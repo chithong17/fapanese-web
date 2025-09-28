@@ -1,4 +1,4 @@
-import React from "react";
+
 import qt from "../assets/quoste.png";
 import ScrollReveal from "./ScrollReveal";
 

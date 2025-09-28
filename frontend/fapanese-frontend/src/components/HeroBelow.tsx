@@ -1,5 +1,4 @@
-import React from "react";
-import heroImage from "../assets/hero.png";
+
 import ScrollReveal from "./ScrollReveal";
 
 function HeroBelow() {

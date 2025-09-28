@@ -1,5 +1,6 @@
 import React from "react";
 import ScrollReveal from "./ScrollReveal";
+import { Link } from "react-router-dom";
 
 interface Course {
   level: string;
@@ -41,7 +42,6 @@ const CoursesSection: React.FC = () => {
     <ScrollReveal>
       <section className="w-full bg-gray-100 py-20 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-
           {courses.map((course, idx) => (
             <div
               key={idx}
@@ -52,27 +52,30 @@ const CoursesSection: React.FC = () => {
 
               {/* Card Content */}
               <div className="relative bg-white/80 backdrop-blur-md border border-gray-200 p-8 rounded-3xl shadow-lg flex flex-col justify-between h-full text-center transition-all duration-500">
-                
                 <div>
-                  <p className="text-gray-900 font-extrabold text-4xl mt-1">{course.code}</p>
-                  <h2 className="mt-3 text-2xl font-extrabold text-gray-800">{course.title}</h2>
+                  <p className="text-gray-900 font-extrabold text-4xl mt-1">
+                    {course.code}
+                  </p>
+                  <h2 className="mt-3 text-2xl font-extrabold text-gray-800">
+                    {course.title}
+                  </h2>
                   <p className="mt-3 text-gray-700">{course.description}</p>
-                  <p className="mt-2 font-semibold text-gray-900">{course.duration}</p>
+                  <p className="mt-2 font-semibold text-gray-900">
+                    {course.duration}
+                  </p>
                 </div>
 
                 <div className="mt-6">
                   <a
-                    href="/courses"
+                    href={`/courses/${course.code}`}
                     className="inline-block px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl shadow hover:bg-gray-700 transition"
                   >
                     Bắt đầu học
                   </a>
                 </div>
-
               </div>
             </div>
           ))}
-
         </div>
       </section>
     </ScrollReveal>

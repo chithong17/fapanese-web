@@ -4,7 +4,6 @@ import heroImage from "../assets/hero.png";
 import heroblImage from "../assets/herobl.png";
 import ScrollReveal from "./ScrollReveal";
 import hero1 from "../assets/hero1.png";
-import hero2 from "../assets/hero2.png";
 import hero3 from "../assets/hero3.jpg";
 import hero4 from "../assets/hero4.jpg";
 import hero5 from "../assets/hero5.png";

@@ -1,11 +1,15 @@
 import React from "react";
 import heroImage from "../assets/hero.png";
+import ScrollReveal from "./ScrollReveal";
 
 function HeroBelow() {
   return (
+    
+    
     <div>
       {/* Section 1: Tiêu đề + mô tả */}
-      <section className="h-80 w-full py-16 px-6 bg-white mt-10">
+      <ScrollReveal>
+        <section className="h-80 w-full py-16 px-6 bg-white mt-10">
         <div className="text-center max-w-6xl mx-auto">
           <h1 className="title title-jp text-[30px] mb-6 font-sans whitespace-nowrap">
             AIを活用した最新の日本語学習法で、日本語と日本文化を素早く学びましょう。
@@ -16,8 +20,10 @@ function HeroBelow() {
           </h2>
         </div>
       </section>
+      </ScrollReveal>
 
-      {/* Section 2: 4 cột với nền xanh */}
+      <ScrollReveal>
+        {/* Section 2: 4 cột với nền xanh */}
       <section className="w-full bg-[#80D9E6] py-16 px-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
           {/* Card 1 */}
@@ -105,6 +111,7 @@ function HeroBelow() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
     </div>
   );
 }

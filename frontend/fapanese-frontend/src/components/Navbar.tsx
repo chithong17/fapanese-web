@@ -1,46 +1,96 @@
+import React, { useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import React from "react";
+import logo from "../assets/logo.png";
+import { Link } from "react-router-dom";
 
 const UserIcon = FaUserCircle as React.ElementType;
 
-function Navbar() {
+interface NavbarProps {
+  scrollToSection: (id: string, tab?: "hiragana" | "katakana") => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ scrollToSection }) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const menuItems = [
+    { name: "VỀ CHÚNG TÔI", link: "/" },
+    { name: "TRANG CHỦ", link: "/" },
+    { name: "KHÓA HỌC", link: "/" },
+    { name: "THÀNH TÍCH", link: "/" },
+    { name: "GÓC CHIA SẺ", link: "/" },
+  ];
+
   return (
     <nav className="bg-white shadow-lg fixed top-0 left-0 right-0 z-50 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between h-20 items-center">
-          {/* Trái: Logo */}
-          <div className="flex-shrink-0">
-            <a
-              href="/"
-              className="text-3xl font-bold text-gray-900 transition-colors relative group"
-              style={{ fontFamily: "'Roboto', sans-serif" }}
-            >
-              <span className="group-hover:bg-gradient-to-r group-hover:from-[#80D9E6] group-hover:to-[#A4EBF2] group-hover:bg-clip-text group-hover:text-transparent transition-colors">
-                {/* Fapanese */}
-              </span>
+          {/* Logo */}
+          <div className="flex items-center space-x-2 flex-shrink-0 -mr-10">
+            <a href="/" className="flex items-center">
+              <img
+                src={logo}
+                alt="Fapanese Logo"
+                className="w-40 h-40 object-contain "
+              />
             </a>
           </div>
 
-          {/* Giữa: Menu */}
+          {/* Menu */}
           <div className="hidden md:flex flex-grow justify-center">
             <div className="flex space-x-12">
-              {["VỀ CHÚNG TÔI", "TRANG CHỦ", "KHÓA HỌC", "THÀNH TÍCH", "GÓC CHIA SẺ"].map((item, idx) => (
+              {menuItems.map((item, idx) => (
                 <a
                   key={idx}
-                  href="/"
+                  href={item.link}
                   className="text-gray-800 font-bold relative group transition-all"
                   style={{ fontFamily: "'Roboto', sans-serif" }}
                 >
                   <span className="group-hover:bg-gradient-to-r group-hover:from-[#80D9E6] group-hover:to-[#A4EBF2] group-hover:bg-clip-text group-hover:text-transparent transition-colors">
-                    {item}
+                    {item.name}
                   </span>
                   <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] group-hover:w-full transition-all"></span>
                 </a>
               ))}
+
+              {/* Dropdown: Bảng Chữ Cái */}
+              <div className="relative cursor-pointer">
+                <span
+                  className="font-bold group-hover:bg-gradient-to-r group-hover:from-[#80D9E6] group-hover:to-[#A4EBF2] group-hover:bg-clip-text group-hover:text-transparent transition-colors"
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                >
+                  BẢNG CHỮ CÁI
+                </span>
+                <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] group-hover:w-full transition-all"></span>
+
+                <div
+                  className={`absolute top-full mt-2 w-40 bg-white rounded-xl shadow-lg transition-all z-50 ${
+                    dropdownOpen ? "opacity-100 visible" : "opacity-0 invisible"
+                  }`}
+                >
+                  <button
+                    onClick={() => {
+                      scrollToSection("alphabet", "hiragana");
+                      setDropdownOpen(false);
+                    }}
+                    className="block w-full px-4 py-2 text-left hover:bg-gray-100 rounded-t-xl font-medium"
+                  >
+                    Hiragana
+                  </button>
+                  <button
+                    onClick={() => {
+                      scrollToSection("alphabet", "katakana");
+                      setDropdownOpen(false);
+                    }}
+                    className="block w-full px-4 py-2 text-left hover:bg-gray-100 rounded-b-xl font-medium"
+                  >
+                    Katakana
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Phải: User icon */}
+          {/* User Icon */}
           <div className="flex items-center space-x-4">
             <div className="p-1 rounded-full hover:bg-gray-200 transition-colors cursor-pointer group">
               <UserIcon className="text-3xl text-gray-700 group-hover:bg-gradient-to-r group-hover:from-[#80D9E6] group-hover:to-[#A4EBF2] group-hover:bg-clip-text group-hover:text-transparent transition-colors" />
@@ -50,6 +100,6 @@ function Navbar() {
       </div>
     </nav>
   );
-}
+};
 
 export default Navbar;

@@ -1,24 +1,46 @@
+import React, { useRef, useState } from "react";
 import Navbar from "./components/Navbar";
 import HeroBackground from "./components/HeroBackground";
 import HeroBelow from "./components/HeroBelow";
-
+import CoursesSection from "./components/CoursesSection";
+import FeatureSection from "./components/FeatureSection";
+import WhyUs from "./components/WhyUs";
+import Footer from "./components/Footer";
+import Quotes from "./components/Quotes";
+import AlphabetLearning from "./components/AlphabetLearning";
 
 function App() {
+  const alphabetRef = useRef<any>(null);
+  const [activeTab, setActiveTab] = useState<"hiragana" | "katakana">("hiragana");
+
+  const scrollToSection = (id: string, tab?: "hiragana" | "katakana") => {
+    if (id === "alphabet" && tab) {
+      setActiveTab(tab);
+      alphabetRef.current?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
   return (
     <div>
-      {/* Navbar cố định trên cùng */}
-      <Navbar />
-
-      {/* Nội dung chính */}
-      <main className="">
-        {/* Hero background section */}
+      <Navbar scrollToSection={scrollToSection} />
+      <main>
         <HeroBackground />
+        <HeroBelow />
+        <CoursesSection />
+        <FeatureSection />
+        <WhyUs />
+        <Quotes />
 
-        {/* Hero navbar (ví dụ như menu riêng cho Hero)
-        <HeroNavbar /> */}
+        <div ref={alphabetRef}>
+          <AlphabetLearning activeTab={activeTab} />
+        </div>
 
-          <HeroBelow/>
-        
+        <Footer />
       </main>
     </div>
   );

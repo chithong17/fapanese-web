@@ -8,7 +8,7 @@ function Quotes() {
       <img
         src={qt}
         alt="Quotes"
-        className="w-full h-200 object-contain drop-shadow-2xl mt-10"
+        className="w-full h-200 object-contain drop-shadow-2xl "
       />
     </ScrollReveal>
   );

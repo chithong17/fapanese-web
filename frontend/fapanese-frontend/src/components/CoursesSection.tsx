@@ -1,6 +1,9 @@
 import React from "react";
 import ScrollReveal from "./ScrollReveal";
 import { Link } from "react-router-dom";
+import pages1 from "../pages/courses/JPD113";
+import pages2 from "../pages/courses/JPD123";
+import pages3 from "../pages/courses/JPD133";
 
 interface Course {
   level: string;
@@ -66,12 +69,12 @@ const CoursesSection: React.FC = () => {
                 </div>
 
                 <div className="mt-6">
-                  <a
-                    href={`/courses/${course.code}`}
+                  <Link
+                    to={`/courses/${course.code}`} // JPD113, JPD123, JPD133
                     className="inline-block px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl shadow hover:bg-gray-700 transition"
                   >
                     Bắt đầu học
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

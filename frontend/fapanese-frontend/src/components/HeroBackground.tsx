@@ -49,7 +49,13 @@ const HeroBackground: React.FC = () => {
           className="w-250px h-auto object-contain drop-shadow-2xl -mt-70"
         />
       </div> */}
+      {/* <div>
+        <div>
+            <h3 className="title title-jp text-md mb-3">知識への投資は最高の利益をもたらす</h3>
+        </div>
+      </div> */}
     </section>
+    
   );
 };
 

@@ -187,7 +187,7 @@ const AlphabetLearning: React.FC<AlphabetLearningProps> = ({ initialTab = "hirag
       <section className="w-full bg-gray-100 py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           {/* Tiêu đề */}
-          <h2 className="text-4xl font-extrabold mb-4 text-gray-900">Học Bảng Chữ Cái</h2>
+          <h2 className="text-4xl font-bold mb-4 text-gray-900">HỌC BẢNG CHỮ CÁI <span className="text-[#80D9E6] font-extrabold">BẰNG HÌNH THỨC MỚI MẺ</span></h2>
           <p className="text-gray-700 mb-8">
             Chọn bảng chữ cái và chế độ học, nhập romaji cho mỗi chữ cái để luyện tập.
           </p>

@@ -92,8 +92,9 @@ function App() {
               <section className="py-16 bg-gray-100">
                 <div className="max-w-6xl mx-auto px-6">
                   <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">
-                    Giới thiệu chức năng học
+                    GIỚI THIỆU CHỨC NĂNG FLASHCARDS <span className="text-[#80D9E6] font-extrabold">GIÚP BẠN HỌC TẬP HIỆU QUẢ</span>
                   </h2>
+
                   <Flashcards cards={flashcardData} />
                 </div>
               </section>

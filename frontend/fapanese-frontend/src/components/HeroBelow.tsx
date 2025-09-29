@@ -59,7 +59,7 @@ function HeroBelow() {
                 className="text-2xl font-extrabold bg-gradient-to-r from-white to-gray-200 
                        bg-clip-text text-transparent"
               >
-                15’ mỗi ngày
+               Chỉ với 15’ mỗi ngày
               </h2>
               <p className="mt-3 text-xl font-extrabold text-black">
                 Đỗ JLPT - Điểm cao
@@ -81,7 +81,7 @@ function HeroBelow() {
                 className="text-2xl font-extrabold bg-gradient-to-r from-white to-gray-200 
                        bg-clip-text text-transparent"
               >
-                Vừa học
+                Vừa học được nhiều thứ
               </h2>
               <p className="mt-3 text-xl font-extrabold text-black">Vừa vui</p>
             </div>

@@ -15,6 +15,7 @@ import BottomNav from "./components/BottomNav";
 import JPD113 from "./pages/courses/JPD113";
 import JPD123 from "./pages/courses/JPD123";
 import JPD133 from "./pages/courses/JPD133";
+import HeroQr from "./components/HeroQr";
 
 function App() {
   const alphabetRef = useRef<any>(null);
@@ -86,7 +87,6 @@ function App() {
               <FeatureSection />
               <WhyUs />
               <Quotes />
-             
 
               {/* Flashcards Section */}
               <section className="py-16 bg-gray-100">
@@ -101,7 +101,7 @@ function App() {
               <div ref={alphabetRef}>
                 <AlphabetLearning activeTab={activeTab} />
               </div>
-
+              <HeroQr />
               <Footer />
             </main>
           }

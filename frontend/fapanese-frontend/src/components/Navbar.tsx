@@ -21,7 +21,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
   ];
 
   return (
-    <nav className="bg-white shadow-lg fixed top-0 left-0 right-0 z-50 backdrop-blur-sm">
+    <nav className="bg-white shadow-lg fixed top-0 left-0 right-0 z-50 backdrop-blur-sm ">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between h-20 items-center">
 
@@ -95,10 +95,10 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
             </div>
 
             {/* Login & Sign Up */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center mr-10">
               <button
                 onClick={() => onAuthClick("login")}
-                className="px-4 py-1 rounded-lg font-medium text-gray-700 hover:text-white hover:bg-gray-700 transition-colors"
+                className=" py-1 rounded-lg font-medium text-gray-700 hover:text-white hover:bg-gray-700 transition-colors "
               >
                 Đăng nhập
               </button>

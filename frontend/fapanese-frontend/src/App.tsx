@@ -11,7 +11,7 @@ import Footer from "./components/Footer";
 import Quotes from "./components/Quotes";
 import AlphabetLearning from "./components/AlphabetLearning";
 import AuthPopup from "./components/AuthPopup";
-
+import BottomNav from "./components/BottomNav";
 import JPD113 from "./pages/courses/JPD113";
 import JPD123 from "./pages/courses/JPD123";
 import JPD133 from "./pages/courses/JPD133";
@@ -79,12 +79,15 @@ function App() {
           path="/"
           element={
             <main>
+              <BottomNav scrollToSection={scrollToSection} />
               <HeroBackground />
               <HeroBelow />
               <CoursesSection />
               <FeatureSection />
               <WhyUs />
               <Quotes />
+             
+
               {/* Flashcards Section */}
               <section className="py-16 bg-gray-100">
                 <div className="max-w-6xl mx-auto px-6">

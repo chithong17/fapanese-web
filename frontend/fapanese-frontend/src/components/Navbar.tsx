@@ -26,8 +26,8 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
         <div className="flex justify-between h-20 items-center">
 
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <a href="/" className="flex items-center">
+          <div className="flex-shrink-0 -ml-30">
+            <a href="/" className="flex items-center  h-40">
               <img src={logo} alt="Fapanese Logo" className="w-40 h-40 object-contain" />
             </a>
           </div>

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import logo from "../assets/logo.png";
+import { link } from "framer-motion/client";
+
 
 const UserIcon = FaUserCircle as React.ElementType;
 
@@ -15,7 +17,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
   const menuItems = [
     { name: "VỀ CHÚNG TÔI", link: "/" },
     { name: "TRANG CHỦ", link: "/" },
-    { name: "KHÓA HỌC", link: "/" },
+    { name: "KHÓA HỌC", to:"/courses" },
     { name: "THÀNH TÍCH", link: "/" },
     { name: "GÓC CHIA SẺ", link: "/" },
   ];

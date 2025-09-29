@@ -158,10 +158,10 @@ const AlphabetLearning: React.FC<AlphabetLearningProps> = ({ initialTab = "hirag
   const handleSubmit = () => {
     if (!currentKana) return;
     if (input.toLowerCase() === currentKana.romaji.toLowerCase()) {
-      setFeedback("✅ Đúng!");
+      setFeedback(" Đúng!");
       setLearnedKana((prev) => [...prev, currentKana]);
     } else {
-      setFeedback(`❌ Sai! Đáp án: ${currentKana.romaji}`);
+      setFeedback(` Sai! Đáp án: ${currentKana.romaji}`);
     }
     setTimeout(() => {
       setFeedback("");
@@ -282,11 +282,11 @@ const AlphabetLearning: React.FC<AlphabetLearningProps> = ({ initialTab = "hirag
           </div>
 
           {/* Mini grid tất cả chữ cái */}
-          <div className="grid grid-cols-10 gap-2 mt-10">
+          <div className="grid grid-cols-10 gap-2 mt-10 ">
             {kanaList.map((k, idx) => (
               <div
                 key={idx}
-                className={`text-xl p-2 rounded text-center ${
+                className={`text-xl p-2 rounded-4xl text-center border ${
                   learnedKana.includes(k) ? "bg-green-100 text-green-700" : "bg-white/10 text-gray-800"
                 }`}
               >

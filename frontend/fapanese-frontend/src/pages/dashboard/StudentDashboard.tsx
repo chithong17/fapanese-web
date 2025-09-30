@@ -5,14 +5,14 @@ import Navbar from "../../components/Navbar";
 import {
   AiOutlineBook,
   AiOutlineDashboard,
-  AiOutlineQuestionCircle,
+  // AiOutlineQuestionCircle,
   AiOutlineEdit,
   AiOutlinePlayCircle,
   AiOutlineSound,
   AiOutlineForm,
   AiOutlineGift,
 } from "react-icons/ai";
-import { MdLogin, MdPersonAdd } from "react-icons/md";
+// import { MdLogin, MdPersonAdd } from "react-icons/md";
 import Confetti from "react-confetti";
 
 const ProgressCard = ({
@@ -113,22 +113,34 @@ const StudentDashboard: React.FC = () => {
         userDropdownOpen={userDropdownOpen}
         setUserDropdownOpen={setUserDropdownOpen}
       />
-      <div className="pt-24 p-6 min-h-screen bg-gray-50">
+      <div className="pt-24 p-4 sm:p-6 min-h-screen bg-gray-50">
         {showConfetti && <Confetti numberOfPieces={200} recycle={false} />}
-        <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-        <p className="mb-6">Theo dõi tiến độ học tập của bạn</p>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Dashboard</h1>
+        <p className="mb-6 text-sm sm:text-base">Theo dõi tiến độ học tập của bạn</p>
 
         {/* Tổng quan */}
-        <div className="flex flex-wrap gap-6 mb-8">
+        <div className="flex flex-wrap gap-4 sm:gap-6 mb-8">
           <ProgressCard
             title="Tổng điểm"
             value="1,250"
             icon={<AiOutlineDashboard />}
             onComplete={handleComplete}
           />
-          <ProgressCard title="Ngày liên tiếp" value="15" icon={<AiOutlineBook />} />
-          <ProgressCard title="Bài đã học" value="32" icon={<AiOutlineEdit />} />
-          <ProgressCard title="Hôm nay" value="45m" icon={<AiOutlinePlayCircle />} />
+          <ProgressCard
+            title="Ngày liên tiếp"
+            value="15"
+            icon={<AiOutlineBook />}
+          />
+          <ProgressCard
+            title="Bài đã học"
+            value="32"
+            icon={<AiOutlineEdit />}
+          />
+          <ProgressCard
+            title="Hôm nay"
+            value="45m"
+            icon={<AiOutlinePlayCircle />}
+          />
           <ProgressCard
             title="Cấp độ hiện tại"
             value="Intermediate"
@@ -144,8 +156,8 @@ const StudentDashboard: React.FC = () => {
         </div>
 
         {/* Hoạt động gần đây */}
-        <div className="bg-white shadow-lg rounded-xl p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">Hoạt động gần đây</h2>
+        <div className="bg-white shadow-lg rounded-xl p-4 sm:p-6 mb-8">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4">Hoạt động gần đây</h2>
           <ActivityItem
             activity="Hiragana và Katakana"
             status="Hoàn thành"
@@ -167,7 +179,7 @@ const StudentDashboard: React.FC = () => {
         </div>
 
         {/* Tiếp tục học */}
-        <div className="flex flex-wrap gap-6">
+        <div className="flex flex-wrap gap-4 sm:gap-6">
           {[
             { name: "Tiếp tục học", icon: <AiOutlineBook /> },
             { name: "Chơi game", icon: <AiOutlinePlayCircle /> },
@@ -178,10 +190,10 @@ const StudentDashboard: React.FC = () => {
             <motion.div
               key={item.name}
               whileHover={{ scale: 1.05 }}
-              className="bg-white shadow-md rounded-xl p-6 w-full sm:w-60 text-center cursor-pointer transition-all flex flex-col items-center gap-2"
+              className="bg-white shadow-md rounded-xl p-4 sm:p-6 w-full sm:w-60 text-center cursor-pointer transition-all flex flex-col items-center gap-2"
             >
-              <div className="text-3xl">{item.icon}</div>
-              <h3 className="font-semibold">{item.name}</h3>
+              <div className="text-2xl sm:text-3xl">{item.icon}</div>
+              <h3 className="font-semibold text-sm sm:text-base">{item.name}</h3>
             </motion.div>
           ))}
         </div>

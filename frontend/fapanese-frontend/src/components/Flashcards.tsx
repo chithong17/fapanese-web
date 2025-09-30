@@ -1,16 +1,12 @@
 import React, { useState } from "react";
 import ScrollReveal from "./ScrollReveal";
 
-interface Flashcard {
-  title: string;
-  description: string;
-}
-
 interface FlashcardsProps {
-  cards: Flashcard[];
+  cards: { title: string; description: string }[];
+  className?: string; // thêm dòng này
 }
 
-const Flashcards: React.FC<FlashcardsProps> = ({ cards }) => {
+const Flashcards: React.FC<FlashcardsProps> = ({ cards, className }) => {
   const [current, setCurrent] = useState(0);
   const [flipped, setFlipped] = useState(false);
 
@@ -28,7 +24,8 @@ const Flashcards: React.FC<FlashcardsProps> = ({ cards }) => {
 
   return (
     <ScrollReveal>
-      <div className="flex flex-col items-center space-y-8">
+      {/* Dùng className ở đây để custom layout */}
+      <div className={`flex flex-col items-center space-y-8 ${className}`}>
         <div
           className="relative w-96 h-64 perspective cursor-pointer"
           onClick={() => setFlipped(!flipped)}
@@ -52,9 +49,7 @@ const Flashcards: React.FC<FlashcardsProps> = ({ cards }) => {
             {/* Back */}
             <div className="absolute w-full h-full bg-gradient-to-br from-gray-200 to-white rounded-3xl shadow-lg flex flex-col justify-center p-6 rotate-y-180 backface-hidden">
               <h3 className="text-2xl font-bold text-gray-900">{card.title}</h3>
-              <p className="mt-2 text-gray-800 text-center">
-                {card.description}
-              </p>
+              <p className="mt-2 text-gray-800 text-center">{card.description}</p>
               <div className="absolute bottom-4 right-4 bg-gray-200/70 px-3 py-1 rounded-lg text-gray-800 font-semibold text-sm">
                 Fap 先生
               </div>
@@ -81,5 +76,6 @@ const Flashcards: React.FC<FlashcardsProps> = ({ cards }) => {
     </ScrollReveal>
   );
 };
+
 
 export default Flashcards;

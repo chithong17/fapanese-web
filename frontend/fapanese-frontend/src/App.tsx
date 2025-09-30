@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Flashcards from "./components/Flashcards";
 import Navbar from "./components/Navbar";
@@ -21,6 +21,7 @@ import StudentDashboard from "./pages/dashboard/StudentDashboard";
 function App() {
   const alphabetRef = useRef<any>(null);
   const [activeTab, setActiveTab] = useState<"hiragana" | "katakana">("hiragana");
+
 
   // Auth popup
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -53,7 +54,7 @@ function App() {
 
   return (
     <Router>
-      {/* Navbar duy nhất */}
+      {/* Navbar */}
       <Navbar
         scrollToSection={scrollToSection}
         onAuthClick={openAuth}
@@ -74,6 +75,9 @@ function App() {
           path="/"
           element={
             <main className="relative z-0 overflow-visible">
+
+
+
               <BottomNav scrollToSection={scrollToSection} />
               <HeroBackground />
               <HeroBelow />
@@ -101,6 +105,7 @@ function App() {
             </main>
           }
         />
+        
 
         {/* Các trang khóa học */}
         <Route path="/courses/JPD113" element={<JPD113 />} />

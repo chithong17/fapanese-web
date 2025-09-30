@@ -1,7 +1,7 @@
 // Navbar.tsx
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserCircle, FaBars, FaTimes } from "react-icons/fa";
 import {
   AiOutlineBook,
   AiOutlineDashboard,
@@ -19,10 +19,10 @@ interface NavbarProps {
   setUserDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>; // <- bắt buộc
 }
 
-
 const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Thêm trạng thái cho menu di động
 
   const menuItems = [
     { name: "VỀ CHÚNG TÔI", link: "/" },
@@ -80,7 +80,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
             </a>
           </div>
 
-          {/* Menu */}
+          {/* Desktop Menu */}
           <div className="hidden md:flex flex-grow justify-center">
             <div className="flex space-x-12 items-center">
               {menuItems.map((item, idx) => (
@@ -138,6 +138,16 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
             </div>
           </div>
 
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-gray-800 hover:text-blue-500 focus:outline-none"
+            >
+              {isMobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+            </button>
+          </div>
+
           {/* User dropdown */}
           <div className="relative flex items-center gap-4">
             <div
@@ -154,6 +164,24 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-white shadow-lg">
+          <div className="px-4 py-2 space-y-2">
+            {menuItems.map((item, idx) => (
+              <a
+                key={idx}
+                href={item.link}
+                className="block text-gray-800 hover:text-blue-500 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* User dropdown portal */}
       {userDropdownOpen &&

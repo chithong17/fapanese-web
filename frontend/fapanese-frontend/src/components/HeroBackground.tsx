@@ -8,6 +8,10 @@ import hero3 from "../assets/hero3.jpg";
 import hero4 from "../assets/hero4.jpg";
 import hero5 from "../assets/hero5.png";
 
+// interface HeroBackgroundProps {
+//   className?: string;
+// }
+
 const HeroBackground: React.FC = () => {
   return (
     <ScrollReveal>

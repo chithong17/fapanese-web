@@ -1,9 +1,6 @@
 import React from "react";
 import ScrollReveal from "./ScrollReveal";
 import { Link } from "react-router-dom";
-import pages1 from "../pages/courses/JPD113";
-import pages2 from "../pages/courses/JPD123";
-import pages3 from "../pages/courses/JPD133";
 
 interface Course {
   level: string;
@@ -54,16 +51,18 @@ const CoursesSection: React.FC = () => {
               <div className="absolute -inset-0.5 rounded-2xl bg-gray-200/20 blur opacity-50 group-hover:opacity-70 transition duration-500"></div>
 
               {/* Card Content */}
-              <div className="relative bg-white/80 backdrop-blur-md border border-gray-200 p-8 rounded-3xl shadow-lg flex flex-col justify-between h-full text-center transition-all duration-500">
+              <div className="relative bg-white/80 backdrop-blur-md border border-gray-200 p-6 sm:p-8 rounded-3xl shadow-lg flex flex-col justify-between h-full text-center transition-all duration-500">
                 <div>
-                  <p className="text-gray-900 font-extrabold text-4xl mt-1">
+                  <p className="text-gray-900 font-extrabold text-2xl sm:text-3xl lg:text-4xl mt-1">
                     {course.code}
                   </p>
-                  <h2 className="mt-3 text-2xl font-extrabold text-gray-800">
+                  <h2 className="mt-3 text-xl sm:text-2xl font-extrabold text-gray-800">
                     {course.title}
                   </h2>
-                  <p className="mt-3 text-gray-700">{course.description}</p>
-                  <p className="mt-2 font-semibold text-gray-900">
+                  <p className="mt-3 text-gray-700 text-sm sm:text-base">
+                    {course.description}
+                  </p>
+                  <p className="mt-2 font-semibold text-gray-900 text-sm sm:text-base">
                     {course.duration}
                   </p>
                 </div>
@@ -71,7 +70,7 @@ const CoursesSection: React.FC = () => {
                 <div className="mt-6">
                   <Link
                     to={`/courses/${course.code}`} // JPD113, JPD123, JPD133
-                    className="inline-block px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl shadow hover:bg-gray-700 transition"
+                    className="inline-block px-4 sm:px-6 py-2 sm:py-3 bg-gray-900 text-white font-semibold rounded-xl shadow hover:bg-gray-700 transition"
                   >
                     Bắt đầu học
                   </Link>

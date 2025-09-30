@@ -7,7 +7,8 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum ErrorCode {
     USER_NOT_EXISTED(1000, "User is not existed", HttpStatus.NOT_FOUND),
-    AUTHENTICATED(1001, "Authenticate fail", HttpStatus.UNAUTHORIZED)
+    AUTHENTICATED(1001, "Authenticate fail", HttpStatus.UNAUTHORIZED),
+    UNCATEGORIZED_EXCEPTION(0000, "Uncategorized excetion", HttpStatus.INTERNAL_SERVER_ERROR)
     ;
     private int code;
     private String message;

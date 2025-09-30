@@ -3,9 +3,6 @@ package com.ktnl.fapanese.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -19,9 +16,14 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
-    String username;
     String email;
     String password_hash;
-    LocalDateTime created_at;
-    LocalDateTime updated_at;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Lecturer teacher;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Student student;
+
+    @ManyToMany
+    Set<Role> roles;
 }

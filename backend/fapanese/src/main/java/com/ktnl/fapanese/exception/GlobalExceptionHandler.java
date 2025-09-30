@@ -26,4 +26,14 @@ public class GlobalExceptionHandler {
                 .status(errorCode.getStatusCode()) // trả về đúng HTTP status tương ứng
                 .body(apiResponse);
     }
+
+
+    @ExceptionHandler(value = Exception.class)
+    ResponseEntity<ApiResponse> handlerRuntimeException(RuntimeException re){
+        ApiResponse apiResponse = new ApiResponse();
+        // Trả về lỗi mặc định UNCATALOGIZED_EXCEPTION
+        apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
+        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
+        return ResponseEntity.badRequest().body(apiResponse);
+    }
 }

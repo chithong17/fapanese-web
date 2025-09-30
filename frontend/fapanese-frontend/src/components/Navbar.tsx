@@ -18,7 +18,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
     { name: "VỀ CHÚNG TÔI", link: "/" },
     { name: "TRANG CHỦ", link: "/" },
     { name: "KHÓA HỌC", link: "/courses" },
-    { name: "THÀNH TÍCH", link: "/" },
+    { name: "THÀNH TÍCH", link: "/dashboard/student" },
     { name: "GÓC CHIA SẺ", link: "/" },
   ];
 

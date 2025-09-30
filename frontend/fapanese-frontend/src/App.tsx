@@ -17,6 +17,7 @@ import JPD123 from "./pages/courses/JPD123";
 import JPD133 from "./pages/courses/JPD133";
 import HeroQr from "./components/HeroQr";
 
+
 function App() {
   const alphabetRef = useRef<any>(null);
   const [activeTab, setActiveTab] = useState<"hiragana" | "katakana">(

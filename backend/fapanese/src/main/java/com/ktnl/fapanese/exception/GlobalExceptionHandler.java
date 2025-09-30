@@ -1,10 +1,12 @@
 package com.ktnl.fapanese.exception;
 
 import com.ktnl.fapanese.dto.response.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+@Slf4j
 @ControllerAdvice   // Đánh dấu class này là global exception handler (xử lý lỗi toàn cục cho Spring MVC)
 public class GlobalExceptionHandler {
 
@@ -16,11 +18,10 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = exception.getErrorCode(); // lấy errorCode được ném từ exception
 
         ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setCode(errorCode.getCode());
+        apiResponse.setMessage(errorCode.getMessage());
 
-        ApiResponse.builder()
-                .code(errorCode.getCode())
-                .message(errorCode.getMessage()+"aaaa")
-                .build();
+        log.info("LLLLLLLLLLLLLLLLLLLLLLLLLL");
 
         return ResponseEntity
                 .status(errorCode.getStatusCode()) // trả về đúng HTTP status tương ứng

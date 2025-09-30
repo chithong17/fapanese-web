@@ -16,12 +16,12 @@ const BottomNav: React.FC<BottomNavProps> = ({ scrollToSection }) => {
 
   return (
     <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[900]">
-  <div className="flex justify-between bg-amber-100 border rounded-3xl shadow-amber-500 shadow-md px-6 py-3 backdrop-blur-md max-w-4xl h-15 w-400">
+  <div className="flex justify-between bg-amber-100 border rounded-3xl shadow-amber-500 shadow-md px-6  backdrop-blur-md max-w-4xl h-10 w-400">
     {sections.map((section) => (
       <button
         key={section.id}
         onClick={() => scrollToSection(section.id)}
-        className="flex-1 mx-1 px-3 py-2 bg-amber-100 hover:scale-105 hover:shadow-xl transition-transform duration-300 font-extrabold text-gray-800 text-center"
+        className="flex-1 bg-amber-100 hover:scale-105 rounded-3xl hover:shadow-xl transition-transform duration-300 font-extrabold text-gray-800 text-center"
       >
         {section.label}
       </button>

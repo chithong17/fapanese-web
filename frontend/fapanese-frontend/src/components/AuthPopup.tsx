@@ -200,3 +200,4 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
 };
 
 export default AuthPopup;
+  

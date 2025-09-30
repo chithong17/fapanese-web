@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
 
         ApiResponse.builder()
                 .code(errorCode.getCode())
-                .message(errorCode.getMessage())
+                .message(errorCode.getMessage()+"aaaa")
                 .build();
 
         return ResponseEntity

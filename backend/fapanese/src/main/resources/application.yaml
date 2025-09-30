@@ -5,7 +5,7 @@ server:
 
 spring:
   datasource:
-    url: ${DBMS_CONNECTION}
+    url: jdbc:mysql://localhost:3306/fapanese_database
     driverClassName: "com.mysql.cj.jdbc.Driver"
     password: ${DBMS_PASSWORD}
     username: ${DBMS_USERNAME}

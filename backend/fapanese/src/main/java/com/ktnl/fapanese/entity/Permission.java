@@ -3,23 +3,17 @@ package com.ktnl.fapanese.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
-
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Role {
+public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
-    private String roleName;
-
-    @ManyToMany
-    private Set<Permission> permissions;
-
+    private String permName;
 }

@@ -8,7 +8,7 @@ function HeroQr() {
       <img
         src={banner}
         alt=""
-        className="w-full h-140 object-contain"
+        className="w-full h-140 object-contain "
       />
     </ScrollReveal>
   );

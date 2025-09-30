@@ -102,13 +102,13 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
                 onClick={() => onAuthClick("login")}
                 className=" py-1 rounded-lg font-medium text-gray-700 hover:text-white hover:bg-gray-700 transition-colors "
               >
-                Đăng nhập
+                Sign In
               </button>
               <button
                 onClick={() => onAuthClick("signup")}
                 className="px-4 py-1 rounded-lg font-medium text-gray-700 hover:text-white hover:bg-gray-700 transition-colors"
               >
-                Đăng ký
+                Sign Up
               </button>
             </div>
           </div>

@@ -15,7 +15,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ scrollToSection }) => {
   ];
 
   return (
-    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[9999]">
+    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[900]">
   <div className="flex justify-between bg-amber-100 border rounded-3xl shadow-amber-500 shadow-md px-6 py-3 backdrop-blur-md max-w-4xl h-15 w-400">
     {sections.map((section) => (
       <button

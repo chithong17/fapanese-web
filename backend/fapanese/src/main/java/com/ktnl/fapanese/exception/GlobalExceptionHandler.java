@@ -1,0 +1,29 @@
+package com.ktnl.fapanese.exception;
+
+import com.ktnl.fapanese.dto.response.ApiResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+@ControllerAdvice   // Đánh dấu class này là global exception handler (xử lý lỗi toàn cục cho Spring MVC)
+public class GlobalExceptionHandler {
+
+    /**
+     * Handler cho AppException (custom exception của hệ thống)
+     */
+    @ExceptionHandler(value = AppException.class)
+    ResponseEntity<ApiResponse> handlingAppException(AppException exception){
+        ErrorCode errorCode = exception.getErrorCode(); // lấy errorCode được ném từ exception
+
+        ApiResponse apiResponse = new ApiResponse();
+
+        ApiResponse.builder()
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build();
+
+        return ResponseEntity
+                .status(errorCode.getStatusCode()) // trả về đúng HTTP status tương ứng
+                .body(apiResponse);
+    }
+}

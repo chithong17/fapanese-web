@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaGithub, FaGoogle, FaLinkedin } from "react-icons/fa";
 import logo from "../assets/logologin.png";
 import ScrollReveal from "./ScrollReveal";
+import WelcomeLogo from "../assets/welcomeLog.jpg";
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -9,7 +10,12 @@ interface AuthPopupProps {
   initialTab: "login" | "signup";
 }
 
-const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) => {
+
+const AuthPopup: React.FC<AuthPopupProps> = ({
+  isOpen,
+  onClose,
+  initialTab,
+}) => {
   const [activeTab, setActiveTab] = useState<"login" | "signup">(initialTab);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -58,7 +64,9 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
 
         {/* Header với nút tab */}
         <div className="flex justify-between items-center px-10 border-b bg-gray-50">
-          <h2><img src={logo} alt="" className="h-40 w-auto -my-7" /></h2>
+          <h2>
+            <img src={logo} alt="" className="h-40 w-auto -my-7" />
+          </h2>
           <div className="flex gap-4">
             <button
               onClick={() => setActiveTab("login")}
@@ -86,7 +94,10 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
         {/* Container 2 cột trượt */}
         <div
           className="flex w-[200%] transition-transform duration-700 ease-in-out"
-          style={{ transform: activeTab === "login" ? "translateX(0%)" : "translateX(-50%)" }}
+          style={{
+            transform:
+              activeTab === "login" ? "translateX(0%)" : "translateX(-50%)",
+          }}
         >
           {/* --- LOGIN SIDE --- */}
           <div className="w-1/2 flex flex-col items-center justify-center p-10">
@@ -137,15 +148,20 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
           </div>
 
           {/* Hình bên phải LOGIN */}
-          <div className="w-1/2 bg-gray-100 flex items-center justify-center">
-            <img src="/login-image.svg" alt="login" className="max-w-sm" />
+          <div className="w-1/2 bg-gray-100 flex items-center justify-center mx-17 ">
+            <img
+              src={WelcomeLogo}
+              alt="login"
+              className="max-w-sm h-152 w-125 rounded-2xl"
+            />
           </div>
 
           {/* --- SIGNUP SIDE --- */}
           <div className="w-1/2 flex flex-col items-center justify-center p-10">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Đăng ký</h2>
-            <p className="text-gray-500 mb-6">Tạo tài khoản mới để bắt đầu học</p>
-
+            <p className="text-gray-500 mb-6">
+              Tạo tài khoản mới để bắt đầu học
+            </p>
             {/* Social buttons */}
             <div className="flex flex-col gap-3 mb-6 w-full max-w-sm">
               <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
@@ -158,13 +174,12 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
                 <FaLinkedin /> Continue with LinkedIn
               </button>
             </div>
-
             <div className="flex items-center gap-2 mb-6 text-gray-400 w-full max-w-sm">
               <div className="flex-1 h-px bg-gray-300"></div>
               <span>OR</span>
               <div className="flex-1 h-px bg-gray-300"></div>
             </div>
-
+           
             <form className="flex flex-col gap-4 w-full max-w-sm">
               <input
                 type="email"
@@ -180,6 +195,14 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
                 onChange={(e) => setSignupPassword(e.target.value)}
                 className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
               />
+              {/* Confirm password */}
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                value={signupPassword}
+                onChange={(e) => setSignupPassword(e.target.value)}
+                className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+              />
               <button
                 type="submit"
                 className="bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
@@ -191,7 +214,11 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
 
           {/* Hình bên trái SIGNUP */}
           <div className="w-1/2 bg-gray-100 flex items-center justify-center">
-            <img src="/signup-image.svg" alt="signup" className="max-w-sm" />
+            <img
+              src={WelcomeLogo}
+              alt="signup"
+              className="max-w-sm rounded-2xl h-152 w-125"
+            />
           </div>
         </div>
       </div>
@@ -200,4 +227,3 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
 };
 
 export default AuthPopup;
-  

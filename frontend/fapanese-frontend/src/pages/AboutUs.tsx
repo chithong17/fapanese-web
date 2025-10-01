@@ -9,6 +9,7 @@ import {
 } from "react-icons/si";
 import Footer from "../components/Footer";
 import AboutUsBanner from "../assets/abub.jpg";
+import AboutUsSide from "../assets/aboutside2.jpg";
 
 const technologies = [
   { icon: <FaReact />, name: "React", color: "text-blue-400" },
@@ -24,22 +25,22 @@ const coreValues = [
   {
     title: "Đổi Mới",
     desc: "Chúng tôi khát khao thay đổi cách học tiếng Nhật truyền thống, mang đến sự sáng tạo và trải nghiệm mới mẻ.",
-    icon: "🚀",
+    icon: "",
   },
   {
     title: "Hợp Tác",
     desc: "Chúng tôi tin rằng sức mạnh tập thể sẽ giúp mọi ý tưởng trở nên hiện thực và lan tỏa xa hơn.",
-    icon: "🤝",
+    icon: "",
   },
   {
     title: "Tận Tâm",
     desc: "Người học là trung tâm. Chúng tôi đồng hành và hỗ trợ tận tình trong từng bước phát triển.",
-    icon: "💡",
+    icon: "",
   },
   {
     title: "Phát Triển Bền Vững",
     desc: "Xây dựng một nền tảng học tập lâu dài, ổn định và có giá trị cho cộng đồng.",
-    icon: "🌱",
+    icon: "",
   },
 ];
 
@@ -59,6 +60,7 @@ const AboutUs: React.FC = () => {
           <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">
             Công Nghệ Chúng Tôi <span  className="text-4xl md:text-5xl font-extrabold text-[#80D9E6]  ">Sử Dụng</span>
           </h2>
+          
           <p className="text-lg text-gray-600">
             Chúng tôi lựa chọn những công nghệ tiên tiến để xây dựng một nền tảng
             học tập tối ưu, ổn định và hiện đại.
@@ -143,7 +145,7 @@ const AboutUs: React.FC = () => {
           <div className="relative animate-float">
             <div className="rounded-2xl shadow-2xl overflow-hidden relative z-10">
               <img
-                src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b"
+                src={AboutUsSide}
                 alt="Learning"
                 className="rounded-2xl transform transition-transform hover:scale-105 duration-500"
               />

@@ -5,17 +5,21 @@ import com.ktnl.fapanese.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.text.ParseException;
 import java.util.Objects;
 
 // CustomJwtDecoder: lớp tự định nghĩa để giải mã và xác thực JWT trong Spring Security
+@Component
 public class CustomJwtDecoder implements JwtDecoder {
 
     // Khóa bí mật dùng để verify chữ ký của JWT (được cấu hình trong application.properties)

@@ -17,6 +17,7 @@ import JPD123 from "./pages/courses/JPD123";
 import JPD133 from "./pages/courses/JPD133";
 import HeroQr from "./components/HeroQr";
 import StudentDashboard from "./pages/dashboard/StudentDashboard";
+import AboutUs from "./pages/AboutUs";
 
 function App() {
   const alphabetRef = useRef<any>(null);
@@ -106,6 +107,9 @@ function App() {
           }
         />
         
+
+        {/* Trang Về Chúng Tôi */}
+        <Route path="/about-us" element={<AboutUs />} />
 
         {/* Các trang khóa học */}
         <Route path="/courses/JPD113" element={<JPD113 />} />

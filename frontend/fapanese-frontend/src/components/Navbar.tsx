@@ -26,7 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Thêm trạng thái cho menu di động
 
   const menuItems = [
-    { name: "VỀ CHÚNG TÔI", link: "/" },
+    { name: "VỀ CHÚNG TÔI", link: "/about-us" },
     { name: "TRANG CHỦ", link: "/" },
     { name: "KHÓA HỌC", link: "/courses" },
     { name: "THÀNH TÍCH", link: "/dashboard/student" },
@@ -67,11 +67,12 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
   ];
 
   return (
+
     <nav className="bg-white shadow-lg fixed top-0 left-0 right-0 z-[2000] backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between h-20 items-center relative">
           {/* Logo */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 -ml-15">
             <a href="/" className="flex items-center h-12">
               <img
                 src={logo}
@@ -88,8 +89,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
                 <a
                   key={idx}
                   href={item.link}
-                  className="text-gray-800 font-bold relative group transition-all"
-                  style={{ fontFamily: "'Roboto', sans-serif" }}
+                  className="text-gray-800 font-extrabold relative group transition-all"
                 >
                   <span className="group-hover:bg-gradient-to-r group-hover:from-[#80D9E6] group-hover:to-[#A4EBF2] group-hover:bg-clip-text group-hover:text-transparent transition-colors">
                     {item.name}
@@ -101,7 +101,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
               {/* Dropdown bảng chữ cái */}
               <div className="relative">
                 <span
-                  className="font-bold cursor-pointer transition-colors group-hover:bg-gradient-to-r group-hover:from-[#80D9E6] group-hover:to-[#A4EBF2] group-hover:bg-clip-text group-hover:text-transparent"
+                  className="font-extrabold cursor-pointer transition-colors group-hover:bg-gradient-to-r group-hover:from-[#80D9E6] group-hover:to-[#A4EBF2] group-hover:bg-clip-text group-hover:text-transparent"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                 >
                   BẢNG CHỮ CÁI

@@ -6,6 +6,8 @@ import com.ktnl.fapanese.entity.Lecturer;
 import com.ktnl.fapanese.entity.Role;
 import com.ktnl.fapanese.entity.Student;
 import com.ktnl.fapanese.entity.User;
+import com.ktnl.fapanese.exception.AppException;
+import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mappper.UserMapper;
 import com.ktnl.fapanese.repository.LecturerRepository;
 import com.ktnl.fapanese.repository.RoleRepository;
@@ -32,11 +34,13 @@ public class UserService {
     private RoleRepository roleRepo;
     @Autowired
     private UserMapper mapper;
-
-
+    @Autowired
     PasswordEncoder passwordEncoder;
 
     public UserResponse registerUser(UserRequest userRequest) {
+        if(userRepo.existsByEmail(userRequest.getEmail())) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
         User user = mapper.toUser(userRequest);
 
         user.setPassword_hash(passwordEncoder.encode(user.getPassword_hash()));

@@ -33,6 +33,7 @@ public class GlobalExceptionHandler {
     ResponseEntity<ApiResponse> handlerRuntimeException(RuntimeException re){
         ApiResponse apiResponse = new ApiResponse();
         // Trả về lỗi mặc định UNCATALOGIZED_EXCEPTION
+        log.info(re.getMessage());
         apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
         apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
         return ResponseEntity.badRequest().body(apiResponse);

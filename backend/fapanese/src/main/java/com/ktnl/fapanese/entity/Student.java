@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Entity
 public class Student {
     @Id
-    private Long id;
+    private String id;
 
     private String campus;
     private LocalDate dateOfBirth;

@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Entity
 public class Lecturer {
     @Id
-    private Long id;
+    private String id;
 
     private String expertise;
     @Column(columnDefinition = "TEXT")

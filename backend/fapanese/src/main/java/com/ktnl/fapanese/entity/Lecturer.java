@@ -27,3 +27,4 @@ public class Lecturer {
     @JoinColumn(name = "id")
     private User user;
 }
+

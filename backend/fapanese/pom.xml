@@ -63,7 +63,6 @@
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
-            <!-- SỬA LỖI: Thêm lại thẻ version ở đây -->
             <version>9.31</version>
         </dependency>
 

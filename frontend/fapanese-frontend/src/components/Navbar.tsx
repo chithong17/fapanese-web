@@ -118,7 +118,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
                           scrollToSection("alphabet", "hiragana");
                           setDropdownOpen(false);
                         }}
-                        className="block w-full px-4 py-2 text-left hover:bg-gray-100 rounded-t-xl font-medium flex items-center gap-2"
+                        className=" w-full px-4 py-2 text-left hover:bg-gray-100 rounded-t-xl font-medium flex items-center gap-2"
                       >
                         Hiragana
                       </button>
@@ -127,7 +127,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
                           scrollToSection("alphabet", "katakana");
                           setDropdownOpen(false);
                         }}
-                        className="block w-full px-4 py-2 text-left hover:bg-gray-100 rounded-b-xl font-medium flex items-center gap-2"
+                        className=" w-full px-4 py-2 text-left hover:bg-gray-100 rounded-b-xl font-medium flex items-center gap-2"
                       >
                         Katakana
                       </button>

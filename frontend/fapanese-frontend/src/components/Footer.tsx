@@ -18,9 +18,9 @@ const Footer: React.FC = () => {
             <img
               src={logo}
               alt="Fapanese Logo"
-              className="h-16 w-auto"
+              className="h-70 w-auto -mt-35 mr-5"
             />
-            <p className="text-black/70 text-sm sm:text-base">
+            <p className="text-black/70 text-sm sm:text-base -mt-25">
               Học tiếng Nhật thông minh với AI. Cung cấp lộ trình học tối ưu, dễ
               hiểu và hiệu quả.
             </p>

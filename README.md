@@ -2,7 +2,7 @@
 
 ## 1️⃣ Đăng nhập (Login)
 
-* Người dùng gửi **username + password** đến API `/auth/token`.
+* Người dùng gửi **username + password** đến API `api/auth/login`.
 * `AuthenticationService` kiểm tra thông tin đăng nhập trong DB.
 * Nếu hợp lệ → sinh ra **JWT Token** (bao gồm: username, role, permission, thời gian hết hạn).
 * Token được trả về cho **client**.

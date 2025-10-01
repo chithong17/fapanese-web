@@ -1,7 +1,7 @@
 // Navbar.tsx
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import { FaUserCircle, FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
 import {
   AiOutlineBook,
   AiOutlineDashboard,

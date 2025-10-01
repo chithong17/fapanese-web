@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaGithub, FaGoogle, FaLinkedin } from "react-icons/fa";
 import logo from "../assets/logologin.png";
-import ScrollReveal from "./ScrollReveal";
 import WelcomeLogo from "../assets/welcomeLog.jpg";
 
 interface AuthPopupProps {

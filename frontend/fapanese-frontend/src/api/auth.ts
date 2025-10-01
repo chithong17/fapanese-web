@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const API_URL = "http://localhost:8080/fapanese/api";
 
 const handleResponse = async (res: Response) => {
@@ -19,14 +21,33 @@ export const signup = async (userData: any) => {
   return handleResponse(res);
 };
 
-// Đăng nhập
-export const login = async (credentials: { email: string; password: string }) => {
-  const res = await fetch(`${API_URL}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(credentials),
-  });
-  return handleResponse(res);
+// Hàm xử lý đăng nhập
+export const login = async (username: string, password: string) => {
+  try {
+    const response = await axios.post(`${API_URL}/auth/login`, {
+      username,
+      password,
+    });
+    return response.data; // Trả về dữ liệu từ API
+  } catch (error) {
+    console.error("Login failed:", error);
+    throw error;
+  }
+};
+
+// Hàm xử lý đăng ký
+export const register = async (username: string, password: string, email: string) => {
+  try {
+    const response = await axios.post(`${API_URL}/users/register`, {
+      username,
+      password,
+      email,
+    });
+    return response.data; // Trả về dữ liệu từ API
+  } catch (error) {
+    console.error("Registration failed:", error);
+    throw error;
+  }
 };
 
 // ✅ Lấy thông tin user hiện tại

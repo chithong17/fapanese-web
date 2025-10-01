@@ -1,5 +1,6 @@
 package com.ktnl.fapanese.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -18,7 +19,9 @@ public class Student {
     private String id;
 
     private String campus;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dateOfBirth;
+
 
     @OneToOne
     @MapsId

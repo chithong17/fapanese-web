@@ -1,6 +1,6 @@
 import React from "react";
 import ScrollReveal from "./ScrollReveal";
-import featureImage from "../assets/aifeature.avif"; // Thay bằng đường dẫn ảnh phù hợp
+import featureImage from "../assets/aifeature.jpg"; // Thay bằng đường dẫn ảnh phù hợp
 const FeatureSection: React.FC = () => {
   return (
     <ScrollReveal>

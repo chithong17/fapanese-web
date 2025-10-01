@@ -69,6 +69,8 @@ function App() {
         onClose={() => setIsAuthOpen(false)}
         initialTab={authTab}
       />
+      
+      
 
       <Routes>
         {/* Trang chủ */}
@@ -108,14 +110,12 @@ function App() {
         />
         
 
-        {/* Trang Về Chúng Tôi */}
-        <Route path="/about-us" element={<AboutUs />} />
-
         {/* Các trang khóa học */}
         <Route path="/courses/JPD113" element={<JPD113 />} />
         <Route path="/courses/JPD123" element={<JPD123 />} />
         <Route path="/courses/JPD133" element={<JPD133 />} />
         <Route path="/dashboard/student" element={<StudentDashboard />} />
+        <Route path="/aboutus" element={<AboutUs/>} />
       </Routes>
     </Router>
   );

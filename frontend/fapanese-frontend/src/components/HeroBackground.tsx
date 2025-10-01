@@ -38,38 +38,38 @@ const HeroBackground: React.FC = () => {
           <img
             src={heroImage}
             alt="Hero"
-            className="w-200px object-contain drop-shadow-2xl mt-40"
+            className="h-55  object-contain drop-shadow-2xl mt-40"
           />
 
           {/* Hình dưới */}
-          <div className="relative">
+          <div className="relative flex flex-col items-center ">
             <img
               src={heroblImage}
               alt="Hero Bottom"
-              className="w-[2000px] object-contain drop-shadow-2xl "
+              className=" h-145 object-contain drop-shadow-2xl "
             />
 
             {/* 4 ô nhỏ chồng lên dưới hình */}
-            <div className="absolute  left-1/2 transform -translate-x-1/2 -bottom-20 flex space-x-4 mb-50 -ml-41">
+            <div className="absolute h-38 left-1/2 transform -translate-x-1/2 -bottom-20 flex space-x-4 mb-50 -ml-41">
               <img
                 src={hero1}
                 alt=""
-                className="w-[300px] h-auto object-contain drop-shadow-lg rounded-lg"
+                className="object-contain drop-shadow-lg rounded-lg"
               />
               <img
                 src={hero5}
                 alt=""
-                className="w-[300px] h-auto object-contain drop-shadow-lg rounded-lg"
+                className="object-contain drop-shadow-lg rounded-lg"
               />
               <img
                 src={hero3}
                 alt=""
-                className="w-[300px] h-auto object-contain drop-shadow-lg rounded-lg"
+                className="object-contain drop-shadow-lg rounded-lg"
               />
               <img
                 src={hero4}
                 alt=""
-                className="w-[300px] h-auto object-contain drop-shadow-lg rounded-lg"
+                className="object-contain drop-shadow-lg rounded-lg"
               />
             </div>
           </div>

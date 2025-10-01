@@ -26,7 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Thêm trạng thái cho menu di động
 
   const menuItems = [
-    { name: "VỀ CHÚNG TÔI", link: "/about-us" },
+    { name: "VỀ CHÚNG TÔI", link: "/aboutus" },
     { name: "TRANG CHỦ", link: "/" },
     { name: "KHÓA HỌC", link: "/courses" },
     { name: "THÀNH TÍCH", link: "/dashboard/student" },
@@ -80,7 +80,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
                 className="w-40 h-40 object-contain"
               />
             </a>
-          </div>
+          </div>  
 
           {/* Desktop Menu */}
           <div className="hidden md:flex flex-grow justify-center">
@@ -89,7 +89,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
                 <a
                   key={idx}
                   href={item.link}
-                  className="text-gray-800 font-extrabold relative group transition-all"
+                  className="text-gray-800 font-bold relative group transition-all"
                 >
                   <span className="group-hover:bg-gradient-to-r group-hover:from-[#80D9E6] group-hover:to-[#A4EBF2] group-hover:bg-clip-text group-hover:text-transparent transition-colors">
                     {item.name}
@@ -101,7 +101,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
               {/* Dropdown bảng chữ cái */}
               <div className="relative">
                 <span
-                  className="font-extrabold cursor-pointer transition-colors group-hover:bg-gradient-to-r group-hover:from-[#80D9E6] group-hover:to-[#A4EBF2] group-hover:bg-clip-text group-hover:text-transparent"
+                  className="font-bold cursor-pointer transition-colors group-hover:bg-gradient-to-r group-hover:from-[#80D9E6] group-hover:to-[#A4EBF2] group-hover:bg-clip-text group-hover:text-transparent"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                 >
                   BẢNG CHỮ CÁI

@@ -19,7 +19,7 @@ public interface UserMapper {
     @Mapping(target = "dateOfBirth", expression = "java(java.time.LocalDate.parse(request.getDateOfBirth()))")
     Student toStudent(UserRequest request);
 
-    @Mapping(source = "roles.iterator().next().roleName", target = "role")
+    @Mapping(expression = "java(user.getRoles().stream().findFirst().map(r -> r.getRoleName()).orElse(null))", target = "role")
     @Mapping(source = "teacher.expertise", target = "expertise")
     @Mapping(source = "teacher.bio", target = "bio")
     @Mapping(source = "teacher.dateOfBirth", target = "teacherDateOfBirth")

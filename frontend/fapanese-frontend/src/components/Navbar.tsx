@@ -11,6 +11,7 @@ import {
 import { MdLogin, MdPersonAdd } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/logo.png";
+import logouser from "../assets/logouser.png";
 
 interface NavbarProps {
   scrollToSection: (id: string, tab?: "hiragana" | "katakana") => void;
@@ -158,7 +159,8 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <FaUserCircle size={28} />
+                {/* <FaUserCircle size={28} /> */}
+                <img src={logouser} className="h-10" />
               </motion.div>
             </div>
           </div>

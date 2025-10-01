@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaGithub, FaGoogle, FaLinkedin } from "react-icons/fa";
 import logo from "../assets/logologin.png";
 import WelcomeLogo from "../assets/welcomeLog.jpg";
+import axios from "axios";
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -24,6 +25,8 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
   const [loginPassword, setLoginPassword] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [error, setError] = useState<string | null>(null); // <--- THÊM STATE NÀY
+  const [loading, setLoading] = useState(false);
 
   // --- thêm state cho animation ---
   const [show, setShow] = useState(isOpen);
@@ -42,6 +45,87 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
       setTimeout(() => setShow(false), 300); // chờ animation đóng
     }
   }, [isOpen]);
+
+  
+  // them code xu ly login
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      // 1. Gửi yêu cầu POST đến API đăng nhập
+      const response = await axios.post(
+        "http://localhost:8080/fapanese/api/auth/login",
+        {
+          email: loginEmail,
+          password: loginPassword,
+        }
+      );
+
+      // 2. Xử lý khi thành công
+      console.log("API Response:", response.data);
+      alert("Đăng nhập thành công!"); // <-- MỤC TIÊU CỦA BẠN
+
+      onClose(); // Đóng popup sau khi đăng nhập thành công
+    } catch (err: any) {
+      // 3. Xử lý khi thất bại
+      console.error("Lỗi đăng nhập:", err.response);
+      setError(
+        err.response?.data?.message || "Email hoặc mật khẩu không chính xác."
+      );
+    } finally {
+      // 4. Luôn tắt loading khi xong
+      setLoading(false);
+    }
+  };
+  // them code xu ly dang ky
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    // 1. Tạo object dữ liệu để gửi đi
+    // LƯU Ý: Tên các thuộc tính (email, password, role,...) phải khớp chính xác
+    // với tên các trường trong DTO (Data Transfer Object) bên Spring Boot của bạn.
+    const userData = {
+      email: signupEmail,
+      password: signupPassword,
+      role: role.toUpperCase(), // Gửi đi dạng 'STUDENT' hoặc 'LECTURER'
+      dob: dob,
+      // Thêm các trường khác tùy theo vai trò đã chọn
+      ...(role === "student" && { campus: campus }),
+      ...(role === "lecturer" && { expertise: expertise, bio: bio }),
+    };
+
+    try {
+      // 2. Gửi yêu cầu POST đến API đăng ký
+      const response = await axios.post(
+        "http://localhost:8080/fapanese/api/users/register",
+        userData
+      );
+
+      // 3. Xử lý khi thành công
+      console.log("API Response:", response.data);
+      alert("Đăng ký thành công! Kiểm tra database và thử đăng nhập.");
+
+      // Tự động chuyển sang tab đăng nhập để tiện lợi
+      setActiveTab("login");
+      // Reset form đăng ký (tùy chọn)
+      setSignupEmail("");
+      setSignupPassword("");
+    } catch (err: any) {
+      // 4. Xử lý khi thất bại
+      console.error("Lỗi đăng ký:", err.response);
+      setError(
+        err.response?.data?.message ||
+          "Đăng ký thất bại. Vui lòng kiểm tra lại thông tin."
+      );
+    } finally {
+      // 5. Luôn tắt loading khi xong
+      setLoading(false);
+    }
+  };
 
   if (!show) return null;
 
@@ -126,7 +210,10 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
               <div className="flex-1 h-px bg-gray-300"></div>
             </div>
 
-            <form className="flex flex-col gap-4 w-full max-w-sm">
+            <form
+              onSubmit={handleLogin} //xy ly su kien login
+              className="flex flex-col gap-4 w-full max-w-sm"
+            >
               <input
                 type="email"
                 placeholder="Email"
@@ -167,7 +254,10 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
             </p>
 
             {/* FORM ĐĂNG KÝ */}
-            <form className="flex flex-col gap-4 w-full max-w-sm">
+            <form
+              onSubmit={handleSignup} //xy ly su kien dang ky
+              className="flex flex-col gap-4 w-full max-w-sm"
+            >
               {/* Email */}
               <input
                 type="email"

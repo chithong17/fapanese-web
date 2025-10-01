@@ -8,6 +8,7 @@ import {
   SiJavascript,
 } from "react-icons/si";
 import Footer from "../components/Footer";
+import AboutUsBanner from "../assets/abub.jpg";
 
 const technologies = [
   { icon: <FaReact />, name: "React", color: "text-blue-400" },
@@ -46,28 +47,13 @@ const AboutUs: React.FC = () => {
   return (
     <div className="bg-gradient-to-b from-blue-50 to-white min-h-screen overflow-hidden font-nunito">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-blue-700 via-teal-500 to-blue-600 text-white py-40 px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1557682250-33bd709cbe85')] bg-cover bg-center opacity-20"></div>
-        <div className="max-w-6xl mx-auto text-center relative z-10 animate-fadeInUp">
-          <h1 className="text-6xl md:text-5xl font-bold mb-6 drop-shadow-xl leading-tight">
-            Về Chúng Tôi
-          </h1>
-          <p className="text-2xl leading-relaxed max-w-3xl mx-auto opacity-95">
-            Chúng tôi là <span className="font-bold">một nhóm sinh viên trẻ</span>,
-            mang trong mình khát vọng đổi thay cách học tiếng Nhật truyền thống.
-            Với tinh thần sáng tạo và niềm đam mê công nghệ, chúng tôi xây dựng
-            một nền tảng học tập <span className="font-semibold">hiện đại, thú vị và đầy cảm hứng</span>.
-          </p>
-        </div>
-        <div className="absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-cyan-400 opacity-30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -right-40 w-[32rem] h-[32rem] bg-indigo-500 opacity-30 rounded-full blur-3xl animate-pulse delay-1000"></div>
-      </section>
+  
 
       {/* Technologies Section */}
-      <section className="py-28 bg-gradient-to-br from-gray-200 to-white relative overflow-hidden">
+      <section className="py-28 bg-gradient-to-br from-gray-00 to-white relative overflow-hidden">
         <div className="max-w-6xl mx-auto text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-            Công Nghệ Chúng Tôi Sử Dụng
+          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">
+            Công Nghệ Chúng Tôi <span  className="text-4xl md:text-5xl font-extrabold text-[#80D9E6]  ">Sử Dụng</span>
           </h2>
           <p className="text-lg text-gray-600">
             Chúng tôi lựa chọn những công nghệ tiên tiến để xây dựng một nền tảng
@@ -102,8 +88,8 @@ const AboutUs: React.FC = () => {
       {/* Core Values Section */}
       <section className="py-28 bg-white relative overflow-hidden">
         <div className="max-w-6xl mx-auto text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-            Giá Trị Cốt Lõi
+          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">
+            Giá Trị <span  className="text-4xl md:text-5    xl font-extrabold text-[#80D9E6]  ">Cốt Lõi</span>
           </h2>
           <p className="text-lg text-gray-600">
             Đây là kim chỉ nam, giúp chúng tôi luôn vững bước trên hành trình đổi mới giáo dục.
@@ -131,7 +117,7 @@ const AboutUs: React.FC = () => {
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div className="text-center md:text-left animate-fadeInUp">
             <h2 className="text-5xl md:text-6xl font-bold text-gray-800 mb-6 leading-tight">
-              Sứ Mệnh Của Chúng Tôi
+              Sứ Mệnh Của <span  className="text-5xl md:text-6xl font-extrabold text-[#80D9E6]  ">Chúng Tôi</span>
             </h2>
             <p className="text-xl text-gray-600 leading-relaxed mb-8">
               Chúng tôi mong muốn mang đến trải nghiệm học tập cá nhân hóa, nơi mà
@@ -144,7 +130,7 @@ const AboutUs: React.FC = () => {
             </p>
             <a
               href="#"
-              className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-bold rounded-xl shadow-lg hover:scale-105 transform transition-all duration-300"
+              className="inline-block px-8 py-4 bg-[#80D9E6] text-white font-bold rounded-xl shadow-lg hover:scale-105 transform transition-all duration-300"
             >
               Tìm Hiểu Thêm
             </a>

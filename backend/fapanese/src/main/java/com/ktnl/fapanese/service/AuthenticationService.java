@@ -3,11 +3,14 @@ package com.ktnl.fapanese.service;
 
 import com.ktnl.fapanese.dto.request.AuthenticationRequest;
 import com.ktnl.fapanese.dto.request.IntrospectRequest;
+import com.ktnl.fapanese.dto.request.RefreshRequest;
 import com.ktnl.fapanese.dto.response.AuthenticationResponse;
 import com.ktnl.fapanese.dto.response.IntrospectResponse;
+import com.ktnl.fapanese.entity.InvalidatedToken;
 import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
+import com.ktnl.fapanese.repository.InvalidatedTokenRepository;
 import com.ktnl.fapanese.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -40,6 +43,7 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
     UserRepository userRepository;
+    InvalidatedTokenRepository invalidatedTokenRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}") // Lấy khóa bí mật từ application.properties (dùng để ký và verify JWT)
@@ -64,7 +68,9 @@ public class AuthenticationService {
 
         //neu sai nem ra exception
         if(!authenticated){
+            log.info("AAAAAAAAAAAAAAAAAAAAA");
             throw new AppException(ErrorCode.AUTHENTICATED);
+
         }
 
         //neu dung generate token
@@ -92,6 +98,35 @@ public class AuthenticationService {
 
         return IntrospectResponse.builder()
                 .valid(isvalidToken)
+                .build();
+    }
+
+    public AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException {
+        //kiểm tra xem token còn hiệu lực ko (kiểm tra trong tg refreshDuration)
+        //nếu ko còn thì verifyToken ném ra Exception Unthenticated nên sẽ stop hàm refreshToken()
+        //còn nếu hàm vẫn đc tiếp tục chạy thì token vẫn trong tg refresh
+        var signedToken = verifyToken(request.getToken(), true);
+
+        //vô hiệu hóa token cũ
+        var ijt = signedToken.getJWTClaimsSet().getJWTID();
+        var expiryTime = signedToken.getJWTClaimsSet().getExpirationTime();
+
+        //đưa vào blacklist (xóa token cũ)
+        invalidatedTokenRepository.save(InvalidatedToken.builder()
+                        .id(ijt)
+                        .expiryTime(expiryTime)
+                .build());
+
+        //tạo token mới
+        var email = signedToken.getJWTClaimsSet().getSubject();
+        var user = userRepository.findByEmail(email).orElseThrow(() ->
+                new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        var newToken = generateToken(user);
+
+        return AuthenticationResponse.builder()
+                .token(newToken)
+                .authenticated(true)
                 .build();
     }
 

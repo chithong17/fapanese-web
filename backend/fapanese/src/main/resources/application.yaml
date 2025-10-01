@@ -5,16 +5,16 @@ server:
 
 spring:
   datasource:
-    url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3306/fapanese_database}
+    url: jdbc:mysql://localhost:3306/fapanese_database
     driverClassName: "com.mysql.cj.jdbc.Driver"
-    password: ${DBMS_PASSWORD:root}
-    username: ${DBMS_USERNAME:root}
+    password: ${DBMS_PASSWORD}
+    username: ${DBMS_USERNAME}
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
 
 jwt:
-  signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
-  valid-duration: 3600 # in second
+  signerKey: ${JWT_SIGNER_KEY}
+  valid-duration:  3600 # in second
   refreshable-duration: 36000 # in seconds

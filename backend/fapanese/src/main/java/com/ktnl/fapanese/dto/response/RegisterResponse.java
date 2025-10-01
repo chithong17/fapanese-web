@@ -2,6 +2,8 @@ package com.ktnl.fapanese.dto.response;
 
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -11,5 +13,9 @@ public class RegisterResponse {
     private String id;
     private String email;
     private String role;
-    private String message;
+    private String expertise;
+    private String bio;
+    private LocalDate teacherDateOfBirth;
+    private String campus;
+    private LocalDate studentDateOfBirth;
 }

@@ -1,5 +1,7 @@
 package com.ktnl.fapanese.service;
 
+import com.ktnl.fapanese.dto.request.RegisterRequest;
+import com.ktnl.fapanese.dto.response.RegisterResponse;
 import com.ktnl.fapanese.repository.LecturerRepository;
 import com.ktnl.fapanese.repository.RoleRepository;
 import com.ktnl.fapanese.repository.StudentRepository;
@@ -8,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthenticationService {
+public class UserService {
     @Autowired
     private UserRepository userRepo;
     @Autowired
@@ -18,8 +20,7 @@ public class AuthenticationService {
     @Autowired
     private RoleRepository roleRepo;
 
+    public RegisterResponse registerUser(RegisterRequest registerRequest) {
 
-
-
-
+    }
 }

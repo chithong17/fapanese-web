@@ -13,11 +13,18 @@ public interface UserMapper {
     @Mapping(target = "password_hash", source = "password")
     User toUser(UserRequest request);
 
-    @Mapping(target = "dateOfBirth", expression = "java(java.time.LocalDate.parse(request.getDateOfBirth()))")
+    @Mapping(
+            target = "dateOfBirth",
+            expression = "java(request.getDateOfBirth() == null ? null : java.time.LocalDate.parse(request.getDateOfBirth(), java.time.format.DateTimeFormatter.ofPattern(\"yyyy-MM-dd\")))"
+    )
+    Student toStudent(UserRequest request);
+
+    @Mapping(
+            target = "dateOfBirth",
+            expression = "java(request.getDateOfBirth() == null ? null : java.time.LocalDate.parse(request.getDateOfBirth(), java.time.format.DateTimeFormatter.ofPattern(\"yyyy-MM-dd\")))"
+    )
     Lecturer toLecturer(UserRequest request);
 
-    @Mapping(target = "dateOfBirth", expression = "java(java.time.LocalDate.parse(request.getDateOfBirth()))")
-    Student toStudent(UserRequest request);
 
     @Mapping(expression = "java(user.getRoles().stream().findFirst().map(r -> r.getRoleName()).orElse(null))", target = "role")
     @Mapping(source = "teacher.expertise", target = "expertise")

@@ -9,12 +9,16 @@ interface AuthPopupProps {
   initialTab: "login" | "signup";
 }
 
-
 const AuthPopup: React.FC<AuthPopupProps> = ({
   isOpen,
   onClose,
   initialTab,
 }) => {
+  const [role, setRole] = useState<"student" | "lecturer">("student");
+  const [campus, setCampus] = useState("");
+  const [dob, setDob] = useState("");
+  const [expertise, setExpertise] = useState("");
+  const [bio, setBio] = useState("");
   const [activeTab, setActiveTab] = useState<"login" | "signup">(initialTab);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -156,30 +160,15 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
           </div>
 
           {/* --- SIGNUP SIDE --- */}
-          <div className="w-1/2 flex flex-col items-center justify-center p-10">
+          <div className="w-1/2 flex flex-col items-center justify-center p-10 mr-5">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Đăng ký</h2>
             <p className="text-gray-500 mb-6">
               Tạo tài khoản mới để bắt đầu học
             </p>
-            {/* Social buttons */}
-            <div className="flex flex-col gap-3 mb-6 w-full max-w-sm">
-              <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
-                <FaGithub /> Continue with GitHub
-              </button>
-              <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
-                <FaGoogle /> Continue with Google
-              </button>
-              <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
-                <FaLinkedin /> Continue with LinkedIn
-              </button>
-            </div>
-            <div className="flex items-center gap-2 mb-6 text-gray-400 w-full max-w-sm">
-              <div className="flex-1 h-px bg-gray-300"></div>
-              <span>OR</span>
-              <div className="flex-1 h-px bg-gray-300"></div>
-            </div>
-           
+
+            {/* FORM ĐĂNG KÝ */}
             <form className="flex flex-col gap-4 w-full max-w-sm">
+              {/* Email */}
               <input
                 type="email"
                 placeholder="Email"
@@ -187,6 +176,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                 onChange={(e) => setSignupEmail(e.target.value)}
                 className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
               />
+              {/* Password */}
               <input
                 type="password"
                 placeholder="Password"
@@ -194,14 +184,72 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                 onChange={(e) => setSignupPassword(e.target.value)}
                 className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
               />
-              {/* Confirm password */}
+              {/* Confirm Password */}
               <input
                 type="password"
                 placeholder="Confirm Password"
-                value={signupPassword}
-                onChange={(e) => setSignupPassword(e.target.value)}
                 className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
               />
+
+              {/* Role chọn Student / Lecturer */}
+              <select
+                className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                value={role}
+                onChange={(e) =>
+                  setRole(e.target.value as "student" | "lecturer")
+                }
+              >
+                <option value="student">Student</option>
+                <option value="lecturer">Lecturer</option>
+              </select>
+
+              {/* Nếu Student → Campus + DOB */}
+              {role === "student" && (
+                <>
+                  <select
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                    value={campus}
+                    onChange={(e) => setCampus(e.target.value)}
+                  >
+                    <option value="">Select Campus</option>
+                    <option value="Hanoi">Hà Nội</option>
+                    <option value="HCM">TP. Hồ Chí Minh</option>
+                    <option value="Danang">Đà Nẵng</option>
+                  </select>
+                  <input
+                    type="date"
+                    value={dob}
+                    onChange={(e) => setDob(e.target.value)}
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                  />
+                </>
+              )}
+
+              {/* Nếu Lecturer → Expertise + Bio + DOB */}
+              {role === "lecturer" && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="Expertise"
+                    value={expertise}
+                    onChange={(e) => setExpertise(e.target.value)}
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                  />
+                  <textarea
+                    placeholder="Bio"
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                  />
+                  <input
+                    type="date"
+                    value={dob}
+                    onChange={(e) => setDob(e.target.value)}
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                  />
+                </>
+              )}
+
               <button
                 type="submit"
                 className="bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"

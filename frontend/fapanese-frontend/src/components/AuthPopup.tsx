@@ -46,6 +46,10 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
     }
   }, [isOpen]);
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 568404a35ee35124bca260f2efb392c04cc0b964
   // them code xu ly login
   // const handleLogin = async (e: React.FormEvent) => {
   //   e.preventDefault();
@@ -124,9 +128,16 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
     const userData = {
       email: signupEmail,
       password: signupPassword,
+<<<<<<< HEAD
       role: role.toUpperCase(),
       dob: dob,
       ...(role === "student" && { campus: campus }),
+=======
+      role: role.toUpperCase(), // Gửi đi dạng 'STUDENT' hoặc 'LECTURER'
+      dateOfBirth: dob,
+      // Thêm các trường khác tùy theo vai trò đã chọn
+      ...(role === "student" && { campus: campus}),
+>>>>>>> 568404a35ee35124bca260f2efb392c04cc0b964
       ...(role === "lecturer" && { expertise: expertise, bio: bio }),
     };
 

@@ -15,13 +15,13 @@ public interface UserMapper {
 
     @Mapping(
             target = "dateOfBirth",
-            expression = "java(request.getDateOfBirth() == null || request.getDateOfBirth().isEmpty() ? null : java.time.LocalDate.parse(request.getDateOfBirth(), java.time.format.DateTimeFormatter.ofPattern(\"dd-MM-yyyy\")))"
+            expression = "java(request.getDateOfBirth() == null ? null : java.time.LocalDate.parse(request.getDateOfBirth(), java.time.format.DateTimeFormatter.ofPattern(\"yyyy-MM-dd\")))"
     )
     Student toStudent(UserRequest request);
 
     @Mapping(
             target = "dateOfBirth",
-            expression = "java(request.getDateOfBirth() == null || request.getDateOfBirth().isEmpty() ? null : java.time.LocalDate.parse(request.getDateOfBirth(), java.time.format.DateTimeFormatter.ofPattern(\"dd-MM-yyyy\")))"
+            expression = "java(request.getDateOfBirth() == null ? null : java.time.LocalDate.parse(request.getDateOfBirth(), java.time.format.DateTimeFormatter.ofPattern(\"yyyy-MM-dd\")))"
     )
     Lecturer toLecturer(UserRequest request);
 

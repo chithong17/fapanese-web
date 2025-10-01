@@ -47,6 +47,10 @@ const AboutUs: React.FC = () => {
   return (
     <div className="bg-gradient-to-b from-blue-50 to-white min-h-screen overflow-hidden font-nunito">
       {/* Hero Section */}
+      <section>
+        <img src={AboutUsBanner} alt="" className="h-[100%] mt-20 "/>
+      </section>
+  
   
 
       {/* Technologies Section */}
@@ -89,7 +93,7 @@ const AboutUs: React.FC = () => {
       <section className="py-28 bg-white relative overflow-hidden">
         <div className="max-w-6xl mx-auto text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">
-            Giá Trị <span  className="text-4xl md:text-5    xl font-extrabold text-[#80D9E6]  ">Cốt Lõi</span>
+            Giá Trị <span  className="text-4xl md:text-5xl font-extrabold text-[#80D9E6]  ">Cốt Lõi</span>
           </h2>
           <p className="text-lg text-gray-600">
             Đây là kim chỉ nam, giúp chúng tôi luôn vững bước trên hành trình đổi mới giáo dục.

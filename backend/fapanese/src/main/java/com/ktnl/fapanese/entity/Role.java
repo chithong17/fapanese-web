@@ -1,24 +1,26 @@
 package com.ktnl.fapanese.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
 
-@Data
-@Entity
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Entity
 public class Role {
     @Id
-    String name;
-    String description;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true)
+    private String roleName;
 
     @ManyToMany
-    Set<Permission> permissions;
+    private Set<Permission> permissions;
+
+
 }

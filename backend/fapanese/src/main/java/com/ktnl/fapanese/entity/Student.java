@@ -6,24 +6,22 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
-@Data
-@Entity
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Entity
 public class Student {
     @Id
-    String id; // Trùng với User.id
-
-    @OneToOne
-    @MapsId   // Dùng chung khóa chính với User
-    @JoinColumn(name = "id")
-    User user;
+    private Long id;
 
     private String campus;
+    private LocalDate dateOfBirth;
 
-    @Column(name = "dob")
-    private LocalDate dob;
-
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id")
+    private User user;
 }

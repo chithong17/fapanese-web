@@ -1,19 +1,19 @@
 package com.ktnl.fapanese.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
-
-@Data
-@Entity
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Entity
 public class Permission {
     @Id
-    String name;
-    String description;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true)
+    private String permName;
 }

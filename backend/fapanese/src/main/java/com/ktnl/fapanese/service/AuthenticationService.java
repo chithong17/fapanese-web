@@ -112,11 +112,11 @@ public class AuthenticationService {
         // Nếu user có role thì thêm ROLE_xxx vào scope
         if(!CollectionUtils.isEmpty(user.getRoles()))
             user.getRoles().forEach(role -> {
-                stringJoiner.add("ROLE_" + role.getName());
+                stringJoiner.add("ROLE_" + role.getRoleName());
 
                 // Nếu role có permission thì thêm từng permission vào scope
                 if(!CollectionUtils.isEmpty(role.getPermissions()))
-                    role.getPermissions().forEach(permission -> stringJoiner.add(permission.getName()));
+                    role.getPermissions().forEach(permission -> stringJoiner.add(permission.getPermName()));
             });
 
         return stringJoiner.toString();

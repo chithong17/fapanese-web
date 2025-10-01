@@ -12,6 +12,8 @@ import com.ktnl.fapanese.repository.RoleRepository;
 import com.ktnl.fapanese.repository.StudentRepository;
 import com.ktnl.fapanese.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -29,8 +31,13 @@ public class UserService {
     @Autowired
     private UserMapper mapper;
 
+
+    PasswordEncoder passwordEncoder;
+
     public UserResponse registerUser(UserRequest userRequest) {
         User user = mapper.toUser(userRequest);
+
+        user.setPassword_hash(passwordEncoder.encode(user.getPassword_hash()));
 
         Role role = roleRepo.findByRoleName(userRequest.getRole());
         user.setRoles(Set.of(role));

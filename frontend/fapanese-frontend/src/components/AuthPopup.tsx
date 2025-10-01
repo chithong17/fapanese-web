@@ -46,7 +46,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
     }
   }, [isOpen]);
 
-  
+
   // them code xu ly login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,9 +92,9 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
       email: signupEmail,
       password: signupPassword,
       role: role.toUpperCase(), // Gửi đi dạng 'STUDENT' hoặc 'LECTURER'
-      dob: dob,
+      dateOfBirth: dob,
       // Thêm các trường khác tùy theo vai trò đã chọn
-      ...(role === "student" && { campus: campus }),
+      ...(role === "student" && { campus: campus}),
       ...(role === "lecturer" && { expertise: expertise, bio: bio }),
     };
 

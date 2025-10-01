@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaGithub, FaGoogle, FaLinkedin } from "react-icons/fa";
 import logo from "../assets/logologin.png";
 import WelcomeLogo from "../assets/welcomeLog.jpg";
+import { login, signup } from "../api/auth"; // API service
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -36,14 +37,52 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
   useEffect(() => {
     if (isOpen) {
       setShow(true);
-      setTimeout(() => setAnimate(true), 10); // bật animation mở
+      setTimeout(() => setAnimate(true), 10);
     } else {
       setAnimate(false);
-      setTimeout(() => setShow(false), 300); // chờ animation đóng
+      setTimeout(() => setShow(false), 300);
     }
   }, [isOpen]);
 
   if (!show) return null;
+
+  // ---------------- HANDLE LOGIN ----------------
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const data = await login({ email: loginEmail, password: loginPassword });
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      alert("Đăng nhập thành công!");
+      onClose();
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  // ---------------- HANDLE SIGNUP ----------------
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await signup({
+        email: signupEmail,
+        password: signupPassword,
+        role,
+        campus,
+        dob,
+        expertise,
+        bio,
+      });
+
+      alert("Đăng ký thành công! Mời bạn đăng nhập.");
+      setActiveTab("login");
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
 
   return (
     <div
@@ -126,7 +165,11 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
               <div className="flex-1 h-px bg-gray-300"></div>
             </div>
 
-            <form className="flex flex-col gap-4 w-full max-w-sm">
+            {/* LOGIN FORM */}
+            <form
+              onSubmit={handleLogin}
+              className="flex flex-col gap-4 w-full max-w-sm"
+            >
               <input
                 type="email"
                 placeholder="Email"
@@ -166,8 +209,11 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
               Tạo tài khoản mới để bắt đầu học
             </p>
 
-            {/* FORM ĐĂNG KÝ */}
-            <form className="flex flex-col gap-4 w-full max-w-sm">
+            {/* SIGNUP FORM */}
+            <form
+              onSubmit={handleSignup}
+              className="flex flex-col gap-4 w-full max-w-sm"
+            >
               {/* Email */}
               <input
                 type="email"

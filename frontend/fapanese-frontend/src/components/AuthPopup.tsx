@@ -50,7 +50,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const data = await login({ email: loginEmail, password: loginPassword });
+      const data = await login(loginEmail, loginPassword);
 
       if (data.token) {
         localStorage.setItem("token", data.token);

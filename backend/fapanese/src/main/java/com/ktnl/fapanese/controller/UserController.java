@@ -1,6 +1,7 @@
 package com.ktnl.fapanese.controller;
 
 import com.ktnl.fapanese.dto.request.UserRequest;
+import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.service.UserService;
 import lombok.AccessLevel;
@@ -22,7 +23,11 @@ public class UserController {
     @Autowired
     private UserService userService;
     @PostMapping("/register")
-    public UserResponse register(@RequestBody UserRequest request){
-        return userService.registerUser(request);
+    public ApiResponse<UserResponse> register(@RequestBody UserRequest request){
+        var result = userService.registerUser(request);
+
+        return  ApiResponse.<UserResponse>builder()
+                .result(result)
+                .build();
     }
 }

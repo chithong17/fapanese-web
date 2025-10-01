@@ -21,12 +21,12 @@ import java.io.IOException;
 @EnableWebSecurity // Bật tính năng bảo mật web của Spring Security
 @EnableMethodSecurity // Cho phép dùng @PreAuthorize, @PostAuthorize ở Controller/Service
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINT ={"/api/auth/login"};
+    private final String[] PUBLIC_ENDPOINT ={"/api/auth/login","/api/users/register"};
 
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
-
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT)
@@ -34,11 +34,17 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated());
 
-//        httpSecurity.oauth2ResourceServer(oauth2 ->
-//                oauth2.jwt(jwtConfigurer ->
-//                        jwtConfigurer.decoder(customJwtDecoder)
-//                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-//                        .authenticationEntryPoint(new Auth))
+        // Cấu hình cho việc xác thực bằng JWT
+        httpSecurity.oauth2ResourceServer(oauth2 ->
+                oauth2.jwt(jwtConfigurer ->
+                                // Dùng CustomJwtDecoder để giải mã + verify chữ ký JWT
+                                jwtConfigurer.decoder(customJwtDecoder)
+                                        // Chuyển "scope/role" trong JWT thành quyền trong Spring Security
+                                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        // Nếu token không hợp lệ (sai chữ ký, hết hạn, nằm trong blacklist)
+                        // → Spring Security sẽ gọi vào JwtAuthenticationEntryPoint để trả về JSON lỗi
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+        );
 
         // Tắt CSRF (thường chỉ bật cho ứng dụng web dùng session; REST API thì tắt đi)
         httpSecurity.csrf(AbstractHttpConfigurer::disable);

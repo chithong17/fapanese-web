@@ -11,6 +11,7 @@ import com.ktnl.fapanese.repository.LecturerRepository;
 import com.ktnl.fapanese.repository.RoleRepository;
 import com.ktnl.fapanese.repository.StudentRepository;
 import com.ktnl.fapanese.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
+@Slf4j
 @Service
 public class UserService {
     @Autowired

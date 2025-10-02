@@ -73,23 +73,38 @@ public class UserService {
     public UserResponse getCurrentUserProfile() {
         // Lấy thông tin Authentication từ SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // Username ở đây chính là email được lưu trong token
         String email = authentication.getName();
 
         // Lấy user từ DB theo email
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Chuyển entity User → UserResponse
-        return UserResponse.builder()
+        UserResponse.UserResponseBuilder builder = UserResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
-                .role(user.getRoles().toString())
-//                .expertise(user.getTeacher().getExpertise())
-//                .teacherDateOfBirth(user.getTeacher().getDateOfBirth())
-                .studentDateOfBirth(user.getStudent().getDateOfBirth())
-                .campus(user.getStudent().getCampus())
-                .build();
+                .role(user.getRoles()
+                        .stream()
+                        .map(Role::getRoleName)
+                        .toList().toString());
+
+
+        // Nếu là student
+        if (user.getStudent() != null) {
+            builder.studentDateOfBirth(user.getStudent().getDateOfBirth())
+                    .campus(user.getStudent().getCampus())
+                    .studentFirstname(user.getStudent().getFirstName())
+                    .studentLastname(user.getStudent().getLastName());
+        }
+
+        // Nếu là lecturer
+        if (user.getTeacher() != null) {
+            builder.teacherDateOfBirth(user.getTeacher().getDateOfBirth())
+                    .expertise(user.getTeacher().getExpertise())
+                    .bio(user.getTeacher().getBio())
+                    .teacherFirstname(user.getTeacher().getFirstName())
+                    .teacherLastname(user.getTeacher().getLastName());
+        }
+
+        return builder.build();
     }
 }

@@ -2,6 +2,7 @@ package com.ktnl.fapanese.controller;
 
 
 import com.ktnl.fapanese.dto.request.AuthenticationRequest;
+import com.ktnl.fapanese.dto.request.LogoutRequest;
 import com.ktnl.fapanese.dto.request.RefreshRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.AuthenticationResponse;
@@ -14,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,5 +48,11 @@ public class AuthenticationController {
         return ApiResponse.<AuthenticationResponse>builder()
                 .result(result)
                 .build();
+    }
+
+    @PostMapping("/logout")
+    public ApiResponse<Void>logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder().build();
     }
 }

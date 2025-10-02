@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaGithub, FaGoogle, FaLinkedin } from "react-icons/fa";
 import logo from "../assets/logologin.png";
 import WelcomeLogo from "../assets/welcomeLog.jpg";
-import { login, signup } from "../api/auth"; // API service
+import axios from "axios";
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -25,6 +25,10 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
   const [loginPassword, setLoginPassword] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [error, setError] = useState<string | null>(null); // <--- THÊM STATE NÀY
+  const [loading, setLoading] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState(""); // Thêm state cho fullName
 
   // --- thêm state cho animation ---
   const [show, setShow] = useState(isOpen);
@@ -36,54 +40,140 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      setShow(true);
-      setTimeout(() => setAnimate(true), 10);
+      setShow(true);  
+      setTimeout(() => setAnimate(true), 10); // bật animation mở
     } else {
       setAnimate(false);
-      setTimeout(() => setShow(false), 300);
+      setTimeout(() => setShow(false), 300); // chờ animation đóng
     }
   }, [isOpen]);
 
-  if (!show) return null;
+  // them code xu ly login
+  // const handleLogin = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setError(null);
+  //   setLoading(true);
 
-  // ---------------- HANDLE LOGIN ----------------
+  //   //1. API đăng nhập localhost
+  //   //http://localhost:8080/fapanese/api/auth/login
+  //   //https://7a85ec43c9f4.ngrok-free.app/fapanese/api/auth/login
+  //   try {
+  //     // 1. Gửi yêu cầu POST đến API đăng nhập
+  //     const response = await axios.post(
+  //       //API đăng nhập thông qua ngrok
+  //       "https://7a85ec43c9f4.ngrok-free.app/fapanese/api/auth/login",
+  //       {
+  //         email: loginEmail,
+  //         password: loginPassword,
+  //       }
+  //     );
+
+  //     // 2. Xử lý khi thành công
+  //     console.log("API Response:", response.data);
+  //     alert("Đăng nhập thành công!"); // <-- MỤC TIÊU CỦA BẠN
+
+  //     onClose(); // Đóng popup sau khi đăng nhập thành công
+  //   } catch (err: any) {
+  //     // 3. Xử lý khi thất bại
+  //     console.error("Lỗi đăng nhập:", err.response);
+  //     setError(
+  //       err.response?.data?.message || "Email hoặc mật khẩu không chính xác."
+  //     );
+  //   } finally {
+  //     // 4. Luôn tắt loading khi xong
+  //     setLoading(false);
+  //   }
+  // };
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
+
     try {
-      const data = await login(loginEmail, loginPassword);
+      console.log("Payload being sent:", {
+        email: loginEmail,
+        password: loginPassword,
+      });
+      const response = await axios.post(
+        "https://bd1a99515bf9.ngrok-free.app/fapanese/api/auth/login",
+        JSON.stringify({ email: loginEmail, password: loginPassword }),
+        { headers: { "Content-Type": "application/json" } }
+      );
 
-      if (data.token) {
-        localStorage.setItem("token", data.token);
+      console.log("API Response:", response.data);
+
+      if (response.data?.result?.authenticated) {
+        alert("Đăng nhập thành công!");
+        localStorage.setItem("token", response.data.result.token);
+        // Lưu api của user vào localstorage để dùng chung
+
+        onClose();
+      } else {
+        setError("Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.");
       }
-
-      alert("Đăng nhập thành công!");
-      onClose();
     } catch (err: any) {
-      alert(err.message);
+      console.error("Lỗi đăng nhập:", err.response || err);
+      console.error("Response data:", err.response?.data);
+      setError(
+        err.response?.data?.message || "Email hoặc mật khẩu không chính xác."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  // ---------------- HANDLE SIGNUP ----------------
+  // them code xu ly dang ky
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await signup({
-        email: signupEmail,
-        password: signupPassword,
-        role,
-        campus,
-        dob,
-        expertise,
-        bio,
-      });
+    setError(null);
+    setLoading(true);
 
-      alert("Đăng ký thành công! Mời bạn đăng nhập.");
+    const userData = {
+      firstName: firstName,
+      lastName: lastName, // Thêm trường fullName với giá trị mặc định
+      email: signupEmail,
+      password: signupPassword,
+      role: role.toUpperCase(), // Gửi đi dạng 'STUDENT' hoặc 'LECTURER'
+      dateOfBirth: dob,
+      // Thêm các trường khác tùy theo vai trò đã chọn
+      ...(role === "student" && { campus: campus }),
+
+      ...(role === "lecturer" && { expertise: expertise, bio: bio }),
+    };
+
+    console.log("Payload being sent for signup:", userData);
+
+    try {
+      const response = await axios.post(
+        "https://bd1a99515bf9.ngrok-free.app/fapanese/api/users/register",
+        userData
+      );
+
+      console.log("Signup API Response:", response.data);
+      alert("Đăng ký thành công! Kiểm tra database và thử đăng nhập.");
+
       setActiveTab("login");
+      setFirstName("");
+      setLastName("");
+      setSignupEmail("");
+      setSignupPassword("");
     } catch (err: any) {
-      alert(err.message);
+      console.error("Lỗi đăng ký:", err.response || err);
+      console.error("Response data:", err.response?.data);
+      setError(
+        err.response?.data?.message ||
+          "Đăng ký thất bại. Vui lòng kiểm tra lại thông tin."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (!show) return null;
+
+
+
+  // Phần render
   return (
     <div
       className={`fixed inset-0 z-[9999] flex items-center justify-center 
@@ -165,9 +255,8 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
               <div className="flex-1 h-px bg-gray-300"></div>
             </div>
 
-            {/* LOGIN FORM */}
             <form
-              onSubmit={handleLogin}
+              onSubmit={handleLogin} //xy ly su kien login
               className="flex flex-col gap-4 w-full max-w-sm"
             >
               <input
@@ -184,11 +273,15 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                 onChange={(e) => setLoginPassword(e.target.value)}
                 className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
               />
+              {error && (
+                <div className="text-red-500 text-sm mt-2">{error}</div>
+              )}
               <button
                 type="submit"
                 className="bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
+                disabled={loading}
               >
-                Login
+                {loading ? "Loading..." : "Login"}
               </button>
             </form>
           </div>
@@ -209,11 +302,31 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
               Tạo tài khoản mới để bắt đầu học
             </p>
 
-            {/* SIGNUP FORM */}
+            {/* FORM ĐĂNG KÝ */}
             <form
-              onSubmit={handleSignup}
+              onSubmit={handleSignup} //xy ly su kien dang ky
               className="flex flex-col gap-4 w-full max-w-sm"
             >
+              {/* Ho va ten*/}
+              <div className="flex gap-3  w-full">
+                <input
+                  type="text"
+                  placeholder="First Name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                  className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition w-30"
+                />
+                <input
+                  type="text"
+                  placeholder="Last Name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                  className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                />
+              </div>
+
               {/* Email */}
               <input
                 type="email"

@@ -24,6 +24,8 @@ public class UserController {
     private UserService userService;
     @PostMapping("/register")
     public ApiResponse<UserResponse> register(@RequestBody UserRequest request){
+        log.info("Register request: {}", request);
+
         var result = userService.registerUser(request);
 
         return  ApiResponse.<UserResponse>builder()

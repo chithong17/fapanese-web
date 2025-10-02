@@ -21,7 +21,8 @@ public class GlobalExceptionHandler {
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(errorCode.getMessage());
 
-        log.info("LLLLLLLLLLLLLLLLLLLLLLLLLL");
+
+        log.error("aaaaa",exception);
 
         return ResponseEntity
                 .status(errorCode.getStatusCode()) // trả về đúng HTTP status tương ứng
@@ -32,8 +33,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ApiResponse> handlerRuntimeException(RuntimeException re){
         ApiResponse apiResponse = new ApiResponse();
-        // Trả về lỗi mặc định UNCATALOGIZED_EXCEPTION
         log.info(re.getMessage());
+
+        // In thêm full stacktrace
+        log.error("Unhandled exception", re);
         apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
         apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
         return ResponseEntity.badRequest().body(apiResponse);

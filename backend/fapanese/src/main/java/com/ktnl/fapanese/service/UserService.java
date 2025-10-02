@@ -15,6 +15,8 @@ import com.ktnl.fapanese.repository.StudentRepository;
 import com.ktnl.fapanese.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -66,5 +68,28 @@ public class UserService {
 
         // 4. Map từ đối tượng đã được lưu (có đầy đủ thông tin) và trả về
         return mapper.toUserResponse(savedUser);
+    }
+
+    public UserResponse getCurrentUserProfile() {
+        // Lấy thông tin Authentication từ SecurityContext
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Username ở đây chính là email được lưu trong token
+        String email = authentication.getName();
+
+        // Lấy user từ DB theo email
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Chuyển entity User → UserResponse
+        return UserResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .role(user.getRoles().toString())
+//                .expertise(user.getTeacher().getExpertise())
+//                .teacherDateOfBirth(user.getTeacher().getDateOfBirth())
+                .studentDateOfBirth(user.getStudent().getDateOfBirth())
+                .campus(user.getStudent().getCampus())
+                .build();
     }
 }

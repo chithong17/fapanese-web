@@ -17,12 +17,11 @@ import java.time.LocalDate;
 public class Student {
     @Id
     private String id;
-
+    private String firstName;
+    private String lastName;
     private String campus;
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dateOfBirth;
-
-
     @OneToOne
     @MapsId
     @JoinColumn(name = "id")

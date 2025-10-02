@@ -17,15 +17,13 @@ import java.time.LocalDate;
 public class Lecturer {
     @Id
     private String id;
-
+    private String firstName;
+    private String lastName;
     private String expertise;
     @Column(columnDefinition = "TEXT")
     private String bio;
-
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dateOfBirth;
-
-
     @OneToOne
     @MapsId
     @JoinColumn(name = "id")

@@ -1,5 +1,5 @@
 // Navbar.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
 import {
@@ -8,7 +8,7 @@ import {
   AiOutlineQuestionCircle,
   AiOutlineEdit,
 } from "react-icons/ai";
-import { MdLogin, MdPersonAdd } from "react-icons/md";
+import { MdLogin, MdLogout, MdPersonAdd } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/logo.png";
 import logouser from "../assets/logouser.png";
@@ -16,7 +16,7 @@ import logouser from "../assets/logouser.png";
 interface NavbarProps {
   scrollToSection: (id: string, tab?: "hiragana" | "katakana") => void;
   onAuthClick: (tab: "login" | "signup") => void;
-  userDropdownOpen: boolean;  // <- bắt buộc
+  userDropdownOpen: boolean; // <- bắt buộc
   setUserDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>; // <- bắt buộc
 }
 
@@ -24,6 +24,16 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Thêm trạng thái cho menu di động
+
+  // Thêm state user
+  const [user, setUser] = useState<string | null>(null);
+
+  // --- Thêm ở đây ---
+  useEffect(() => {
+    const savedUser = localStorage.getItem("userName"); // Lấy tên người dùng từ localStorage
+    console.log("UserName retrieved from localStorage:", savedUser);
+    if (savedUser) setUser(savedUser);
+  }, []);
 
   const menuItems = [
     { name: "VỀ CHÚNG TÔI", link: "/aboutus" },
@@ -64,10 +74,12 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
       icon: <AiOutlineEdit />,
       action: () => console.log("Go to edit profile"),
     },
+   {   name: "Đăng Xuất",
+      icon: <MdLogout />,
+      action: () => {}}
   ];
 
   return (
-
     <nav className="bg-white shadow-lg fixed top-0 left-0 right-0 z-[2000] backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between h-20 items-center relative">
@@ -80,7 +92,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
                 className="w-40 h-40 object-contain"
               />
             </a>
-          </div>  
+          </div>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex flex-grow justify-center">
@@ -151,17 +163,23 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
 
           {/* User dropdown */}
           <div className="relative flex items-center gap-4">
-            <div
-              className="p-1 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
-              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-            >
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
+            <div className="relative flex items-center gap-4">
+              {user && (
+                <span className="text-gray-700 font-medium mr-2">
+                  Xin chào, {user}
+                </span>
+              )}
+              <div
+                className="p-1 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
               >
-                {/* <FaUserCircle size={28} /> */}
-                <img src={logouser} className="h-10" />
-              </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <img src={logouser} className="h-10" />
+                </motion.div>
+              </div>
             </div>
           </div>
         </div>

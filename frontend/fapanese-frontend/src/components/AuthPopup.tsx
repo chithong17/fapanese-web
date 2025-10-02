@@ -46,6 +46,8 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
     }
   }, [isOpen]);
 
+
+
   // them code xu ly login
   // const handleLogin = async (e: React.FormEvent) => {
   //   e.preventDefault();
@@ -100,6 +102,8 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
       if (response.data?.result?.authenticated) {
         alert("Đăng nhập thành công!");
         localStorage.setItem("token", response.data.result.token);
+// Lưu api của user vào localstorage để dùng chung
+
         onClose();
       } else {
         setError("Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.");

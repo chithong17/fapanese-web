@@ -18,6 +18,8 @@ public class User {
     String id;
     String email;
     String password_hash;
+    @Column(nullable = false)
+    private boolean isActive = false;
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Lecturer teacher;
 

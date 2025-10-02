@@ -12,6 +12,7 @@ import { MdLogin, MdLogout, MdPersonAdd } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/logo.png";
 import logouser from "../assets/logouser.png";
+import axios from "axios";
 
 interface NavbarProps {
   scrollToSection: (id: string, tab?: "hiragana" | "katakana") => void;
@@ -42,6 +43,38 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
     { name: "THÀNH TÍCH", link: "/dashboard/student" },
     { name: "GÓC CHIA SẺ", link: "/" },
   ];
+
+  //code xử lý logout
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Bạn chưa đăng nhập!");
+        return;
+      }
+
+      // Gọi API logout
+      await axios.post(
+        // "https://bd1a99515bf9.ngrok-free.app/fapanese/api/auth/logout"
+        "http://localhost:8080/fapanese/api/auth/logout",
+        { token }, // backend của bạn đang nhận token trong body
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // optional nếu backend check header
+          },
+        }
+      );
+
+      // Xóa token ở localStorage
+      localStorage.removeItem("token");
+      alert("Đăng xuất thành công!");
+      window.location.reload(); // hoặc chuyển hướng về trang login
+    } catch (err: any) {
+      console.error("Lỗi logout:", err.response || err);
+      alert("Có lỗi khi đăng xuất!");
+    }
+  };
 
   const userMenuItems = [
     {
@@ -74,10 +107,10 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
       icon: <AiOutlineEdit />,
       action: () => console.log("Go to edit profile"),
     },
-   {   name: "Đăng Xuất",
-      icon: <MdLogout />,
-      action: () => {}}
+    { name: "Đăng Xuất", icon: <MdLogout />, action: handleLogout },
   ];
+
+  
 
   return (
     <nav className="bg-white shadow-lg fixed top-0 left-0 right-0 z-[2000] backdrop-blur-sm">

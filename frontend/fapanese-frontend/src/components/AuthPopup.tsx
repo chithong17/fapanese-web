@@ -46,48 +46,81 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
     }
   }, [isOpen]);
 
-
   // them code xu ly login
+  // const handleLogin = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setError(null);
+  //   setLoading(true);
+
+  //   //1. API đăng nhập localhost
+  //   //http://localhost:8080/fapanese/api/auth/login
+  //   //https://7a85ec43c9f4.ngrok-free.app/fapanese/api/auth/login
+  //   try {
+  //     // 1. Gửi yêu cầu POST đến API đăng nhập
+  //     const response = await axios.post(
+  //       //API đăng nhập thông qua ngrok
+  //       "https://7a85ec43c9f4.ngrok-free.app/fapanese/api/auth/login",
+  //       {
+  //         email: loginEmail,
+  //         password: loginPassword,
+  //       }
+  //     );
+
+  //     // 2. Xử lý khi thành công
+  //     console.log("API Response:", response.data);
+  //     alert("Đăng nhập thành công!"); // <-- MỤC TIÊU CỦA BẠN
+
+  //     onClose(); // Đóng popup sau khi đăng nhập thành công
+  //   } catch (err: any) {
+  //     // 3. Xử lý khi thất bại
+  //     console.error("Lỗi đăng nhập:", err.response);
+  //     setError(
+  //       err.response?.data?.message || "Email hoặc mật khẩu không chính xác."
+  //     );
+  //   } finally {
+  //     // 4. Luôn tắt loading khi xong
+  //     setLoading(false);
+  //   }
+  // };
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-      // 1. Gửi yêu cầu POST đến API đăng nhập
+      console.log("Payload being sent:", { email: loginEmail, password: loginPassword });
       const response = await axios.post(
-        "http://localhost:8080/fapanese/api/auth/login",
-        {
-          email: loginEmail,
-          password: loginPassword,
-        }
+        "https://7a85ec43c9f4.ngrok-free.app/fapanese/api/auth/login",
+        JSON.stringify({ email: loginEmail, password: loginPassword }),
+        { headers: { "Content-Type": "application/json" } }
       );
 
-      // 2. Xử lý khi thành công
       console.log("API Response:", response.data);
-      alert("Đăng nhập thành công!"); // <-- MỤC TIÊU CỦA BẠN
 
-      onClose(); // Đóng popup sau khi đăng nhập thành công
+      if (response.data?.result?.authenticated) {
+        alert("Đăng nhập thành công!");
+        localStorage.setItem("token", response.data.result.token);
+        onClose();
+      } else {
+        setError("Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.");
+      }
     } catch (err: any) {
-      // 3. Xử lý khi thất bại
-      console.error("Lỗi đăng nhập:", err.response);
+      console.error("Lỗi đăng nhập:", err.response || err);
+      console.error("Response data:", err.response?.data);
       setError(
         err.response?.data?.message || "Email hoặc mật khẩu không chính xác."
       );
     } finally {
-      // 4. Luôn tắt loading khi xong
       setLoading(false);
     }
   };
+
   // them code xu ly dang ky
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    // 1. Tạo object dữ liệu để gửi đi
-    // LƯU Ý: Tên các thuộc tính (email, password, role,...) phải khớp chính xác
-    // với tên các trường trong DTO (Data Transfer Object) bên Spring Boot của bạn.
     const userData = {
       email: signupEmail,
       password: signupPassword,
@@ -98,31 +131,28 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
       ...(role === "lecturer" && { expertise: expertise, bio: bio }),
     };
 
+    console.log("Payload being sent for signup:", userData);
+
     try {
-      // 2. Gửi yêu cầu POST đến API đăng ký
       const response = await axios.post(
-        "http://localhost:8080/fapanese/api/users/register",
+        "https://7a85ec43c9f4.ngrok-free.app/fapanese/api/users/register",
         userData
       );
 
-      // 3. Xử lý khi thành công
-      console.log("API Response:", response.data);
+      console.log("Signup API Response:", response.data);
       alert("Đăng ký thành công! Kiểm tra database và thử đăng nhập.");
 
-      // Tự động chuyển sang tab đăng nhập để tiện lợi
       setActiveTab("login");
-      // Reset form đăng ký (tùy chọn)
       setSignupEmail("");
       setSignupPassword("");
     } catch (err: any) {
-      // 4. Xử lý khi thất bại
-      console.error("Lỗi đăng ký:", err.response);
+      console.error("Lỗi đăng ký:", err.response || err);
+      console.error("Response data:", err.response?.data);
       setError(
         err.response?.data?.message ||
           "Đăng ký thất bại. Vui lòng kiểm tra lại thông tin."
       );
     } finally {
-      // 5. Luôn tắt loading khi xong
       setLoading(false);
     }
   };
@@ -228,11 +258,15 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                 onChange={(e) => setLoginPassword(e.target.value)}
                 className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
               />
+              {error && (
+                <div className="text-red-500 text-sm mt-2">{error}</div>
+              )}
               <button
                 type="submit"
                 className="bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
+                disabled={loading}
               >
-                Login
+                {loading ? "Loading..." : "Login"}
               </button>
             </form>
           </div>

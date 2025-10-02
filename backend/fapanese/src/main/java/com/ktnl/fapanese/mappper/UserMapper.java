@@ -27,6 +27,10 @@ public interface UserMapper {
 
 
     @Mapping(expression = "java(user.getRoles().stream().findFirst().map(r -> r.getRoleName()).orElse(null))", target = "role")
+    @Mapping(source = "student.firstName", target = "studentFirstname")
+    @Mapping(source = "student.lastName", target = "studentLastname")
+    @Mapping(source = "teacher.firstName", target = "teacherFirstname")
+    @Mapping(source = "teacher.lastName", target = "teacherLastname")
     @Mapping(source = "teacher.expertise", target = "expertise")
     @Mapping(source = "teacher.bio", target = "bio")
     @Mapping(source = "teacher.dateOfBirth", target = "teacherDateOfBirth")

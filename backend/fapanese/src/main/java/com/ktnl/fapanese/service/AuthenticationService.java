@@ -3,6 +3,7 @@ package com.ktnl.fapanese.service;
 
 import com.ktnl.fapanese.dto.request.AuthenticationRequest;
 import com.ktnl.fapanese.dto.request.IntrospectRequest;
+import com.ktnl.fapanese.dto.request.LogoutRequest;
 import com.ktnl.fapanese.dto.request.RefreshRequest;
 import com.ktnl.fapanese.dto.response.AuthenticationResponse;
 import com.ktnl.fapanese.dto.response.IntrospectResponse;
@@ -29,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.text.ParseException;
 import java.time.Instant;
@@ -220,6 +222,25 @@ public class AuthenticationService {
     }
 
 
+    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+        try {
+            var signedJWT = verifyToken(request.getToken(), true);
+
+            var jit = signedJWT.getJWTClaimsSet().getJWTID();
+            Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+            InvalidatedToken invalidatedToken = InvalidatedToken
+                    .builder()
+                    .id(jit)
+                    .expiryTime(expiryTime)
+                    .build();
+            invalidatedTokenRepository.save(invalidatedToken);
+        } catch (AppException e) {
+            log.info("Token already expired");
+        }
+    }
+
+
     /**
      * Tạo scope cho user từ roles và permissions
      * Ví dụ: "ROLE_ADMIN READ_USER WRITE_USER"
@@ -239,4 +260,6 @@ public class AuthenticationService {
 
         return stringJoiner.toString();
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.ktnl.fapanese.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,7 +21,10 @@ public class Lecturer {
     private String expertise;
     @Column(columnDefinition = "TEXT")
     private String bio;
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dateOfBirth;
+
 
     @OneToOne
     @MapsId

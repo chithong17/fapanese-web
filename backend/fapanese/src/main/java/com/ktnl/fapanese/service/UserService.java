@@ -41,26 +41,30 @@ public class UserService {
         if(userRepo.existsByEmail(userRequest.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
+
+        // 1. Chuẩn bị đối tượng User trong bộ nhớ
         User user = mapper.toUser(userRequest);
-
-        user.setPassword_hash(passwordEncoder.encode(user.getPassword_hash()));
-
+        user.setPassword_hash(passwordEncoder.encode(userRequest.getPassword())); // Nên lấy pass từ request
         Role role = roleRepo.findByRoleName(userRequest.getRole());
         user.setRoles(Set.of(role));
 
-        userRepo.save(user);
-
+        // 2. Chuẩn bị đối tượng Lecturer hoặc Student và thiết lập quan hệ 2 chiều
         if("LECTURER".equalsIgnoreCase(userRequest.getRole())){
             Lecturer lecturer = mapper.toLecturer(userRequest);
-            lecturer.setUser(user);
-            lecturerRepo.save(lecturer);
+            lecturer.setUser(user);      // Quan hệ từ Lecturer -> User
+            user.setTeacher(lecturer);   // Quan hệ ngược lại từ User -> Lecturer
         }
         else if("STUDENT".equalsIgnoreCase(userRequest.getRole())){
             Student student = mapper.toStudent(userRequest);
-            student.setUser(user);
-            studentRepo.save(student);
+            student.setUser(user);       // Quan hệ từ Student -> User
+            user.setStudent(student);    // Quan hệ ngược lại từ User -> Student
         }
 
-        return mapper.toUserResponse(user);
+        // 3. Chỉ cần LƯU USER MỘT LẦN DUY NHẤT ở cuối cùng
+        // Do có CascadeType.ALL, JPA sẽ tự động lưu cả Lecturer/Student liên quan
+        User savedUser = userRepo.save(user);
+
+        // 4. Map từ đối tượng đã được lưu (có đầy đủ thông tin) và trả về
+        return mapper.toUserResponse(savedUser);
     }
 }

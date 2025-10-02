@@ -2,22 +2,28 @@ package com.ktnl.fapanese.controller;
 
 
 import com.ktnl.fapanese.dto.request.AuthenticationRequest;
+import com.ktnl.fapanese.dto.request.LogoutRequest;
+import com.ktnl.fapanese.dto.request.RefreshRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.AuthenticationResponse;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.repository.UserRepository;
 import com.ktnl.fapanese.service.AuthenticationService;
+import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.ParseException;
 
 @Slf4j
 @RestController
@@ -33,5 +39,20 @@ public class AuthenticationController {
         return ApiResponse.<AuthenticationResponse>builder()
                 .result(result)
                 .build();
+    }
+
+    @PostMapping("/refresh")
+    public ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
+        var result = authenticationService.refreshToken(request);
+
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/logout")
+    public ApiResponse<Void>logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder().build();
     }
 }

@@ -1,5 +1,8 @@
 package com.ktnl.fapanese.service;
 
+import com.ktnl.fapanese.dto.response.EmailResponse;
+import com.ktnl.fapanese.exception.AppException;
+import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mail.EmailTemplate;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -37,7 +40,7 @@ public class EmailService {
      *  -> "args[0] = Nguyễn Văn A", "args[1] = link-active"
      *  -> emailTemplate sẽ dùng args để replace placeholder trong nội dung
      */
-    public void sendEmail(String to, EmailTemplate emailTemplate, String... args){
+    public EmailResponse sendEmail(String to, EmailTemplate emailTemplate, String... args){
         try {
             // 1. Tạo MimeMessage (email phức tạp, hỗ trợ HTML, file đính kèm...)
             MimeMessage message = mailSender.createMimeMessage();
@@ -60,6 +63,13 @@ public class EmailService {
             // Trường hợp có lỗi khi tạo / gửi email
             e.printStackTrace();
             log.info("Failed to send mail");
+            throw new AppException(ErrorCode.EMAIL_SENDER);
         }
+
+        return EmailResponse.builder()
+                .to(to)
+                .subject(emailTemplate.getSubject())
+                .isSuccess(true)
+                .build();
     }
 }

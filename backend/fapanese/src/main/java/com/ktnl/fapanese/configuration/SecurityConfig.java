@@ -26,7 +26,14 @@ import java.util.Collections;
 @EnableMethodSecurity
 public class SecurityConfig {
     // Đảm bảo endpoint này chính xác
-    private final String[] PUBLIC_ENDPOINT = {"/api/auth/login", "/api/users/register"};
+    private final String[] PUBLIC_POST_ENDPOINT = {"/api/auth/login", "/api/users/register"};
+
+    private final String[] SWAGGER_WHITELIST  = {
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-ui.html",
+            "/v3/api-docs.yaml"
+    };
 
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
@@ -37,7 +44,8 @@ public class SecurityConfig {
                 request
                         // THÊM DÒNG NÀY ĐỂ GIẢI QUYẾT LỖI CORS PREFLIGHT
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()
+                        .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
+                        .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .anyRequest().authenticated()
         );
 

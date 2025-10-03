@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -77,7 +78,7 @@ public class UserService {
 
         // Lấy user từ DB theo email
         User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         UserResponse.UserResponseBuilder builder = UserResponse.builder()
                 .id(user.getId())
@@ -85,24 +86,24 @@ public class UserService {
                 .role(user.getRoles()
                         .stream()
                         .map(Role::getRoleName)
-                        .toList().toString());
+                        .collect(Collectors.joining(",")));
 
 
         // Nếu là student
         if (user.getStudent() != null) {
-            builder.studentDateOfBirth(user.getStudent().getDateOfBirth())
+            builder.dob(user.getStudent().getDateOfBirth())
                     .campus(user.getStudent().getCampus())
-                    .studentFirstname(user.getStudent().getFirstName())
-                    .studentLastname(user.getStudent().getLastName());
+                    .firstname(user.getStudent().getFirstName())
+                    .lastname(user.getStudent().getLastName());
         }
 
         // Nếu là lecturer
         if (user.getTeacher() != null) {
-            builder.teacherDateOfBirth(user.getTeacher().getDateOfBirth())
+            builder.dob(user.getTeacher().getDateOfBirth())
                     .expertise(user.getTeacher().getExpertise())
                     .bio(user.getTeacher().getBio())
-                    .teacherFirstname(user.getTeacher().getFirstName())
-                    .teacherLastname(user.getTeacher().getLastName());
+                    .firstname(user.getTeacher().getFirstName())
+                    .lastname(user.getTeacher().getLastName());
         }
 
         return builder.build();

@@ -22,8 +22,6 @@ public class GlobalExceptionHandler {
         apiResponse.setMessage(errorCode.getMessage());
 
 
-        log.error("aaaaa",exception);
-
         return ResponseEntity
                 .status(errorCode.getStatusCode()) // trả về đúng HTTP status tương ứng
                 .body(apiResponse);

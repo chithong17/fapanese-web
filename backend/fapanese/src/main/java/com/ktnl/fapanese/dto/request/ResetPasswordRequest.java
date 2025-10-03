@@ -1,14 +1,15 @@
-package com.ktnl.fapanese.dto.response;
+package com.ktnl.fapanese.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OtpResponse {
-    boolean success;
-    String message;
+public class ResetPasswordRequest {
+    String email;
+    String otp;
+    String newPassword;
 }

@@ -16,14 +16,14 @@ import java.time.LocalDate;
 @Entity
 public class Student {
     @Id
-    private String id;
-    private String firstName;
-    private String lastName;
-    private String campus;
+    String id;
+    String firstname;
+    String lastname;
+    String campus;
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private LocalDate dateOfBirth;
+    LocalDate dateOfBirth;
     @OneToOne
     @MapsId
     @JoinColumn(name = "id")
-    private User user;
+    User user;
 }

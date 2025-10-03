@@ -11,6 +11,7 @@ import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.repository.UserRepository;
 import com.ktnl.fapanese.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

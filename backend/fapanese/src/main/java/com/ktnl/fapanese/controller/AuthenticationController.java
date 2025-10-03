@@ -35,7 +35,6 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    @Operation(summary = "aaaa")
     public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest request){
         var result = authenticationService.login(request);
         return ApiResponse.<AuthenticationResponse>builder()

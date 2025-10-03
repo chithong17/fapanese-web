@@ -21,6 +21,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -96,8 +98,8 @@ public class UserService {
         if (user.getStudent() != null) {
             builder.dob(user.getStudent().getDateOfBirth())
                     .campus(user.getStudent().getCampus())
-                    .firstname(user.getStudent().getFirstname())
-                    .lastname(user.getStudent().getLastname());
+                    .firstName(user.getStudent().getFirstName())
+                    .lastName(user.getStudent().getLastName());
         }
 
         // Nếu là lecturer
@@ -105,10 +107,70 @@ public class UserService {
             builder.dob(user.getTeacher().getDateOfBirth())
                     .expertise(user.getTeacher().getExpertise())
                     .bio(user.getTeacher().getBio())
-                    .firstname(user.getTeacher().getFirstname())
-                    .lastname(user.getTeacher().getLastname());
+                    .firstName(user.getTeacher().getFirstName())
+                    .lastName(user.getTeacher().getLastName());
         }
 
         return builder.build();
+    }
+
+    public UserResponse updateUserProfile(UserRequest userRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        user.setEmail(userRequest.getEmail());
+
+        Role role = roleRepo.findByRoleName(userRequest.getRole());
+        if(role == null){
+            throw new AppException(ErrorCode.ROLE_NOT_FOUND);
+        }
+        if (user.getRoles() == null) {
+            user.setRoles(new HashSet<>());
+        } else {
+            user.getRoles().clear(); // nếu bạn muốn hoàn toàn thay mới
+        }
+        user.getRoles().add(role);
+
+        if ("STUDENT".equalsIgnoreCase(userRequest.getRole())) {
+            Student student = user.getStudent(); // LẤY student hiện có (nếu có)
+            if (student == null) {
+                // tạo mới và gắn hai chiều
+                student = mapper.toStudent(userRequest); // có thể dùng mapper
+                student.setUser(user);
+                user.setStudent(student);
+            } else {
+                // update các field trên student hiện có
+                student.setFirstName(userRequest.getFirstName());
+                student.setLastName(userRequest.getLastName());
+                student.setCampus(userRequest.getCampus());
+                student.setDateOfBirth(LocalDate.parse(userRequest.getDateOfBirth()));
+            }
+        }
+
+        if ("LECTURER".equalsIgnoreCase(userRequest.getRole())) {
+            // LẤY lecturer hiện tại được liên kết với user (nếu có)
+            Lecturer lecturer = user.getTeacher();
+
+            if (lecturer == null) {
+                // chưa có -> tạo mới từ mapper hoặc thủ công, gán hai chiều
+                lecturer = mapper.toLecturer(userRequest); // mới được map từ request
+                lecturer.setUser(user);
+                user.setTeacher(lecturer);
+            } else {
+                // đã có -> cập nhật trực tiếp lên object đã liên kết
+                lecturer.setFirstName(userRequest.getFirstName());
+                lecturer.setLastName(userRequest.getLastName());
+                lecturer.setBio(userRequest.getBio());
+                lecturer.setExpertise(userRequest.getExpertise());
+                lecturer.setDateOfBirth(LocalDate.parse(userRequest.getDateOfBirth())); // hoặc dùng parse an toàn
+            }
+        }
+
+        User savedUser = userRepo.save(user);
+        return mapper.toUserResponse(savedUser);
+
     }
 }

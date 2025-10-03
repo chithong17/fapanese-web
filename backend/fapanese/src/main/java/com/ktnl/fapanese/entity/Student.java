@@ -17,8 +17,8 @@ import java.time.LocalDate;
 public class Student {
     @Id
     String id;
-    String firstname;
-    String lastname;
+    String firstName;
+    String lastName;
     String campus;
     @JsonFormat(pattern = "dd/MM/yyyy")
     LocalDate dateOfBirth;

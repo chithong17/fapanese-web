@@ -15,11 +15,14 @@ import com.ktnl.fapanese.repository.StudentRepository;
 import com.ktnl.fapanese.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -69,5 +72,43 @@ public class UserService {
 
         // 4. Map từ đối tượng đã được lưu (có đầy đủ thông tin) và trả về
         return mapper.toUserResponse(savedUser);
+    }
+
+    public UserResponse getCurrentUserProfile() {
+        // Lấy thông tin Authentication từ SecurityContext
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        // Lấy user từ DB theo email
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        UserResponse.UserResponseBuilder builder = UserResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .role(user.getRoles()
+                        .stream()
+                        .map(Role::getRoleName)
+                        .collect(Collectors.joining(",")));
+
+
+        // Nếu là student
+        if (user.getStudent() != null) {
+            builder.dob(user.getStudent().getDateOfBirth())
+                    .campus(user.getStudent().getCampus())
+                    .firstname(user.getStudent().getFirstName())
+                    .lastname(user.getStudent().getLastName());
+        }
+
+        // Nếu là lecturer
+        if (user.getTeacher() != null) {
+            builder.dob(user.getTeacher().getDateOfBirth())
+                    .expertise(user.getTeacher().getExpertise())
+                    .bio(user.getTeacher().getBio())
+                    .firstname(user.getTeacher().getFirstName())
+                    .lastname(user.getTeacher().getLastName());
+        }
+
+        return builder.build();
     }
 }

@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +27,17 @@ public class UserController {
 
         return  ApiResponse.<UserResponse>builder()
                 .result(result)
+                .build();
+    }
+
+    @GetMapping("/profile")
+    private ApiResponse<UserResponse> getProfile(){
+        log.info("Get profile request");
+
+        UserResponse userResponse = userService.getCurrentUserProfile();
+
+        return ApiResponse.<UserResponse>builder()
+                .result(userResponse)
                 .build();
     }
 }

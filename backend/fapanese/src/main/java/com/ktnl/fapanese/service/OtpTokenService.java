@@ -1,6 +1,10 @@
 package com.ktnl.fapanese.service;
 
+import com.ktnl.fapanese.dto.response.EmailResponse;
+import com.ktnl.fapanese.dto.response.VerifyOtpResponse;
 import com.ktnl.fapanese.entity.OtpToken;
+import com.ktnl.fapanese.exception.AppException;
+import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mail.VerifyOtpEmail;
 import com.ktnl.fapanese.repository.OtpTokenRepository;
 import lombok.AccessLevel;
@@ -26,7 +30,7 @@ public class OtpTokenService {
     private final EmailService emailService;
 
 
-    public void generateAndSendOtp(String email) {
+    public EmailResponse generateAndSendOtp(String email) {
         String otp = String.valueOf(100000 + new Random().nextInt(900000));
         LocalDateTime expiry = LocalDateTime.now().plusMinutes(5);
 
@@ -38,14 +42,15 @@ public class OtpTokenService {
         otpRepo.save(token);
 
         // Gửi OTP
-        emailService.sendEmail(email, new VerifyOtpEmail(), otp);
+        return emailService.sendEmail(email, new VerifyOtpEmail(), otp);
     }
 
-    public boolean verifyOtp(String email, String otpInput) {
+    public VerifyOtpResponse verifyOtp(String email, String otpInput) {
         Optional<OtpToken> otpTokenOpt = otpRepo.findTopByEmailOrderByExpiryTimeDesc(email);
 
+
         if (otpTokenOpt.isEmpty())
-            return false;
+            throw new AppException(ErrorCode.OTP_NOT_EXISTED);
 
         OtpToken token = otpTokenOpt.get();
         if (!token.isUsed()
@@ -53,8 +58,12 @@ public class OtpTokenService {
                 && token.getExpiryTime().isAfter(LocalDateTime.now())) {
             token.setUsed(true);
             otpRepo.save(token);
-            return true;
+            return VerifyOtpResponse.builder()
+                    .to(email)
+                    .isSuccess(true)
+                    .build();
+        }else{
+            throw new AppException(ErrorCode.OTP_INVALID);
         }
-        return false;
     }
 }

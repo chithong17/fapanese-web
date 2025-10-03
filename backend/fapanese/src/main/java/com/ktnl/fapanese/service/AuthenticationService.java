@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -58,6 +59,9 @@ public class AuthenticationService {
     @NonFinal
     @Value("${jwt.refreshable-duration}") // Lấy khóa bí mật từ application.properties (dùng để ký và verify JWT)
     protected long REFRESHABLE_DURATION;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public AuthenticationResponse login(AuthenticationRequest request){
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow(
@@ -261,5 +265,12 @@ public class AuthenticationService {
         return stringJoiner.toString();
     }
 
+
+    public void updatePassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        user.setPassword_hash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
 
 }

@@ -4,20 +4,21 @@ public class ForgotPasswordEmail extends BaseEmailTemplate {
 
     @Override
     public String getSubject() {
-        return "Đặt lại mật khẩu";
+        return "Mã OTP đặt lại mật khẩu";
     }
 
     @Override
     protected String renderBody(String... args) {
         String name = args[0];
-        String resetLink = args[1];
+        String otpCode = args[1]; // thay resetLink bằng OTP
 
         return """
                 <h2>Xin chào %s,</h2>
                 <p>Bạn vừa yêu cầu <strong>đặt lại mật khẩu</strong> cho tài khoản của mình.</p>
-                <p>Vui lòng click vào nút bên dưới để tạo mật khẩu mới:</p>
-                <a href="%s" class="button">Đặt lại mật khẩu</a>
+                <p>Đây là mã OTP của bạn (có hiệu lực trong 5 phút):</p>
+                <h3 style="color: #14a5a5; font-size: 24px;">%s</h3>
+                <p>Hãy nhập mã này vào ứng dụng/web để đổi mật khẩu mới.</p>
                 <p>Nếu không phải bạn, vui lòng bỏ qua email này.</p>
-                """.formatted(name, resetLink);
+                """.formatted(name, otpCode);
     }
 }

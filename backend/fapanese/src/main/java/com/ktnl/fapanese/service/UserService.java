@@ -96,8 +96,8 @@ public class UserService {
         if (user.getStudent() != null) {
             builder.dob(user.getStudent().getDateOfBirth())
                     .campus(user.getStudent().getCampus())
-                    .firstname(user.getStudent().getFirstName())
-                    .lastname(user.getStudent().getLastName());
+                    .firstname(user.getStudent().getFirstname())
+                    .lastname(user.getStudent().getLastname());
         }
 
         // Nếu là lecturer
@@ -105,8 +105,8 @@ public class UserService {
             builder.dob(user.getTeacher().getDateOfBirth())
                     .expertise(user.getTeacher().getExpertise())
                     .bio(user.getTeacher().getBio())
-                    .firstname(user.getTeacher().getFirstName())
-                    .lastname(user.getTeacher().getLastName());
+                    .firstname(user.getTeacher().getFirstname())
+                    .lastname(user.getTeacher().getLastname());
         }
 
         return builder.build();

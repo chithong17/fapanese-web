@@ -9,7 +9,11 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1000, "User is not existed", HttpStatus.NOT_FOUND),
     AUTHENTICATED(1001, "Authenticate fail", HttpStatus.UNAUTHORIZED),
     UNCATEGORIZED_EXCEPTION(0000, "Uncategorized excetion", HttpStatus.INTERNAL_SERVER_ERROR),
-    EMAIL_EXISTED(1002, "Email is existed", HttpStatus.BAD_REQUEST)
+    EMAIL_EXISTED(1002, "Email is existed", HttpStatus.BAD_REQUEST),
+    EMAIL_SENDER(1003, "Send email failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    OTP_NOT_EXISTED(1004, "OTP is not existed", HttpStatus.NOT_FOUND),
+    OTP_INVALID(1005, "OTP is invalid or expiry", HttpStatus.BAD_REQUEST),
+    USER_NOT_ISACTIVED(1006, "User is not actived", HttpStatus.FORBIDDEN)
     ;
     private int code;
     private String message;

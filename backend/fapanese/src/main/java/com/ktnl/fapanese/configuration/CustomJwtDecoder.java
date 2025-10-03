@@ -2,6 +2,7 @@ package com.ktnl.fapanese.configuration;
 
 import com.ktnl.fapanese.dto.request.IntrospectRequest;
 import com.ktnl.fapanese.service.AuthenticationService;
+import com.ktnl.fapanese.service.TokenValidationService;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +29,7 @@ public class CustomJwtDecoder implements JwtDecoder {
 
     // Service dùng để introspect token (gửi token sang AuthenticationService để kiểm tra)
     @Autowired
-    private AuthenticationService authenticationService;
+    private TokenValidationService tokenValidationService;
 
     // Đối tượng NimbusJwtDecoder (thư viện hỗ trợ decode/verify JWT)
     private NimbusJwtDecoder nimbusJwtDecoder = null;
@@ -38,7 +39,7 @@ public class CustomJwtDecoder implements JwtDecoder {
     public Jwt decode(String token){
         try {
             // B1: Gọi API introspect để kiểm tra token có hợp lệ hay không (DB, blacklist,...)
-            var response = authenticationService.introspect(IntrospectRequest.builder().token(token).build());
+            var response = tokenValidationService.introspect(IntrospectRequest.builder().token(token).build());
 
             // Nếu introspect báo token không hợp lệ → ném exception
             if (!response.isValid())

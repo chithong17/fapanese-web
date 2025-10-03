@@ -41,6 +41,9 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     public UserResponse registerUser(UserRequest userRequest) {
+        log.info("Register request payload: {}", userRequest);
+
+
         if(userRepo.existsByEmail(userRequest.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }

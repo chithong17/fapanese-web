@@ -13,12 +13,16 @@ public interface UserMapper {
     @Mapping(target = "password_hash", source = "password")
     User toUser(UserRequest request);
 
+    @Mapping(source = "firstName", target = "firstName")
+    @Mapping(source = "lastName", target = "lastName")
     @Mapping(
             target = "dateOfBirth",
             expression = "java(request.getDateOfBirth() == null ? null : java.time.LocalDate.parse(request.getDateOfBirth(), java.time.format.DateTimeFormatter.ofPattern(\"yyyy-MM-dd\")))"
     )
     Student toStudent(UserRequest request);
 
+    @Mapping(source = "firstName", target = "firstName")
+    @Mapping(source = "lastName", target = "lastName")
     @Mapping(
             target = "dateOfBirth",
             expression = "java(request.getDateOfBirth() == null ? null : java.time.LocalDate.parse(request.getDateOfBirth(), java.time.format.DateTimeFormatter.ofPattern(\"yyyy-MM-dd\")))"

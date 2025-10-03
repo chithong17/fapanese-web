@@ -106,7 +106,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between h-20 items-center relative">
           {/* Logo */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 -ml-15">
             <a href="/" className="flex items-center h-12">
               <img
                 src={logo}
@@ -184,7 +184,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
           </div>
 
           {/* User dropdown */}
-          <div className="relative flex items-center gap-4 -mr-40">
+          <div className="relative flex items-center gap-4 -mr-30">
             {user ? (
               <>
                 <div
@@ -212,7 +212,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
     text-white 
     py-2 px-5 
     rounded-4xl 
-    font-bold 
+    font-bold `
     shadow-md 
     transform 
     transition 

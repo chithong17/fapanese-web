@@ -46,7 +46,6 @@ public class SecurityConfig {
                         // THÊM DÒNG NÀY ĐỂ GIẢI QUYẾT LỖI CORS PREFLIGHT
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .anyRequest().authenticated()
         );

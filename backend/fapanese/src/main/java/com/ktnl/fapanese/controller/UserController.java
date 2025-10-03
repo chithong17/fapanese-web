@@ -40,4 +40,13 @@ public class UserController {
                 .result(userResponse)
                 .build();
     }
+
+    @PostMapping("/profile/update")
+    private ApiResponse<UserResponse> updateProfile(@RequestBody UserRequest request){
+        log.info("Update profile request: {}", request);
+        UserResponse userResponse = userService.updateUserProfile(request);
+        return ApiResponse.<UserResponse>builder()
+                .result(userResponse)
+                .build();
+    }
 }

@@ -32,11 +32,11 @@ public interface UserMapper {
 
     @Mapping(
             expression = "java(user.getStudent() != null ? user.getStudent().getFirstName() : (user.getTeacher() != null ? user.getTeacher().getFirstName() : null))",
-            target = "firstname"
+            target = "firstName"
     )
     @Mapping(
             expression = "java(user.getStudent() != null ? user.getStudent().getLastName() : (user.getTeacher() != null ? user.getTeacher().getLastName() : null))",
-            target = "lastname"
+            target = "lastName"
     )
     @Mapping(
             expression = "java(user.getStudent() != null ? user.getStudent().getDateOfBirth() : (user.getTeacher() != null ? user.getTeacher().getDateOfBirth() : null))",

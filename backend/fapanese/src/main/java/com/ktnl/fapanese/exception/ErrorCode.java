@@ -9,7 +9,8 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1000, "User is not existed", HttpStatus.NOT_FOUND),
     AUTHENTICATED(1001, "Authenticate fail", HttpStatus.UNAUTHORIZED),
     UNCATEGORIZED_EXCEPTION(0000, "Uncategorized excetion", HttpStatus.INTERNAL_SERVER_ERROR),
-    EMAIL_EXISTED(1002, "Email is existed", HttpStatus.BAD_REQUEST)
+    EMAIL_EXISTED(1002, "Email is existed", HttpStatus.BAD_REQUEST),
+    ROLE_NOT_FOUND(1003, "Role not found", HttpStatus.NOT_FOUND)
     ;
     private int code;
     private String message;

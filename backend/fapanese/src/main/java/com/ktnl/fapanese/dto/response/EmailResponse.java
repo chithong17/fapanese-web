@@ -1,5 +1,6 @@
 package com.ktnl.fapanese.dto.response;
 
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -8,7 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OtpResponse {
-    boolean success;
-    String message;
+public class EmailResponse {
+    String to;
+    String subject;
+    boolean isSuccess;
 }

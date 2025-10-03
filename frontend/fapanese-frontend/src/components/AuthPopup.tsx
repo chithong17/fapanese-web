@@ -15,106 +15,70 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
   onClose,
   initialTab,
 }) => {
+  // --- State chung ---
+  const [activeTab, setActiveTab] = useState<"login" | "signup">(initialTab);
+  const [show, setShow] = useState(isOpen);
+  const [animate, setAnimate] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // --- Login state ---
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
+  // --- Signup state ---
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
   const [role, setRole] = useState<"student" | "lecturer">("student");
   const [campus, setCampus] = useState("");
   const [dob, setDob] = useState("");
   const [expertise, setExpertise] = useState("");
   const [bio, setBio] = useState("");
-  const [activeTab, setActiveTab] = useState<"login" | "signup">(initialTab);
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
-  const [error, setError] = useState<string | null>(null); // <--- THÊM STATE NÀY
-  const [loading, setLoading] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState(""); // Thêm state cho fullName
 
-  // --- thêm state cho animation ---
-  const [show, setShow] = useState(isOpen);
-  const [animate, setAnimate] = useState(false);
-
+  // --- Handle animation mở/đóng popup ---
   useEffect(() => {
     setActiveTab(initialTab);
   }, [initialTab]);
 
   useEffect(() => {
     if (isOpen) {
-      setShow(true);  
-      setTimeout(() => setAnimate(true), 10); // bật animation mở
+      setShow(true);
+      setTimeout(() => setAnimate(true), 10);
     } else {
       setAnimate(false);
-      setTimeout(() => setShow(false), 300); // chờ animation đóng
+      setTimeout(() => setShow(false), 300);
     }
   }, [isOpen]);
 
-  // them code xu ly login
-  // const handleLogin = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setError(null);
-  //   setLoading(true);
-
-  //   //1. API đăng nhập localhost
-  //   //http://localhost:8080/fapanese/api/auth/login
-  //   //https://7a85ec43c9f4.ngrok-free.app/fapanese/api/auth/login
-  //   try {
-  //     // 1. Gửi yêu cầu POST đến API đăng nhập
-  //     const response = await axios.post(
-  //       //API đăng nhập thông qua ngrok
-  //       "https://7a85ec43c9f4.ngrok-free.app/fapanese/api/auth/login",
-  //       {
-  //         email: loginEmail,
-  //         password: loginPassword,
-  //       }
-  //     );
-
-  //     // 2. Xử lý khi thành công
-  //     console.log("API Response:", response.data);
-  //     alert("Đăng nhập thành công!"); // <-- MỤC TIÊU CỦA BẠN
-
-  //     onClose(); // Đóng popup sau khi đăng nhập thành công
-  //   } catch (err: any) {
-  //     // 3. Xử lý khi thất bại
-  //     console.error("Lỗi đăng nhập:", err.response);
-  //     setError(
-  //       err.response?.data?.message || "Email hoặc mật khẩu không chính xác."
-  //     );
-  //   } finally {
-  //     // 4. Luôn tắt loading khi xong
-  //     setLoading(false);
-  //   }
-  // };
+  // --- Login API ---
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-      console.log("Payload being sent:", {
-        email: loginEmail,
-        password: loginPassword,
-      });
       const response = await axios.post(
-        // "https://bd1a99515bf9.ngrok-free.app/fapanese/api/auth/login"
-        "http://localhost:8080/fapanese/api/auth/login",
-        JSON.stringify({ email: loginEmail, password: loginPassword }),
+        "https://250d13769941.ngrok-free.app/fapanese/api/auth/login",
+        { email: loginEmail, password: loginPassword },
         { headers: { "Content-Type": "application/json" } }
       );
 
-      console.log("API Response:", response.data);
-
       if (response.data?.result?.authenticated) {
         alert("Đăng nhập thành công!");
-        localStorage.setItem("token", response.data.result.token);
-        // Lưu api của user vào localstorage để dùng chung
 
-        onClose();
+        // Lưu token và email
+        // Login thành công
+        localStorage.setItem("token", response.data.result.token);
+        localStorage.setItem("email", loginEmail);
+        window.dispatchEvent(new Event("loginSuccess")); // Navbar sẽ tự cập nhật
+        onClose(); // Đóng popup
       } else {
         setError("Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.");
       }
     } catch (err: any) {
       console.error("Lỗi đăng nhập:", err.response || err);
-      console.error("Response data:", err.response?.data);
       setError(
         err.response?.data?.message || "Email hoặc mật khẩu không chính xác."
       );
@@ -123,48 +87,44 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
     }
   };
 
-  // them code xu ly dang ky
+  // --- Signup API ---
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     const userData = {
-      firstName: firstName,
-      lastName: lastName, // Thêm trường fullName với giá trị mặc định
+      firstName,
+      lastName,
       email: signupEmail,
       password: signupPassword,
-      role: role.toUpperCase(), // Gửi đi dạng 'STUDENT' hoặc 'LECTURER'
+      role: role.toUpperCase(),
       dateOfBirth: dob,
-      // Thêm các trường khác tùy theo vai trò đã chọn
-      ...(role === "student" && { campus: campus }),
-
-      ...(role === "lecturer" && { expertise: expertise, bio: bio }),
+      ...(role === "student" && { campus }),
+      ...(role === "lecturer" && { expertise, bio }),
     };
-
-    console.log("Payload being sent for signup:", userData);
 
     try {
       const response = await axios.post(
-        // "https://bd1a99515bf9.ngrok-free.app/fapanese/api/users/register"
-        "http://localhost:8080/fapanese/api/users/register",
+        "https://250d13769941.ngrok-free.app/fapanese/api/users/register",
         userData
       );
 
-      console.log("Signup API Response:", response.data);
-      alert("Đăng ký thành công! Kiểm tra database và thử đăng nhập.");
-
+      alert("Đăng ký thành công! Hãy thử đăng nhập.");
       setActiveTab("login");
       setFirstName("");
       setLastName("");
       setSignupEmail("");
       setSignupPassword("");
+      setCampus("");
+      setDob("");
+      setExpertise("");
+      setBio("");
     } catch (err: any) {
       console.error("Lỗi đăng ký:", err.response || err);
-      console.error("Response data:", err.response?.data);
       setError(
         err.response?.data?.message ||
-          "Đăng ký thất bại. Vui lòng kiểm tra lại thông tin."
+          "Đăng ký thất bại. Kiểm tra lại thông tin."
       );
     } finally {
       setLoading(false);
@@ -173,24 +133,16 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
   if (!show) return null;
 
-
-  
-
-
-
-
-  // Phần render
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center 
-      bg-black/60 backdrop-blur-sm p-4 
-      transition-opacity duration-300 
-      ${animate ? "opacity-100" : "opacity-0"}`}
+      className={`fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-opacity duration-300 ${
+        animate ? "opacity-100" : "opacity-0"
+      }`}
     >
       <div
-        className={`relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden
-        transform transition-all duration-300
-        ${animate ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
+        className={`relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden transform transition-all duration-300 ${
+          animate ? "scale-100 opacity-100" : "scale-95 opacity-0"
+        }`}
       >
         {/* Close button */}
         <button
@@ -200,11 +152,9 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
           ✕
         </button>
 
-        {/* Header với nút tab */}
+        {/* Tabs */}
         <div className="flex justify-between items-center px-10 border-b bg-gray-50">
-          <h2>
-            <img src={logo} alt="" className="h-40 w-auto -my-7" />
-          </h2>
+          <img src={logo} alt="" className="h-40 w-auto -my-7" />
           <div className="flex gap-4">
             <button
               onClick={() => setActiveTab("login")}
@@ -229,7 +179,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
           </div>
         </div>
 
-        {/* Container 2 cột trượt */}
+        {/* Content */}
         <div
           className="flex w-[200%] transition-transform duration-700 ease-in-out"
           style={{
@@ -237,12 +187,11 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
               activeTab === "login" ? "translateX(0%)" : "translateX(-50%)",
           }}
         >
-          {/* --- LOGIN SIDE --- */}
-          <div className="w-1/2 flex flex-col items-center justify-center p-10">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Đăng nhập</h2>
+          {/* LOGIN SIDE */}
+          <div className="w-1/2 flex flex-col items-center justify-center p-10 ml-10 ">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 mr">Đăng nhập</h2>
             <p className="text-gray-500 mb-6">Chào mừng quay lại Fapanese</p>
 
-            {/* Social buttons */}
             <div className="flex flex-col gap-3 mb-6 w-full max-w-sm">
               <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
                 <FaGithub /> Continue with GitHub
@@ -262,7 +211,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
             </div>
 
             <form
-              onSubmit={handleLogin} //xy ly su kien login
+              onSubmit={handleLogin}
               className="flex flex-col gap-4 w-full max-w-sm"
             >
               <input
@@ -292,29 +241,27 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
             </form>
           </div>
 
-          {/* Hình bên phải LOGIN */}
-          <div className="w-1/2 bg-gray-100 flex items-center justify-center mx-17 ">
+          {/* LOGIN IMAGE */}
+          <div className="w-1/2 bg-gray-100 flex items-center justify-center mx-17">
             <img
               src={WelcomeLogo}
               alt="login"
-              className="max-w-sm h-152 w-125 rounded-2xl"
+              className="max-w-sm h-155 w-125 rounded-2xl"
             />
           </div>
 
-          {/* --- SIGNUP SIDE --- */}
+          {/* SIGNUP SIDE */}
           <div className="w-1/2 flex flex-col items-center justify-center p-10 mr-5">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Đăng ký</h2>
             <p className="text-gray-500 mb-6">
               Tạo tài khoản mới để bắt đầu học
             </p>
 
-            {/* FORM ĐĂNG KÝ */}
             <form
-              onSubmit={handleSignup} //xy ly su kien dang ky
+              onSubmit={handleSignup}
               className="flex flex-col gap-4 w-full max-w-sm"
             >
-              {/* Ho va ten*/}
-              <div className="flex gap-3  w-full">
+              <div className="flex gap-3 w-full">
                 <input
                   type="text"
                   placeholder="First Name"
@@ -332,8 +279,6 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                   className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
                 />
               </div>
-
-              {/* Email */}
               <input
                 type="email"
                 placeholder="Email"
@@ -341,7 +286,6 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                 onChange={(e) => setSignupEmail(e.target.value)}
                 className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
               />
-              {/* Password */}
               <input
                 type="password"
                 placeholder="Password"
@@ -349,14 +293,12 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                 onChange={(e) => setSignupPassword(e.target.value)}
                 className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
               />
-              {/* Confirm Password */}
               <input
                 type="password"
                 placeholder="Confirm Password"
                 className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
               />
 
-              {/* Role chọn Student / Lecturer */}
               <select
                 className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
                 value={role}
@@ -368,7 +310,6 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                 <option value="lecturer">Lecturer</option>
               </select>
 
-              {/* Nếu Student → Campus + DOB */}
               {role === "student" && (
                 <>
                   <select
@@ -390,7 +331,6 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                 </>
               )}
 
-              {/* Nếu Lecturer → Expertise + Bio + DOB */}
               {role === "lecturer" && (
                 <>
                   <input
@@ -424,12 +364,12 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
             </form>
           </div>
 
-          {/* Hình bên trái SIGNUP */}
+          {/* SIGNUP IMAGE */}
           <div className="w-1/2 bg-gray-100 flex items-center justify-center">
             <img
               src={WelcomeLogo}
               alt="signup"
-              className="max-w-sm rounded-2xl h-152 w-125"
+              className="max-w-sm rounded-2xl h-155 w-125"
             />
           </div>
         </div>

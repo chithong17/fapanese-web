@@ -17,23 +17,28 @@ import axios from "axios";
 interface NavbarProps {
   scrollToSection: (id: string, tab?: "hiragana" | "katakana") => void;
   onAuthClick: (tab: "login" | "signup") => void;
-  userDropdownOpen: boolean; // <- bắt buộc
-  setUserDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>; // <- bắt buộc
 }
 
 const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Thêm trạng thái cho menu di động
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Thêm state user
-  const [user, setUser] = useState<string | null>(null);
+  // State lưu email user
+  const [user, setUser] = useState<string | null>(
+    localStorage.getItem("email") || null
+  );
 
-  // --- Thêm ở đây ---
+  // Lắng nghe login/logout
   useEffect(() => {
-    const savedUser = localStorage.getItem("userName"); // Lấy tên người dùng từ localStorage
-    console.log("UserName retrieved from localStorage:", savedUser);
-    if (savedUser) setUser(savedUser);
+    const handleLogin = () => setUser(localStorage.getItem("email"));
+    window.addEventListener("loginSuccess", handleLogin);
+    window.addEventListener("storage", handleLogin); // cho các tab khác
+
+    return () => {
+      window.removeEventListener("loginSuccess", handleLogin);
+      window.removeEventListener("storage", handleLogin);
+    };
   }, []);
 
   const menuItems = [
@@ -44,7 +49,6 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
     { name: "GÓC CHIA SẺ", link: "/" },
   ];
 
-  //code xử lý logout
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -53,71 +57,56 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
         return;
       }
 
-      // Gọi API logout
       await axios.post(
-        // "https://bd1a99515bf9.ngrok-free.app/fapanese/api/auth/logout"
-        "http://localhost:8080/fapanese/api/auth/logout",
-        { token }, // backend của bạn đang nhận token trong body
+        "https://250d13769941.ngrok-free.app/fapanese/api/auth/logout",
+        { token },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // optional nếu backend check header
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      // Xóa token ở localStorage
       localStorage.removeItem("token");
+      localStorage.removeItem("email");
+      window.dispatchEvent(new Event("loginSuccess"));
       alert("Đăng xuất thành công!");
-      window.location.reload(); // hoặc chuyển hướng về trang login
+      window.location.reload();
     } catch (err: any) {
       console.error("Lỗi logout:", err.response || err);
       alert("Có lỗi khi đăng xuất!");
     }
   };
 
-  const userMenuItems = [
-    {
-      name: "Đăng Nhập",
-      icon: <MdLogin />,
-      action: () => onAuthClick("login"),
-    },
-    {
-      name: "Đăng Ký",
-      icon: <MdPersonAdd />,
-      action: () => onAuthClick("signup"),
-    },
-    {
-      name: "Khóa Học",
-      icon: <AiOutlineBook />,
-      action: () => console.log("Go to courses"),
-    },
-    {
-      name: "Dashboard",
-      icon: <AiOutlineDashboard />,
-      action: () => console.log("Go to dashboard"),
-    },
-    {
-      name: "Hướng Dẫn Sử Dụng",
-      icon: <AiOutlineQuestionCircle />,
-      action: () => console.log("Go to guide"),
-    },
-    {
-      name: "Edit Profile",
-      icon: <AiOutlineEdit />,
-      action: () => console.log("Go to edit profile"),
-    },
-    { name: "Đăng Xuất", icon: <MdLogout />, action: handleLogout },
-  ];
-
-  
+  // Menu user dựa trên trạng thái đăng nhập
+  const userMenuItems = user
+    ? [
+        {
+          name: "Khóa Học",
+          icon: <AiOutlineBook />,
+          action: () => console.log("Go to courses"),
+        },
+        {
+          name: "Dashboard",
+          icon: <AiOutlineDashboard />,
+          action: () => console.log("Go to dashboard"),
+        },
+        {
+          name: "Edit Profile",
+          icon: <AiOutlineEdit />,
+          action: () => console.log("Go to edit profile"),
+        },
+        { name: "Đăng Xuất", icon: <MdLogout />, action: handleLogout },
+      ]
+    : []; // chưa login thì không có menu
 
   return (
     <nav className="bg-white shadow-lg fixed top-0 left-0 right-0 z-[2000] backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between h-20 items-center relative">
           {/* Logo */}
-          <div className="flex-shrink-0 -ml-15">
+          <div className="flex-shrink-0">
             <a href="/" className="flex items-center h-12">
               <img
                 src={logo}
@@ -164,7 +153,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
                           scrollToSection("alphabet", "hiragana");
                           setDropdownOpen(false);
                         }}
-                        className=" w-full px-4 py-2 text-left hover:bg-gray-100 rounded-t-xl font-medium flex items-center gap-2"
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded-t-xl font-medium flex items-center gap-2"
                       >
                         Hiragana
                       </button>
@@ -173,7 +162,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
                           scrollToSection("alphabet", "katakana");
                           setDropdownOpen(false);
                         }}
-                        className=" w-full px-4 py-2 text-left hover:bg-gray-100 rounded-b-xl font-medium flex items-center gap-2"
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 rounded-b-xl font-medium flex items-center gap-2"
                       >
                         Katakana
                       </button>
@@ -195,25 +184,48 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
           </div>
 
           {/* User dropdown */}
-          <div className="relative flex items-center gap-4">
-            <div className="relative flex items-center gap-4">
-              {user && (
-                <span className="text-gray-700 font-medium mr-2">
-                  Xin chào, {user}
-                </span>
-              )}
-              <div
-                className="p-1 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
-                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-              >
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
+          <div className="relative flex items-center gap-4 -mr-40">
+            {user ? (
+              <>
+                <div
+                  className="p-1 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                 >
-                  <img src={logouser} className="h-10" />
-                </motion.div>
-              </div>
-            </div>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <img src={logouser} className="h-10 " />
+                  </motion.div>
+                </div>
+                <span className="text-gray-700 font-medium ">
+                  Xin chào,
+                  <br />
+                  <span> {user}</span>
+                </span>
+              </>
+            ) : (
+              <button
+                onClick={() => onAuthClick("login")}
+                className="
+    bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] 
+    text-white 
+    py-2 px-5 
+    rounded-4xl 
+    font-bold 
+    shadow-md 
+    transform 
+    transition 
+    duration-300 
+    hover:scale-105 
+    hover:shadow-xl 
+    hover:opacity-90
+    mr-20
+  "
+              >
+                Đăng Nhập
+              </button>
+            )}
           </div>
         </div>
       </div>

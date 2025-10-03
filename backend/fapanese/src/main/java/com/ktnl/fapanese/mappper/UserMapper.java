@@ -26,15 +26,29 @@ public interface UserMapper {
     Lecturer toLecturer(UserRequest request);
 
 
-    @Mapping(expression = "java(user.getRoles().stream().findFirst().map(r -> r.getRoleName()).orElse(null))", target = "role")
-    @Mapping(source = "student.firstName", target = "studentFirstname")
-    @Mapping(source = "student.lastName", target = "studentLastname")
-    @Mapping(source = "teacher.firstName", target = "teacherFirstname")
-    @Mapping(source = "teacher.lastName", target = "teacherLastname")
-    @Mapping(source = "teacher.expertise", target = "expertise")
-    @Mapping(source = "teacher.bio", target = "bio")
-    @Mapping(source = "teacher.dateOfBirth", target = "teacherDateOfBirth")
-    @Mapping(source = "student.campus", target = "campus")
-    @Mapping(source = "student.dateOfBirth", target = "studentDateOfBirth")
+    @Mapping(
+            expression = "java(user.getStudent() != null ? user.getStudent().getFirstName() : (user.getTeacher() != null ? user.getTeacher().getFirstName() : null))",
+            target = "firstname"
+    )
+    @Mapping(
+            expression = "java(user.getStudent() != null ? user.getStudent().getLastName() : (user.getTeacher() != null ? user.getTeacher().getLastName() : null))",
+            target = "lastname"
+    )
+    @Mapping(
+            expression = "java(user.getStudent() != null ? user.getStudent().getDateOfBirth() : (user.getTeacher() != null ? user.getTeacher().getDateOfBirth() : null))",
+            target = "dob"
+    )
+    @Mapping(
+            expression = "java(user.getStudent() != null ? user.getStudent().getCampus() : null)",
+            target = "campus"
+    )
+    @Mapping(
+            expression = "java(user.getTeacher() != null ? user.getTeacher().getExpertise() : null)",
+            target = "expertise"
+    )
+    @Mapping(
+            expression = "java(user.getTeacher() != null ? user.getTeacher().getBio() : null)",
+            target = "bio"
+    )
     UserResponse toUserResponse(User user);
 }

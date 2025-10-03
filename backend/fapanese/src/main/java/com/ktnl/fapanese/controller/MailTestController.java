@@ -2,7 +2,9 @@ package com.ktnl.fapanese.controller;
 
 import com.ktnl.fapanese.mail.ForgotPasswordEmail;
 import com.ktnl.fapanese.service.EmailService;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,5 +24,6 @@ public class MailTestController {
         emailService.sendEmail("hlqkhanh@gmail.com", new ForgotPasswordEmail(), "Nguyễn Văn A", "http://localhost:8080/reset?token=xyz789");
         return "Đã gửi mail đến: " + "hlqkhanh@gmail.com";
     }
+
 }
 

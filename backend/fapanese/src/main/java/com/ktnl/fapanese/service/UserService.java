@@ -13,6 +13,7 @@ import com.ktnl.fapanese.repository.LecturerRepository;
 import com.ktnl.fapanese.repository.RoleRepository;
 import com.ktnl.fapanese.repository.StudentRepository;
 import com.ktnl.fapanese.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,5 +174,13 @@ public class UserService {
         User savedUser = userRepo.save(user);
         return mapper.toUserResponse(savedUser);
 
+    }
+
+    @Transactional
+    public void deleteUserByEmail(String email) {
+        if (userRepo.findByEmail(email).isEmpty()) {
+            throw new RuntimeException("User not found with email: " + email);
+        }
+        userRepo.deleteByEmail(email);
     }
 }

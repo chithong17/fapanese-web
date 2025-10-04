@@ -33,7 +33,7 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/swagger-ui.html",
             "/v3/api-docs.yaml",
-            "/api/test-mail"
+            "/api/test-mail",
     };
 
     @Autowired
@@ -46,6 +46,7 @@ public class SecurityConfig {
                         // THÊM DÒNG NÀY ĐỂ GIẢI QUYẾT LỖI CORS PREFLIGHT
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").permitAll()
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .anyRequest().authenticated()
         );

@@ -22,7 +22,7 @@ public class Lecturer {
     private String expertise;
     @Column(columnDefinition = "TEXT")
     private String bio;
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
     @OneToOne
     @MapsId

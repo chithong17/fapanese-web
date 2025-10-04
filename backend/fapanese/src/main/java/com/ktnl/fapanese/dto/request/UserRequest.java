@@ -38,7 +38,7 @@ public class UserRequest {
     private String bio;
 
     @Past(message = "Date of birth must be in the past") // map -> ErrorCode.DOB_INVALID
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
     @NotBlank(message = "Campus is required") // map -> ErrorCode.CAMPUS_REQUIRED

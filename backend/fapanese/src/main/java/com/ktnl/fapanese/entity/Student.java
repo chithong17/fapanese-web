@@ -20,8 +20,8 @@ public class Student {
     String firstName;
     String lastName;
     String campus;
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    LocalDate dateOfBirth;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateOfBirth;
     @OneToOne
     @MapsId
     @JoinColumn(name = "id")

@@ -43,7 +43,12 @@ public class OtpTokenService {
                 .build();
         otpRepo.save(token);
 
-        return emailService.sendEmail(email, template, args[0], otp);
+        // nếu args rỗng thì chỉ truyền otp
+        if (args.length == 0) {
+            return emailService.sendEmail(email, template, otp);
+        } else {
+            return emailService.sendEmail(email, template, args[0], otp);
+        }
     }
 
     public VerifyOtpResponse verifyOtp(String email, String otpInput) {

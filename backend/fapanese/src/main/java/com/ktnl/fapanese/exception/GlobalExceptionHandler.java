@@ -1,10 +1,17 @@
 package com.ktnl.fapanese.exception;
 
 import com.ktnl.fapanese.dto.response.ApiResponse;
+import com.ktnl.fapanese.dto.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @ControllerAdvice   // Đánh dấu class này là global exception handler (xử lý lỗi toàn cục cho Spring MVC)
@@ -38,5 +45,43 @@ public class GlobalExceptionHandler {
         apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
         apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
         return ResponseEntity.badRequest().body(apiResponse);
+    }
+
+    /**
+     * Handler cho lỗi validate (javax/jakarta validation)
+     * Ví dụ: @Size(min=6) -> nếu vi phạm thì exception này sẽ được ném
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
+        Map<String, Object> errors = new HashMap<>();
+
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+            ErrorCode code = mapFieldToErrorCode(fieldError.getField());
+            errors.put(fieldError.getField(), Map.of(
+                    "code", code.getCode(),
+                    "message", fieldError.getDefaultMessage()
+            ));
+        }
+
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Validation failed",
+                errors
+        );
+
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    private ErrorCode mapFieldToErrorCode(String field) {
+        return switch (field) {
+            case "firstName" -> ErrorCode.FIRSTNAME_REQUIRED;
+            case "lastName" -> ErrorCode.LASTNAME_REQUIRED;
+            case "email" -> ErrorCode.EMAIL_INVALID;
+            case "password" -> ErrorCode.PASSWORD_INVALID;
+            case "role" -> ErrorCode.ROLE_REQUIRED;
+            case "dateOfBirth" -> ErrorCode.DOB_INVALID;
+            case "campus" -> ErrorCode.CAMPUS_REQUIRED;
+            default -> ErrorCode.INVALID_KEY; // fallback
+        };
     }
 }

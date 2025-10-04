@@ -1,5 +1,6 @@
 package com.ktnl.fapanese.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -15,6 +16,7 @@ public class UserResponse {
     private String id;
     private String email;
     private String role;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dob;
     private String firstName;
     private String lastName;

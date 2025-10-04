@@ -43,8 +43,8 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({
     try {
       setError(null);
       await axios.post(
-        // "https://a252c7297f36.ngrok-free.app/fapanese/api/auth/send-otp",
-        "http://localhost:8080/fapanese/api/auth/forgot-password",
+        "https://a252c7297f36.ngrok-free.app/fapanese/api/auth/send-otp",
+        // "http://localhost:8080/fapanese/api/auth/forgot-password",
         { email }
       );
       setOtpSent(true);
@@ -63,8 +63,8 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({
       setLoading(true);
       setError(null);
       await axios.post(
-        // "https://a252c7297f36.ngrok-free.app/fapanese/api/auth/reset-password",
-        "http://localhost:8080/fapanese/api/auth/reset-password",
+        "https://a252c7297f36.ngrok-free.app/fapanese/api/auth/reset-password",
+        // "http://localhost:8080/fapanese/api/auth/reset-password",
         { email, otp, newPassword }
       );
       setSuccess("Đặt lại mật khẩu thành công 🎉");
@@ -109,7 +109,7 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({
         {/* Email */}
         <div className="mb-4">
           <label className="block text-gray-600 font-medium mb-1">
-            Email<span className="text-red-600">*</span>
+            Email<span className="text-amber-600">*</span>
           </label>
           <div className={inputWrapper}>
             <HiOutlineMail />

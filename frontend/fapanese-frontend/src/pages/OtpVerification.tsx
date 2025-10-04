@@ -10,7 +10,7 @@ interface OtpVerificationProps {
 
 const OtpVerification: React.FC<OtpVerificationProps> = ({ email, mode }) => {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
-  const [timeLeft, setTimeLeft] = useState(270); // 4 phút 30 giây
+  const [timeLeft, setTimeLeft] = useState(300); // 4 phút 30 giây -> thành 5p
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const inputs = useRef<Array<HTMLInputElement | null>>([]);

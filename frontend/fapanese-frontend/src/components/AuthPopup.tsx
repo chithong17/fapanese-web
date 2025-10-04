@@ -60,7 +60,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
     try {
       const response = await axios.post(
-        "https://250d13769941.ngrok-free.app/fapanese/api/auth/login",
+        "https://380a31be1f4f.ngrok-free.app/fapanese/api/auth/login",
         { email: loginEmail, password: loginPassword },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -106,7 +106,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
     try {
       const response = await axios.post(
-        "https://250d13769941.ngrok-free.app/fapanese/api/users/register",
+        "https://380a31be1f4f.ngrok-free.app/fapanese/api/users/register",
         userData
       );
 

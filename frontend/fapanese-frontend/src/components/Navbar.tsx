@@ -5,14 +5,12 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import {
   AiOutlineBook,
   AiOutlineDashboard,
-  AiOutlineQuestionCircle,
   AiOutlineEdit,
 } from "react-icons/ai";
-import { MdLogin, MdLogout, MdPersonAdd } from "react-icons/md";
+import { MdLogout } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/logo.png";
 import logouser from "../assets/logouser.png";
-import axios from "axios";
 
 interface NavbarProps {
   scrollToSection: (id: string, tab?: "hiragana" | "katakana") => void;
@@ -24,7 +22,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // State lưu email user
+  // Lưu email user
   const [user, setUser] = useState<string | null>(
     localStorage.getItem("email") || null
   );
@@ -32,11 +30,15 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
   // Lắng nghe login/logout
   useEffect(() => {
     const handleLogin = () => setUser(localStorage.getItem("email"));
+    const handleLogout = () => setUser(null);
+
     window.addEventListener("loginSuccess", handleLogin);
-    window.addEventListener("storage", handleLogin); // cho các tab khác
+    window.addEventListener("logoutSuccess", handleLogout);
+    window.addEventListener("storage", handleLogin); // đồng bộ tab khác
 
     return () => {
       window.removeEventListener("loginSuccess", handleLogin);
+      window.removeEventListener("logoutSuccess", handleLogout);
       window.removeEventListener("storage", handleLogin);
     };
   }, []);
@@ -49,37 +51,16 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
     { name: "GÓC CHIA SẺ", link: "/" },
   ];
 
-  const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Bạn chưa đăng nhập!");
-        return;
-      }
-
-      await axios.post(
-        "https://250d13769941.ngrok-free.app/fapanese/api/auth/logout",
-        { token },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      localStorage.removeItem("token");
-      localStorage.removeItem("email");
-      window.dispatchEvent(new Event("loginSuccess"));
-      alert("Đăng xuất thành công!");
-      window.location.reload();
-    } catch (err: any) {
-      console.error("Lỗi logout:", err.response || err);
-      alert("Có lỗi khi đăng xuất!");
-    }
+  // ✅ Logout: chỉ cần xóa token/email + phát event
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+    window.dispatchEvent(new Event("logoutSuccess"));
+    alert("Đăng xuất thành công!");
+    window.location.reload();
   };
 
-  // Menu user dựa trên trạng thái đăng nhập
+  // Menu user sau khi login
   const userMenuItems = user
     ? [
         {
@@ -99,7 +80,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
         },
         { name: "Đăng Xuất", icon: <MdLogout />, action: handleLogout },
       ]
-    : []; // chưa login thì không có menu
+    : [];
 
   return (
     <nav className="bg-white shadow-lg fixed top-0 left-0 right-0 z-[2000] backdrop-blur-sm">
@@ -207,21 +188,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
             ) : (
               <button
                 onClick={() => onAuthClick("login")}
-                className="
-    bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] 
-    text-white 
-    py-2 px-5 
-    rounded-4xl 
-    font-bold `
-    shadow-md 
-    transform 
-    transition 
-    duration-300 
-    hover:scale-105 
-    hover:shadow-xl 
-    hover:opacity-90
-    mr-20
-  "
+                className="bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white py-2 px-5 rounded-4xl font-bold shadow-md transform transition duration-300 hover:scale-105 hover:shadow-xl hover:opacity-90 mr-20"
               >
                 Đăng Nhập
               </button>

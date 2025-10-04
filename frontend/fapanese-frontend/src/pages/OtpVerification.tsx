@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mail } from "lucide-react";
 import axios from "axios";
+import ResetPassword from "./ResetPassword";
 
 
 interface OtpVerificationProps {
@@ -50,8 +51,8 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, mode }) => {
     try {
       setError(null);
       const response = await axios.post(
-        "http://localhost:8080/fapanese/api/auth/verify-otp",
-      //  "https://a252c7297f36.ngrok-free.app/fapanese/api/auth/verify-otp",
+        // "http://localhost:8080/fapanese/api/auth/verify-otp",
+       "https://a252c7297f36.ngrok-free.app/fapanese/api/auth/verify-otp",
         { email, otp: code, mode }
       );
 
@@ -127,6 +128,7 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, mode }) => {
         >
           Xác thực
         </motion.button>
+        <ResetPassword/>
 
         <button className="mt-4 text-sm font-medium text-gray-400 cursor-not-allowed">
           Gửi lại OTP

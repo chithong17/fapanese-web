@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -49,5 +50,11 @@ public class UserController {
         return ApiResponse.<UserResponse>builder()
                 .result(userResponse)
                 .build();
+    }
+
+    @DeleteMapping("/{email}")
+    public ResponseEntity<String> deleteUserByEmail(@PathVariable String email) {
+        userService.deleteUserByEmail(email);
+        return ResponseEntity.ok("User with email " + email + " has been deleted.");
     }
 }

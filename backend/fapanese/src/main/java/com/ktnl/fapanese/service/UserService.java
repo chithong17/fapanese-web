@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,10 +46,17 @@ public class UserService {
 
     public UserResponse registerUser(UserRequest userRequest) {
         log.info("Register request payload: {}", userRequest);
+        Optional<User> existingUserOpt  = userRepo.findByEmail(userRequest.getEmail());
 
-
-        if(userRepo.existsByEmail(userRequest.getEmail())) {
-            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        if(existingUserOpt.isPresent()) {
+            User existingUser = existingUserOpt.get();
+            if (existingUser.isActive()) {
+                // User đã active → lỗi
+                throw new AppException(ErrorCode.EMAIL_EXISTED);
+            } else {
+                // User chưa active → xóa và tạo lại
+                userRepo.delete(existingUser);
+            }
         }
 
         // 1. Chuẩn bị đối tượng User trong bộ nhớ

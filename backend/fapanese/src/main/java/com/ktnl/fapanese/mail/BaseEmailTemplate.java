@@ -7,7 +7,7 @@ public abstract class BaseEmailTemplate implements EmailTemplate {
     @Override
     public String getContent(String... args) {
         return """
-                <!DOCTYPE html>
+                                <!DOCTYPE html>
                 <html lang="vi">
                 <head>
                     <meta charset="UTF-8">
@@ -32,7 +32,7 @@ public abstract class BaseEmailTemplate implements EmailTemplate {
                             text-align: center;
                         }
                         .header img {
-                            max-height: 60px;
+                            max-height: 80px; /* tăng size logo header */
                             display: block;
                             margin: 0 auto;
                         }
@@ -64,37 +64,84 @@ public abstract class BaseEmailTemplate implements EmailTemplate {
                             background-color: #ffb300;
                         }
                         .footer {
-                            font-size: 12px;
-                            color: #777777;
-                            padding: 15px;
-                            text-align: center;
-                            background: #f1f3f5;
+                            font-size: 13px;
+                            color: #555;
+                            padding: 30px;
+                            background: #f9fafb;
+                            text-align: left;
                         }
-                        .footer img {
-                            height: 16px;
+                        .footer h3 {
+                            font-size: 15px;
+                            margin-bottom: 10px;
+                            color: #222;
+                        }
+                        .footer a {
+                            color: #14a5a5;
+                            text-decoration: none;
+                            font-size: 13px;
+                        }
+                        .footer a:hover {
+                            text-decoration: underline;
+                        }
+                        .footer-section {
+                            display: inline-block;
+                            vertical-align: top;
+                            width: 45%;
+                            margin: 10px 2%;
+                        }
+                        .social-icons img {
+                            height: 32px; /* tăng size icon */
+                            width: 32px;
+                            margin-right: 10px;
                             vertical-align: middle;
-                            margin: 0 3px;
+                        }
+                        .bottom-footer {
+                            text-align: center;
+                            font-size: 12px;
+                            color: #777;
+                            margin-top: 20px;
                         }
                     </style>
                 </head>
                 <body>
                     <div class="container">
                         <div class="header">
-                            <img src="https://i.ibb.co/3shCwzp/fapanese-logo.png" alt="Fapanese Logo">
+                            <img src="https://i.postimg.cc/137kGVqd/logo2.png" alt="Fapanese Logo">
                         </div>
                         <div class="content">
                             %s
                         </div>
                         <div class="footer">
-                            &copy; 2025 Fapanese. All rights reserved.<br>
-                            Made with ❤️ Việt Nam & Nhật Bản <br>
-                            <img src="https://en.wikipedia.org/wiki/File:Flag_of_Japan.svg" alt="VN Flag">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Vietnam.svg" alt="JP Flag"><br>
-                            Đây là email tự động, vui lòng không trả lời.
+                            <div class="footer-section">
+                                <img src="https://i.postimg.cc/137kGVqd/logo2.png" alt="Fapanese Logo" style="height:70px; margin-bottom:10px;">
+                                <p style="font-size:13px; color:#555;">
+                                    Học tiếng Nhật thông minh với AI.<br>
+                                    Lộ trình học tối ưu, dễ hiểu và hiệu quả.
+                                </p>
+                                <p style="font-size:12px; color:#888;">© 2025 Fapanese. All rights reserved.</p>
+                            </div>
+
+                            <div class="footer-section">
+                                <h3>Liên hệ</h3>
+                                <p>Email: fapanese.edu@gmail.com</p>
+                                <p>Hotline: +84 123 456 789</p>
+                                <div class="social-icons">
+                                    <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"></a>
+                                    <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter"></a>
+                                    <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram"></a>
+                                    <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn"></a>
+                                </div>
+                            </div>
+
+                            <div class="bottom-footer">
+                                Designed with ❤️ by Fapanese Team
+                            </div>
                         </div>
                     </div>
                 </body>
                 </html>
-                """.formatted(renderBody(args));
+
+                                """
+                .formatted(renderBody(args));
     }
 }

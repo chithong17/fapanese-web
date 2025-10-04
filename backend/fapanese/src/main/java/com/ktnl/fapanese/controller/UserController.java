@@ -4,6 +4,7 @@ import com.ktnl.fapanese.dto.request.UserRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.service.UserService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,7 +21,7 @@ public class UserController {
     @Autowired
     private UserService userService;
     @PostMapping("/register")
-    public ApiResponse<UserResponse> register(@RequestBody UserRequest request){
+    public ApiResponse<UserResponse> register(@Valid @RequestBody UserRequest request){
         log.info("Register request: {}", request);
 
         var result = userService.registerUser(request);

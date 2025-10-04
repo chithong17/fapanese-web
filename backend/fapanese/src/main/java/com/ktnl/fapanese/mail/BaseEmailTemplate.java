@@ -95,6 +95,7 @@ public abstract class BaseEmailTemplate implements EmailTemplate {
                     </div>
                 </body>
                 </html>
-                """.formatted(renderBody(args));
+                """
+                .formatted(renderBody(args));
     }
 }

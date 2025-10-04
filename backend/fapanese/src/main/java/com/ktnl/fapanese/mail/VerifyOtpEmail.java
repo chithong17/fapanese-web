@@ -1,6 +1,6 @@
 package com.ktnl.fapanese.mail;
 
-public class VerifyOtpEmail extends BaseEmailTemplate{
+public class VerifyOtpEmail extends BaseEmailTemplate {
     @Override
     public String getSubject() {
         return "Xác thực tài khoản - Mã OTP";

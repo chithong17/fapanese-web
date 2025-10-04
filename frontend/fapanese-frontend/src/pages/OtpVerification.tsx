@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Mail } from "lucide-react";
 import axios from "axios";
 
+
 interface OtpVerificationProps {
   email: string;
   mode: "register" | "forgotPassword";

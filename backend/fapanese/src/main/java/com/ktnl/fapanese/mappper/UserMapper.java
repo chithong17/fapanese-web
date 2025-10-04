@@ -31,11 +31,11 @@ public interface UserMapper {
 
 
     @Mapping(
-            expression = "java(user.getStudent() != null ? user.getStudent().getfirstName() : (user.getTeacher() != null ? user.getTeacher().getFirstname() : null))",
+            expression = "java(user.getStudent() != null ? user.getStudent().getFirstname() : (user.getTeacher() != null ? user.getTeacher().getFirstname() : null))",
             target = "firstname"
     )
     @Mapping(
-            expression = "java(user.getStudent() != null ? user.getStudent().getlastName() : (user.getTeacher() != null ? user.getTeacher().getLastname() : null))",
+            expression = "java(user.getStudent() != null ? user.getStudent().getLastname() : (user.getTeacher() != null ? user.getTeacher().getLastname() : null))",
             target = "lastname"
     )
     @Mapping(

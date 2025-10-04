@@ -10,7 +10,6 @@ import {
 import Footer from "../components/Footer";
 import AboutUsBanner from "../assets/abub.jpg";
 import AboutUsSide from "../assets/aboutside2.jpg";
-import ResetPassword from "./ResetPassword";
 
 
 const technologies = [
@@ -158,7 +157,6 @@ const AboutUs: React.FC = () => {
           </div>
         </div>
       </section>
-      <ResetPassword></ResetPassword>
     
 
 

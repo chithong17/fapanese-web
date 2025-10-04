@@ -1,12 +1,7 @@
-// Navbar.tsx
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
-import {
-  AiOutlineBook,
-  AiOutlineDashboard,
-  AiOutlineEdit,
-} from "react-icons/ai";
+import { AiOutlineBook, AiOutlineDashboard, AiOutlineEdit } from "react-icons/ai";
 import { MdLogout } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/logo.png";
@@ -15,27 +10,27 @@ import logouser from "../assets/logouser.png";
 interface NavbarProps {
   scrollToSection: (id: string, tab?: "hiragana" | "katakana") => void;
   onAuthClick: (tab: "login" | "signup") => void;
+  userDropdownOpen: boolean;
+  setUserDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
+const Navbar: React.FC<NavbarProps> = ({
+  scrollToSection,
+  onAuthClick,
+  userDropdownOpen,
+  setUserDropdownOpen,
+}) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Lưu email user
-  const [user, setUser] = useState<string | null>(
-    localStorage.getItem("email") || null
-  );
+  const [user, setUser] = useState<string | null>(localStorage.getItem("email") || null);
 
-  // Lắng nghe login/logout
   useEffect(() => {
     const handleLogin = () => setUser(localStorage.getItem("email"));
     const handleLogout = () => setUser(null);
-
     window.addEventListener("loginSuccess", handleLogin);
     window.addEventListener("logoutSuccess", handleLogout);
-    window.addEventListener("storage", handleLogin); // đồng bộ tab khác
-
+    window.addEventListener("storage", handleLogin);
     return () => {
       window.removeEventListener("loginSuccess", handleLogin);
       window.removeEventListener("logoutSuccess", handleLogout);
@@ -51,7 +46,6 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
     { name: "GÓC CHIA SẺ", link: "/" },
   ];
 
-  // ✅ Logout: chỉ cần xóa token/email + phát event
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
@@ -60,24 +54,11 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
     window.location.reload();
   };
 
-  // Menu user sau khi login
   const userMenuItems = user
     ? [
-        {
-          name: "Khóa Học",
-          icon: <AiOutlineBook />,
-          action: () => console.log("Go to courses"),
-        },
-        {
-          name: "Dashboard",
-          icon: <AiOutlineDashboard />,
-          action: () => console.log("Go to dashboard"),
-        },
-        {
-          name: "Edit Profile",
-          icon: <AiOutlineEdit />,
-          action: () => console.log("Go to edit profile"),
-        },
+        { name: "Khóa Học", icon: <AiOutlineBook />, action: () => console.log("Go to courses") },
+        { name: "Dashboard", icon: <AiOutlineDashboard />, action: () => console.log("Go to dashboard") },
+        { name: "Edit Profile", icon: <AiOutlineEdit />, action: () => console.log("Go to edit profile") },
         { name: "Đăng Xuất", icon: <MdLogout />, action: handleLogout },
       ]
     : [];
@@ -89,11 +70,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
           {/* Logo */}
           <div className="flex-shrink-0 -ml-15">
             <a href="/" className="flex items-center h-12">
-              <img
-                src={logo}
-                alt="Fapanese Logo"
-                className="w-40 h-40 object-contain"
-              />
+              <img src={logo} alt="Fapanese Logo" className="w-40 h-40 object-contain" />
             </a>
           </div>
 
@@ -101,11 +78,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
           <div className="hidden md:flex flex-grow justify-center">
             <div className="flex space-x-12 items-center">
               {menuItems.map((item, idx) => (
-                <a
-                  key={idx}
-                  href={item.link}
-                  className="text-gray-800 font-bold relative group transition-all"
-                >
+                <a key={idx} href={item.link} className="text-gray-800 font-bold relative group transition-all">
                   <span className="group-hover:bg-gradient-to-r group-hover:from-[#80D9E6] group-hover:to-[#A4EBF2] group-hover:bg-clip-text group-hover:text-transparent transition-colors">
                     {item.name}
                   </span>
@@ -172,10 +145,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
                   className="p-1 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                 >
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
+                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                     <img src={logouser} className="h-10 " />
                   </motion.div>
                 </div>

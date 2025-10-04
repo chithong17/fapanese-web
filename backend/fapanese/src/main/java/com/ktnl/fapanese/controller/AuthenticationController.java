@@ -61,7 +61,7 @@ public class AuthenticationController {
 
     @PostMapping("/send-otp")
     public ApiResponse<EmailResponse> sendOtp(@RequestBody OtpRequest request) {
-        var result = otpTokenService.generateAndSendOtp(request.getEmail(), new VerifyOtpEmail(), "Người dùng");
+        var result = otpTokenService.generateAndSendOtp(request.getEmail(), new VerifyOtpEmail());
 
         return ApiResponse.<EmailResponse>builder()
                 .result(result)
@@ -82,7 +82,8 @@ public class AuthenticationController {
 
     @PostMapping("/forgot-password")
     public ApiResponse<EmailResponse> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-        var result = otpTokenService.generateAndSendOtp(request.getEmail(), new ForgotPasswordEmail(), "Người dùng");
+        var result = otpTokenService.generateAndSendOtp(request.getEmail(), new ForgotPasswordEmail(), request.getEmail());
+
         return ApiResponse.<EmailResponse>builder()
                 .result(result)
                 .build();

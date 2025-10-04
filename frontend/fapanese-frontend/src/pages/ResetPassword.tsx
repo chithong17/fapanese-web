@@ -109,7 +109,7 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({
         {/* Email */}
         <div className="mb-4">
           <label className="block text-gray-600 font-medium mb-1">
-            Email<span className="text-amber-600">*</span>
+            Email<span className="text-red-600">*</span>
           </label>
           <div className={inputWrapper}>
             <HiOutlineMail />

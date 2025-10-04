@@ -16,10 +16,11 @@ import java.time.LocalDate;
 @Entity
 public class Lecturer {
     @Id
-    private String id;
-    private String firstName;
-    private String lastName;
-    private String expertise;
+    String id;
+    String firstName;
+    String lastName;
+    String expertise;
+    String avtUrl;
     @Column(columnDefinition = "TEXT")
     private String bio;
     @JsonFormat(pattern = "yyyy-MM-dd")

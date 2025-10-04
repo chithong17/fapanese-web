@@ -65,8 +65,14 @@ public class AuthenticationService {
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        if(!user.isActive())
+        if(user.getStatus() == 0)
+            throw new AppException(ErrorCode.USER_NOT_VERIFY_EMAIL);
+
+        if(user.getStatus() == 1)
             throw new AppException(ErrorCode.USER_NOT_ISACTIVED);
+
+        if(user.getStatus() == 2)
+            throw new AppException(ErrorCode.USER_NEED_ADMIN_APPROVAL);
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 

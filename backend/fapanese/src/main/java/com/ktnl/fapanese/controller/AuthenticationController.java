@@ -73,11 +73,17 @@ public class AuthenticationController {
         var result = otpTokenService.verifyOtp(request.getEmail(), request.getOtp());
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        user.setActive(true);
+
+        if(user.getTeacher() != null)
+            user.setStatus(2);
+        else if(user.getStudent() != null)
+            user.setStatus(3);
+
         userRepository.save(user);
         return ApiResponse.<VerifyOtpResponse>builder()
                 .result(result)
                 .build();
+
     }
 
     @PostMapping("/forgot-password")
@@ -100,7 +106,7 @@ public class AuthenticationController {
 
             var response = VerifyOtpResponse.builder()
                     .isSuccess(true)
-                    .to(request.getEmail())
+                    .email(request.getEmail())
                     .message("Mật khẩu đã được đặt lại thành công!")
                     .build();
 
@@ -111,7 +117,7 @@ public class AuthenticationController {
         } catch (AppException ex) {
             var response = VerifyOtpResponse.builder()
                     .isSuccess(false)
-                    .to(request.getEmail())
+                    .email(request.getEmail())
                     .message(ex.getMessage())
                     .build();
 

@@ -6,7 +6,10 @@ import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.AuthenticationResponse;
 import com.ktnl.fapanese.dto.response.EmailResponse;
 import com.ktnl.fapanese.dto.response.VerifyOtpResponse;
+import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.exception.AppException;
+import com.ktnl.fapanese.exception.ErrorCode;
+import com.ktnl.fapanese.repository.UserRepository;
 import com.ktnl.fapanese.service.AuthenticationService;
 import com.ktnl.fapanese.service.OtpTokenService;
 import com.nimbusds.jose.JOSEException;
@@ -29,6 +32,7 @@ import java.text.ParseException;
 public class AuthenticationController {
     AuthenticationService authenticationService;
     OtpTokenService  otpTokenService;
+    UserRepository userRepository;
 
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest request){
@@ -65,7 +69,10 @@ public class AuthenticationController {
     @PostMapping("/verify-otp")
     public ApiResponse<VerifyOtpResponse> verifyOtp(@RequestBody OtpVerifyRequest request) {
         var result = otpTokenService.verifyOtp(request.getEmail(), request.getOtp());
-
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        user.setActive(true);
+        userRepository.save(user);
         return ApiResponse.<VerifyOtpResponse>builder()
                 .result(result)
                 .build();

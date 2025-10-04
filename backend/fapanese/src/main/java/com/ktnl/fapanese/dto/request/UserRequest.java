@@ -19,7 +19,6 @@ public class UserRequest {
     private String lastName;
     private String expertise;
     private String bio;
-    @JsonFormat(pattern = "dd/MM/yyyy")
     private String dateOfBirth;
     private String campus;
 }

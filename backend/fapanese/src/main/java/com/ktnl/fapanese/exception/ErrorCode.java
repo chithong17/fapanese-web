@@ -13,7 +13,8 @@ public enum ErrorCode {
     EMAIL_SENDER(1003, "Send email failed", HttpStatus.INTERNAL_SERVER_ERROR),
     OTP_NOT_EXISTED(1004, "OTP is not existed", HttpStatus.NOT_FOUND),
     OTP_INVALID(1005, "OTP is invalid or expiry", HttpStatus.BAD_REQUEST),
-    USER_NOT_ISACTIVED(1006, "User is not actived", HttpStatus.FORBIDDEN)
+    USER_NOT_ISACTIVED(1006, "User is not actived", HttpStatus.FORBIDDEN),
+    ROLE_NOT_FOUND(1007, "Role not found", HttpStatus.NOT_FOUND)
     ;
     private int code;
     private String message;

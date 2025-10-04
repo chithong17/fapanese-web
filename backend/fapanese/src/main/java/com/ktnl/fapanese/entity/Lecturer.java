@@ -17,10 +17,8 @@ import java.time.LocalDate;
 public class Lecturer {
     @Id
     private String id;
-    @Column(name = "first_name")
-    String firstname;
-    @Column(name = "last_name")
-    String lastname;
+    private String firstName;
+    private String lastName;
     private String expertise;
     @Column(columnDefinition = "TEXT")
     private String bio;

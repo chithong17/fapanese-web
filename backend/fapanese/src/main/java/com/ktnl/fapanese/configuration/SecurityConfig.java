@@ -26,14 +26,20 @@ import java.util.Collections;
 @EnableMethodSecurity
 public class SecurityConfig {
     // Đảm bảo endpoint này chính xác
-    private final String[] PUBLIC_POST_ENDPOINT = {"/api/auth/login", "/api/users/register", "/api/auth/send-otp", "/api/auth/verify-otp", "/api/auth/forgot-password", "/api/auth/reset-password"};
+    private final String[] PUBLIC_POST_ENDPOINT = {
+            "/api/auth/login",
+            "/api/users/register",
+            "/api/auth/send-otp",
+            "/api/auth/verify-otp",
+            "/api/auth/forgot-password",
+            "/api/auth/reset-password"};
 
     private final String[] SWAGGER_WHITELIST  = {
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/swagger-ui.html",
             "/v3/api-docs.yaml",
-            "/api/test-mail"
+            "/api/test-mail",
     };
 
     @Autowired
@@ -46,10 +52,10 @@ public class SecurityConfig {
                         // THÊM DÒNG NÀY ĐỂ GIẢI QUYẾT LỖI CORS PREFLIGHT
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").permitAll()
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .anyRequest().authenticated()
         );
-
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer ->
                                 jwtConfigurer.decoder(customJwtDecoder)

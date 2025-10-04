@@ -3,7 +3,7 @@ import axios from "axios";
 
 // const API_URL = "http://localhost:8080/fapanese/api";
 
-const API_URL = "https://7a85ec43c9f4.ngrok-free.app/fapanese/api";
+const API_URL = "https://250d13769941.ngrok-free.app/fapanese/api";
 
 
 const handleResponse = async (res: Response) => {
@@ -43,14 +43,18 @@ export const signup = async (userData: any) => {
 // Hàm xử lý đăng nhập - dành cho grok
 export const login = async (email: string, password: string) => {
   try {
-    const response = await axios.post(
-      `${API_URL}/auth/login`,
-      { email, password },
-      { headers: { "Content-Type": "application/json" } }
-    );
+    const response = await axios.post(`${API_URL}/auth/login`, { email, password }, {
+      headers: { "Content-Type": "application/json" },
+    });
 
     if (response.data?.result?.authenticated) {
+      // Lưu token và email
       localStorage.setItem("token", response.data.result.token);
+      localStorage.setItem("email", email);
+
+      // Phát sự kiện để Navbar biết
+      window.dispatchEvent(new Event("loginSuccess"));
+
       return response.data;
     } else {
       throw new Error("Đăng nhập thất bại");
@@ -60,6 +64,8 @@ export const login = async (email: string, password: string) => {
     throw err;
   }
 };
+
+
 
 
 

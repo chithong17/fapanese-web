@@ -15,9 +15,9 @@ public class UserResponse {
     private String id;
     private String email;
     private String role;
-    private String firstname;
-    private String lastname;
     private LocalDate dob;
+    private String firstName;
+    private String lastName;
     // student specific
     private String campus;
     // lecturer specific

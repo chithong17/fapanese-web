@@ -11,6 +11,7 @@ import Footer from "../components/Footer";
 import AboutUsBanner from "../assets/abub.jpg";
 import AboutUsSide from "../assets/aboutside2.jpg";
 
+
 const technologies = [
   { icon: <FaReact />, name: "React", color: "text-blue-400" },
   { icon: <SiTypescript />, name: "TypeScript", color: "text-blue-600" },
@@ -154,6 +155,8 @@ const AboutUs: React.FC = () => {
           </div>
         </div>
       </section>
+    
+
 
       <Footer />
 

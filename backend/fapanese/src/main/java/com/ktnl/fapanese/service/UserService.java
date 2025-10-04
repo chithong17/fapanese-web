@@ -13,6 +13,7 @@ import com.ktnl.fapanese.repository.LecturerRepository;
 import com.ktnl.fapanese.repository.RoleRepository;
 import com.ktnl.fapanese.repository.StudentRepository;
 import com.ktnl.fapanese.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -146,7 +147,7 @@ public class UserService {
                 student.setFirstName(userRequest.getFirstName());
                 student.setLastName(userRequest.getLastName());
                 student.setCampus(userRequest.getCampus());
-                student.setDateOfBirth(LocalDate.parse(userRequest.getDateOfBirth()));
+                student.setDateOfBirth(userRequest.getDateOfBirth());
             }
         }
 
@@ -165,7 +166,7 @@ public class UserService {
                 lecturer.setLastName(userRequest.getLastName());
                 lecturer.setBio(userRequest.getBio());
                 lecturer.setExpertise(userRequest.getExpertise());
-                lecturer.setDateOfBirth(LocalDate.parse(userRequest.getDateOfBirth())); // hoặc dùng parse an toàn
+                lecturer.setDateOfBirth(userRequest.getDateOfBirth()); // hoặc dùng parse an toàn
             }
         }
 

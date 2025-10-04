@@ -41,6 +41,5 @@ public class UserRequest {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
-    @NotBlank(message = "Campus is required") // map -> ErrorCode.CAMPUS_REQUIRED
     private String campus;
 }

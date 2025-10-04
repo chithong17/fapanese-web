@@ -3,6 +3,7 @@ import { FaGithub, FaGoogle, FaLinkedin } from "react-icons/fa";
 import logo from "../assets/logologin.png";
 import WelcomeLogo from "../assets/welcomeLog.jpg";
 import axios from "axios";
+import OtpVerification from "../pages/OtpVerification";
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -38,9 +39,8 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
   const [bio, setBio] = useState("");
 
   //otp state
-  const [step, setStep] = useState<"login" | "signup" | "otp">("login");
+  const [step, setStep] = useState<"login" | "signup" | "otp">(initialTab);
   const [otpEmail, setOtpEmail] = useState("");
-  const [otp, setOtp] = useState("");
 
   // --- Handle animation mở/đóng popup ---
   useEffect(() => {
@@ -56,6 +56,17 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
       setTimeout(() => setShow(false), 300);
     }
   }, [isOpen]);
+
+  //swtich to login after otp verified
+  useEffect(() => {
+    const handleSwitch = () => {
+      setStep("login"); // quay lại step login
+      setActiveTab("login"); // hiển thị tab login
+    };
+
+    window.addEventListener("switchToLogin", handleSwitch);
+    return () => window.removeEventListener("switchToLogin", handleSwitch);
+  }, []);
 
   // --- Login API ---
   const handleLogin = async (e: React.FormEvent) => {
@@ -123,8 +134,10 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
         { email: signupEmail }
       );
 
-      alert("Đăng ký thành công! Hãy thử đăng nhập.");
-      setActiveTab("login"); // mo popup nhap otp
+      setStep("otp");
+      setOtpEmail(signupEmail);
+      alert("Đăng ký thành công! Vui lòng kiểm tra email để xác thực.");
+
       setFirstName("");
       setLastName("");
       setSignupEmail("");
@@ -165,229 +178,241 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
           ✕
         </button>
 
-        {/* Tabs */}
-        <div className="flex justify-between items-center px-10 border-b bg-gray-50">
-          <img src={logo} alt="" className="h-40 w-auto -my-7" />
-          <div className="flex gap-4">
-            <button
-              onClick={() => setActiveTab("login")}
-              className={`px-6 py-2 font-semibold rounded-xl transition ${
-                activeTab === "login"
-                  ? "bg-black text-white shadow"
-                  : "bg-white text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              Login
-            </button>
-            <button
-              onClick={() => setActiveTab("signup")}
-              className={`px-6 py-2 font-semibold rounded-xl transition ${
-                activeTab === "signup"
-                  ? "bg-black text-white shadow"
-                  : "bg-white text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              Sign Up
-            </button>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div
-          className="flex w-[200%] transition-transform duration-700 ease-in-out"
-          style={{
-            transform:
-              activeTab === "login" ? "translateX(0%)" : "translateX(-50%)",
-          }}
-        >
-          {/* LOGIN SIDE */}
-          <div className="w-1/2 flex flex-col items-center justify-center p-10 ml-10 ">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 mr">
-              Đăng nhập
-            </h2>
-            <p className="text-gray-500 mb-6">Chào mừng quay lại Fapanese</p>
-
-            <div className="flex flex-col gap-3 mb-6 w-full max-w-sm">
-              <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
-                <FaGithub /> Continue with GitHub
-              </button>
-              <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
-                <FaGoogle /> Continue with Google
-              </button>
-              <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
-                <FaLinkedin /> Continue with LinkedIn
-              </button>
+        {/* === OTP check start === */}
+        {step === "otp" ? (
+          <OtpVerification email={otpEmail} mode="register" />
+        ) : (
+          <>
+            {/* Tabs */}
+            <div className="flex justify-between items-center px-10 border-b bg-gray-50">
+              <img src={logo} alt="" className="h-40 w-auto -my-7" />
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setActiveTab("login")}
+                  className={`px-6 py-2 font-semibold rounded-xl transition ${
+                    activeTab === "login"
+                      ? "bg-black text-white shadow"
+                      : "bg-white text-gray-600 hover:bg-gray-100"
+                  }`}
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => setActiveTab("signup")}
+                  className={`px-6 py-2 font-semibold rounded-xl transition ${
+                    activeTab === "signup"
+                      ? "bg-black text-white shadow"
+                      : "bg-white text-gray-600 hover:bg-gray-100"
+                  }`}
+                >
+                  Sign Up
+                </button>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2 mb-6 text-gray-400 w-full max-w-sm">
-              <div className="flex-1 h-px bg-gray-300"></div>
-              <span>OR</span>
-              <div className="flex-1 h-px bg-gray-300"></div>
-            </div>
-
-            <form
-              onSubmit={handleLogin}
-              className="flex flex-col gap-4 w-full max-w-sm"
+            {/* Content */}
+            <div
+              className="flex w-[200%] transition-transform duration-700 ease-in-out"
+              style={{
+                transform:
+                  activeTab === "login" ? "translateX(0%)" : "translateX(-50%)",
+              }}
             >
-              <input
-                type="email"
-                placeholder="Email"
-                value={loginEmail}
-                onChange={(e) => setLoginEmail(e.target.value)}
-                className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={loginPassword}
-                onChange={(e) => setLoginPassword(e.target.value)}
-                className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
-              />
-              {error && (
-                <div className="text-red-500 text-sm mt-2">{error}</div>
-              )}
-              <button
-                type="submit"
-                className="bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
-                disabled={loading}
-              >
-                {loading ? "Loading..." : "Login"}
-              </button>
-            </form>
-          </div>
+              {/* LOGIN SIDE */}
+              <div className="w-1/2 flex flex-col items-center justify-center p-10 ml-10 ">
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                  Đăng nhập
+                </h2>
+                <p className="text-gray-500 mb-6">
+                  Chào mừng quay lại Fapanese
+                </p>
 
-          {/* LOGIN IMAGE */}
-          <div className="w-1/2 bg-gray-100 flex items-center justify-center mx-17">
-            <img
-              src={WelcomeLogo}
-              alt="login"
-              className="max-w-sm h-155 w-125 rounded-2xl"
-            />
-          </div>
+                <div className="flex flex-col gap-3 mb-6 w-full max-w-sm">
+                  <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
+                    <FaGithub /> Continue with GitHub
+                  </button>
+                  <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
+                    <FaGoogle /> Continue with Google
+                  </button>
+                  <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
+                    <FaLinkedin /> Continue with LinkedIn
+                  </button>
+                </div>
 
-          {/* SIGNUP SIDE */}
-          <div className="w-1/2 flex flex-col items-center justify-center p-10 mr-5">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Đăng ký</h2>
-            <p className="text-gray-500 mb-6">
-              Tạo tài khoản mới để bắt đầu học
-            </p>
+                <div className="flex items-center gap-2 mb-6 text-gray-400 w-full max-w-sm">
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                  <span>OR</span>
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                </div>
 
-            <form
-              onSubmit={handleSignup}
-              className="flex flex-col gap-4 w-full max-w-sm"
-            >
-              <div className="flex gap-3 w-full">
-                <input
-                  type="text"
-                  placeholder="First Name"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                  className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition w-30"
-                />
-                <input
-                  type="text"
-                  placeholder="Last Name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required
-                  className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                <form
+                  onSubmit={handleLogin}
+                  className="flex flex-col gap-4 w-full max-w-sm"
+                >
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                  />
+                  {error && (
+                    <div className="text-red-500 text-sm mt-2">{error}</div>
+                  )}
+                  <button
+                    type="submit"
+                    className="bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
+                    disabled={loading}
+                  >
+                    {loading ? "Loading..." : "Login"}
+                  </button>
+                </form>
+              </div>
+
+              {/* LOGIN IMAGE */}
+              <div className="w-1/2 bg-gray-100 flex items-center justify-center mx-17">
+                <img
+                  src={WelcomeLogo}
+                  alt="login"
+                  className="max-w-sm h-155 w-125 rounded-2xl"
                 />
               </div>
-              <input
-                type="email"
-                placeholder="Email"
-                value={signupEmail}
-                onChange={(e) => setSignupEmail(e.target.value)}
-                className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={signupPassword}
-                onChange={(e) => setSignupPassword(e.target.value)}
-                className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
-              />
-              <input
-                type="password"
-                placeholder="Confirm Password"
-                className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
-              />
 
-              <select
-                className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
-                value={role}
-                onChange={(e) =>
-                  setRole(e.target.value as "student" | "lecturer")
-                }
-              >
-                <option value="student">Student</option>
-                <option value="lecturer">Lecturer</option>
-              </select>
+              {/* SIGNUP SIDE */}
+              <div className="w-1/2 flex flex-col items-center justify-center p-10 mr-5">
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                  Đăng ký
+                </h2>
+                <p className="text-gray-500 mb-6">
+                  Tạo tài khoản mới để bắt đầu học
+                </p>
 
-              {role === "student" && (
-                <>
+                <form
+                  onSubmit={handleSignup}
+                  className="flex flex-col gap-4 w-full max-w-sm"
+                >
+                  <div className="flex gap-3 w-full">
+                    <input
+                      type="text"
+                      placeholder="First Name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
+                      className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition w-30"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Last Name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                      className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                    />
+                  </div>
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={signupEmail}
+                    onChange={(e) => setSignupEmail(e.target.value)}
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    value={signupPassword}
+                    onChange={(e) => setSignupPassword(e.target.value)}
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Confirm Password"
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                  />
+
                   <select
                     className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
-                    value={campus}
-                    onChange={(e) => setCampus(e.target.value)}
+                    value={role}
+                    onChange={(e) =>
+                      setRole(e.target.value as "student" | "lecturer")
+                    }
                   >
-                    <option value="">Select Campus</option>
-                    <option value="Hanoi">Hà Nội</option>
-                    <option value="HCM">TP. Hồ Chí Minh</option>
-                    <option value="Danang">Đà Nẵng</option>
+                    <option value="student">Student</option>
+                    <option value="lecturer">Lecturer</option>
                   </select>
-                  <input
-                    type="date"
-                    value={dob}
-                    onChange={(e) => setDob(e.target.value)}
-                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
-                  />
-                </>
-              )}
 
-              {role === "lecturer" && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Expertise"
-                    value={expertise}
-                    onChange={(e) => setExpertise(e.target.value)}
-                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
-                  />
-                  <textarea
-                    placeholder="Bio"
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
-                  />
-                  <input
-                    type="date"
-                    value={dob}
-                    onChange={(e) => setDob(e.target.value)}
-                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
-                  />
-                </>
-              )}
+                  {role === "student" && (
+                    <>
+                      <select
+                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                        value={campus}
+                        onChange={(e) => setCampus(e.target.value)}
+                      >
+                        <option value="">Select Campus</option>
+                        <option value="Hanoi">Hà Nội</option>
+                        <option value="HCM">TP. Hồ Chí Minh</option>
+                        <option value="Danang">Đà Nẵng</option>
+                      </select>
+                      <input
+                        type="date"
+                        value={dob}
+                        onChange={(e) => setDob(e.target.value)}
+                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                      />
+                    </>
+                  )}
 
-              <button
-                type="submit"
-                className="bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
-              >
-                Sign Up
-              </button>
-            </form>
-          </div>
+                  {role === "lecturer" && (
+                    <>
+                      <input
+                        type="text"
+                        placeholder="Expertise"
+                        value={expertise}
+                        onChange={(e) => setExpertise(e.target.value)}
+                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                      />
+                      <textarea
+                        placeholder="Bio"
+                        value={bio}
+                        onChange={(e) => setBio(e.target.value)}
+                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                      />
+                      <input
+                        type="date"
+                        value={dob}
+                        onChange={(e) => setDob(e.target.value)}
+                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                      />
+                    </>
+                  )}
 
-          {/* SIGNUP IMAGE */}
-          <div className="w-1/2 bg-gray-100 flex items-center justify-center">
-            <img
-              src={WelcomeLogo}
-              alt="signup"
-              className="max-w-sm rounded-2xl h-155 w-125"
-            />
-          </div>
-        </div>
+                  <button
+                    type="submit"
+                    className="bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
+                  >
+                    Sign Up
+                  </button>
+                </form>
+              </div>
+
+              {/* SIGNUP IMAGE */}
+              <div className="w-1/2 bg-gray-100 flex items-center justify-center">
+                <img
+                  src={WelcomeLogo}
+                  alt="signup"
+                  className="max-w-sm rounded-2xl h-155 w-125"
+                />
+              </div>
+            </div>
+          </>
+        )}
+        {/* === OTP check end === */}
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { MdLogout } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/logo.png";
 import logouser from "../assets/logouser.png";
+import LogoutPopup from "./LogoutPopup";
 
 interface NavbarProps {
   scrollToSection: (id: string, tab?: "hiragana" | "katakana") => void;
@@ -22,8 +23,8 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   const [user, setUser] = useState<string | null>(localStorage.getItem("email") || null);
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   useEffect(() => {
     const handleLogin = () => setUser(localStorage.getItem("email"));
@@ -46,12 +47,16 @@ const Navbar: React.FC<NavbarProps> = ({
     { name: "GÓC CHIA SẺ", link: "/" },
   ];
 
-  const handleLogout = () => {
+  // Khi người dùng bấm "Đăng Xuất" → mở popup
+  const handleLogoutClick = () => setLogoutOpen(true);
+
+  // Khi người dùng xác nhận logout trong popup
+  const confirmLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
     window.dispatchEvent(new Event("logoutSuccess"));
-    alert("Đăng xuất thành công!");
-    window.location.reload();
+    setLogoutOpen(false); // đóng popup
+    window.location.reload(); // reload sau logout
   };
 
   const userMenuItems = user
@@ -59,7 +64,7 @@ const Navbar: React.FC<NavbarProps> = ({
         { name: "Khóa Học", icon: <AiOutlineBook />, action: () => console.log("Go to courses") },
         { name: "Dashboard", icon: <AiOutlineDashboard />, action: () => console.log("Go to dashboard") },
         { name: "Edit Profile", icon: <AiOutlineEdit />, action: () => console.log("Go to edit profile") },
-        { name: "Đăng Xuất", icon: <MdLogout />, action: handleLogout },
+        { name: "Đăng Xuất", icon: <MdLogout />, action: handleLogoutClick },
       ]
     : [];
 
@@ -214,6 +219,9 @@ const Navbar: React.FC<NavbarProps> = ({
           </AnimatePresence>,
           document.body
         )}
+
+      {/* Logout popup */}
+      <LogoutPopup isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} onConfirm={confirmLogout} />
     </nav>
   );
 };

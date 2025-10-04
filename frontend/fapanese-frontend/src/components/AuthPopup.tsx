@@ -4,9 +4,7 @@ import logo from "../assets/logologin.png";
 import WelcomeLogo from "../assets/welcomeLog.jpg";
 import axios from "axios";
 import OtpVerification from "../pages/OtpVerification";
-import { Link } from "react-router-dom";
 import ForgotPasswordPopup from "../pages/ResetPassword";
-
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -14,15 +12,14 @@ interface AuthPopupProps {
   initialTab: "login" | "signup";
 }
 
-// Component popup thông báo
-const NotificationModal: React.FC<{
-  message: string;
-  onClose: () => void;
-}> = ({ message, onClose }) => {
+// Notification modal
+const NotificationModal: React.FC<{ message: string; onClose: () => void }> = ({
+  message,
+  onClose,
+}) => {
   return (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white text-black rounded-2xl shadow-2xl p-8 w-[90%] max-w-md transform transition-all duration-300 scale-100 animate-fadeIn">
-        {/* Icon + Title */}
         <div className="flex items-center gap-3 mb-5">
           <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-md">
             <svg
@@ -42,13 +39,7 @@ const NotificationModal: React.FC<{
           </div>
           <h2 className="text-xl font-bold text-gray-800">Thông báo</h2>
         </div>
-
-        {/* Message */}
-        <p className="mb-8 text-gray-600 leading-relaxed text-base">
-          {message}
-        </p>
-
-        {/* Actions */}
+        <p className="mb-8 text-gray-600 leading-relaxed text-base">{message}</p>
         <div className="flex justify-end">
           <button
             onClick={onClose}
@@ -62,24 +53,25 @@ const NotificationModal: React.FC<{
   );
 };
 
-const AuthPopup: React.FC<AuthPopupProps> = ({
-  isOpen,
-  onClose,
-  initialTab,
-}) => {
+const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) => {
   // --- State chung ---
   const [activeTab, setActiveTab] = useState<"login" | "signup">(initialTab);
   const [show, setShow] = useState(isOpen);
   const [animate, setAnimate] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // Notification modal
   const [notifMessage, setNotifMessage] = useState<string | null>(null);
 
-  // AuthPopup.tsx
-const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
+  // OTP & step
+  const [step, setStep] = useState<"login" | "signup" | "otp">(initialTab);
+  const [otpEmail, setOtpEmail] = useState("");
 
+  // email chưa xác thực
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+
+  // Forgot password
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
 
   // --- Login state ---
   const [loginEmail, setLoginEmail] = useState("");
@@ -96,11 +88,7 @@ const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [expertise, setExpertise] = useState("");
   const [bio, setBio] = useState("");
 
-  //otp state
-  const [step, setStep] = useState<"login" | "signup" | "otp">(initialTab);
-  const [otpEmail, setOtpEmail] = useState("");
-
-  // --- Handle animation mở/đóng popup ---
+  // --- Animation open/close ---
   useEffect(() => {
     setActiveTab(initialTab);
   }, [initialTab]);
@@ -115,56 +103,68 @@ const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
     }
   }, [isOpen]);
 
-  //swtich to login after otp verified
+  // --- Switch to login after OTP verified ---
   useEffect(() => {
     const handleSwitch = () => {
-      setStep("login"); // quay lại step login
-      setActiveTab("login"); // hiển thị tab login
+      setStep("login");
+      setActiveTab("login");
     };
-
     window.addEventListener("switchToLogin", handleSwitch);
     return () => window.removeEventListener("switchToLogin", handleSwitch);
   }, []);
 
-  // --- Login API ---
+  // --- Handle notification close ---
+  const handleNotifClose = async () => {
+    setNotifMessage(null);
+    if (unverifiedEmail) {
+      try {
+        await axios.post(
+          "https://30b1e8b2feec.ngrok-free.app/fapanese/api/auth/send-otp",
+          { email: unverifiedEmail }
+        );
+        setStep("otp");
+        setOtpEmail(unverifiedEmail);
+        setUnverifiedEmail(null);
+      } catch (err: any) {
+        console.error("Lỗi gửi OTP:", err.response || err);
+        setNotifMessage(err.response?.data?.message || "Gửi OTP thất bại");
+      }
+    }
+  };
+
+  // --- Login ---
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     try {
       const response = await axios.post(
-        // "https://a252c7297f36.ngrok-free.app/fapanese/api/auth/login",
-        "http://localhost:8080/fapanese/api/auth/login",
-        { email: loginEmail, password: loginPassword },
-        { headers: { "Content-Type": "application/json" } }
+        "https://30b1e8b2feec.ngrok-free.app/fapanese/api/auth/login",
+        { email: loginEmail, password: loginPassword }
       );
 
       if (response.data?.result?.authenticated) {
-        setNotifMessage("Đăng nhập thành công!");
         localStorage.setItem("token", response.data.result.token);
         localStorage.setItem("email", loginEmail);
         window.dispatchEvent(new Event("loginSuccess"));
+        setNotifMessage("Đăng nhập thành công!");
         onClose();
-      } else {
-        setNotifMessage(
-          "Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu."
-        );
       }
     } catch (err: any) {
-      console.error("Lỗi đăng nhập:", err.response || err);
-      setNotifMessage(
-        err.response?.data?.message || "Email hoặc mật khẩu không chính xác."
-      );
+      if (err.response?.data?.code === 1008) {
+        setUnverifiedEmail(loginEmail);
+        setNotifMessage(err.response.data?.message || "Tài khoản chưa xác thực email");
+      } else {
+        setNotifMessage(err.response?.data?.message || "Email hoặc mật khẩu không chính xác.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // --- Signup API ---
+  // --- Signup ---
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     const userData = {
@@ -177,29 +177,23 @@ const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
       ...(role === "student" && { campus }),
       ...(role === "lecturer" && { expertise, bio }),
     };
-    console.log("Payload being sent to backend:", userData);
 
     try {
       await axios.post(
-        // "https://a252c7297f36.ngrok-free.app/fapanese/api/users/register",
-        "http://localhost:8080/fapanese/api/users/register",
+        "https://30b1e8b2feec.ngrok-free.app/fapanese/api/users/register",
         userData
       );
 
       await axios.post(
-        // "https://a252c7297f36.ngrok-free.app/fapanese/api/auth/send-otp",
-        "http://localhost:8080/fapanese/api/auth/send-otp",
-        {
-          email: signupEmail,
-        }
+        "https://30b1e8b2feec.ngrok-free.app/fapanese/api/auth/send-otp",
+        { email: signupEmail }
       );
 
       setStep("otp");
       setOtpEmail(signupEmail);
-      setNotifMessage(
-        "Đăng ký thành công! Vui lòng kiểm tra email để xác thực."
-      );
+      setNotifMessage("Đăng ký thành công! Vui lòng kiểm tra email để xác thực.");
 
+      // Reset form
       setFirstName("");
       setLastName("");
       setSignupEmail("");
@@ -209,11 +203,7 @@ const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
       setExpertise("");
       setBio("");
     } catch (err: any) {
-      console.error("Lỗi đăng ký:", err.response || err);
-      setNotifMessage(
-        err.response?.data?.message ||
-          "Đăng ký thất bại. Kiểm tra lại thông tin."
-      );
+      setNotifMessage(err.response?.data?.message || "Đăng ký thất bại. Kiểm tra lại thông tin.");
     } finally {
       setLoading(false);
     }
@@ -232,7 +222,6 @@ const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
           animate ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
-        {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-800 rounded-full p-1 transition"
@@ -240,7 +229,7 @@ const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
           ✕
         </button>
 
-        {/* === OTP check start === */}
+        {/* === OTP Step === */}
         {step === "otp" ? (
           <OtpVerification email={otpEmail} mode="register" />
         ) : (
@@ -282,18 +271,13 @@ const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
             <div
               className="flex w-[200%] transition-transform duration-700 ease-in-out"
               style={{
-                transform:
-                  activeTab === "login" ? "translateX(0%)" : "translateX(-50%)",
+                transform: activeTab === "login" ? "translateX(0%)" : "translateX(-50%)",
               }}
             >
               {/* LOGIN SIDE */}
-              <div className="w-1/2 flex flex-col items-center justify-center p-10 ml-10 ">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                  Đăng nhập
-                </h2>
-                <p className="text-gray-500 mb-6">
-                  Chào mừng quay lại Fapanese
-                </p>
+              <div className="w-1/2 flex flex-col items-center justify-center p-10 ml-10">
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">Đăng nhập</h2>
+                <p className="text-gray-500 mb-6">Chào mừng quay lại Fapanese</p>
 
                 <div className="flex flex-col gap-3 mb-6 w-full max-w-sm">
                   <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
@@ -313,10 +297,7 @@ const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
                   <div className="flex-1 h-px bg-gray-300"></div>
                 </div>
 
-                <form
-                  onSubmit={handleLogin}
-                  className="flex flex-col gap-4 w-full max-w-sm"
-                >
+                <form onSubmit={handleLogin} className="flex flex-col gap-4 w-full max-w-sm">
                   <input
                     type="email"
                     placeholder="Email"
@@ -352,17 +333,10 @@ const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
 
               {/* SIGNUP SIDE */}
               <div className="w-1/2 flex flex-col items-center justify-center p-10 mr-5">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                  Đăng ký
-                </h2>
-                <p className="text-gray-500 mb-6">
-                  Tạo tài khoản mới để bắt đầu học
-                </p>
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">Đăng ký</h2>
+                <p className="text-gray-500 mb-6">Tạo tài khoản mới để bắt đầu học</p>
 
-                <form
-                  onSubmit={handleSignup}
-                  className="flex flex-col gap-4 w-full max-w-sm"
-                >
+                <form onSubmit={handleSignup} className="flex flex-col gap-4 w-full max-w-sm">
                   <div className="flex gap-3 w-full">
                     <input
                       type="text"
@@ -399,9 +373,7 @@ const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
                   <select
                     className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
                     value={role}
-                    onChange={(e) =>
-                      setRole(e.target.value as "student" | "lecturer")
-                    }
+                    onChange={(e) => setRole(e.target.value as "student" | "lecturer")}
                   >
                     <option value="student">Student</option>
                     <option value="lecturer">Lecturer</option>
@@ -472,17 +444,14 @@ const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
             </div>
           </>
         )}
-        {/* === OTP check end === */}
       </div>
 
       {/* Notification Modal */}
       {notifMessage && (
-        <NotificationModal
-          message={notifMessage}
-          onClose={() => setNotifMessage(null)}
-        />
+        <NotificationModal message={notifMessage} onClose={handleNotifClose} />
       )}
 
+      {/* Forgot Password */}
       <ForgotPasswordPopup
         isOpen={forgotPasswordOpen}
         onClose={() => setForgotPasswordOpen(false)}

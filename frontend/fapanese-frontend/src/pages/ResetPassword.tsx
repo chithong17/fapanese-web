@@ -43,7 +43,7 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({
     try {
       setError(null);
       await axios.post(
-        "https://a252c7297f36.ngrok-free.app/fapanese/api/auth/send-otp",
+        "https://30b1e8b2feec.ngrok-free.app/fapanese/api/auth/send-otp",
         // "http://localhost:8080/fapanese/api/auth/forgot-password",
         { email }
       );
@@ -63,7 +63,7 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({
       setLoading(true);
       setError(null);
       await axios.post(
-        "https://a252c7297f36.ngrok-free.app/fapanese/api/auth/reset-password",
+        "https://30b1e8b2feec.ngrok-free.app/fapanese/api/auth/reset-password",
         // "http://localhost:8080/fapanese/api/auth/reset-password",
         { email, otp, newPassword }
       );
@@ -213,7 +213,10 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           className="mt-4 w-full py-3 rounded-full border border-[#14a5a5] text-[#14a5a5] font-semibold hover:bg-[#14a5a5] hover:text-white transition"
-          onClick={() => window.dispatchEvent(new CustomEvent("switchToLogin"))}
+          onClick={() => {
+            onClose(); // đóng popup quên mật khẩu
+            window.dispatchEvent(new CustomEvent("switchToLogin")); // chuyển tab login
+          }}
         >
           Quay lại đăng nhập
         </motion.button>

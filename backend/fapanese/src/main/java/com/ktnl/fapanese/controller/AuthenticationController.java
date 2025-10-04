@@ -9,6 +9,8 @@ import com.ktnl.fapanese.dto.response.VerifyOtpResponse;
 import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
+import com.ktnl.fapanese.mail.ForgotPasswordEmail;
+import com.ktnl.fapanese.mail.VerifyOtpEmail;
 import com.ktnl.fapanese.repository.UserRepository;
 import com.ktnl.fapanese.service.AuthenticationService;
 import com.ktnl.fapanese.service.OtpTokenService;
@@ -59,7 +61,7 @@ public class AuthenticationController {
 
     @PostMapping("/send-otp")
     public ApiResponse<EmailResponse> sendOtp(@RequestBody OtpRequest request) {
-        var result = otpTokenService.generateAndSendOtp(request.getEmail());
+        var result = otpTokenService.generateAndSendOtp(request.getEmail(), new VerifyOtpEmail(), "Người dùng");
 
         return ApiResponse.<EmailResponse>builder()
                 .result(result)
@@ -76,12 +78,11 @@ public class AuthenticationController {
         return ApiResponse.<VerifyOtpResponse>builder()
                 .result(result)
                 .build();
-
     }
 
     @PostMapping("/forgot-password")
     public ApiResponse<EmailResponse> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-        var result = otpTokenService.generateAndSendOtp(request.getEmail());
+        var result = otpTokenService.generateAndSendOtp(request.getEmail(), new ForgotPasswordEmail(), "Người dùng");
         return ApiResponse.<EmailResponse>builder()
                 .result(result)
                 .build();

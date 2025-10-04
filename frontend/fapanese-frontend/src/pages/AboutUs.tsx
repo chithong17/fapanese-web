@@ -103,6 +103,8 @@ const AboutUs: React.FC = () => {
           </p>
         </div>
 
+
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 max-w-6xl mx-auto px-6">
           {coreValues.map((value, idx) => (
             <div

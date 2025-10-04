@@ -23,7 +23,6 @@ function App() {
   const alphabetRef = useRef<any>(null);
   const [activeTab, setActiveTab] = useState<"hiragana" | "katakana">("hiragana");
 
-
   // Auth popup
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState<"login" | "signup">("login");
@@ -47,10 +46,24 @@ function App() {
   };
 
   const flashcardData = [
-    { title: "Bảng chữ cái", description: "Học Hiragana và Katakana cơ bản với ví dụ và bài tập." },
-    { title: "Ngữ pháp", description: "Tìm hiểu các quy tắc ngữ pháp cơ bản, trợ từ và câu đơn giản." },
-    { title: "Từ vựng", description: "Mở rộng vốn từ qua các chủ đề hằng ngày và tình huống giao tiếp." },
-    { title: "Speaking", description: "Luyện tập phản xạ, phát âm và giao tiếp tự nhiên." },
+    {
+      title: "Bảng chữ cái",
+      description: "Học Hiragana và Katakana cơ bản với ví dụ và bài tập.",
+    },
+    {
+      title: "Ngữ pháp",
+      description:
+        "Tìm hiểu các quy tắc ngữ pháp cơ bản, trợ từ và câu đơn giản.",
+    },
+    {
+      title: "Từ vựng",
+      description:
+        "Mở rộng vốn từ qua các chủ đề hằng ngày và tình huống giao tiếp.",
+    },
+    {
+      title: "Speaking",
+      description: "Luyện tập phản xạ, phát âm và giao tiếp tự nhiên.",
+    },
   ];
 
   return (
@@ -69,8 +82,6 @@ function App() {
         onClose={() => setIsAuthOpen(false)}
         initialTab={authTab}
       />
-      
-      
 
       <Routes>
         {/* Trang chủ */}
@@ -78,9 +89,6 @@ function App() {
           path="/"
           element={
             <main className="relative z-0 overflow-visible">
-
-
-
               <BottomNav scrollToSection={scrollToSection} />
               <HeroBackground />
               <HeroBelow />
@@ -93,7 +101,9 @@ function App() {
                 <div className="max-w-6xl mx-auto px-6">
                   <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">
                     GIỚI THIỆU CHỨC NĂNG FLASHCARDS{" "}
-                    <span className="text-[#80D9E6] font-extrabold">GIÚP BẠN HỌC TẬP HIỆU QUẢ</span>
+                    <span className="text-[#80D9E6] font-extrabold">
+                      GIÚP BẠN HỌC TẬP HIỆU QUẢ
+                    </span>
                   </h2>
                   <Flashcards cards={flashcardData} />
                 </div>
@@ -108,14 +118,13 @@ function App() {
             </main>
           }
         />
-        
 
         {/* Các trang khóa học */}
         <Route path="/courses/JPD113" element={<JPD113 />} />
         <Route path="/courses/JPD123" element={<JPD123 />} />
         <Route path="/courses/JPD133" element={<JPD133 />} />
         <Route path="/dashboard/student" element={<StudentDashboard />} />
-        <Route path="/aboutus" element={<AboutUs/>} />
+        <Route path="/aboutus" element={<AboutUs />} />
       </Routes>
     </Router>
   );

@@ -4,7 +4,9 @@ import logo from "../assets/logologin.png";
 import WelcomeLogo from "../assets/welcomeLog.jpg";
 import axios from "axios";
 import OtpVerification from "../pages/OtpVerification";
-import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
+import ForgotPasswordPopup from "../pages/ResetPassword";
+
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -75,6 +77,10 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
   // Notification modal
   const [notifMessage, setNotifMessage] = useState<string | null>(null);
 
+  // AuthPopup.tsx
+const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
+
+
   // --- Login state ---
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -128,8 +134,8 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
     try {
       const response = await axios.post(
-        // "https://a252c7297f36.ngrok-free.app/fapanese/api/auth/login",
-        "http://localhost:8080/fapanese/api/auth/login",
+        "https://a252c7297f36.ngrok-free.app/fapanese/api/auth/login",
+        // "http://localhost:8080/fapanese/api/auth/login",
         { email: loginEmail, password: loginPassword },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -175,14 +181,17 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
     try {
       await axios.post(
-        // "https://a252c7297f36.ngrok-free.app/fapanese/api/users/register"
-        "http://localhost:8080/fapanese/api/users/register",
+        "https://a252c7297f36.ngrok-free.app/fapanese/api/users/register",
+        // "http://localhost:8080/fapanese/api/users/register",
         userData
       );
 
-      await axios.post("http://localhost:8080/fapanese/api/auth/send-otp", {
-        email: signupEmail,
-      });
+      await axios.post(
+        "https://a252c7297f36.ngrok-free.app/fapanese/api/auth/send-otp",
+        {
+          email: signupEmail,
+        }
+      );
 
       setStep("otp");
       setOtpEmail(signupEmail);
@@ -258,6 +267,12 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                   }`}
                 >
                   Sign Up
+                </button>
+                <button
+                  className="text-black  py-2 px-4 rounded-md shadow hover:bg-gray-600 transition-all"
+                  onClick={() => setForgotPasswordOpen(true)}
+                >
+                  Quên mật khẩu
                 </button>
               </div>
             </div>
@@ -466,6 +481,11 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
           onClose={() => setNotifMessage(null)}
         />
       )}
+
+      <ForgotPasswordPopup
+        isOpen={forgotPasswordOpen}
+        onClose={() => setForgotPasswordOpen(false)}
+      />
     </div>
   );
 };

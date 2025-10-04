@@ -37,6 +37,11 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
   const [expertise, setExpertise] = useState("");
   const [bio, setBio] = useState("");
 
+  //otp state
+  const [step, setStep] = useState<"login" | "signup" | "otp">("login");
+  const [otpEmail, setOtpEmail] = useState("");
+  const [otp, setOtp] = useState("");
+
   // --- Handle animation mở/đóng popup ---
   useEffect(() => {
     setActiveTab(initialTab);
@@ -60,7 +65,8 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
     try {
       const response = await axios.post(
-        "https://250d13769941.ngrok-free.app/fapanese/api/auth/login",
+        // "https://250d13769941.ngrok-free.app/fapanese/api/auth/login"
+        "http://localhost:8080/fapanese/api/auth/login",
         { email: loginEmail, password: loginPassword },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -103,15 +109,22 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
       ...(role === "student" && { campus }),
       ...(role === "lecturer" && { expertise, bio }),
     };
+    console.log("Payload being sent to backend:", userData);
 
     try {
       const response = await axios.post(
-        "https://250d13769941.ngrok-free.app/fapanese/api/users/register",
+        // "https://250d13769941.ngrok-free.app/fapanese/api/users/register"
+        "http://localhost:8080/fapanese/api/users/register",
         userData
+      );
+      await axios.post(
+        // "https://250d13769941.ngrok-free.app/fapanese/api/auth/forgot-password"
+        "http://localhost:8080/fapanese/api/auth/send-otp",
+        { email: signupEmail }
       );
 
       alert("Đăng ký thành công! Hãy thử đăng nhập.");
-      setActiveTab("login");
+      setActiveTab("login"); // mo popup nhap otp
       setFirstName("");
       setLastName("");
       setSignupEmail("");
@@ -189,7 +202,9 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
         >
           {/* LOGIN SIDE */}
           <div className="w-1/2 flex flex-col items-center justify-center p-10 ml-10 ">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 mr">Đăng nhập</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 mr">
+              Đăng nhập
+            </h2>
             <p className="text-gray-500 mb-6">Chào mừng quay lại Fapanese</p>
 
             <div className="flex flex-col gap-3 mb-6 w-full max-w-sm">

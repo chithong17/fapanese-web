@@ -3,7 +3,7 @@ import axios from "axios";
 
 // const API_URL = "http://localhost:8080/fapanese/api";
 
-const API_URL = "https://30b1e8b2feec.ngrok-free.app/fapanese/api";
+const API_URL = "https://c49fed29a856.ngrok-free.app/fapanese/api";
 
 
 const handleResponse = async (res: Response) => {

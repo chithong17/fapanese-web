@@ -26,7 +26,13 @@ const ProfilePage: React.FC = () => {
         
         const res = await axios.get(
           "https://c49fed29a856.ngrok-free.app/fapanese/api/users/profile",
-          { headers: { Authorization: `Bearer ${token}` } }
+          { 
+            headers: 
+            { 
+              Authorization: `Bearer ${token}`, 
+              "ngrok-skip-browser-warning": "any-value" 
+            } 
+          }
         );
 
         console.log("Profile API response:", res.data); // debug API

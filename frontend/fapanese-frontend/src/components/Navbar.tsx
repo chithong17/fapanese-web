@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { AiOutlineBook, AiOutlineDashboard, AiOutlineEdit } from "react-icons/ai";
+import {
+  AiOutlineBook,
+  AiOutlineDashboard,
+  AiOutlineEdit,
+} from "react-icons/ai";
 import { MdLogout } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/logo.png";
@@ -26,8 +30,9 @@ const Navbar: React.FC<NavbarProps> = ({
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<string | null>(localStorage.getItem("email") || null);
+  const [user, setUser] = useState<string | null>(null);
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [userProfile, setUserProfile] = useState<{
     firstName: string;
@@ -44,9 +49,14 @@ const Navbar: React.FC<NavbarProps> = ({
 
     try {
       const res = await axios.get(
-        // "https://c49fed29a856.ngrok-free.app/fapanese/api/users/profile",
-        "http://localhost:8080/fapanese/api/users/profile",
-        { headers: { Authorization: `Bearer ${token}` } } // <-- token ở đây
+        "https://1eb4ad2349e8.ngrok-free.app/fapanese/api/users/profile",
+        // "http://localhost:8080/fapanese/api/users/profile",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "any-value",
+          },
+        } // <-- token ở đây
       );
       if (res.data && res.data.result) {
         setUserProfile(res.data.result);
@@ -87,7 +97,6 @@ const Navbar: React.FC<NavbarProps> = ({
 
   const confirmLogout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("email");
     window.dispatchEvent(new Event("logoutSuccess"));
     setLogoutOpen(false);
     window.location.reload();
@@ -95,9 +104,21 @@ const Navbar: React.FC<NavbarProps> = ({
 
   const userMenuItems = user
     ? [
-        { name: "Khóa Học", icon: <AiOutlineBook />, action: () => console.log("Go to courses") },
-        { name: "Dashboard", icon: <AiOutlineDashboard />, action: () => console.log("Go to dashboard") },
-        { name: "Edit Profile", icon: <AiOutlineEdit />, action: () => navigate("/profile") },
+        {
+          name: "Khóa Học",
+          icon: <AiOutlineBook />,
+          action: () => console.log("Go to courses"),
+        },
+        {
+          name: "Dashboard",
+          icon: <AiOutlineDashboard />,
+          action: () => console.log("Go to dashboard"),
+        },
+        {
+          name: "Edit Profile",
+          icon: <AiOutlineEdit />,
+          action: () => navigate("/profile"),
+        },
         { name: "Đăng Xuất", icon: <MdLogout />, action: handleLogoutClick },
       ]
     : [];
@@ -109,7 +130,11 @@ const Navbar: React.FC<NavbarProps> = ({
           {/* Logo */}
           <div className="flex-shrink-0 -ml-15">
             <a href="/" className="flex items-center h-12">
-              <img src={logo} alt="Fapanese Logo" className="w-40 h-40 object-contain" />
+              <img
+                src={logo}
+                alt="Fapanese Logo"
+                className="w-40 h-40 object-contain"
+              />
             </a>
           </div>
 
@@ -188,13 +213,20 @@ const Navbar: React.FC<NavbarProps> = ({
                   className="p-1 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                 >
-                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
                     <img src={logouser} className="h-10" />
                   </motion.div>
                 </div>
-                <span className="text-gray-700 font-medium ">
-                  Xin chào, <br />
-                  <span>{user}</span>
+                <span className="text-gray-700 font-medium">
+                  Xin chào,
+                  <span className="font-semibold text-[#0b7a75]">
+                    {userProfile
+                      ? `${userProfile.firstName} ${userProfile.lastName}`
+                      : "Đang tải..."}
+                  </span>
                 </span>
               </>
             ) : (
@@ -258,7 +290,11 @@ const Navbar: React.FC<NavbarProps> = ({
         )}
 
       {/* Logout popup */}
-      <LogoutPopup isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} onConfirm={confirmLogout} />
+      <LogoutPopup
+        isOpen={logoutOpen}
+        onClose={() => setLogoutOpen(false)}
+        onConfirm={confirmLogout}
+      />
     </nav>
   );
 };

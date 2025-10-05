@@ -43,13 +43,9 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({
     try {
       setError(null);
       await axios.post(
-<<<<<<< HEAD
-        // "https://c49fed29a856.ngrok-free.app/fapanese/api/auth/send-otp",
-        "http://localhost:8080/fapanese/api/auth/send-otp", // point
-=======
-        "http://localhost:8080/fapanese/api/auth/send-otp",
->>>>>>> 28f50e3b8afeb4455b44550e265f191680c4d48d
-        { email }
+        "http://localhost:8080/fapanese/api/auth/forgot-password",
+        { email },
+        { headers: { "Content-Type": "application/json" } } // ✅ thêm header này
       );
       setOtpSent(true);
       setSuccess("OTP đã được gửi đến email!");

@@ -43,8 +43,8 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({
     try {
       setError(null);
       await axios.post(
-        "https://c49fed29a856.ngrok-free.app/fapanese/api/auth/send-otp",
-        // "http://localhost:8080/fapanese/api/auth/forgot-password",
+        // "https://c49fed29a856.ngrok-free.app/fapanese/api/auth/send-otp",
+        "http://localhost:8080/fapanese/api/auth/send-otp", // point
         { email }
       );
       setOtpSent(true);
@@ -63,8 +63,8 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({
       setLoading(true);
       setError(null);
       await axios.post(
-        "https://c49fed29a856.ngrok-free.app/fapanese/api/auth/reset-password",
-        // "http://localhost:8080/fapanese/api/auth/reset-password",
+        // "https://c49fed29a856.ngrok-free.app/fapanese/api/auth/reset-password",
+        "http://localhost:8080/fapanese/api/auth/reset-password",
         { email, otp, newPassword }
       );
       setSuccess("Đặt lại mật khẩu thành công 🎉");

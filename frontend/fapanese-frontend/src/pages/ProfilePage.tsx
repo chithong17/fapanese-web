@@ -25,13 +25,14 @@ const ProfilePage: React.FC = () => {
         if (!token) throw new Error("Bạn chưa đăng nhập.");
         
         const res = await axios.get(
-          "https://c49fed29a856.ngrok-free.app/fapanese/api/users/profile",
+          // "https://c49fed29a856.ngrok-free.app/fapanese/api/users/profile",
+          "http://localhost:8080/fapanese/api/users/profile",
           { 
-            headers: 
-            { 
-              Authorization: `Bearer ${token}`, 
-              "ngrok-skip-browser-warning": "any-value" 
-            } 
+            // headers: 
+            // { 
+            //   Authorization: `Bearer ${token}`, 
+            //   "ngrok-skip-browser-warning": "any-value" 
+            // } 
           }
         );
 
@@ -60,7 +61,8 @@ const ProfilePage: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        "https://c49fed29a856.ngrok-free.app/fapanese/api/users/profile/update",
+        // "https://c49fed29a856.ngrok-free.app/fapanese/api/users/profile/update",
+        "http://localhost:8080/fapanese/api/users/profile/update",
         profile,
         { headers: { Authorization: `Bearer ${token}` } }
       );

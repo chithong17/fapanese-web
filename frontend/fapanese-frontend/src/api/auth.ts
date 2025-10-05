@@ -1,9 +1,9 @@
 import axios from "axios";
 
 
-// const API_URL = "http://localhost:8080/fapanese/api";
+const API_URL = "http://localhost:8080/fapanese/api";
 
-const API_URL = "https://c49fed29a856.ngrok-free.app/fapanese/api";
+// const API_URL = "https://c49fed29a856.ngrok-free.app/fapanese/api";
 
 
 const handleResponse = async (res: Response) => {
@@ -84,17 +84,17 @@ export const register = async (username: string, password: string, email: string
   }
 };
 
-// // ✅ Lấy thông tin user hiện tại
-// export const getCurrentUser = async () => {
-//   const token = getToken();
-//   if (!token) throw new Error("No token found");
+// ✅ Lấy thông tin user hiện tại
+export const getCurrentUser = async () => {
+  const token = getToken();
+  if (!token) throw new Error("No token found");
 
-//   const res = await fetch(`${API_URL}/users/me`, {
-//     method: "GET",
-//     headers: {
-//       "Content-Type": "application/json",
-//       "Authorization": `Bearer ${token}`,
-//     },
-//   });
-//   return handleResponse(res);
-// };
+  const res = await fetch(`${API_URL}/users/me`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    },
+  });
+  return handleResponse(res);
+};

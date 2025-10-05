@@ -124,7 +124,8 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
     if (unverifiedEmail) {
       try {
         await axios.post(
-          "https://c49fed29a856.ngrok-free.app/fapanese/api/auth/send-otp",
+          // "https://c49fed29a856.ngrok-free.app/fapanese/api/auth/send-otp",
+          "http://localhost:8080/fapanese/api/auth/send-otp",
           { email: unverifiedEmail }
         );
         setStep("otp");
@@ -144,7 +145,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
 
     try {
       const response = await axios.post(
-        "https://c49fed29a856.ngrok-free.app/fapanese/api/auth/login",
+        "http://localhost:8080/fapanese/api/auth/login",
         { email: loginEmail, password: loginPassword }
       );
 
@@ -185,12 +186,12 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
 
     try {
       await axios.post(
-        "https://c49fed29a856.ngrok-free.app/fapanese/api/users/register",
+        "http://localhost:8080/fapanese/api/users/register",
         userData
       );
 
       await axios.post(
-        "https://c49fed29a856.ngrok-free.app/fapanese/api/auth/send-otp",
+        "http://localhost:8080/fapanese/api/auth/send-otp",
         { email: signupEmail }
       );
 

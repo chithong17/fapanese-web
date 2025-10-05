@@ -5,6 +5,11 @@ import WelcomeLogo from "../assets/welcomeLog.jpg";
 import axios from "axios";
 import OtpVerification from "../pages/OtpVerification";
 import ForgotPasswordPopup from "../pages/ResetPassword";
+import CircularProgress from "@mui/material/CircularProgress";
+
+
+
+
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -119,7 +124,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
     if (unverifiedEmail) {
       try {
         await axios.post(
-          "https://30b1e8b2feec.ngrok-free.app/fapanese/api/auth/send-otp",
+          "https://c49fed29a856.ngrok-free.app/fapanese/api/auth/send-otp",
           { email: unverifiedEmail }
         );
         setStep("otp");
@@ -139,7 +144,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
 
     try {
       const response = await axios.post(
-        "https://30b1e8b2feec.ngrok-free.app/fapanese/api/auth/login",
+        "https://c49fed29a856.ngrok-free.app/fapanese/api/auth/login",
         { email: loginEmail, password: loginPassword }
       );
 
@@ -180,12 +185,12 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
 
     try {
       await axios.post(
-        "https://30b1e8b2feec.ngrok-free.app/fapanese/api/users/register",
+        "https://c49fed29a856.ngrok-free.app/fapanese/api/users/register",
         userData
       );
 
       await axios.post(
-        "https://30b1e8b2feec.ngrok-free.app/fapanese/api/auth/send-otp",
+        "https://c49fed29a856.ngrok-free.app/fapanese/api/auth/send-otp",
         { email: signupEmail }
       );
 
@@ -222,9 +227,18 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
           animate ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
+
+        {/* === Loading Overlay toàn popup === */}
+        {loading && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+            <CircularProgress />
+          </div>
+        )}
+
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-800 rounded-full p-1 transition"
+          disabled={loading}
         >
           ✕
         </button>
@@ -245,6 +259,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
                       ? "bg-black text-white shadow"
                       : "bg-white text-gray-600 hover:bg-gray-100"
                   }`}
+                  disabled={loading}
                 >
                   Login
                 </button>
@@ -255,12 +270,14 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
                       ? "bg-black text-white shadow"
                       : "bg-white text-gray-600 hover:bg-gray-100"
                   }`}
+                  disabled={loading}
                 >
                   Sign Up
                 </button>
                 <button
                   className="text-black  py-2 px-4 rounded-md shadow hover:bg-gray-600 transition-all"
                   onClick={() => setForgotPasswordOpen(true)}
+                  disabled={loading}
                 >
                   Quên mật khẩu
                 </button>
@@ -276,6 +293,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
             >
               {/* LOGIN SIDE */}
               <div className="w-1/2 flex flex-col items-center justify-center p-10 ml-10">
+              
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">Đăng nhập</h2>
                 <p className="text-gray-500 mb-6">Chào mừng quay lại Fapanese</p>
 
@@ -427,6 +445,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
                   <button
                     type="submit"
                     className="bg-black text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
+                    disabled={loading}
                   >
                     Sign Up
                   </button>

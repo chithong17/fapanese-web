@@ -153,7 +153,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
         localStorage.setItem("email", loginEmail);
         window.dispatchEvent(new Event("loginSuccess"));
         setNotifMessage("Đăng nhập thành công!");
-        onClose();
+        window.location.reload();
       }
     } catch (err: any) {
       if (err.response?.data?.code === 1008) {

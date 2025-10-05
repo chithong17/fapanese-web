@@ -44,10 +44,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
     try {
       const res = await axios.get(
-<<<<<<< HEAD
         // "https://c49fed29a856.ngrok-free.app/fapanese/api/users/profile",
-=======
->>>>>>> 28f50e3b8afeb4455b44550e265f191680c4d48d
         "http://localhost:8080/fapanese/api/users/profile",
         { headers: { Authorization: `Bearer ${token}` } } // <-- token ở đây
       );

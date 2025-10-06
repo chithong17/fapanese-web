@@ -166,7 +166,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
         );
       } else {
         setNotifMessage(
-          err.response?.data?.message || "Email hoặc mật khẩu không chính xác."
+          err.response?.data?.message || "Kết nối thất bại tới hệ thống."
         );
       }
     } finally {

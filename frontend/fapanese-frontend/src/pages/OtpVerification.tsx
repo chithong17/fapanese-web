@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mail } from "lucide-react";
 import axios from "axios";
+import ResetPassword from "./ResetPassword";
+
 
 interface OtpVerificationProps {
   email: string;
@@ -10,7 +12,7 @@ interface OtpVerificationProps {
 
 const OtpVerification: React.FC<OtpVerificationProps> = ({ email, mode }) => {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
-  const [timeLeft, setTimeLeft] = useState(270); // 4 phút 30 giây
+  const [timeLeft, setTimeLeft] = useState(300); // 4 phút 30 giây -> thành 5p
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const inputs = useRef<Array<HTMLInputElement | null>>([]);
@@ -49,7 +51,8 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, mode }) => {
     try {
       setError(null);
       const response = await axios.post(
-        "http://localhost:8080/fapanese/api/auth/verify-otp",
+        // "http://localhost:8080/fapanese/api/auth/verify-otp",
+       "https://1eb4ad2349e8.ngrok-free.app/fapanese/api/auth/verify-otp",
         { email, otp: code, mode }
       );
 

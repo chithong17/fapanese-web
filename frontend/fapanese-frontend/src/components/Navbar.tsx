@@ -1,4 +1,3 @@
-// Navbar.tsx
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
@@ -11,35 +10,78 @@ import { MdLogout } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/logo.png";
 import logouser from "../assets/logouser.png";
+import LogoutPopup from "./LogoutPopup";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface NavbarProps {
   scrollToSection: (id: string, tab?: "hiragana" | "katakana") => void;
   onAuthClick: (tab: "login" | "signup") => void;
+  userDropdownOpen: boolean;
+  setUserDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
+const Navbar: React.FC<NavbarProps> = ({
+  scrollToSection,
+  onAuthClick,
+  userDropdownOpen,
+  setUserDropdownOpen,
+}) => {
+  const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<string | null>(null);
+  const [logoutOpen, setLogoutOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Lưu email user
-  const [user, setUser] = useState<string | null>(
-    localStorage.getItem("email") || null
-  );
+  const [userProfile, setUserProfile] = useState<{
+    firstName: string;
+    lastName: string;
+    email: string;
+    campus?: string;
+    dob?: string;
+  } | null>(null);
 
-  // Lắng nghe login/logout
+  // --- Fetch profile using token ---
+  const fetchProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await axios.get(
+        "https://1eb4ad2349e8.ngrok-free.app/fapanese/api/users/profile",
+        // "http://localhost:8080/fapanese/api/users/profile",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "any-value",
+          },
+        } // <-- token ở đây
+      );
+      if (res.data && res.data.result) {
+        setUserProfile(res.data.result);
+        setUser(res.data.result.email); // set email từ profile
+      }
+    } catch (err) {
+      console.error("Lỗi fetch profile:", err);
+      setUserProfile(null);
+    }
+  };
+
   useEffect(() => {
-    const handleLogin = () => setUser(localStorage.getItem("email"));
+    const handleLogin = () => {
+      fetchProfile();
+    };
     const handleLogout = () => setUser(null);
 
     window.addEventListener("loginSuccess", handleLogin);
     window.addEventListener("logoutSuccess", handleLogout);
-    window.addEventListener("storage", handleLogin); // đồng bộ tab khác
+
+    if (localStorage.getItem("token")) fetchProfile();
 
     return () => {
       window.removeEventListener("loginSuccess", handleLogin);
       window.removeEventListener("logoutSuccess", handleLogout);
-      window.removeEventListener("storage", handleLogin);
     };
   }, []);
 
@@ -51,16 +93,15 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
     { name: "GÓC CHIA SẺ", link: "/" },
   ];
 
-  // ✅ Logout: chỉ cần xóa token/email + phát event
-  const handleLogout = () => {
+  const handleLogoutClick = () => setLogoutOpen(true);
+
+  const confirmLogout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("email");
     window.dispatchEvent(new Event("logoutSuccess"));
-    alert("Đăng xuất thành công!");
+    setLogoutOpen(false);
     window.location.reload();
   };
 
-  // Menu user sau khi login
   const userMenuItems = user
     ? [
         {
@@ -76,9 +117,9 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
         {
           name: "Edit Profile",
           icon: <AiOutlineEdit />,
-          action: () => console.log("Go to edit profile"),
+          action: () => navigate("/profile"),
         },
-        { name: "Đăng Xuất", icon: <MdLogout />, action: handleLogout },
+        { name: "Đăng Xuất", icon: <MdLogout />, action: handleLogoutClick },
       ]
     : [];
 
@@ -176,13 +217,16 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <img src={logouser} className="h-10 " />
+                    <img src={logouser} className="h-10" />
                   </motion.div>
                 </div>
-                <span className="text-gray-700 font-medium ">
+                <span className="text-gray-700 font-medium">
                   Xin chào,
-                  <br />
-                  <span> {user}</span>
+                  <span className="font-semibold text-[#0b7a75]">
+                    {userProfile
+                      ? `${userProfile.firstName} ${userProfile.lastName}`
+                      : "Đang tải..."}
+                  </span>
                 </span>
               </>
             ) : (
@@ -244,6 +288,13 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, onAuthClick }) => {
           </AnimatePresence>,
           document.body
         )}
+
+      {/* Logout popup */}
+      <LogoutPopup
+        isOpen={logoutOpen}
+        onClose={() => setLogoutOpen(false)}
+        onConfirm={confirmLogout}
+      />
     </nav>
   );
 };

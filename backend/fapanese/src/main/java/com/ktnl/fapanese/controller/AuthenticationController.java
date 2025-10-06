@@ -9,6 +9,8 @@ import com.ktnl.fapanese.dto.response.VerifyOtpResponse;
 import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
+import com.ktnl.fapanese.mail.ForgotPasswordEmail;
+import com.ktnl.fapanese.mail.VerifyOtpEmail;
 import com.ktnl.fapanese.repository.UserRepository;
 import com.ktnl.fapanese.service.AuthenticationService;
 import com.ktnl.fapanese.service.OtpTokenService;
@@ -59,7 +61,7 @@ public class AuthenticationController {
 
     @PostMapping("/send-otp")
     public ApiResponse<EmailResponse> sendOtp(@RequestBody OtpRequest request) {
-        var result = otpTokenService.generateAndSendOtp(request.getEmail());
+        var result = otpTokenService.generateAndSendOtp(request.getEmail(), new VerifyOtpEmail());
 
         return ApiResponse.<EmailResponse>builder()
                 .result(result)
@@ -71,7 +73,12 @@ public class AuthenticationController {
         var result = otpTokenService.verifyOtp(request.getEmail(), request.getOtp());
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        user.setActive(true);
+
+        if(user.getTeacher() != null)
+            user.setStatus(2);
+        else if(user.getStudent() != null)
+            user.setStatus(3);
+
         userRepository.save(user);
         return ApiResponse.<VerifyOtpResponse>builder()
                 .result(result)
@@ -81,7 +88,8 @@ public class AuthenticationController {
 
     @PostMapping("/forgot-password")
     public ApiResponse<EmailResponse> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-        var result = otpTokenService.generateAndSendOtp(request.getEmail());
+        var result = otpTokenService.generateAndSendOtp(request.getEmail(), new ForgotPasswordEmail(), request.getEmail());
+
         return ApiResponse.<EmailResponse>builder()
                 .result(result)
                 .build();
@@ -98,7 +106,7 @@ public class AuthenticationController {
 
             var response = VerifyOtpResponse.builder()
                     .isSuccess(true)
-                    .to(request.getEmail())
+                    .email(request.getEmail())
                     .message("Mật khẩu đã được đặt lại thành công!")
                     .build();
 
@@ -109,7 +117,7 @@ public class AuthenticationController {
         } catch (AppException ex) {
             var response = VerifyOtpResponse.builder()
                     .isSuccess(false)
-                    .to(request.getEmail())
+                    .email(request.getEmail())
                     .message(ex.getMessage())
                     .build();
 

@@ -74,15 +74,14 @@ const ProfilePage: React.FC = () => {
         profile,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      // Hiện popup sang trọng
+      // Hiện popup
       setPopup({ text: "Cập nhật thành công!", type: "success" });
- setTimeout(() => {
-    setPopup(null);
-    setTimeout(() => {
-      window.location.reload();
-    }, 500); // thêm 0.5s để đảm bảo hiệu ứng tắt popup xong
-  }, 1000);      
+      setTimeout(() => {
+        setPopup(null);
+        setTimeout(() => {
+          window.location.reload();
+        }, 500); // thêm 0.5s để đảm bảo hiệu ứng tắt popup xong
+      }, 1000);
     } catch (err) {
       console.error(err);
       setPopup({ text: "Cập nhật thất bại!", type: "error" });
@@ -110,67 +109,67 @@ const ProfilePage: React.FC = () => {
     <div className="relative min-h-screen bg-gradient-to-br from-teal-50 to-blue-100 py-10 px-4 pt-20">
       {/* Popup*/}
       <AnimatePresence>
-  {popup && (
-    <motion.div
-      initial={{ opacity: 0, y: -40, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -30, scale: 0.9 }}
-      transition={{
-        type: "spring",
-        stiffness: 300,
-        damping: 25,
-      }}
-      className="fixed top-6 left-1/2 transform -translate-x-1/2 z-[9999]"
-    >
-      <div
-        className={`relative flex items-center gap-3 px-6 py-4 rounded-2xl backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.12)] border 
-        ${popup.type === "success"
-          ? "border-emerald-400/50 bg-gradient-to-r from-emerald-400/20 to-teal-300/20 text-emerald-900"
-          : "border-rose-400/50 bg-gradient-to-r from-rose-400/20 to-red-300/20 text-rose-900"
+        {popup && (
+          <motion.div
+            initial={{ opacity: 0, y: -40, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -30, scale: 0.9 }}
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 25,
+            }}
+            className="fixed top-6 left-1/2 transform -translate-x-1/2 z-[9999]"
+          >
+            <div
+              className={`relative flex items-center gap-3 px-6 py-4 rounded-2xl backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.12)] border 
+        ${
+          popup.type === "success"
+            ? "border-emerald-400/50 bg-gradient-to-r from-emerald-400/20 to-teal-300/20 text-emerald-900"
+            : "border-rose-400/50 bg-gradient-to-r from-rose-400/20 to-red-300/20 text-rose-900"
         }`}
-      >
-        {/* Icon */}
-        <motion.div
-          initial={{ rotate: 0 }}
-          animate={{ rotate: popup.type === "success" ? 360 : -360 }}
-          transition={{ duration: 0.6 }}
-          className="text-2xl"
-        >
-          {popup.type === "success" ? (
-            <FaCheckCircle  />
-          ) : (
-            <FaTimesCircle  />
-          )}
-        </motion.div>
+            >
+              {/* Icon */}
+              <motion.div
+                initial={{ rotate: 0 }}
+                animate={{ rotate: popup.type === "success" ? 360 : -360 }}
+                transition={{ duration: 0.6 }}
+                className="text-2xl"
+              >
+                {popup.type === "success" ? (
+                  <FaCheckCircle />
+                ) : (
+                  <FaTimesCircle />
+                )}
+              </motion.div>
 
-        {/* Text */}
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="font-semibold text-base tracking-wide"
-        >
-          {popup.text}
-        </motion.span>
+              {/* Text */}
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.1 }}
+                className="font-semibold text-base tracking-wide"
+              >
+                {popup.text}
+              </motion.span>
 
-        {/* Glow Border Animation */}
-        <motion.div
-          className={`absolute inset-0 rounded-2xl pointer-events-none ${
-            popup.type === "success"
-              ? "bg-gradient-to-r from-emerald-400 to-teal-400"
-              : "bg-gradient-to-r from-rose-400 to-red-400"
-          }`}
-          style={{
-            opacity: 0.2,
-            filter: "blur(8px)",
-            zIndex: -1,
-          }}
-        />
-      </div>
-    </motion.div>
-  )}
-</AnimatePresence>
-
+              {/* Glow Border Animation */}
+              <motion.div
+                className={`absolute inset-0 rounded-2xl pointer-events-none ${
+                  popup.type === "success"
+                    ? "bg-gradient-to-r from-emerald-400 to-teal-400"
+                    : "bg-gradient-to-r from-rose-400 to-red-400"
+                }`}
+                style={{
+                  opacity: 0.2,
+                  filter: "blur(8px)",
+                  zIndex: -1,
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main content */}
       <motion.div

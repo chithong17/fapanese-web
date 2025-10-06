@@ -160,7 +160,7 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({
         {/* OTP */}
         <div className="mb-6">
           <label className="block text-gray-600 font-medium mb-1">
-            Mã xác minh<span className="text-red-600">*</span>
+            Mã xác minh<span className="text-white-600">*</span>
           </label>
           <div className="flex gap-2">
             <div className={inputWrapper}>

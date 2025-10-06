@@ -49,8 +49,8 @@ const Navbar: React.FC<NavbarProps> = ({
 
     try {
       const res = await axios.get(
-        "https://5180368dcd09.ngrok-free.app/fapanese/api/users/profile",
-        // "http://localhost:8080/fapanese/api/users/profile",
+        // "https://5180368dcd09.ngrok-free.app/fapanese/api/users/profile",
+        "http://localhost:8080/fapanese/api/users/profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,

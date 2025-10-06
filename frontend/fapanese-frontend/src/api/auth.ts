@@ -1,9 +1,9 @@
 import axios from "axios";
 
 
-// const API_URL = "http://localhost:8080/fapanese/api";
+const API_URL = "http://localhost:8080/fapanese/api";
 
-const API_URL = "https://5180368dcd09.ngrok-free.app/fapanese/api";
+// const API_URL = "https://5180368dcd09.ngrok-free.app/fapanese/api";
 
 
 const handleResponse = async (res: Response) => {

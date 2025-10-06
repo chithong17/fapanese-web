@@ -28,7 +28,7 @@ const LoadingWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 1000); // giả lập delay load
+    const timer = setTimeout(() => setLoading(false), 500); // giả lập delay load
     return () => clearTimeout(timer);
   }, [location.pathname]);
 

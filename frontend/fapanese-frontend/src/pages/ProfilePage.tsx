@@ -4,15 +4,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaUserCircle, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import logo from "../assets/banneredit.jpg";
 
-
-
 interface UserProfile {
   id?: string;
   firstName: string;
   lastName: string;
   email: string;
   campus: string;
-  dob?: string;
+  dob?: string; // yyyy-mm-dd
   role?: string;
 }
 
@@ -32,16 +30,36 @@ const ProfilePage: React.FC = () => {
         if (!token) throw new Error("Bạn chưa đăng nhập.");
 
         const res = await axios.get(
-          "https://1eb4ad2349e8.ngrok-free.app/fapanese/api/users/profile",
+          //"https://1eb4ad2349e8.ngrok-free.app/fapanese/api/users/profile",
+          "http://localhost:8080/fapanese/api/users/profile",
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              "ngrok-skip-browser-warning": "any-value",
+              //  "ngrok-skip-browser-warning": "any-value",
             },
           }
         );
 
-        setProfile(res.data.result);
+        // Convert dob to yyyy-mm-dd string if present
+        const user = res.data.result;
+        if (user.dob) {
+          // Nếu là ISO (có chữ T) -> cắt 10 ký tự đầu
+          if (typeof user.dob === "string") {
+            // Nếu dạng 2025-10-06T00:00:00Z
+            if (user.dob.includes("T")) {
+              user.dob = user.dob.slice(0, 10);
+            }
+            // Nếu dạng dd/MM/yyyy (thỉnh thoảng BE trả vậy)
+            else if (user.dob.includes("/")) {
+              const [day, month, year] = user.dob.split("/");
+              user.dob = `${year}-${month.padStart(2, "0")}-${day.padStart(
+                2,
+                "0"
+              )}`;
+            }
+          }
+        }
+        setProfile(user);
       } catch (err: any) {
         console.error(err);
         setPopup({
@@ -71,9 +89,23 @@ const ProfilePage: React.FC = () => {
     setPopup(null);
     try {
       const token = localStorage.getItem("token");
+      // Ensure dob is yyyy-mm-dd string
+      // const payload = {
+      //   ...profile,
+      //   dob:
+      //     profile.dob && typeof profile.dob === "string"
+      //       ? profile.dob.slice(0, 10)
+      //       : "",
+      // };
+
+      const payload = {
+        ...profile,
+        dob: profile.dob ? profile.dob.slice(0, 10) : "",
+      };
       await axios.post(
-        "https://1eb4ad2349e8.ngrok-free.app/fapanese/api/users/profile/update",
-        profile,
+        //"https://1eb4ad2349e8.ngrok-free.app/fapanese/api/users/profile/update",
+        "http://localhost:8080/fapanese/api/users/profile/update",
+        payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

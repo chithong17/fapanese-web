@@ -49,12 +49,12 @@ const Navbar: React.FC<NavbarProps> = ({
 
     try {
       const res = await axios.get(
-        "https://1eb4ad2349e8.ngrok-free.app/fapanese/api/users/profile",
-        // "http://localhost:8080/fapanese/api/users/profile",
+        //"https://1eb4ad2349e8.ngrok-free.app/fapanese/api/users/profile",
+         "http://localhost:8080/fapanese/api/users/profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "ngrok-skip-browser-warning": "any-value",
+           // "ngrok-skip-browser-warning": "any-value",
           },
         } // <-- token ở đây
       );

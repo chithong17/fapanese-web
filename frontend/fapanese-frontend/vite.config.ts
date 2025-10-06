@@ -6,8 +6,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://1eb4ad2349e8.ngrok-free.app/fapanese",
-        // target: "http://localhost:8080/fapanese",
+        //target: "https://1eb4ad2349e8.ngrok-free.app/fapanese",
+         target: "http://localhost:8080/fapanese",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

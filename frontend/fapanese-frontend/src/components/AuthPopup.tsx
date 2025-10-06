@@ -4,12 +4,56 @@ import logo from "../assets/logologin.png";
 import WelcomeLogo from "../assets/welcomeLog.jpg";
 import axios from "axios";
 import OtpVerification from "../pages/OtpVerification";
+import ForgotPasswordPopup from "../pages/ResetPassword";
 
 interface AuthPopupProps {
   isOpen: boolean;
   onClose: () => void;
   initialTab: "login" | "signup";
 }
+
+// Notification modal
+const NotificationModal: React.FC<{ message: string; onClose: () => void }> = ({
+  message,
+  onClose,
+}) => {
+  return (
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="bg-white text-black rounded-2xl shadow-2xl p-8 w-[90%] max-w-md transform transition-all duration-300 scale-100 animate-fadeIn">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-md">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
+              />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-gray-800">Thông báo</h2>
+        </div>
+        <p className="mb-8 text-gray-600 leading-relaxed text-base">
+          {message}
+        </p>
+        <div className="flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-6 py-2.5 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-full font-semibold shadow-md hover:opacity-90 active:scale-95 transition-all"
+          >
+            Xác nhận
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const AuthPopup: React.FC<AuthPopupProps> = ({
   isOpen,
@@ -21,7 +65,19 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
   const [show, setShow] = useState(isOpen);
   const [animate, setAnimate] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  // Notification modal
+  const [notifMessage, setNotifMessage] = useState<string | null>(null);
+
+  // OTP & step
+  const [step, setStep] = useState<"login" | "signup" | "otp">(initialTab);
+  const [otpEmail, setOtpEmail] = useState("");
+
+  // email chưa xác thực
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+
+  // Forgot password
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
 
   // --- Login state ---
   const [loginEmail, setLoginEmail] = useState("");
@@ -38,11 +94,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
   const [expertise, setExpertise] = useState("");
   const [bio, setBio] = useState("");
 
-  //otp state
-  const [step, setStep] = useState<"login" | "signup" | "otp">(initialTab);
-  const [otpEmail, setOtpEmail] = useState("");
-
-  // --- Handle animation mở/đóng popup ---
+  // --- Animation open/close ---
   useEffect(() => {
     setActiveTab(initialTab);
   }, [initialTab]);
@@ -57,57 +109,74 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
     }
   }, [isOpen]);
 
-  //swtich to login after otp verified
+  // --- Switch to login after OTP verified ---
   useEffect(() => {
     const handleSwitch = () => {
-      setStep("login"); // quay lại step login
-      setActiveTab("login"); // hiển thị tab login
+      setStep("login");
+      setActiveTab("login");
     };
-
     window.addEventListener("switchToLogin", handleSwitch);
     return () => window.removeEventListener("switchToLogin", handleSwitch);
   }, []);
 
-  // --- Login API ---
+  // --- Handle notification close ---
+  const handleNotifClose = async () => {
+    setNotifMessage(null);
+    if (unverifiedEmail) {
+      try {
+        await axios.post(
+          "https://1eb4ad2349e8.ngrok-free.app/fapanese/api/auth/send-otp",
+          // "http://localhost:8080/fapanese/api/auth/send-otp",
+          { email: unverifiedEmail }
+        );
+        setStep("otp");
+        setOtpEmail(unverifiedEmail);
+        setUnverifiedEmail(null);
+      } catch (err: any) {
+        console.error("Lỗi gửi OTP:", err.response || err);
+        setNotifMessage(err.response?.data?.message || "Gửi OTP thất bại");
+      }
+    }
+  };
+
+  // --- Login ---
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     try {
       const response = await axios.post(
-        // "https://250d13769941.ngrok-free.app/fapanese/api/auth/login"
-        "http://localhost:8080/fapanese/api/auth/login",
-        { email: loginEmail, password: loginPassword },
-        { headers: { "Content-Type": "application/json" } }
+        "https://1eb4ad2349e8.ngrok-free.app/fapanese/api/auth/login",
+        // "http://localhost:8080/fapanese/api/auth/login",
+        { email: loginEmail, password: loginPassword }
       );
 
       if (response.data?.result?.authenticated) {
-        alert("Đăng nhập thành công!");
-
-        // Lưu token và email
-        // Login thành công
         localStorage.setItem("token", response.data.result.token);
         localStorage.setItem("email", loginEmail);
-        window.dispatchEvent(new Event("loginSuccess")); // Navbar sẽ tự cập nhật
-        onClose(); // Đóng popup
-      } else {
-        setError("Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.");
+        window.dispatchEvent(new Event("loginSuccess"));
+        setNotifMessage("Đăng nhập thành công!");
+        window.location.reload();
       }
     } catch (err: any) {
-      console.error("Lỗi đăng nhập:", err.response || err);
-      setError(
-        err.response?.data?.message || "Email hoặc mật khẩu không chính xác."
-      );
+      if (err.response?.data?.code === 1008) {
+        setUnverifiedEmail(loginEmail);
+        setNotifMessage(
+          err.response.data?.message || "Tài khoản chưa xác thực email"
+        );
+      } else {
+        setNotifMessage(
+          err.response?.data?.message || "Kết nối thất bại tới hệ thống."
+        );
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // --- Signup API ---
+  // --- Signup ---
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     const userData = {
@@ -120,24 +189,29 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
       ...(role === "student" && { campus }),
       ...(role === "lecturer" && { expertise, bio }),
     };
-    console.log("Payload being sent to backend:", userData);
 
     try {
-      const response = await axios.post(
-        // "https://250d13769941.ngrok-free.app/fapanese/api/users/register"
-        "http://localhost:8080/fapanese/api/users/register",
-        userData
-      );
       await axios.post(
-        // "https://250d13769941.ngrok-free.app/fapanese/api/auth/forgot-password"
-        "http://localhost:8080/fapanese/api/auth/send-otp",
+        "https://1eb4ad2349e8.ngrok-free.app/fapanese/api/users/register",
+        
+        // "http://localhost:8080/fapanese/api/users/register",
+        userData
+        
+      );
+
+      await axios.post(
+        "https://1eb4ad2349e8.ngrok-free.app/fapanese/api/auth/send-otp",
+        // "http://localhost:8080/fapanese/api/auth/send-otp",
         { email: signupEmail }
       );
 
       setStep("otp");
       setOtpEmail(signupEmail);
-      alert("Đăng ký thành công! Vui lòng kiểm tra email để xác thực.");
+      setNotifMessage(
+        "Đăng ký thành công! Vui lòng kiểm tra email để xác thực."
+      );
 
+      // Reset form
       setFirstName("");
       setLastName("");
       setSignupEmail("");
@@ -147,8 +221,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
       setExpertise("");
       setBio("");
     } catch (err: any) {
-      console.error("Lỗi đăng ký:", err.response || err);
-      setError(
+      setNotifMessage(
         err.response?.data?.message ||
           "Đăng ký thất bại. Kiểm tra lại thông tin."
       );
@@ -170,7 +243,6 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
           animate ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
-        {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-800 rounded-full p-1 transition"
@@ -178,7 +250,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
           ✕
         </button>
 
-        {/* === OTP check start === */}
+        {/* === OTP Step === */}
         {step === "otp" ? (
           <OtpVerification email={otpEmail} mode="register" />
         ) : (
@@ -207,6 +279,12 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                 >
                   Sign Up
                 </button>
+                <button
+                  className="text-black  py-2 px-4 rounded-md shadow hover:bg-gray-600 transition-all"
+                  onClick={() => setForgotPasswordOpen(true)}
+                >
+                  Quên mật khẩu
+                </button>
               </div>
             </div>
 
@@ -219,7 +297,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
               }}
             >
               {/* LOGIN SIDE */}
-              <div className="w-1/2 flex flex-col items-center justify-center p-10 ml-10 ">
+              <div className="w-1/2 flex flex-col items-center justify-center p-10 ml-10">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">
                   Đăng nhập
                 </h2>
@@ -254,21 +332,18 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                     placeholder="Email"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
-                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
                   />
                   <input
                     type="password"
                     placeholder="Password"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
                   />
-                  {error && (
-                    <div className="text-red-500 text-sm mt-2">{error}</div>
-                  )}
                   <button
                     type="submit"
-                    className="bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
+                    className="bg-black text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
                     disabled={loading}
                   >
                     {loading ? "Loading..." : "Login"}
@@ -305,7 +380,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       required
-                      className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition w-30"
+                      className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition w-30"
                     />
                     <input
                       type="text"
@@ -313,7 +388,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       required
-                      className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                      className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
                     />
                   </div>
                   <input
@@ -321,23 +396,18 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                     placeholder="Email"
                     value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
-                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
                   />
                   <input
                     type="password"
                     placeholder="Password"
                     value={signupPassword}
                     onChange={(e) => setSignupPassword(e.target.value)}
-                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
-                  />
-                  <input
-                    type="password"
-                    placeholder="Confirm Password"
-                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
                   />
 
                   <select
-                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
                     value={role}
                     onChange={(e) =>
                       setRole(e.target.value as "student" | "lecturer")
@@ -350,7 +420,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                   {role === "student" && (
                     <>
                       <select
-                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
                         value={campus}
                         onChange={(e) => setCampus(e.target.value)}
                       >
@@ -363,7 +433,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                         type="date"
                         value={dob}
                         onChange={(e) => setDob(e.target.value)}
-                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
                       />
                     </>
                   )}
@@ -375,26 +445,26 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                         placeholder="Expertise"
                         value={expertise}
                         onChange={(e) => setExpertise(e.target.value)}
-                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
                       />
                       <textarea
                         placeholder="Bio"
                         value={bio}
                         onChange={(e) => setBio(e.target.value)}
-                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
                       />
                       <input
                         type="date"
                         value={dob}
                         onChange={(e) => setDob(e.target.value)}
-                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#80D9E6] outline-none transition"
+                        className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
                       />
                     </>
                   )}
 
                   <button
                     type="submit"
-                    className="bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
+                    className="bg-black text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
                   >
                     Sign Up
                   </button>
@@ -412,8 +482,18 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
             </div>
           </>
         )}
-        {/* === OTP check end === */}
       </div>
+
+      {/* Notification Modal */}
+      {notifMessage && (
+        <NotificationModal message={notifMessage} onClose={handleNotifClose} />
+      )}
+
+      {/* Forgot Password */}
+      <ForgotPasswordPopup
+        isOpen={forgotPasswordOpen}
+        onClose={() => setForgotPasswordOpen(false)}
+      />
     </div>
   );
 };

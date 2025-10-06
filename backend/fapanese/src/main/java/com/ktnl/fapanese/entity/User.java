@@ -18,8 +18,14 @@ public class User {
     String id;
     String email;
     String password_hash;
+
+    //0: dki chua xac thuc email
+    //1: da xac thuc email chua active
+    //2: da xac thuc da active cho admin duyet
+    //3: dc active, hoat dong binh thuong
     @Column(nullable = false)
-    private boolean isActive = true;
+    private int status = 0;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Lecturer teacher;
 

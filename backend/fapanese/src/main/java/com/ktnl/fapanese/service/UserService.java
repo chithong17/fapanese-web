@@ -13,6 +13,7 @@ import com.ktnl.fapanese.repository.LecturerRepository;
 import com.ktnl.fapanese.repository.RoleRepository;
 import com.ktnl.fapanese.repository.StudentRepository;
 import com.ktnl.fapanese.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,27 +47,29 @@ public class UserService {
 
     public UserResponse registerUser(UserRequest userRequest) {
         log.info("Register request payload: {}", userRequest);
+        Optional<User> existingUserOpt  = userRepo.findByEmail(userRequest.getEmail());
 
-
-        if(userRepo.existsByEmail(userRequest.getEmail())) {
+        if(existingUserOpt.isPresent())
             throw new AppException(ErrorCode.EMAIL_EXISTED);
-        }
 
         // 1. Chuẩn bị đối tượng User trong bộ nhớ
         User user = mapper.toUser(userRequest);
         user.setPassword_hash(passwordEncoder.encode(userRequest.getPassword())); // Nên lấy pass từ request
         Role role = roleRepo.findByRoleName(userRequest.getRole());
         user.setRoles(Set.of(role));
+        user.setStatus(0);
 
         // 2. Chuẩn bị đối tượng Lecturer hoặc Student và thiết lập quan hệ 2 chiều
         if("LECTURER".equalsIgnoreCase(userRequest.getRole())){
             Lecturer lecturer = mapper.toLecturer(userRequest);
             lecturer.setUser(user);      // Quan hệ từ Lecturer -> User
+            lecturer.setAvtUrl("https://drive.google.com/file/d/1KZJdE58UiYN8UjoZ0y7wUw0Ptge8FZ0i/view?usp=drive_link");
             user.setTeacher(lecturer);   // Quan hệ ngược lại từ User -> Lecturer
         }
         else if("STUDENT".equalsIgnoreCase(userRequest.getRole())){
             Student student = mapper.toStudent(userRequest);
             student.setUser(user);       // Quan hệ từ Student -> User
+            student.setAvtUrl("https://drive.google.com/file/d/1KZJdE58UiYN8UjoZ0y7wUw0Ptge8FZ0i/view?usp=drive_link");
             user.setStudent(student);    // Quan hệ ngược lại từ User -> Student
         }
 
@@ -173,5 +177,13 @@ public class UserService {
         User savedUser = userRepo.save(user);
         return mapper.toUserResponse(savedUser);
 
+    }
+
+    @Transactional
+    public void deleteUserByEmail(String email) {
+        if (userRepo.findByEmail(email).isEmpty()) {
+            throw new RuntimeException("User not found with email: " + email);
+        }
+        userRepo.deleteByEmail(email);
     }
 }

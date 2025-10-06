@@ -20,6 +20,7 @@ public class Student {
     String firstName;
     String lastName;
     String campus;
+    String avtUrl;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
     @OneToOne

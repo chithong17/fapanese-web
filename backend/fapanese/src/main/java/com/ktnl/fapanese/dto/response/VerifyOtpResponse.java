@@ -10,6 +10,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VerifyOtpResponse {
     boolean isSuccess;
-    String to;
+    String email;
     String message;
 }

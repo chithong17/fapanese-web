@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaUserCircle, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import logo from "../assets/banneredit.jpg";
+import logo from "../assets/editprofile.png";
 
 
 
@@ -32,7 +32,7 @@ const ProfilePage: React.FC = () => {
         if (!token) throw new Error("Bạn chưa đăng nhập.");
 
         const res = await axios.get(
-          "https://1eb4ad2349e8.ngrok-free.app/fapanese/api/users/profile",
+          "https://5180368dcd09.ngrok-free.app/fapanese/api/users/profile",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -72,13 +72,14 @@ const ProfilePage: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        "https://1eb4ad2349e8.ngrok-free.app/fapanese/api/users/profile/update",
+        "https://5180368dcd09.ngrok-free.app/fapanese/api/users/profile/update",
         profile,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       // Hiện popup sang trọng
       setPopup({ text: "Cập nhật thành công!", type: "success" });
+      window.location.reload();
       setTimeout(() => setPopup(null), 2500);
     } catch (err) {
       console.error(err);
@@ -105,7 +106,7 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-teal-50 to-blue-100 py-10 px-4 pt-20">
-      {/* Popup sang trọng */}
+      {/* Popup*/}
       <AnimatePresence>
         {popup && (
           <motion.div
@@ -133,14 +134,33 @@ const ProfilePage: React.FC = () => {
         transition={{ duration: 0.4 }}
       >
         {/* Header */}
-        <div className="relative bg-gradient-to-r from-teal-600 to-cyan-500 h-44 flex items-center justify-center">
-          <img src={logo} alt="" className="h-[100%]" />
-          <div className="absolute -bottom-14 flex flex-col items-center ">
-            <h1 className="mt-2 text-xl font-bold text-[#0b7a75]">
-              Học viên: {profile.firstName} {profile.lastName}
-            </h1>
-          </div>
-        </div>
+       <div className="relative bg-gradient-to-r from-[#32a9a9] to-[#70caca] h-44 flex items-center justify-center overflow-hidden">
+  {/* SVG caro overlay */}
+  <svg
+    className="absolute inset-0 w-full h-full z-0 pointer-events-none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#grid)" />
+  </svg>
+<div className="pl-150 pt-5">
+    <img src={logo} alt="" className="w-50 "/>
+
+</div>
+  {/* Nội dung hiển thị tên học viên */}
+  <div className="absolute bottom-4 flex flex-col items-start z-10 ">
+    <h1 className="mt-2 text-xl font-bold text-white">
+      HỌC VIÊN: {profile.firstName} {profile.lastName}
+    </h1> 
+  </div>
+  
+</div>
+
+
 
         {/* Body */}
         <div className="mt-20 p-8">

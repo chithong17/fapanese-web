@@ -5,6 +5,7 @@ import WelcomeLogo from "../assets/welcomeLog.jpg";
 import axios from "axios";
 import OtpVerification from "../pages/OtpVerification";
 import ForgotPasswordPopup from "../pages/ResetPassword";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -193,10 +194,9 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
     try {
       await axios.post(
         // "https://5180368dcd09.ngrok-free.app/fapanese/api/users/register",
-        
+
         "http://localhost:8080/fapanese/api/users/register",
         userData
-        
       );
 
       await axios.post(
@@ -464,9 +464,11 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
                   <button
                     type="submit"
-                    className="bg-black text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
+                    className="bg-black text-white py-2 rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center gap-2"
+                    disabled={loading}
                   >
-                    Sign Up
+                    {loading && <CircularProgress size={20} color="inherit" />}
+                    {loading ? "Đang tải..." : "Sign Up"}
                   </button>
                 </form>
               </div>

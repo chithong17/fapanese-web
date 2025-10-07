@@ -361,7 +361,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
               </div>
 
               {/* SIGNUP SIDE */}
-              <div className="w-1/2 flex flex-col items-center justify-center p-10 mr-5">
+              <div className="w-1/2 flex flex-col items-center justify-center p-9 mr-5 ">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">
                   Đăng ký
                 </h2>
@@ -371,7 +371,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
                 <form
                   onSubmit={handleSignup}
-                  className="flex flex-col gap-4 w-full max-w-sm"
+                  className="flex flex-col gap-4 w-full max-w-sm "
                 >
                   <div className="flex gap-3 w-full">
                     <input

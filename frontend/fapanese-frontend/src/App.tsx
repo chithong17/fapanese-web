@@ -5,7 +5,7 @@ import Flashcards from "./components/Flashcards";
 import Navbar from "./components/Navbar";
 import HeroBackground from "./components/HeroBackground";
 import HeroBelow from "./components/HeroBelow";
-import CoursesSection from "./components/CoursesSection";
+// import CoursesSection from "./components/CoursesSection";
 import FeatureSection from "./components/FeatureSection";
 import WhyUs from "./components/WhyUs";
 import Footer from "./components/Footer";
@@ -127,7 +127,6 @@ function App() {
                 <BottomNav scrollToSection={scrollToSection} />
                 <HeroBackground />
                 <HeroBelow />
-                <CoursesSection />
                 <FeatureSection />
                 <WhyUs />
                 <Quotes />

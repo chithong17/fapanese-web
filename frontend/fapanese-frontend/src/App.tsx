@@ -5,7 +5,7 @@ import Flashcards from "./components/Flashcards";
 import Navbar from "./components/Navbar";
 import HeroBackground from "./components/HeroBackground";
 import HeroBelow from "./components/HeroBelow";
-import CoursesSection from "./components/CoursesSection";
+// import CoursesSection from "./components/CoursesSection";
 import FeatureSection from "./components/FeatureSection";
 import WhyUs from "./components/WhyUs";
 import Footer from "./components/Footer";
@@ -28,7 +28,7 @@ const LoadingWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 1000); // giả lập delay load
+    const timer = setTimeout(() => setLoading(false), 500); // giả lập delay load
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
@@ -51,6 +51,7 @@ function App() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState<"login" | "signup">("login");
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [loadingPopup, setLoadingPopup] = useState(false); // 🔹 loading trước khi mở popup
 
   const scrollToSection = (id: string, tab?: "hiragana" | "katakana") => {
     if (id === "alphabet" && tab) {
@@ -62,9 +63,16 @@ function App() {
     }
   };
 
+  // 🟢 Khi người dùng bấm Sign up / Login
   const openAuth = (tab: "login" | "signup") => {
     setAuthTab(tab);
-    setIsAuthOpen(true);
+    setLoadingPopup(true); // bật loading
+
+    // mô phỏng delay tải giao diện popup
+    setTimeout(() => {
+      setLoadingPopup(false);
+      setIsAuthOpen(true); // sau khi "tải xong" thì mở popup
+    }, 600);
   };
 
   const flashcardData = [
@@ -90,20 +98,27 @@ function App() {
 
   return (
     <Router>
-      <Navbar
-        scrollToSection={scrollToSection}
-        onAuthClick={openAuth}
-        userDropdownOpen={userDropdownOpen}
-        setUserDropdownOpen={setUserDropdownOpen}
-      />
-
-      <AuthPopup
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        initialTab={authTab}
-      />
-
       <LoadingWrapper>
+        {/* Spinner khi đang load popup */}
+        {loadingPopup && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80">
+            <CircularProgress />
+          </div>
+        )}
+
+        <Navbar
+          scrollToSection={scrollToSection}
+          onAuthClick={openAuth}
+          userDropdownOpen={userDropdownOpen}
+          setUserDropdownOpen={setUserDropdownOpen}
+        />
+
+        <AuthPopup
+          isOpen={isAuthOpen}
+          onClose={() => setIsAuthOpen(false)}
+          initialTab={authTab}
+        />
+
         <Routes>
           <Route
             path="/"
@@ -112,7 +127,6 @@ function App() {
                 <BottomNav scrollToSection={scrollToSection} />
                 <HeroBackground />
                 <HeroBelow />
-                <CoursesSection />
                 <FeatureSection />
                 <WhyUs />
                 <Quotes />
@@ -146,5 +160,4 @@ function App() {
     </Router>
   );
 }
-
-export default App;
+ export default App;

@@ -1,14 +1,15 @@
 import React from "react";
 import ScrollReveal from "../../components/ScrollReveal";
 import { Link } from "react-router-dom";
-import LogoJPD113  from "../../assets/jpd113.jpg";
-import LogoJPD123  from "../../assets/jpd123.jpg";
-import LogoJPD133  from "../../assets/jpd133.png";
-
+import LogoJPD113 from "../../assets/jpd113.jpg";
+import LogoJPD123 from "../../assets/jpd123.jpg";
+import LogoJPD133 from "../../assets/jpd133.png";
 
 interface Course {
-   img: string 
+  img: string;
+  nameCourse: string;
   price: string;
+  level: string;
   code: string;
   title: string;
   description: string;
@@ -17,8 +18,10 @@ interface Course {
 
 const courses: Course[] = [
   {
+    nameCourse: "Fapanese Nihon",
     img: LogoJPD113,
-    price: "Cơ bản",
+    price: "MIỄN PHÍ",
+    level: "Cơ bản",
     code: "JPD113",
     title: "Khóa học Cơ bản",
     description:
@@ -26,8 +29,11 @@ const courses: Course[] = [
     duration: "12 tuần",
   },
   {
+    nameCourse: "Fapanese Nihon",
+
     img: LogoJPD123,
-    price: "Trung cấp",
+    level: "Trung cấp",
+    price: "MIỄN PHÍ",
     code: "JPD123",
     title: "Khóa học Trung cấp",
     description:
@@ -35,8 +41,10 @@ const courses: Course[] = [
     duration: "10 tuần",
   },
   {
+    nameCourse: "Fapanese Nihon",
     img: LogoJPD133,
-    price: "Nâng cao",
+    level: "Nâng cao",
+    price: "MIỄN PHÍ",
     code: "JPD133",
     title: "Khóa học Nâng cao",
     description:
@@ -49,27 +57,28 @@ const Course: React.FC = () => {
   return (
     <ScrollReveal>
       <section className="w-full bg-gray-100 py-30 px-6  break-all">
-        <div className="max-w-10xl mx-auto grid gap-10">
+        <div className="max-w-7xl mx-auto grid gap-10">
           {courses.map((course, idx) => (
             <div
               key={idx}
               className="relative group bg-white/90 backdrop-blur-md border border-gray-200 rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transform transition-all duration-500 hover:-translate-y-2"
             >
-              <div className="grid grid-cols-10 items-center p-6 sm:p-8 gap-6">
+              <div className="grid grid-cols-10 items-center p-6 sm:p-3 gap-6">
                 {/* Bên phải: hình và button */}
                 <div className="col-span-10 sm:col-span-6 flex flex-col items-center justify-center space-y-4">
                   <img
                     src={course.img}
                     alt={course.title}
-                    className=" h-[75%] object-cover rounded-2xl shadow-md transition duration-500 hover:scale-105"
+                    className=" h-[75 %] object-cover rounded-2xl shadow-md transition duration-500 "
                   />
-                  
                 </div>
                 {/* Bên trái: thông tin khóa học */}
                 <div className="col-span-10 sm:col-span-4 text-left space-y-3">
-                  <p className="text-sm text-gray-500 font-semibold uppercase tracking-wide">
-                    {course.price}
-                  </p>
+                  <div>
+                    <span  className="bg-red-500 rounded-2xl px-3 py-1 font-extrabold text-white">{course.price}</span>
+                    <span className="">  {course.nameCourse}</span>
+                  </div>
+                 
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-800">
                     {course.title}
                   </h2>
@@ -79,13 +88,12 @@ const Course: React.FC = () => {
                   <p className="text-gray-900 font-semibold">
                     ⏱ Thời lượng: {course.duration}
                   </p>
-                   <Link
+                  <Link
                     to={`/courses/${course.code}`}
                     className="px-5 py-3 bg-[#14a5a5] text-white rounded-xl font-semibold shadow-md hover:bg-[#119090] transition"
                   >
                     Bắt đầu học
                   </Link>
-                  
                 </div>
               </div>
             </div>

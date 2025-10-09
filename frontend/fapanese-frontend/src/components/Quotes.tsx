@@ -1,5 +1,5 @@
 
-import qt from "../assets/quoste.png";
+import qt from "../assets/quoste.jpg";
 import ScrollReveal from "./ScrollReveal";
 
 function Quotes() {

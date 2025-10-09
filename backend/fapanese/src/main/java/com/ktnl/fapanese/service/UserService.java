@@ -101,7 +101,7 @@ public class UserService {
 
         // Nếu là student
         if (user.getStudent() != null) {
-            builder.dob(user.getStudent().getDateOfBirth())
+            builder.dateOfBirth(user.getStudent().getDateOfBirth())
                     .campus(user.getStudent().getCampus())
                     .firstName(user.getStudent().getFirstName())
                     .lastName(user.getStudent().getLastName());
@@ -109,7 +109,7 @@ public class UserService {
 
         // Nếu là lecturer
         if (user.getTeacher() != null) {
-            builder.dob(user.getTeacher().getDateOfBirth())
+            builder.dateOfBirth(user.getTeacher().getDateOfBirth())
                     .expertise(user.getTeacher().getExpertise())
                     .bio(user.getTeacher().getBio())
                     .firstName(user.getTeacher().getFirstName())

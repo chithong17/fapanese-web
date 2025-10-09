@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import LogoJPD113 from "../../assets/jpd113.jpg";
 import LogoJPD123 from "../../assets/jpd123.jpg";
 import LogoJPD133 from "../../assets/jpd133.png";
+import Footer from "../../components/Footer";
+
 
 interface Course {
   img: string;
@@ -13,42 +15,48 @@ interface Course {
   code: string;
   title: string;
   description: string;
+  description2: string;
+
   duration: string;
 }
 
 const courses: Course[] = [
   {
-    nameCourse: "Fapanese Nihon",
+    nameCourse: "できる日本語 (SƠ)",
     img: LogoJPD113,
     price: "MIỄN PHÍ",
     level: "Cơ bản",
     code: "JPD113",
-    title: "Khóa học Cơ bản",
-    description:
-      "Khóa học toàn diện từ cơ bản với bảng chữ cái, từ vựng, ngữ pháp và speaking.",
+    title: "JPD113",
+    description: "できる日本語! - Tiến bộ nhanh chóng cùng",
+    description2: "FAPANESE!",
     duration: "12 tuần",
   },
   {
-    nameCourse: "Fapanese Nihon",
+    nameCourse: "できる日本語 (TRUNG)",
 
     img: LogoJPD123,
     level: "Trung cấp",
     price: "MIỄN PHÍ",
     code: "JPD123",
-    title: "Khóa học Trung cấp",
+    title: "JPD123",
     description:
-      "Khóa học trung cấp tập trung vào từ vựng, ngữ pháp và kỹ năng speaking nâng cao.",
+      "できる日本語! - Tiến bộ nhanh chóng cùng",
+    description2: "FAPANESE!",
+
     duration: "10 tuần",
   },
   {
-    nameCourse: "Fapanese Nihon",
+    nameCourse: "できる日本語 (CAO)",
     img: LogoJPD133,
     level: "Nâng cao",
     price: "MIỄN PHÍ",
     code: "JPD133",
-    title: "Khóa học Nâng cao",
+    title: "JPD133",
     description:
-      "Khóa học nâng cao với chương trình học chuyên sâu và luyện thi chứng chỉ JLPT.",
+      "できる日本語! - Tiến bộ nhanh chóng cùng",
+    description2: "FAPANESE!",
+
     duration: "14 tuần",
   },
 ];
@@ -73,26 +81,93 @@ const Course: React.FC = () => {
                   />
                 </div>
                 {/* Bên trái: thông tin khóa học */}
-                <div className="col-span-10 sm:col-span-4 text-left space-y-3">
+                <div className="col-span-10 sm:col-span-4 text-right space-y-3 px-5 py-5  tracking-wider">
                   <div>
-                    <span  className="bg-red-500 rounded-2xl px-3 py-1 font-extrabold text-white">{course.price}</span>
-                    <span className="">  {course.nameCourse}</span>
+                    <span className="bg-red-500 rounded-2xl px-3 py-1 font-bold text-white">
+                      {course.price}
+                    </span>
+                    <span className="text-green-950 font-semibold text-3xl">
+                      {" "}
+                      {course.nameCourse}
+                    </span>
                   </div>
-                 
-                  <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-800">
+
+                  <h2 className="text-8xl font-extrabold text-[#023333] ">
                     {course.title}
                   </h2>
                   <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
                     {course.description}
                   </p>
+                  <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
+                    {course.description2}
+                  </p>
                   <p className="text-gray-900 font-semibold">
                     ⏱ Thời lượng: {course.duration}
                   </p>
+                  <div className="flex justify-end">
+                    <svg
+                      className="w-4 h-4 text-yellow-300 me-1"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-4 h-4 text-yellow-300 me-1"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-4 h-4 text-yellow-300 me-1"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-4 h-4 text-yellow-300 me-1"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-4 h-4 text-yellow-300 me-1"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                      5
+                    </p>
+                    <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                      /
+                    </p>
+                    <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                      5
+                    </p>
+                    <br />
+                  </div>
+                  <br />
+
                   <Link
                     to={`/courses/${course.code}`}
-                    className="px-5 py-3 bg-[#14a5a5] text-white rounded-xl font-semibold shadow-md hover:bg-[#119090] transition"
+                    className="px-5 py-2 bg-[#F68828] text-white rounded-3xl font-bold  "
                   >
-                    Bắt đầu học
+                    BẮT ĐẦU HỌC CÙNG VỚI CHÚNG TÔI NÀO!
                   </Link>
                 </div>
               </div>
@@ -100,6 +175,7 @@ const Course: React.FC = () => {
           ))}
         </div>
       </section>
+      <Footer></Footer>
     </ScrollReveal>
   );
 };

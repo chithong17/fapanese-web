@@ -8,7 +8,7 @@ function Quotes() {
       <img
         src={qt}
         alt="Quotes"
-        className="w-full h-215 object-contain drop-shadow-2xl"
+        className="w-full h-215 object-contain drop-shadow-2xl hover:focus-visible:*:"
       />
     </ScrollReveal>
   );

@@ -14,6 +14,7 @@ import com.ktnl.fapanese.mail.VerifyOtpEmail;
 import com.ktnl.fapanese.repository.UserRepository;
 import com.ktnl.fapanese.service.AuthenticationService;
 import com.ktnl.fapanese.service.OtpTokenService;
+import com.ktnl.fapanese.service.UserService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ import java.text.ParseException;
 public class AuthenticationController {
     AuthenticationService authenticationService;
     OtpTokenService  otpTokenService;
-    UserRepository userRepository;
+    UserService userService;
 
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest request){
@@ -70,20 +71,15 @@ public class AuthenticationController {
 
     @PostMapping("/verify-otp")
     public ApiResponse<VerifyOtpResponse> verifyOtp(@RequestBody OtpVerifyRequest request) {
+        //nếu xác thực thành công hàm mới đc đi tiếp
+        //nếu xác thực OTP thất bại hàm verifyOtp sẽ ném ra Exception nên hàm bị dừng ở câu lệnh này
         var result = otpTokenService.verifyOtp(request.getEmail(), request.getOtp());
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        if(user.getTeacher() != null)
-            user.setStatus(2);
-        else if(user.getStudent() != null)
-            user.setStatus(3);
+        userService.updateStatusUserAfterVerifyOtp(request.getEmail());
 
-        userRepository.save(user);
         return ApiResponse.<VerifyOtpResponse>builder()
                 .result(result)
                 .build();
-
     }
 
     @PostMapping("/forgot-password")

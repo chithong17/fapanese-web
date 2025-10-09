@@ -179,6 +179,18 @@ public class UserService {
 
     }
 
+    public void updateStatusUserAfterVerifyOtp(String email){
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if(user.getTeacher() != null)
+            user.setStatus(2);
+        else if(user.getStudent() != null)
+            user.setStatus(3);
+
+        userRepo.save(user);
+    }
+
     @Transactional
     public void deleteUserByEmail(String email) {
         if (userRepo.findByEmail(email).isEmpty()) {

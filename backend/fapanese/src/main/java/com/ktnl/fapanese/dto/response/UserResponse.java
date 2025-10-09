@@ -16,8 +16,8 @@ public class UserResponse {
     private String id;
     private String email;
     private String role;
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    private LocalDate dob;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateOfBirth;
     private String firstName;
     private String lastName;
     // student specific

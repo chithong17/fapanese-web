@@ -1,8 +1,13 @@
 import React from "react";
 import ScrollReveal from "../../components/ScrollReveal";
 import { Link } from "react-router-dom";
+import LogoJPD113  from "../../assets/jpd113.jpg";
+import LogoJPD123  from "../../assets/jpd123.jpg";
+import LogoJPD133  from "../../assets/jpd133.png";
+
 
 interface Course {
+   img: string 
   price: string;
   code: string;
   title: string;
@@ -12,6 +17,7 @@ interface Course {
 
 const courses: Course[] = [
   {
+    img: LogoJPD113,
     price: "Cơ bản",
     code: "JPD113",
     title: "Khóa học Cơ bản",
@@ -20,6 +26,7 @@ const courses: Course[] = [
     duration: "12 tuần",
   },
   {
+    img: LogoJPD123,
     price: "Trung cấp",
     code: "JPD123",
     title: "Khóa học Trung cấp",
@@ -28,6 +35,7 @@ const courses: Course[] = [
     duration: "10 tuần",
   },
   {
+    img: LogoJPD133,
     price: "Nâng cao",
     code: "JPD133",
     title: "Khóa học Nâng cao",
@@ -49,16 +57,16 @@ const Course: React.FC = () => {
             >
               <div className="grid grid-cols-10 items-center p-6 sm:p-8 gap-6">
                 {/* Bên phải: hình và button */}
-                <div className="col-span-10 sm:col-span-4 flex flex-col items-center justify-center space-y-4">
+                <div className="col-span-10 sm:col-span-6 flex flex-col items-center justify-center space-y-4">
                   <img
-                    // src={courseImg}
+                    src={course.img}
                     alt={course.title}
-                    className="w-full h-32 sm:h-40 object-cover rounded-2xl shadow-md transition duration-500 hover:scale-105"
+                    className=" h-[75%] object-cover rounded-2xl shadow-md transition duration-500 hover:scale-105"
                   />
                   
                 </div>
                 {/* Bên trái: thông tin khóa học */}
-                <div className="col-span-10 sm:col-span-6 text-left space-y-3">
+                <div className="col-span-10 sm:col-span-4 text-left space-y-3">
                   <p className="text-sm text-gray-500 font-semibold uppercase tracking-wide">
                     {course.price}
                   </p>
@@ -71,12 +79,13 @@ const Course: React.FC = () => {
                   <p className="text-gray-900 font-semibold">
                     ⏱ Thời lượng: {course.duration}
                   </p>
-                  <Link
+                   <Link
                     to={`/courses/${course.code}`}
                     className="px-5 py-3 bg-[#14a5a5] text-white rounded-xl font-semibold shadow-md hover:bg-[#119090] transition"
                   >
                     Bắt đầu học
                   </Link>
+                  
                 </div>
               </div>
             </div>

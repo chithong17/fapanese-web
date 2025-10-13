@@ -1,4 +1,4 @@
-package com.ktnl.fapanese.service;
+package com.ktnl.fapanese.service.implementations;
 
 import com.ktnl.fapanese.dto.request.IntrospectRequest;
 import com.ktnl.fapanese.dto.response.IntrospectResponse;

@@ -1,4 +1,4 @@
-package com.ktnl.fapanese.service;
+package com.ktnl.fapanese.service.implementations;
 
 import com.ktnl.fapanese.dto.request.UserRequest;
 import com.ktnl.fapanese.dto.response.UserResponse;
@@ -13,17 +13,15 @@ import com.ktnl.fapanese.repository.LecturerRepository;
 import com.ktnl.fapanese.repository.RoleRepository;
 import com.ktnl.fapanese.repository.StudentRepository;
 import com.ktnl.fapanese.repository.UserRepository;
+import com.ktnl.fapanese.service.interfaces.IUserService;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -31,7 +29,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class UserService {
+public class UserService implements IUserService {
     @Autowired
     private UserRepository userRepo;
     @Autowired

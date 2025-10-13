@@ -108,7 +108,7 @@ const Course: React.FC = () => {
                     <span className="bg-red-500 rounded-2xl px-3 py-1 font-bold text-white">
                       {course.price}
                     </span>
-                    <span className="text-green-950 font-semibold text-3xl">
+                    <span className="text-green-950 font-semibold text-3xl font-sans">
                       {" "}
                       {course.nameCourse}
                     </span>
@@ -187,7 +187,7 @@ const Course: React.FC = () => {
 
                   <Link
                     to={`/courses/${course.code}`}
-                    className="px-5 py-2 bg-[#F68828] text-white rounded-3xl font-bold  "
+                    className="px-5 py-2 bg-[#80D9E6] text-white rounded-3xl font-bold px-20 "
                   >
                     BẮT ĐẦU HỌC!
                   </Link>

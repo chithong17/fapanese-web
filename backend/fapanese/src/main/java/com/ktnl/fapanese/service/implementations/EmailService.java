@@ -1,9 +1,10 @@
-package com.ktnl.fapanese.service;
+package com.ktnl.fapanese.service.implementations;
 
 import com.ktnl.fapanese.dto.response.EmailResponse;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mail.EmailTemplate;
+import com.ktnl.fapanese.service.interfaces.IEmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AccessLevel;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class EmailService {
+public class EmailService implements IEmailService {
     JavaMailSender mailSender; // Spring cung cấp để gửi mail
 
     @NonFinal

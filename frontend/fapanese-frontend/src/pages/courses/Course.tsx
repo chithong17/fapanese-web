@@ -77,7 +77,7 @@ const Course: React.FC = () => {
                   <img
                     src={course.img}
                     alt={course.title}
-                    className=" h-[75 %] object-cover rounded-2xl shadow-md transition duration-500 "
+                    className=" h-[75 %] object-cover rounded-2xl shadow-md transition duration-500"
                   />
                 </div>
                 {/* Bên trái: thông tin khóa học */}
@@ -92,7 +92,7 @@ const Course: React.FC = () => {
                     </span>
                   </div>
 
-                  <h2 className="text-8xl font-extrabold text-[#023333] ">
+                  <h2 className="text-8xl font-extrabold text-[#023333] font-sans">
                     {course.title}
                   </h2>
                   <p className="text-gray-600 text-sm sm:text-base leading-relaxed">

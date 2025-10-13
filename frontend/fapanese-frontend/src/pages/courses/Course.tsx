@@ -92,7 +92,7 @@ const Course: React.FC = () => {
                     </span>
                   </div>
 
-                  <h2 className="text-8xl font-extrabold text-[#023333] font-sans">
+                  <h2 className="text-6xl font-extrabold text-[#023333] font-sans">
                     {course.title}
                   </h2>
                   <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
@@ -167,7 +167,7 @@ const Course: React.FC = () => {
                     to={`/courses/${course.code}`}
                     className="px-5 py-2 bg-[#F68828] text-white rounded-3xl font-bold  "
                   >
-                    BẮT ĐẦU HỌC CÙNG VỚI CHÚNG TÔI NÀO!
+                    BẮT ĐẦU HỌC!
                   </Link>
                 </div>
               </div>

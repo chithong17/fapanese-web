@@ -3,7 +3,7 @@ package com.ktnl.fapanese.controller;
 import com.ktnl.fapanese.dto.request.UserRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
-import com.ktnl.fapanese.service.UserService;
+import com.ktnl.fapanese.service.interfaces.IUserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 public class UserController {
     @Autowired
-    private UserService userService;
+    IUserService iUserService;
     @PostMapping("/register")
     public ApiResponse<UserResponse> register(@Valid @RequestBody UserRequest request){
         log.info("Register request: {}", request);
 
-        var result = userService.registerUser(request);
+        var result = iUserService.registerUser(request);
 
         return  ApiResponse.<UserResponse>builder()
                 .result(result)
@@ -36,7 +36,7 @@ public class UserController {
     private ApiResponse<UserResponse> getProfile(){
         log.info("Get profile request");
 
-        UserResponse userResponse = userService.getCurrentUserProfile();
+        UserResponse userResponse = iUserService.getCurrentUserProfile();
 
         return ApiResponse.<UserResponse>builder()
                 .result(userResponse)
@@ -46,7 +46,7 @@ public class UserController {
     @PostMapping("/profile/update")
     private ApiResponse<UserResponse> updateProfile(@RequestBody UserRequest request){
         log.info("Update profile request: {}", request);
-        UserResponse userResponse = userService.updateUserProfile(request);
+        UserResponse userResponse = iUserService.updateUserProfile(request);
         return ApiResponse.<UserResponse>builder()
                 .result(userResponse)
                 .build();
@@ -54,7 +54,7 @@ public class UserController {
 
     @DeleteMapping("/{email}")
     public ResponseEntity<String> deleteUserByEmail(@PathVariable String email) {
-        userService.deleteUserByEmail(email);
+        iUserService.deleteUserByEmail(email);
         return ResponseEntity.ok("User with email " + email + " has been deleted.");
     }
 }

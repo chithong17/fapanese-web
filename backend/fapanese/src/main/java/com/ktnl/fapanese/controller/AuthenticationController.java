@@ -6,15 +6,12 @@ import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.AuthenticationResponse;
 import com.ktnl.fapanese.dto.response.EmailResponse;
 import com.ktnl.fapanese.dto.response.VerifyOtpResponse;
-import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.exception.AppException;
-import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mail.ForgotPasswordEmail;
 import com.ktnl.fapanese.mail.VerifyOtpEmail;
-import com.ktnl.fapanese.repository.UserRepository;
-import com.ktnl.fapanese.service.AuthenticationService;
-import com.ktnl.fapanese.service.OtpTokenService;
-import com.ktnl.fapanese.service.UserService;
+import com.ktnl.fapanese.service.interfaces.IAuthenticationService;
+import com.ktnl.fapanese.service.interfaces.IOtpTokenService;
+import com.ktnl.fapanese.service.interfaces.IUserService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -33,13 +30,13 @@ import java.text.ParseException;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationController {
-    AuthenticationService authenticationService;
-    OtpTokenService  otpTokenService;
-    UserService userService;
+    IAuthenticationService iAuthenticationService;
+    IOtpTokenService iOtpTokenService;
+    IUserService iUserService;
 
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest request){
-        var result = authenticationService.login(request);
+        var result = iAuthenticationService.login(request);
         return ApiResponse.<AuthenticationResponse>builder()
                 .result(result)
                 .build();
@@ -47,7 +44,7 @@ public class AuthenticationController {
 
     @PostMapping("/refresh")
     public ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
-        var result = authenticationService.refreshToken(request);
+        var result = iAuthenticationService.refreshToken(request);
 
         return ApiResponse.<AuthenticationResponse>builder()
                 .result(result)
@@ -56,13 +53,13 @@ public class AuthenticationController {
 
     @PostMapping("/logout")
     public ApiResponse<Void>logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
-        authenticationService.logout(request);
+        iAuthenticationService.logout(request);
         return ApiResponse.<Void>builder().build();
     }
 
     @PostMapping("/send-otp")
     public ApiResponse<EmailResponse> sendOtp(@RequestBody OtpRequest request) {
-        var result = otpTokenService.generateAndSendOtp(request.getEmail(), new VerifyOtpEmail());
+        var result = iOtpTokenService.generateAndSendOtp(request.getEmail(), new VerifyOtpEmail());
 
         return ApiResponse.<EmailResponse>builder()
                 .result(result)
@@ -73,9 +70,9 @@ public class AuthenticationController {
     public ApiResponse<VerifyOtpResponse> verifyOtp(@RequestBody OtpVerifyRequest request) {
         //nếu xác thực thành công hàm mới đc đi tiếp
         //nếu xác thực OTP thất bại hàm verifyOtp sẽ ném ra Exception nên hàm bị dừng ở câu lệnh này
-        var result = otpTokenService.verifyOtp(request.getEmail(), request.getOtp());
+        var result = iOtpTokenService.verifyOtp(request.getEmail(), request.getOtp());
 
-        userService.updateStatusUserAfterVerifyOtp(request.getEmail());
+        iUserService.updateStatusUserAfterVerifyOtp(request.getEmail());
 
         return ApiResponse.<VerifyOtpResponse>builder()
                 .result(result)
@@ -84,7 +81,7 @@ public class AuthenticationController {
 
     @PostMapping("/forgot-password")
     public ApiResponse<EmailResponse> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-        var result = otpTokenService.generateAndSendOtp(request.getEmail(), new ForgotPasswordEmail(), request.getEmail());
+        var result = iOtpTokenService.generateAndSendOtp(request.getEmail(), new ForgotPasswordEmail(), request.getEmail());
 
         return ApiResponse.<EmailResponse>builder()
                 .result(result)
@@ -95,10 +92,10 @@ public class AuthenticationController {
     public ApiResponse<VerifyOtpResponse> resetPassword(@RequestBody ResetPasswordRequest request) {
         try {
             // verifyOtp sẽ ném AppException nếu sai
-            var verifyResult = otpTokenService.verifyOtp(request.getEmail(), request.getOtp());
+            var verifyResult = iOtpTokenService.verifyOtp(request.getEmail(), request.getOtp());
 
             // Nếu tới đây tức là OTP hợp lệ → cập nhật mật khẩu
-            authenticationService.updatePassword(request.getEmail(), request.getNewPassword());
+            iAuthenticationService.updatePassword(request.getEmail(), request.getNewPassword());
 
             var response = VerifyOtpResponse.builder()
                     .isSuccess(true)

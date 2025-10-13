@@ -1,13 +1,10 @@
 package com.ktnl.fapanese.configuration;
 
 import com.ktnl.fapanese.dto.request.IntrospectRequest;
-import com.ktnl.fapanese.service.AuthenticationService;
-import com.ktnl.fapanese.service.TokenValidationService;
+import com.ktnl.fapanese.service.implementations.TokenValidationService;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;

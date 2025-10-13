@@ -6,7 +6,6 @@ import LogoJPD123 from "../../assets/jpd123.jpg";
 import LogoJPD133 from "../../assets/jpd133.png";
 import Footer from "../../components/Footer";
 
-
 interface Course {
   img: string;
   nameCourse: string;
@@ -40,8 +39,7 @@ const courses: Course[] = [
     price: "MIỄN PHÍ",
     code: "JPD123",
     title: "JPD123",
-    description:
-      "できる日本語! - Tiến bộ nhanh chóng cùng",
+    description: "できる日本語! - Tiến bộ nhanh chóng cùng",
     description2: "FAPANESE!",
 
     duration: "10 tuần",
@@ -53,8 +51,7 @@ const courses: Course[] = [
     price: "MIỄN PHÍ",
     code: "JPD133",
     title: "JPD133",
-    description:
-      "できる日本語! - Tiến bộ nhanh chóng cùng",
+    description: "できる日本語! - Tiến bộ nhanh chóng cùng",
     description2: "FAPANESE!",
 
     duration: "14 tuần",
@@ -73,13 +70,38 @@ const Course: React.FC = () => {
             >
               <div className="grid grid-cols-10 items-center p-6 sm:p-3 gap-6">
                 {/* Bên phải: hình và button */}
-                <div className="col-span-10 sm:col-span-6 flex flex-col items-center justify-center space-y-4">
+                <div className="col-span-10 sm:col-span-6 relative flex flex-col items-center justify-center space-y-4">
+                  {/* Hình ảnh chính */}
                   <img
                     src={course.img}
                     alt={course.title}
-                    className=" h-[75 %] object-cover rounded-2xl shadow-md transition duration-500"
+                    className="h-[75%] object-cover rounded-2xl shadow-md transition duration-500 -mb-0.5"
                   />
+
+                  {/* SVG caro overlay */}
+                  <svg
+                    className="absolute inset-0 w-full h-full z-0 pointer-events-none rounded-2xl"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <defs>
+                      <pattern
+                        id="grid"
+                        width="15"
+                        height="15"
+                        patternUnits="userSpaceOnUse"
+                      >
+                        <path
+                          d="M 40 0 L 0 0 0 40"
+                          fill="none"
+                          stroke="rgba(0,0,0,0.1)" // Màu đen với độ mờ nhẹ
+                          strokeWidth="1"
+                        />
+                      </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                  </svg>
                 </div>
+
                 {/* Bên trái: thông tin khóa học */}
                 <div className="col-span-10 sm:col-span-4 text-right space-y-3 px-5 py-5  tracking-wider">
                   <div>
@@ -92,7 +114,7 @@ const Course: React.FC = () => {
                     </span>
                   </div>
 
-                  <h2 className="text-6xl font-extrabold text-[#023333] font-sans">
+                  <h2 className="text-6xl font-bold text-[#023333] font-sans">
                     {course.title}
                   </h2>
                   <p className="text-gray-600 text-sm sm:text-base leading-relaxed">

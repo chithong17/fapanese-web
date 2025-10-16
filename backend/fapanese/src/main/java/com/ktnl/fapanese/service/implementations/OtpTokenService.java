@@ -1,4 +1,4 @@
-package com.ktnl.fapanese.service;
+package com.ktnl.fapanese.service.implementations;
 
 import com.ktnl.fapanese.dto.response.EmailResponse;
 import com.ktnl.fapanese.dto.response.VerifyOtpResponse;
@@ -6,8 +6,8 @@ import com.ktnl.fapanese.entity.OtpToken;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mail.EmailTemplate;
-import com.ktnl.fapanese.mail.VerifyOtpEmail;
 import com.ktnl.fapanese.repository.OtpTokenRepository;
+import com.ktnl.fapanese.service.interfaces.IOtpTokenService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -23,7 +23,7 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class OtpTokenService {
+public class OtpTokenService implements IOtpTokenService {
     @Autowired
     private final OtpTokenRepository otpRepo;
     @Autowired

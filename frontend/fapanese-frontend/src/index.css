@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap');
+@import "@fontsource/poppins/400.css";
+@import "@fontsource/poppins/700.css";
+@import "@fontsource/poppins/900.css";
 
 /* Reset mặc định & set font */
 html, body, #root {

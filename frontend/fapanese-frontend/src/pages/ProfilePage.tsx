@@ -3,6 +3,7 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaUserCircle, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import logo from "../assets/editprofile.png";
+import logo2 from "../assets/logologin.png"
 
 interface UserProfile {
   id?: string;
@@ -73,7 +74,7 @@ const ProfilePage: React.FC = () => {
       await axios.post(
       
         "http://localhost:8080/fapanese/api/users/profile/update",
-        //"https://5180368dcd09.ngrok-free.app/fapanese/api/users/profile/update",
+        // "https://5180368dcd09.ngrok-free.app/fapanese/api/users/profile/update",
         profile,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -205,8 +206,11 @@ const ProfilePage: React.FC = () => {
             </defs>
             <rect width="100%" height="100%" fill="url(#grid)" />
           </svg>
+          <div>
+            <img src={logo2} alt="" className="pt-25 pl-5"/>
+          </div>
           <div className="pl-150 pt-5">
-            <img src={logo} alt="" className="w-50 " />
+            <span><img src={logo} alt="" className="w-160 " /></span>
           </div>
           {/* Nội dung hiển thị tên học viên */}
           <div className="absolute bottom-4 flex flex-col items-start z-10 ">

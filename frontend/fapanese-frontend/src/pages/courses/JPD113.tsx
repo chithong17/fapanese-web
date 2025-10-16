@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion, type Variants, easeOut } from "framer-motion";
 import { FaBookOpen, FaComments, FaLanguage } from "react-icons/fa";
-import { ClassNames } from "@emotion/react";
 
 const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -17,26 +16,29 @@ const JPD113: React.FC = () => {
   const lessons = [
     {
       title: "第1課ーはじめて",
+      lessonId: "bai1", // KEY DUY NHẤT CỦA BÀI HỌC
       details: [
-        { type: "Từ vựng", icon: <FaLanguage /> },
-        { type: "Ngữ pháp", icon: <FaBookOpen /> },
-        { type: "Speaking", icon: <FaComments /> },
+        { type: "Từ vựng", key: "tuvung", icon: <FaLanguage /> }, // KEY DUY NHẤT CỦA MỤC
+        { type: "Ngữ pháp", key: "nguphap", icon: <FaBookOpen /> },
+        { type: "Speaking", key: "speaking", icon: <FaComments /> },
       ],
     },
     {
       title: "第２課ー買い物◦食事",
+      lessonId: "bai2",
       details: [
-        { type: "Từ vựng", icon: <FaLanguage />　 },
-        { type: "Ngữ pháp", icon: <FaBookOpen /> },
-        { type: "Speaking", icon: <FaComments /> },
+        { type: "Từ vựng", key: "tuvung", icon: <FaLanguage />　 },
+        { type: "Ngữ pháp", key: "nguphap", icon: <FaBookOpen /> },
+        { type: "Speaking", key: "speaking", icon: <FaComments /> },
       ],
     },
     {
       title: "第３課ースケジュール",
+      lessonId: "bai3",
       details: [
-        { type: "Từ vựng", icon: <FaLanguage /> },
-        { type: "Ngữ pháp", icon: <FaBookOpen /> },
-        { type: "Speaking", icon: <FaComments /> },
+        { type: "Từ vựng", key: "tuvung", icon: <FaLanguage /> },
+        { type: "Ngữ pháp", key: "nguphap", icon: <FaBookOpen /> },
+        { type: "Speaking", key: "speaking", icon: <FaComments /> },
       ],
     },
   ];
@@ -49,7 +51,7 @@ const JPD113: React.FC = () => {
         variants={fadeInUp}
         className="max-w-6xl mx-auto bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl p-10 space-y-12"
       >
-        {/* Header */}
+        {/* Header (Giữ nguyên) */}
         <motion.div
           variants={fadeInUp}
           className="text-center space-y-4"
@@ -69,7 +71,7 @@ const JPD113: React.FC = () => {
           </Link>
         </motion.div>
 
-        {/* Lộ trình học tập chi tiết */}
+        {/* Lộ trình học tập chi tiết (Đã sửa key) */}
         <motion.div variants={fadeInUp} className="space-y-6 mt-12">
           <h2 className="text-3xl font-bold text-gray-900 text-center">
             Lộ trình học tập chi tiết
@@ -88,7 +90,7 @@ const JPD113: React.FC = () => {
               { title: "Chứng chỉ", desc: "Xác nhận năng lực và hoàn thành khóa", color: "from-purple-50 to-fuchsia-100" },
             ].map((item, i) => (
               <motion.div
-                key={i}
+                key={item.title} // Dùng title làm key vì danh sách này cố định
                 variants={fadeInUp}
                 whileHover={{ scale: 1.05 }}
                 className={`bg-gradient-to-br ${item.color} rounded-2xl shadow-md p-6 transition`}
@@ -100,15 +102,15 @@ const JPD113: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Danh sách bài học */}
+        {/* Danh sách bài học (Đã sửa key) */}
         <motion.div variants={fadeInUp} className="space-y-10 mt-16">
           <h2 className="text-3xl font-bold text-gray-900 text-center">
-             Danh sách bài học chi tiết
+            Danh sách bài học chi tiết
           </h2>
 
-          {lessons.map((lesson, idx) => (
+          {lessons.map((lesson) => ( // Lấy lesson thay vì idx
             <motion.div
-              key={idx}
+              key={lesson.lessonId} // SỬA: Dùng lessonId làm key
               variants={fadeInUp}
               whileHover={{ scale: 1.02 }}
               className="bg-white/90 rounded-2xl shadow-lg p-8 hover:shadow-2xl transition-transform duration-300"
@@ -117,9 +119,9 @@ const JPD113: React.FC = () => {
                 {lesson.title}
               </h3>
               <ul className="space-y-4">
-                {lesson.details.map((item, i) => (
+                {lesson.details.map((item) => ( // Lấy item thay vì i
                   <motion.li
-                    key={i}
+                    key={item.key} // SỬA: Dùng item.key (tuvung, nguphap, speaking)
                     whileHover={{ scale: 1.02 }}
                     className="flex justify-between items-center bg-gradient-to-r from-gray-50 to-gray-100 hover:from-sky-50 hover:to-white p-4 rounded-xl transition duration-200"
                   >
@@ -127,9 +129,12 @@ const JPD113: React.FC = () => {
                       {item.icon}
                       <span>{item.type}</span>
                     </div>
-                    <button className="px-4 py-2 bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white font-semibold rounded-lg shadow hover:scale-105 transition-transform">
+                    <Link
+                      to={`/lesson/jpd113/${lesson.lessonId}/${item.key}`}
+                      className="px-4 py-2 bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white font-semibold rounded-lg shadow hover:scale-105 transition-transform"
+                    >
                       Học ngay
-                    </button>
+                    </Link>
                   </motion.li>
                 ))}
               </ul>
@@ -137,13 +142,13 @@ const JPD113: React.FC = () => {
           ))}
         </motion.div>
 
-        {/* CTA */}
+        {/* CTA (Giữ nguyên) */}
         <motion.div
           variants={fadeInUp}
           className="text-center space-y-4 mt-16"
         >
           <p className="text-gray-800 font-semibold text-xl">
-               Sẵn sàng bắt đầu hành trình học tiếng Nhật?
+            Sẵn sàng bắt đầu hành trình học tiếng Nhật?
           </p>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Hãy tham gia cùng hàng nghìn học viên đã chinh phục tiếng Nhật cùng Fapanese.

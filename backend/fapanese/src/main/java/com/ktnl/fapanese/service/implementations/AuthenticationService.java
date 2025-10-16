@@ -1,23 +1,20 @@
-package com.ktnl.fapanese.service;
+package com.ktnl.fapanese.service.implementations;
 
 
 import com.ktnl.fapanese.dto.request.AuthenticationRequest;
-import com.ktnl.fapanese.dto.request.IntrospectRequest;
 import com.ktnl.fapanese.dto.request.LogoutRequest;
 import com.ktnl.fapanese.dto.request.RefreshRequest;
 import com.ktnl.fapanese.dto.response.AuthenticationResponse;
-import com.ktnl.fapanese.dto.response.IntrospectResponse;
 import com.ktnl.fapanese.entity.InvalidatedToken;
 import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.repository.InvalidatedTokenRepository;
 import com.ktnl.fapanese.repository.UserRepository;
+import com.ktnl.fapanese.service.interfaces.IAuthenticationService;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
-import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -25,13 +22,10 @@ import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.text.ParseException;
 import java.time.Instant;
@@ -44,7 +38,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AuthenticationService {
+public class AuthenticationService implements IAuthenticationService {
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
     TokenValidationService tokenValidationService;

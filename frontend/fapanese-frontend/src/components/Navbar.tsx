@@ -88,7 +88,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const menuItems = [
     { name: "VỀ CHÚNG TÔI", link: "/aboutus" },
     { name: "TRANG CHỦ", link: "/" },
-    { name: "KHÓA HỌC", link: "/courses" },
+    { name: "KHÓA HỌC", link: "/course" },
     { name: "THÀNH TÍCH", link: "/dashboard/student" },
     { name: "GÓC CHIA SẺ", link: "/" },
   ];
@@ -224,7 +224,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   Xin chào,
                   <span className="font-semibold text-[#0b7a75]">
                     {userProfile
-                      ? `${userProfile.firstName} ${userProfile.lastName}`
+                      ? `${userProfile.firstName} ${userProfile.lastName}` 
                       : "Đang tải..."}
                   </span>
                 </span>

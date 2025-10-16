@@ -1,4 +1,4 @@
-package com.ktnl.fapanese.service;
+package com.ktnl.fapanese.service.implementations;
 
 import com.ktnl.fapanese.dto.request.UserRequest;
 import com.ktnl.fapanese.dto.response.UserResponse;
@@ -13,17 +13,15 @@ import com.ktnl.fapanese.repository.LecturerRepository;
 import com.ktnl.fapanese.repository.RoleRepository;
 import com.ktnl.fapanese.repository.StudentRepository;
 import com.ktnl.fapanese.repository.UserRepository;
+import com.ktnl.fapanese.service.interfaces.IUserService;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -31,7 +29,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class UserService {
+public class UserService implements IUserService {
     @Autowired
     private UserRepository userRepo;
     @Autowired
@@ -101,7 +99,7 @@ public class UserService {
 
         // Nếu là student
         if (user.getStudent() != null) {
-            builder.dob(user.getStudent().getDateOfBirth())
+            builder.dateOfBirth(user.getStudent().getDateOfBirth())
                     .campus(user.getStudent().getCampus())
                     .firstName(user.getStudent().getFirstName())
                     .lastName(user.getStudent().getLastName());
@@ -109,7 +107,7 @@ public class UserService {
 
         // Nếu là lecturer
         if (user.getTeacher() != null) {
-            builder.dob(user.getTeacher().getDateOfBirth())
+            builder.dateOfBirth(user.getTeacher().getDateOfBirth())
                     .expertise(user.getTeacher().getExpertise())
                     .bio(user.getTeacher().getBio())
                     .firstName(user.getTeacher().getFirstName())
@@ -177,6 +175,18 @@ public class UserService {
         User savedUser = userRepo.save(user);
         return mapper.toUserResponse(savedUser);
 
+    }
+
+    public void updateStatusUserAfterVerifyOtp(String email){
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if(user.getTeacher() != null)
+            user.setStatus(2);
+        else if(user.getStudent() != null)
+            user.setStatus(3);
+
+        userRepo.save(user);
     }
 
     @Transactional

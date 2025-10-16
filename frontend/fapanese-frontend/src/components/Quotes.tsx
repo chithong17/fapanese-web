@@ -1,5 +1,5 @@
 
-import qt from "../assets/quoste.png";
+import qt from "../assets/quoste.jpg";
 import ScrollReveal from "./ScrollReveal";
 
 function Quotes() {
@@ -8,7 +8,7 @@ function Quotes() {
       <img
         src={qt}
         alt="Quotes"
-        className="w-full h-215 object-contain drop-shadow-2xl"
+        className="w-full h-215 object-contain drop-shadow-2xl hover:focus-visible:*:"
       />
     </ScrollReveal>
   );

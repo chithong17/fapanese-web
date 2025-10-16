@@ -79,7 +79,7 @@ public abstract class BaseEmailTemplate implements EmailTemplate {
                       font-weight: 600;
                       color: #222;
                     }
-.footer a {
+                    .footer a {
                       color: #14a5a5;
                       text-decoration: none;
                       font-size: 13px;
@@ -90,8 +90,8 @@ public abstract class BaseEmailTemplate implements EmailTemplate {
                     .footer-section {
                       display: inline-block;
                       vertical-align: top;
-                      width: 45%;
-                      margin: 10px 2%;
+                      width: 45%%;
+                      margin: 10px 2%%;
                     }
                     .footer-section img {
                       height: 60px;
@@ -147,13 +147,13 @@ public abstract class BaseEmailTemplate implements EmailTemplate {
                       </div>
 
                       <div class="bottom-footer">
-Designed with ❤️ by Fapanese Team
+                        Designed with ❤️ by Fapanese Team
                       </div>
                     </div>
                   </div>
                 </body>
                 </html>
-                 """
+                """
                 .formatted(renderBody(args));
     }
 }

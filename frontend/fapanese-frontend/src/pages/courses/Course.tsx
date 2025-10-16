@@ -1,9 +1,9 @@
 import React from "react";
 import ScrollReveal from "../../components/ScrollReveal";
 import { Link } from "react-router-dom";
-import LogoJPD113 from "../../assets/jpd113.jpg";
-import LogoJPD123 from "../../assets/jpd123.jpg";
-import LogoJPD133 from "../../assets/jpd133.png";
+import LogoJPD113 from "../../assets/jpd113.svg";
+import LogoJPD123 from "../../assets/jpd123.svg";
+import LogoJPD133 from "../../assets/jpd133.svg";
 import Footer from "../../components/Footer";
 
 interface Course {

@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaBookOpen, FaComments, FaLanguage, FaDownload } from "react-icons/fa";
-import { FiSearch, FiVideo } from "react-icons/fi";
+import { FiSearch, FiCheckCircle } from "react-icons/fi";
+import { FaLanguage, FaBookOpen, FaComments } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
-// ----------------------------- DỮ LIỆU GIẢ -----------------------------
-const sidebarLessons = [
-  { title: "Bộ thủ chữ Hán 2", duration: "0h24'", type: "Video" },
-  { title: "Bộ thủ chữ Hán 3", duration: "0h33'", type: "Video" },
-  { title: "Bộ thủ chữ Hán 4", duration: "0h29'", type: "Video" },
-  { title: "Bộ thủ chữ Hán 6", duration: "0h26'", type: "Video" },
-];
+// 🖼️ Import 4 ảnh SVG (tùy bạn đổi đường dẫn cho đúng)
+import BannerVocab from "../../assets/1.svg";
+import BannerGrammar from "../../assets/2.svg";
+import BannerSpeaking from "../../assets/3.svg";
+import BannerTest from "../../assets/4.svg";
 
+// ----------------------------- DỮ LIỆU GIẢ -----------------------------
 const vocabularyContent = [
   { jp: "はじめまして", vn: "Rất hân hạnh (Lần đầu gặp mặt)" },
   { jp: "わたし", vn: "Tôi" },
@@ -36,9 +35,17 @@ const quizData = {
 const LessonContentPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"lesson" | "exercise">("lesson");
   const [contentType, setContentType] = useState<
-    "vocab" | "grammar" | "speaking"
+    "vocab" | "grammar" | "speaking" | "test"
   >("vocab");
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
+
+  // 🖼️ Đổi banner dựa trên contentType
+  const bannerImage = {
+    vocab: BannerVocab,
+    grammar: BannerGrammar,
+    speaking: BannerSpeaking,
+    test: BannerTest,
+  }[contentType];
 
   // ----------------------------- BÀI TẬP -----------------------------
   const renderExerciseContent = () => (
@@ -86,7 +93,7 @@ const LessonContentPage: React.FC = () => {
 
       <button
         disabled={selectedOption === null}
-        className={`w-full py-4 font-bold text-lg rounded-5xl transition-all duration-300 
+        className={`w-full py-4 font-bold text-lg transition-all duration-300 rounded-4xl
           ${
             selectedOption !== null
               ? "bg-gradient-to-r from-[#00BCD4] to-[#26C6DA] text-white shadow-md hover:shadow-xl hover:opacity-95"
@@ -100,27 +107,6 @@ const LessonContentPage: React.FC = () => {
 
   // ----------------------------- BÀI HỌC -----------------------------
   const renderLessonContent = () => {
-    const contentButtons = [
-      {
-        key: "vocab",
-        title: "Từ vựng",
-        icon: <FaLanguage />,
-        color: "text-blue-500",
-      },
-      {
-        key: "grammar",
-        title: "Ngữ pháp",
-        icon: <FaBookOpen />,
-        color: "text-green-500",
-      },
-      {
-        key: "speaking",
-        title: "Speaking",
-        icon: <FaComments />,
-        color: "text-orange-500",
-      },
-    ];
-
     const renderContentSection = () => {
       switch (contentType) {
         case "vocab":
@@ -173,9 +159,18 @@ const LessonContentPage: React.FC = () => {
           return (
             <div className="p-6 text-gray-700">
               <h1 className="text-3xl font-bold mb-3">
-                Kỹ năng Nói: Giao tiếp chào hỏi cơ bản
+                Speaking: Giao tiếp chào hỏi cơ bản
               </h1>
               <p>Các đoạn hội thoại mẫu và công cụ luyện tập...</p>
+            </div>
+          );
+        case "test":
+          return (
+            <div className="p-6 text-gray-700">
+              <h1 className="text-3xl font-bold mb-3">
+                Kiểm tra cuối khóa
+              </h1>
+              <p>Bài kiểm tra tổng hợp kiến thức đã học trong chương này.</p>
             </div>
           );
       }
@@ -183,53 +178,23 @@ const LessonContentPage: React.FC = () => {
 
     return (
       <div className="w-full flex-shrink-0">
-        {/* Video header */}
+        {/* Banner đổi theo contentType */}
         <div className="aspect-video w-full bg-black relative overflow-hidden rounded-t-xl">
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-black/80 to-black/60 text-white p-6">
-            <h1 className="text-4xl font-extrabold text-cyan-400 mb-2">
-              NHẬP MÔN SƠ CẤP
-            </h1>
-            <h2 className="text-5xl font-extrabold tracking-wide">CHỮ HÁN</h2>
-            <p className="text-xl mt-3 opacity-90">
-              Giới thiệu chữ Hán trong tiếng Nhật
-            </p>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              className="mt-6 text-white bg-gradient-to-r from-green-400 to-teal-400 p-4 rounded-full shadow-lg"
-            >
-              <FiVideo className="text-3xl" />
-            </motion.button>
-            <span className="text-xs absolute bottom-2 left-3 text-gray-400">
-              Nguồn: Video bài giảng Fapanese
-            </span>
-          </div>
+          <motion.img
+            key={bannerImage}
+            src={bannerImage}
+            alt={contentType}
+            className="w-full h-full object-cover"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          />
         </div>
 
         {/* Nội dung bài học */}
         <div className="bg-gradient-to-br from-white via-[#f9fdff] to-[#f1fbfc]">
           {renderContentSection()}
         </div>
-
-        {/* Nút chọn mục */}
-        {/* <div className="grid grid-cols-3 gap-4 text-center p-6 border-t border-gray-100 bg-white rounded-b-xl">
-          {contentButtons.map((item) => (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              key={item.key}
-              onClick={() => setContentType(item.key as any)}
-              className={`p-4 rounded-xl font-medium transition-all duration-300 ${
-                contentType === item.key
-                  ? "bg-gradient-to-r from-[#E0F7FA] to-[#B2EBF2] shadow-lg ring-2 ring-[#00BCD4]"
-                  : "bg-white border border-gray-200 hover:bg-gray-50 shadow-sm"
-              }`}
-            >
-              {React.cloneElement(item.icon, {
-                className: `mx-auto text-3xl ${item.color} mb-2`,
-              })}
-              {item.title}
-            </motion.button>
-          ))}
-        </div> */}
       </div>
     );
   };
@@ -240,7 +205,7 @@ const LessonContentPage: React.FC = () => {
       <div className="flex-1 flex flex-col lg:flex-row max-w-7xl py-10 px-6">
         {/* CỘT TRÁI */}
         <div className="lg:w-3/4 pr-0 lg:pr-8 space-y-4">
-          {/* Thanh chuyển bài học/bài tập */}
+          {/* Thanh chuyển Bài học / Bài tập */}
           <div className="relative flex justify-between mb-6 w-72 mx-auto bg-gray-200 rounded-full p-1 shadow-inner overflow-hidden">
             <motion.div
               className="absolute top-1 bottom-1 w-1/2 rounded-full bg-gradient-to-r from-[#B2EBF2] to-[#80DEEA] shadow-md"
@@ -264,7 +229,7 @@ const LessonContentPage: React.FC = () => {
             ))}
           </div>
 
-          {/* Hiệu ứng chuyển fade */}
+          {/* Nội dung chính */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-100 overflow-hidden min-h-[450px]">
             <AnimatePresence mode="wait">
               {activeTab === "lesson" ? (
@@ -293,53 +258,72 @@ const LessonContentPage: React.FC = () => {
         </div>
 
         {/* SIDEBAR */}
-        <div className="lg:w-1/4 mt-8 lg:mt-0 bg-white/90 backdrop-blur rounded-2xl shadow-xl p-6 space-y-6 border border-gray-100 h-fit sticky top-4">
-          <div className="relative">
-            <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Tìm kiếm bài học..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#80DEEA] transition-all"
-            />
-          </div>
+<div className="lg:w-1/4 mt-8 lg:mt-0 bg-white/70 backdrop-blur-xl rounded-3xl shadow-lg p-6 space-y-6 border border-gray-100 h-fit sticky top-4 transition-all duration-500">
+  {/* Ô tìm kiếm */}
+  <div className="relative">
+    <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
+    <input
+      type="text"
+      placeholder="Tìm kiếm bài học..."
+      className="w-full pl-11 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#80DEEA] focus:border-[#00BCD4] bg-white/60 placeholder-gray-400 text-gray-700 transition-all duration-300 shadow-sm"
+    />
+  </div>
 
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-gray-800 border-b pb-2">
-              Các bài học chữ Hán
-            </h3>
-            {sidebarLessons.map((lesson, index) => (
-              <Link
-                key={index}
-                to="#"
-                className="flex items-start p-3 hover:bg-[#f8fdfe] rounded-lg transition duration-300 group"
-              >
-                <div className="w-16 h-12 bg-gradient-to-br from-gray-200 to-gray-100 rounded-md flex-shrink-0 relative overflow-hidden shadow-inner">
-                  <span className="absolute bottom-1 right-1 bg-black/70 text-white text-xs px-1 rounded">
-                    {lesson.duration}
-                  </span>
-                </div>
-                <div className="ml-3 flex-1">
-                  <p className="text-sm font-medium text-gray-900 group-hover:text-[#00BCD4] transition-colors duration-300">
-                    {lesson.title}...
-                  </p>
-                  <div className="flex items-center text-xs text-gray-500 mt-1">
-                    <FiVideo className="mr-1 text-green-500" />
-                    <span>{lesson.type}</span>
-                    <span className="ml-3 text-red-500 font-semibold cursor-pointer hover:underline">
-                      Tài liệu
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+  {/* Danh sách học phần */}
+  <div className="space-y-5">
+    <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-100 pb-2 tracking-wide">
+      Bài 1 - はじめて
+    </h3>
 
-          <div className="pt-4 border-t">
-            <button className="w-full py-3 bg-gradient-to-r from-[#80DEEA] to-[#4DD0E1] text-white font-semibold rounded-xl hover:opacity-90 transition-all flex items-center justify-center shadow-md hover:shadow-xl">
-              <FaDownload className="mr-2" /> Tải tài liệu bài học
-            </button>
-          </div>
+    {[
+      { type: "Từ vựng", key: "vocab", icon: <FaLanguage className="text-gray-500" /> },
+      { type: "Ngữ pháp", key: "grammar", icon: <FaBookOpen className="text-gray-500" /> },
+      { type: "Speaking", key: "speaking", icon: <FaComments className="text-gray-500" /> },
+      { type: "Kiểm tra cuối khóa", key: "test", icon: <FiCheckCircle className="text-gray-500" /> },
+    ].map((part, idx) => (
+      <Link
+        key={idx}
+        to="#"
+        onClick={() => setContentType(part.key as any)}
+        className={`flex items-center gap-4 p-4 rounded-2xl border border-transparent transition-all duration-300 group ${
+          contentType === part.key
+            ? "bg-gradient-to-r from-[#E0F7FA] to-[#B2EBF2] shadow-lg border-[#B2EBF2]"
+            : "hover:bg-gray-50 hover:shadow-md"
+        }`}
+      >
+        <div
+          className={`w-11 h-11 flex items-center justify-center rounded-xl transition-transform duration-300 ${
+            contentType === part.key ? "bg-white shadow-sm scale-105" : "bg-gray-100"
+          }`}
+        >
+          {React.cloneElement(part.icon, {
+            className: `text-xl transition-colors duration-300 ${
+              contentType === part.key
+                ? "text-[#00ACC1]"
+                : "text-gray-500 group-hover:text-[#00BCD4]"
+            }`,
+          })}
         </div>
+
+        <div className="flex-1">
+          <p
+            className={`text-[15px] font-medium tracking-wide transition-colors duration-300 ${
+              contentType === part.key
+                ? "text-[#0097A7]"
+                : "text-gray-800 group-hover:text-[#00BCD4]"
+            }`}
+          >
+            {part.type}
+          </p>
+          <p className="text-xs text-gray-500 group-hover:text-[#00ACC1] mt-1 cursor-pointer hover:underline">
+            Tài liệu
+          </p>
+        </div>
+      </Link>
+    ))}
+  </div>
+</div>
+
       </div>
     </div>
   );

@@ -5,7 +5,6 @@ import WelcomeLogo from "../assets/welcomeLog.jpg";
 import axios from "axios";
 import OtpVerification from "../pages/OtpVerification";
 import ForgotPasswordPopup from "../pages/ResetPassword";
-import CircularProgress from "@mui/material/CircularProgress";
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -126,8 +125,8 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
     if (unverifiedEmail) {
       try {
         await axios.post(
-          // "https://5180368dcd09.ngrok-free.app/fapanese/api/auth/send-otp",
-          "http://localhost:8080/fapanese/api/auth/send-otp",
+          //"https://1eb4ad2349e8.ngrok-free.app/fapanese/api/auth/send-otp",
+           "http://localhost:8080/fapanese/api/auth/send-otp",
           { email: unverifiedEmail }
         );
         setStep("otp");
@@ -147,8 +146,8 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
     try {
       const response = await axios.post(
-        // "https://5180368dcd09.ngrok-free.app/fapanese/api/auth/login",
-        "http://localhost:8080/fapanese/api/auth/login",
+        //"https://1eb4ad2349e8.ngrok-free.app/fapanese/api/auth/login",
+         "http://localhost:8080/fapanese/api/auth/login",
         { email: loginEmail, password: loginPassword }
       );
 
@@ -193,15 +192,16 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
     try {
       await axios.post(
-        // "https://5180368dcd09.ngrok-free.app/fapanese/api/users/register",
-
-        "http://localhost:8080/fapanese/api/users/register",
+        //"https://1eb4ad2349e8.ngrok-free.app/fapanese/api/users/register",
+        
+         "http://localhost:8080/fapanese/api/users/register",
         userData
+        
       );
 
       await axios.post(
-        // "https://5180368dcd09.ngrok-free.app/fapanese/api/auth/send-otp",
-        "http://localhost:8080/fapanese/api/auth/send-otp",
+        //"https://1eb4ad2349e8.ngrok-free.app/fapanese/api/auth/send-otp",
+         "http://localhost:8080/fapanese/api/auth/send-otp",
         { email: signupEmail }
       );
 
@@ -361,7 +361,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
               </div>
 
               {/* SIGNUP SIDE */}
-              <div className="w-1/2 flex flex-col items-center justify-center p-9 mr-5 ">
+              <div className="w-1/2 flex flex-col items-center justify-center p-10 mr-5">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">
                   Đăng ký
                 </h2>
@@ -371,7 +371,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
                 <form
                   onSubmit={handleSignup}
-                  className="flex flex-col gap-4 w-full max-w-sm "
+                  className="flex flex-col gap-4 w-full max-w-sm"
                 >
                   <div className="flex gap-3 w-full">
                     <input
@@ -464,11 +464,9 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
                   <button
                     type="submit"
-                    className="bg-black text-white py-2 rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center gap-2"
-                    disabled={loading}
+                    className="bg-black text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
                   >
-                    {loading && <CircularProgress size={20} color="inherit" />}
-                    {loading ? "Đang tải..." : "Sign Up"}
+                    Sign Up
                   </button>
                 </form>
               </div>

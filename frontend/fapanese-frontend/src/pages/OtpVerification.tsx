@@ -2,8 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mail } from "lucide-react";
 import axios from "axios";
-
-
+import ResetPassword from "./ResetPassword";
 
 
 interface OtpVerificationProps {
@@ -52,8 +51,8 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, mode }) => {
     try {
       setError(null);
       const response = await axios.post(
-        "http://localhost:8080/fapanese/api/auth/verify-otp",
-      //  "https://5180368dcd09.ngrok-free.app/fapanese/api/auth/verify-otp",
+         "http://localhost:8080/fapanese/api/auth/verify-otp",
+       //"https://1eb4ad2349e8.ngrok-free.app/fapanese/api/auth/verify-otp",
         { email, otp: code, mode }
       );
 
@@ -75,7 +74,7 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, mode }) => {
   const seconds = timeLeft % 60;
 
   return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-6">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-6">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md text-center">
         {/* Icon */}
         <div className="flex justify-center mb-4">

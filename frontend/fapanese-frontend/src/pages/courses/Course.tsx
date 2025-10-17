@@ -1,9 +1,15 @@
 import React from "react";
 import ScrollReveal from "../../components/ScrollReveal";
 import { Link } from "react-router-dom";
+<<<<<<< HEAD
 import LogoJPD113 from "../../assets/jpd113.svg";
 import LogoJPD123 from "../../assets/jpd123.svg";
 import LogoJPD133 from "../../assets/jpd133.svg";
+=======
+import LogoJPD113 from "../../assets/jpd113.jpg";
+import LogoJPD123 from "../../assets/jpd123.jpg";
+import LogoJPD133 from "../../assets/jpd133.png";
+>>>>>>> f6a9b8e495186c1f813143aeed547ee23b4761c8
 import Footer from "../../components/Footer";
 
 interface Course {
@@ -77,8 +83,14 @@ const Course: React.FC = () => {
                     alt={course.title}
                     className="h-[75%] object-cover rounded-2xl shadow-md transition duration-500 -mb-0.5"
                   />
+<<<<<<< HEAD
                   {/* SVG caro overlay */}
                   {/* <svg
+=======
+
+                  {/* SVG caro overlay */}
+                  <svg
+>>>>>>> f6a9b8e495186c1f813143aeed547ee23b4761c8
                     className="absolute inset-0 w-full h-full z-0 pointer-events-none rounded-2xl"
                     xmlns="http://www.w3.org/2000/svg"
                   >
@@ -98,13 +110,21 @@ const Course: React.FC = () => {
                       </pattern>
                     </defs>
                     <rect width="100%" height="100%" fill="url(#grid)" />
+<<<<<<< HEAD
                   </svg> */}
+=======
+                  </svg>
+>>>>>>> f6a9b8e495186c1f813143aeed547ee23b4761c8
                 </div>
 
                 {/* Bên trái: thông tin khóa học */}
                 <div className="col-span-10 sm:col-span-4 text-right space-y-3 px-5 py-5  tracking-wider">
                   <div>
+<<<<<<< HEAD
                     <span className="bg-red-700 rounded-2xl px-3 py-1 font-bold text-white">
+=======
+                    <span className="bg-red-500 rounded-2xl px-3 py-1 font-bold text-white">
+>>>>>>> f6a9b8e495186c1f813143aeed547ee23b4761c8
                       {course.price}
                     </span>
                     <span className="text-green-950 font-semibold text-3xl font-sans">
@@ -127,7 +147,11 @@ const Course: React.FC = () => {
                   </p>
                   <div className="flex justify-end">
                     <svg
+<<<<<<< HEAD
                       className="w-4 h-4 text-yellow-400 me-1"
+=======
+                      className="w-4 h-4 text-yellow-300 me-1"
+>>>>>>> f6a9b8e495186c1f813143aeed547ee23b4761c8
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="currentColor"
@@ -136,7 +160,11 @@ const Course: React.FC = () => {
                       <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                     </svg>
                     <svg
+<<<<<<< HEAD
                       className="w-4 h-4 text-yellow-400 me-1"
+=======
+                      className="w-4 h-4 text-yellow-300 me-1"
+>>>>>>> f6a9b8e495186c1f813143aeed547ee23b4761c8
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="currentColor"
@@ -145,7 +173,11 @@ const Course: React.FC = () => {
                       <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                     </svg>
                     <svg
+<<<<<<< HEAD
                       className="w-4 h-4 text-yellow-400 me-1"
+=======
+                      className="w-4 h-4 text-yellow-300 me-1"
+>>>>>>> f6a9b8e495186c1f813143aeed547ee23b4761c8
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="currentColor"
@@ -154,7 +186,11 @@ const Course: React.FC = () => {
                       <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                     </svg>
                     <svg
+<<<<<<< HEAD
                       className="w-4 h-4 text-yellow-400 me-1"
+=======
+                      className="w-4 h-4 text-yellow-300 me-1"
+>>>>>>> f6a9b8e495186c1f813143aeed547ee23b4761c8
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="currentColor"
@@ -163,7 +199,11 @@ const Course: React.FC = () => {
                       <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                     </svg>
                     <svg
+<<<<<<< HEAD
                       className="w-4 h-4 text-yellow-400 me-1"
+=======
+                      className="w-4 h-4 text-yellow-300 me-1"
+>>>>>>> f6a9b8e495186c1f813143aeed547ee23b4761c8
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="currentColor"

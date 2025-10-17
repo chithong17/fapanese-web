@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
+<<<<<<< HEAD
       // 1. PROXY CHO BACKEND JAVA (Business Logic)
       // Frontend gọi: /api/users -> http://localhost:8080/fapanese/users
       "/api": {
@@ -26,3 +27,14 @@ export default defineConfig({
     },
   },
 });
+=======
+      "/api": {
+        //target: "https://1eb4ad2349e8.ngrok-free.app/fapanese",
+         target: "http://localhost:8080/fapanese",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
+});
+>>>>>>> f6a9b8e495186c1f813143aeed547ee23b4761c8

@@ -1,5 +1,6 @@
 package com.ktnl.fapanese.controller;
 
+import com.ktnl.fapanese.dto.request.ChangePasswordRequest;
 import com.ktnl.fapanese.dto.request.UserRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
@@ -11,6 +12,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -56,5 +59,18 @@ public class UserController {
     public ResponseEntity<String> deleteUserByEmail(@PathVariable String email) {
         iUserService.deleteUserByEmail(email);
         return ResponseEntity.ok("User with email " + email + " has been deleted.");
+    }
+
+
+    @PutMapping("/change-password")
+    public ApiResponse<Void> changePassword(@RequestBody ChangePasswordRequest request) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        iUserService.changePassword(username, request);
+
+        return ApiResponse.<Void>builder()
+                .message("Đổi mật khẩu thành công")
+                .build();
     }
 }

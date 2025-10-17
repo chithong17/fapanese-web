@@ -24,10 +24,8 @@ import java.util.Random;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OtpTokenService implements IOtpTokenService {
-    @Autowired
-    private final OtpTokenRepository otpRepo;
-    @Autowired
-    private final EmailService emailService;
+    OtpTokenRepository otpRepo;
+    EmailService emailService;
 
 
     public EmailResponse generateAndSendOtp(String email, EmailTemplate template, String... args) {

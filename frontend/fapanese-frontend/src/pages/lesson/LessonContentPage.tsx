@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FiSearch, FiCheckCircle } from "react-icons/fi";
 import { FaLanguage, FaBookOpen, FaComments } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
-// 🖼️ Import 4 ảnh SVG (tùy bạn đổi đường dẫn cho đúng)
+// 🖼️ Import 4 ảnh SVG (Cần đảm bảo đường dẫn đúng)
+// Vui lòng thay đổi đường dẫn nếu cần:
 import BannerVocab from "../../assets/1.svg";
 import BannerGrammar from "../../assets/2.svg";
 import BannerSpeaking from "../../assets/3.svg";
@@ -17,6 +18,11 @@ const vocabularyContent = [
   { jp: "にほん", vn: "Nhật Bản" },
   { jp: "がくせい", vn: "Học sinh, sinh viên" },
   { jp: "せんせい", vn: "Giáo viên, giảng viên" },
+  { jp: "おきなわ", vn: "Okinawa (Địa danh)" },
+  { jp: "えいご", vn: "Tiếng Anh" },
+  { jp: "ちゅうごく", vn: "Trung Quốc" },
+  { jp: "せんもん", vn: "Chuyên môn" },
+  { jp: "かた", vn: "Vị (Kính ngữ của người)" },
 ];
 
 const quizData = {
@@ -39,7 +45,29 @@ const LessonContentPage: React.FC = () => {
   >("vocab");
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
-  // 🖼️ Đổi banner dựa trên contentType
+  // === 🚀 LOGIC FLOATING NAV BAR ===
+  const [showFloatingNav, setShowFloatingNav] = useState(false);
+  const navRef = useRef<HTMLDivElement>(null); 
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (navRef.current) {
+        const navTop = navRef.current.getBoundingClientRect().top;
+        
+        // Kích hoạt pop-up ngay khi thanh Nav ban đầu vừa cuộn qua đỉnh.
+        if (navTop < 0) { 
+          setShowFloatingNav(true);
+        } else {
+          setShowFloatingNav(false);
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+  // ===================================
+
   const bannerImage = {
     vocab: BannerVocab,
     grammar: BannerGrammar,
@@ -47,65 +75,96 @@ const LessonContentPage: React.FC = () => {
     test: BannerTest,
   }[contentType];
 
-  // ----------------------------- BÀI TẬP -----------------------------
-  const renderExerciseContent = () => (
-    <div className="w-full p-10 bg-gradient-to-br from-white via-[#f8fdfe] to-[#f2faff] rounded-xl">
-      <div className="mb-8">
-        <p className="text-xl font-medium text-gray-700 mb-2">
-          1/{quizData.totalQuestions}
-        </p>
-        <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-          <motion.div
-            className="bg-gradient-to-r from-[#00BCD4] to-[#4DD0E1] h-2.5"
-            initial={{ width: 0 }}
-            animate={{ width: `${(1 / quizData.totalQuestions) * 100}%` }}
-            transition={{ duration: 0.8 }}
-          />
-        </div>
-      </div>
-
-      <div className="mb-10 space-y-3">
-        <p className="text-gray-500 text-sm">{quizData.title}</p>
-        <p className="text-gray-400 text-xs">Chọn đáp án đúng</p>
-        <h2 className="text-2xl font-semibold text-gray-800 pt-3">
-          {quizData.question}
-        </h2>
-      </div>
-
-      <div className="grid grid-cols-2 gap-6 mb-12">
-        {quizData.options.map((option) => (
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            key={option.id}
-            onClick={() => setSelectedOption(option.id)}
-            className={`p-5 rounded-4xl text-left shadow-sm border-2 transition-all duration-300 
-              ${
-                selectedOption === option.id
-                  ? "bg-[#E0F7FA] border-[#00BCD4] text-[#00BCD4] shadow-lg"
-                  : "bg-white border-gray-200 hover:border-[#B2EBF2] text-gray-800"
-              }`}
-          >
-            <span className="font-bold mr-2">{option.id}.</span> {option.text}
-          </motion.button>
-        ))}
-      </div>
-
-      <button
-        disabled={selectedOption === null}
-        className={`w-full py-4 font-bold text-lg transition-all duration-300 rounded-4xl
-          ${
-            selectedOption !== null
-              ? "bg-gradient-to-r from-[#00BCD4] to-[#26C6DA] text-white shadow-md hover:shadow-xl hover:opacity-95"
-              : "bg-gray-200 text-gray-500 cursor-not-allowed"
+  // ----------------------------- COMPONENT THANH CHUYỂN ĐỔI CHUNG -----------------------------
+  const NavTabButtons = ({ isFloating = false }: { isFloating?: boolean }) => (
+    <div className={`relative mt-15 flex justify-between w-72 mx-auto bg-gray-200 rounded-full p-1 shadow-inner overflow-hidden ${isFloating ? 'shadow-2xl' : ''}`}>
+      
+      {/* THANH TRƯỢT MÀU XANH */}
+      <motion.div
+        className="absolute top-1 bottom-1 w-1/2 rounded-full bg-gradient-to-r from-[#B2EBF2] to-[#80DEEA] shadow-md"
+        animate={{
+          left: activeTab === "lesson" ? "2%" : "48%",
+        }}
+        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+      />
+      
+      {/* NÚT BẤM (ĐÃ TĂNG Z-INDEX) */}
+      {["lesson", "exercise"].map((tab) => (
+        <button
+          key={tab}
+          onClick={() => setActiveTab(tab as any)}
+          // Đảm bảo z-index cao hơn thanh trượt (motion.div)
+          className={`relative z-[20] w-1/2 py-2 text-base font-semibold rounded-full transition-all duration-300 ${
+            activeTab === tab
+              ? "text-[#00838F]"
+              : "text-gray-600 hover:text-[#00BCD4]"
           }`}
-      >
-        KIỂM TRA
-      </button>
+        >
+          {tab === "lesson" ? "Bài học" : "Bài tập"}
+        </button>
+      ))}
     </div>
   );
 
-  // ----------------------------- BÀI HỌC -----------------------------
+  // ----------------------------- BÀI TẬP (Giữ nguyên) -----------------------------
+  const renderExerciseContent = () => (
+    <div className="w-full p-10 bg-gradient-to-br from-white via-[#f8fdfe] to-[#f2faff] rounded-xl">
+        <div className="mb-8">
+            <p className="text-xl font-medium text-gray-700 mb-2">
+                1/{quizData.totalQuestions}
+            </p>
+            <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                <motion.div
+                    className="bg-gradient-to-r from-[#00BCD4] to-[#4DD0E1] h-2.5"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(1 / quizData.totalQuestions) * 100}%` }}
+                    transition={{ duration: 0.8 }}
+                />
+            </div>
+        </div>
+
+        <div className="mb-10 space-y-3">
+            <p className="text-gray-500 text-sm">{quizData.title}</p>
+            <p className="text-gray-400 text-xs">Chọn đáp án đúng</p>
+            <h2 className="text-2xl font-semibold text-gray-800 pt-3">
+                {quizData.question}
+            </h2>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-6 mb-12">
+            {quizData.options.map((option) => (
+                <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    key={option.id}
+                    onClick={() => setSelectedOption(option.id)}
+                    className={`p-5 rounded-4xl text-left shadow-sm border-2 transition-all duration-300 
+                    ${
+                        selectedOption === option.id
+                        ? "bg-[#E0F7FA] border-[#00BCD4] text-[#00BCD4] shadow-lg"
+                        : "bg-white border-gray-200 hover:border-[#B2EBF2] text-gray-800"
+                    }`}
+                >
+                    <span className="font-bold mr-2">{option.id}.</span> {option.text}
+                </motion.button>
+            ))}
+        </div>
+
+        <button
+            disabled={selectedOption === null}
+            className={`w-full py-4 font-bold text-lg transition-all duration-300 rounded-4xl
+            ${
+                selectedOption !== null
+                ? "bg-gradient-to-r from-[#00BCD4] to-[#26C6DA] text-white shadow-md hover:shadow-xl hover:opacity-95"
+                : "bg-gray-200 text-gray-500 cursor-not-allowed"
+            }`}
+        >
+            KIỂM TRA
+        </button>
+    </div>
+  );
+
+  // ----------------------------- BÀI HỌC (Giữ nguyên) -----------------------------
   const renderLessonContent = () => {
     const renderContentSection = () => {
       switch (contentType) {
@@ -145,34 +204,34 @@ const LessonContentPage: React.FC = () => {
             </div>
           );
         case "grammar":
-          return (
-            <div className="p-6 text-gray-700">
-              <h1 className="text-3xl font-bold mb-3">
-                Ngữ pháp: Cấu trúc cơ bản Desu / Desu ka
-              </h1>
-              <p className="text-gray-600">
-                Nội dung chi tiết về ngữ pháp và các ví dụ liên quan...
-              </p>
-            </div>
-          );
-        case "speaking":
-          return (
-            <div className="p-6 text-gray-700">
-              <h1 className="text-3xl font-bold mb-3">
-                Speaking: Giao tiếp chào hỏi cơ bản
-              </h1>
-              <p>Các đoạn hội thoại mẫu và công cụ luyện tập...</p>
-            </div>
-          );
-        case "test":
-          return (
-            <div className="p-6 text-gray-700">
-              <h1 className="text-3xl font-bold mb-3">
-                Kiểm tra cuối khóa
-              </h1>
-              <p>Bài kiểm tra tổng hợp kiến thức đã học trong chương này.</p>
-            </div>
-          );
+            return (
+                <div className="p-6 text-gray-700">
+                  <h1 className="text-3xl font-bold mb-3">
+                    Ngữ pháp: Cấu trúc cơ bản Desu / Desu ka
+                  </h1>
+                  <p className="text-gray-600">
+                    Nội dung chi tiết về ngữ pháp và các ví dụ liên quan...
+                  </p>
+                </div>
+              );
+            case "speaking":
+                return (
+                    <div className="p-6 text-gray-700">
+                      <h1 className="text-3xl font-bold mb-3">
+                        Speaking: Giao tiếp chào hỏi cơ bản
+                      </h1>
+                      <p>Các đoạn hội thoại mẫu và công cụ luyện tập...</p>
+                    </div>
+                  );
+            case "test":
+                return (
+                    <div className="p-6 text-gray-700">
+                      <h1 className="text-3xl font-bold mb-3">
+                        Kiểm tra cuối khóa
+                      </h1>
+                      <p>Bài kiểm tra tổng hợp kiến thức đã học trong chương này.</p>
+                    </div>
+                  );
       }
     };
 
@@ -199,34 +258,36 @@ const LessonContentPage: React.FC = () => {
     );
   };
 
-  // ----------------------------- TRẢ VỀ GIAO DIỆN -----------------------------
+  // ----------------------------- TRẢ VỀ GIAO DIỆN CHÍNH -----------------------------
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-[#f8fdfe] to-[#e6f7f9] flex justify-center py-20">
+      
+      {/* 🚀 FLOATING NAV BAR - CHỈ HIỆN NÚT VÀ CĂN GIỮA */}
+      <AnimatePresence>
+        {showFloatingNav && (
+          <motion.div
+            key="floating-nav"
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            
+            // Dùng fixed, căn giữa (left-1/2, -translate-x-1/2) và top cố định (top-5)
+            className="fixed top-5 left-1/2 transform -translate-x-1/2 z-[9999]"
+          >
+            <NavTabButtons isFloating={true} /> 
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* CONTAINER CHÍNH CỦA TRANG */}
       <div className="flex-1 flex flex-col lg:flex-row max-w-7xl py-10 px-6">
-        {/* CỘT TRÁI */}
+        {/* CỘT TRÁI (Nội dung chính) */}
         <div className="lg:w-3/4 pr-0 lg:pr-8 space-y-4">
-          {/* Thanh chuyển Bài học / Bài tập */}
-          <div className="relative flex justify-between mb-6 w-72 mx-auto bg-gray-200 rounded-full p-1 shadow-inner overflow-hidden">
-            <motion.div
-              className="absolute top-1 bottom-1 w-1/2 rounded-full bg-gradient-to-r from-[#B2EBF2] to-[#80DEEA] shadow-md"
-              animate={{
-                left: activeTab === "lesson" ? "2%" : "48%",
-              }}
-              transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            />
-            {["lesson", "exercise"].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab as any)}
-                className={`relative z-10 w-1/2 py-2 text-base font-semibold rounded-full transition-all duration-300 ${
-                  activeTab === tab
-                    ? "text-[#00838F]"
-                    : "text-gray-600 hover:text-[#00BCD4]"
-                }`}
-              >
-                {tab === "lesson" ? "Bài học" : "Bài tập"}
-              </button>
-            ))}
+          
+          {/* VỊ TRÍ BAN ĐẦU (Gán Ref để theo dõi cuộn) */}
+          <div ref={navRef} className="pb-4">
+            <NavTabButtons />
           </div>
 
           {/* Nội dung chính */}
@@ -257,73 +318,74 @@ const LessonContentPage: React.FC = () => {
           </div>
         </div>
 
-        {/* SIDEBAR */}
-<div className="lg:w-1/4 mt-8 lg:mt-0 bg-white/70 backdrop-blur-xl rounded-3xl shadow-lg p-6 space-y-6 border border-gray-100 h-fit sticky top-4 transition-all duration-500">
-  {/* Ô tìm kiếm */}
-  <div className="relative">
-    <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
-    <input
-      type="text"
-      placeholder="Tìm kiếm bài học..."
-      className="w-full pl-11 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#80DEEA] focus:border-[#00BCD4] bg-white/60 placeholder-gray-400 text-gray-700 transition-all duration-300 shadow-sm"
-    />
-  </div>
-
-  {/* Danh sách học phần */}
-  <div className="space-y-5">
-    <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-100 pb-2 tracking-wide">
-      Bài 1 - はじめて
-    </h3>
-
-    {[
-      { type: "Từ vựng", key: "vocab", icon: <FaLanguage className="text-gray-500" /> },
-      { type: "Ngữ pháp", key: "grammar", icon: <FaBookOpen className="text-gray-500" /> },
-      { type: "Speaking", key: "speaking", icon: <FaComments className="text-gray-500" /> },
-      { type: "Kiểm tra cuối khóa", key: "test", icon: <FiCheckCircle className="text-gray-500" /> },
-    ].map((part, idx) => (
-      <Link
-        key={idx}
-        to="#"
-        onClick={() => setContentType(part.key as any)}
-        className={`flex items-center gap-4 p-4 rounded-2xl border border-transparent transition-all duration-300 group ${
-          contentType === part.key
-            ? "bg-gradient-to-r from-[#E0F7FA] to-[#B2EBF2] shadow-lg border-[#B2EBF2]"
-            : "hover:bg-gray-50 hover:shadow-md"
-        }`}
-      >
-        <div
-          className={`w-11 h-11 flex items-center justify-center rounded-xl transition-transform duration-300 ${
-            contentType === part.key ? "bg-white shadow-sm scale-105" : "bg-gray-100"
-          }`}
+        {/* SIDEBAR (Giữ nguyên) */}
+        <div 
+            className="lg:w-1/4 mt-8 lg:mt-0 bg-white/70 backdrop-blur-xl rounded-3xl shadow-lg p-6 space-y-6 border border-gray-100 h-fit sticky top-20 transition-all duration-500 z-30"
         >
-          {React.cloneElement(part.icon, {
-            className: `text-xl transition-colors duration-300 ${
-              contentType === part.key
-                ? "text-[#00ACC1]"
-                : "text-gray-500 group-hover:text-[#00BCD4]"
-            }`,
-          })}
-        </div>
+          {/* Ô tìm kiếm */}
+          <div className="relative">
+            <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
+            <input
+              type="text"
+              placeholder="Tìm kiếm bài học..."
+              className="w-full pl-11 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#80DEEA] focus:border-[#00BCD4] bg-white/60 placeholder-gray-400 text-gray-700 transition-all duration-300 shadow-sm"
+            />
+          </div>
 
-        <div className="flex-1">
-          <p
-            className={`text-[15px] font-medium tracking-wide transition-colors duration-300 ${
-              contentType === part.key
-                ? "text-[#0097A7]"
-                : "text-gray-800 group-hover:text-[#00BCD4]"
-            }`}
-          >
-            {part.type}
-          </p>
-          <p className="text-xs text-gray-500 group-hover:text-[#00ACC1] mt-1 cursor-pointer hover:underline">
-            Tài liệu
-          </p>
-        </div>
-      </Link>
-    ))}
-  </div>
-</div>
+          {/* Danh sách học phần */}
+          <div className="space-y-5">
+            <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-100 pb-2 tracking-wide">
+              Bài 1 - はじめて
+            </h3>
 
+            {[
+              { type: "Từ vựng", key: "vocab", icon: <FaLanguage className="text-gray-500" /> },
+              { type: "Ngữ pháp", key: "grammar", icon: <FaBookOpen className="text-gray-500" /> },
+              { type: "Speaking", key: "speaking", icon: <FaComments className="text-gray-500" /> },
+              { type: "Kiểm tra cuối khóa", key: "test", icon: <FiCheckCircle className="text-gray-500" /> },
+            ].map((part, idx) => (
+              <Link
+                key={idx}
+                to="#"
+                onClick={() => setContentType(part.key as any)}
+                className={`flex items-center gap-4 p-4 rounded-2xl border border-transparent transition-all duration-300 group ${
+                  contentType === part.key
+                    ? "bg-gradient-to-r from-[#E0F7FA] to-[#B2EBF2] shadow-lg border-[#B2EBF2]"
+                    : "hover:bg-gray-50 hover:shadow-md"
+                }`}
+              >
+                <div
+                  className={`w-11 h-11 flex items-center justify-center rounded-xl transition-transform duration-300 ${
+                    contentType === part.key ? "bg-white shadow-sm scale-105" : "bg-gray-100"
+                  }`}
+                >
+                  {React.cloneElement(part.icon, {
+                    className: `text-xl transition-colors duration-300 ${
+                      contentType === part.key
+                        ? "text-[#00ACC1]"
+                        : "text-gray-500 group-hover:text-[#00BCD4]"
+                    }`,
+                  })}
+                </div>
+
+                <div className="flex-1">
+                  <p
+                    className={`text-[15px] font-medium tracking-wide transition-colors duration-300 ${
+                      contentType === part.key
+                        ? "text-[#0097A7]"
+                        : "text-gray-800 group-hover:text-[#00BCD4]"
+                    }`}
+                  >
+                    {part.type}
+                  </p>
+                  <p className="text-xs text-gray-500 group-hover:text-[#00ACC1] mt-1 cursor-pointer hover:underline">
+                    Tài liệu
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

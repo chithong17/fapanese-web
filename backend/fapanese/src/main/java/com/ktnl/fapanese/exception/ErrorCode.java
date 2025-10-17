@@ -20,7 +20,7 @@ public enum ErrorCode {
     USER_NEED_ADMIN_APPROVAL(1009, "Tài khoản của bạn đang đợi duyệt", HttpStatus.FORBIDDEN),
     COURSE_NOT_FOUND(1010, "Không tìm thấy khóa học", HttpStatus.NOT_FOUND),
     INVALID_COURSE_NAME(1011, "Vui lòng nhập tên hợp lệ", HttpStatus.BAD_REQUEST),
-
+    PASSWORD_INCORRECT(1012, "Mật khẩu cũ không chính xác", HttpStatus.BAD_REQUEST),
     // 👉 Validation specific error codes
     FIRSTNAME_REQUIRED(2001, "First name is required", HttpStatus.BAD_REQUEST),
     LASTNAME_REQUIRED(2002, "Last name is required", HttpStatus.BAD_REQUEST),

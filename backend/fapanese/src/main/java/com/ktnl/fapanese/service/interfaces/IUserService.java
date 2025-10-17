@@ -1,7 +1,11 @@
 package com.ktnl.fapanese.service.interfaces;
 
+import com.ktnl.fapanese.dto.request.ChangePasswordRequest;
 import com.ktnl.fapanese.dto.request.UserRequest;
 import com.ktnl.fapanese.dto.response.UserResponse;
+import com.ktnl.fapanese.entity.User;
+
+import java.util.Optional;
 
 public interface IUserService {
     UserResponse registerUser(UserRequest userRequest);
@@ -9,4 +13,5 @@ public interface IUserService {
     UserResponse updateUserProfile(UserRequest userRequest);
     void updateStatusUserAfterVerifyOtp(String email);
     void deleteUserByEmail(String email);
+    void changePassword(String email, ChangePasswordRequest request);
 }

@@ -63,7 +63,7 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({
       setLoading(true);
       setError(null);
       await axios.post(
-        //"https://1eb4ad2349e8.ngrok-free.app/fapanese/api/auth/reset-password",
+        // "https://5180368dcd09.ngrok-free.app/fapanese/api/auth/reset-password",
         "http://localhost:8080/fapanese/api/auth/reset-password",
         { email, otp, newPassword }
       );

@@ -53,14 +53,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").permitAll()
+<<<<<<< HEAD
                         .requestMatchers(HttpMethod.DELETE, "/api/courses/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/lessons/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/vocabularies/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/questions/**").permitAll()
+=======
+>>>>>>> 31f2da156453a0bba473bcb1614fb2737fd435cf
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .anyRequest().authenticated()
         );
-
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer ->
                                 jwtConfigurer.decoder(customJwtDecoder)

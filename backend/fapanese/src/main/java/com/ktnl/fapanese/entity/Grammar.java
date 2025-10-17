@@ -18,7 +18,7 @@ public class Grammar {
     private String title;
 
     @Column(columnDefinition = "TEXT")
-    private String explaination;
+    private String explanation;
 
     @ManyToOne
     @JoinColumn(name = "lesson_id")

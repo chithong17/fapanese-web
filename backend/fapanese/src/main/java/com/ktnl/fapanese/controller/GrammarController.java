@@ -39,7 +39,7 @@ public class GrammarController {
     }
 
     @GetMapping("/by-lesson/{lessonId}")
-    public ApiResponse<List<GrammarResponse>> getGrammarsByLesson(@PathVariable Long lessonId) {
+    public ApiResponse<List<GrammarResponse>> getGrammarsByLesson(@PathVariable String lessonId) {
         List<GrammarResponse> result = grammarService.getGrammarsByLesson(lessonId);
         return ApiResponse.<List<GrammarResponse>>builder()
                 .message("Grammars fetched successfully for lesson " + lessonId)

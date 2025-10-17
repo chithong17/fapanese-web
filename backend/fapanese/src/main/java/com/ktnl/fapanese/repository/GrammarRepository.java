@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface GrammarRepository extends JpaRepository<Grammar, Long> {
-    List<Grammar> findByLessonId(Long lessonId);
+    List<Grammar> findByLessonId(String lessonId);
 }

@@ -22,7 +22,7 @@ public interface QuestionMapper {
     @Mapping(target = "lesson", expression = "java(toLesson(request.getLessonId()))")
     void updateQuestion(@MappingTarget Question question, QuestionRequest request);
 
-    default Lesson toLesson(Long lessonId) {
+    default Lesson toLesson(String lessonId) {
         if (lessonId == null) return null;
         Lesson lesson = new Lesson();
         lesson.setId(lessonId);

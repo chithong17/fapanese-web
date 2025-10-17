@@ -43,7 +43,7 @@ public class VocabularyController {
     }
 
     @GetMapping("/by-lesson/{lessonId}")
-    public ResponseEntity<List<VocabularyResponse>> getVocabulariesByLesson(@PathVariable Long lessonId) {
+    public ResponseEntity<List<VocabularyResponse>> getVocabulariesByLesson(@PathVariable String lessonId) {
         return ResponseEntity.ok(vocabularyService.getVocabulariesByLessonId(lessonId));
     }
 }

@@ -25,7 +25,7 @@ public class LessonController {
 
     // GET /api/lessons/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<LessonRespone> getLessonById(@PathVariable Long id) {
+    public ResponseEntity<LessonRespone> getLessonById(@PathVariable String id) {
         return ResponseEntity.ok(lessonService.getLessonByLessonId(id));
     }
 

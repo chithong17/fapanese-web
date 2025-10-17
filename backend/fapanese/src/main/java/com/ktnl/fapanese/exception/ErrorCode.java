@@ -32,7 +32,9 @@ public enum ErrorCode {
     EMAIL_INVALID(2003, "Invalid email format", HttpStatus.BAD_REQUEST),
     PASSWORD_INVALID(2004, "Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
     ROLE_REQUIRED(2005, "Role is required", HttpStatus.BAD_REQUEST),
-    DOB_INVALID(2006, "Date of birth must be in the past", HttpStatus.BAD_REQUEST);
+    DOB_INVALID(2006, "Date of birth must be in the past", HttpStatus.BAD_REQUEST),
+    CAMPUS_REQUIRED(2007, "Campus is required", HttpStatus.BAD_REQUEST);
+
 
     private int code;
     private String message;

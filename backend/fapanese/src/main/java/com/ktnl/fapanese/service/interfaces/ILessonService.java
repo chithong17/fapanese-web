@@ -7,5 +7,5 @@ import java.util.List;
 public interface ILessonService {
     List<LessonRespone> getAllLesson();
     List<LessonRespone> getLessonByCourseId(Long courseId);
-    LessonRespone getLessonByLessonId(Long lessonId);
+    LessonRespone getLessonByLessonId(String lessonId);
 }

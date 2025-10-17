@@ -32,7 +32,6 @@ const Navbar: React.FC<NavbarProps> = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<string | null>(null);
   const [logoutOpen, setLogoutOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   const [userProfile, setUserProfile] = useState<{
     firstName: string;

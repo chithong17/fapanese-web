@@ -7,6 +7,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface CourseMapper {
 
@@ -15,6 +17,8 @@ public interface CourseMapper {
     Course toCourse(CourseRequest request);
 
     CourseResponse toCourseResponse(Course course);
+
+    List<CourseResponse> toCourseResponseList(List<Course> courses);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "lessons", ignore = true)

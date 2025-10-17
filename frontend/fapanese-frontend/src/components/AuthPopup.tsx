@@ -267,7 +267,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                       : "bg-white text-gray-600 hover:bg-gray-100"
                   }`}
                 >
-                  Login
+                  Đăng nhập
                 </button>
                 <button
                   onClick={() => setActiveTab("signup")}
@@ -277,7 +277,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                       : "bg-white text-gray-600 hover:bg-gray-100"
                   }`}
                 >
-                  Sign Up
+                  Đăng kí
                 </button>
                 <button
                   className="text-black  py-2 px-4 rounded-md shadow hover:bg-gray-600 transition-all"
@@ -307,19 +307,19 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
                 <div className="flex flex-col gap-3 mb-6 w-full max-w-sm">
                   <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
-                    <FaGithub /> Continue with GitHub
+                    <FaGithub /> Đăng nhập bằng GitHub
                   </button>
                   <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
-                    <FaGoogle /> Continue with Google
+                    <FaGoogle /> Đăng nhập bằng Google
                   </button>
                   <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
-                    <FaLinkedin /> Continue with LinkedIn
+                    <FaLinkedin /> Đăng nhập bằng LinkedIn
                   </button>
                 </div>
 
                 <div className="flex items-center gap-2 mb-6 text-gray-400 w-full max-w-sm">
                   <div className="flex-1 h-px bg-gray-300"></div>
-                  <span>OR</span>
+                  <span>HOẶC</span>
                   <div className="flex-1 h-px bg-gray-300"></div>
                 </div>
 
@@ -336,7 +336,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                   />
                   <input
                     type="password"
-                    placeholder="Password"
+                    placeholder="Mật khẩu"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
@@ -346,7 +346,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                     className="bg-black text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
                     disabled={loading}
                   >
-                    {loading ? "Loading..." : "Login"}
+                    {loading ? "Loading..." : "Đăng nhập"}
                   </button>
                 </form>
               </div>
@@ -356,7 +356,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                 <img
                   src={WelcomeLogo}
                   alt="login"
-                  className="max-w-sm h-155 w-125 rounded-2xl"
+                  className="max-w-sm h-155 w-125 rounded-2xl -mr-2"
                 />
               </div>
 
@@ -376,7 +376,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                   <div className="flex gap-3 w-full">
                     <input
                       type="text"
-                      placeholder="First Name"
+                      placeholder="Họ"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       required
@@ -384,7 +384,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                     />
                     <input
                       type="text"
-                      placeholder="Last Name"
+                      placeholder="Tên"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       required
@@ -400,7 +400,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                   />
                   <input
                     type="password"
-                    placeholder="Password"
+                    placeholder="Mật khẩu"
                     value={signupPassword}
                     onChange={(e) => setSignupPassword(e.target.value)}
                     className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
@@ -413,8 +413,8 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                       setRole(e.target.value as "student" | "lecturer")
                     }
                   >
-                    <option value="student">Student</option>
-                    <option value="lecturer">Lecturer</option>
+                    <option value="student">Học sinh</option>
+                    <option value="lecturer">Giảng viên</option>
                   </select>
 
                   {role === "student" && (
@@ -424,7 +424,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                         value={campus}
                         onChange={(e) => setCampus(e.target.value)}
                       >
-                        <option value="">Select Campus</option>
+                        <option value="">Chọn Campus</option>
                         <option value="Hanoi">Hà Nội</option>
                         <option value="HCM">TP. Hồ Chí Minh</option>
                         <option value="Danang">Đà Nẵng</option>
@@ -442,13 +442,13 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
                     <>
                       <input
                         type="text"
-                        placeholder="Expertise"
+                        placeholder="Chuyên môn"
                         value={expertise}
                         onChange={(e) => setExpertise(e.target.value)}
                         className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
                       />
                       <textarea
-                        placeholder="Bio"
+                        placeholder="Giới thiệu"
                         value={bio}
                         onChange={(e) => setBio(e.target.value)}
                         className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"

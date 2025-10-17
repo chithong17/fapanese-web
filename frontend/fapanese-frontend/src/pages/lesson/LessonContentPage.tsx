@@ -47,15 +47,15 @@ const LessonContentPage: React.FC = () => {
 
   // === 🚀 LOGIC FLOATING NAV BAR ===
   const [showFloatingNav, setShowFloatingNav] = useState(false);
-  const navRef = useRef<HTMLDivElement>(null); 
+  const navRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
       if (navRef.current) {
         const navTop = navRef.current.getBoundingClientRect().top;
-        
+
         // Kích hoạt pop-up ngay khi thanh Nav ban đầu vừa cuộn qua đỉnh.
-        if (navTop < 0) { 
+        if (navTop < 0) {
           setShowFloatingNav(true);
         } else {
           setShowFloatingNav(false);
@@ -67,6 +67,21 @@ const LessonContentPage: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   // ===================================
+  
+  // === 🆕 LOGIC SCROLL TO TOP MỖI KHI CHUYỂN TAB/NỘI DUNG ===
+  useEffect(() => {
+    // Cuộn về đầu trang (vị trí (0, 0))
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // Có thể dùng 'auto' nếu không muốn hiệu ứng cuộn mượt
+    });
+    // Đặt lại trạng thái Quiz khi chuyển sang nội dung mới hoặc tab Bài tập
+    if (activeTab === 'exercise' || contentType !== 'test') {
+        setSelectedOption(null);
+    }
+  }, [activeTab, contentType]); // Chạy mỗi khi activeTab hoặc contentType thay đổi
+  // ===================================
+
 
   const bannerImage = {
     vocab: BannerVocab,
@@ -78,7 +93,7 @@ const LessonContentPage: React.FC = () => {
   // ----------------------------- COMPONENT THANH CHUYỂN ĐỔI CHUNG -----------------------------
   const NavTabButtons = ({ isFloating = false }: { isFloating?: boolean }) => (
     <div className={`relative mt-15 flex justify-between w-72 mx-auto bg-gray-200 rounded-full p-1 shadow-inner overflow-hidden ${isFloating ? 'shadow-2xl' : ''}`}>
-      
+
       {/* THANH TRƯỢT MÀU XANH */}
       <motion.div
         className="absolute top-1 bottom-1 w-1/2 rounded-full bg-gradient-to-r from-[#B2EBF2] to-[#80DEEA] shadow-md"
@@ -87,7 +102,7 @@ const LessonContentPage: React.FC = () => {
         }}
         transition={{ type: "spring", stiffness: 400, damping: 30 }}
       />
-      
+
       {/* NÚT BẤM (ĐÃ TĂNG Z-INDEX) */}
       {["lesson", "exercise"].map((tab) => (
         <button
@@ -130,7 +145,7 @@ const LessonContentPage: React.FC = () => {
                 {quizData.question}
             </h2>
         </div>
-        
+
         <div className="grid grid-cols-2 gap-6 mb-12">
             {quizData.options.map((option) => (
                 <motion.button
@@ -138,7 +153,7 @@ const LessonContentPage: React.FC = () => {
                     whileTap={{ scale: 0.98 }}
                     key={option.id}
                     onClick={() => setSelectedOption(option.id)}
-                    className={`p-5 rounded-4xl text-left shadow-sm border-2 transition-all duration-300 
+                    className={`p-5 rounded-4xl text-left shadow-sm border-2 transition-all duration-300
                     ${
                         selectedOption === option.id
                         ? "bg-[#E0F7FA] border-[#00BCD4] text-[#00BCD4] shadow-lg"
@@ -206,12 +221,12 @@ const LessonContentPage: React.FC = () => {
         case "grammar":
             return (
                 <div className="p-6 text-gray-700">
-                  <h1 className="text-3xl font-bold mb-3">
-                    Ngữ pháp: Cấu trúc cơ bản Desu / Desu ka
-                  </h1>
-                  <p className="text-gray-600">
-                    Nội dung chi tiết về ngữ pháp và các ví dụ liên quan...
-                  </p>
+                    <h1 className="text-3xl font-bold mb-3">
+                      Ngữ pháp: Cấu trúc cơ bản Desu / Desu ka
+                    </h1>
+                    <p className="text-gray-600">
+                      Nội dung chi tiết về ngữ pháp và các ví dụ liên quan...
+                    </p>
                 </div>
               );
             case "speaking":
@@ -260,8 +275,8 @@ const LessonContentPage: React.FC = () => {
 
   // ----------------------------- TRẢ VỀ GIAO DIỆN CHÍNH -----------------------------
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-[#f8fdfe] to-[#e6f7f9] flex justify-center py-20">
-      
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-[#f8fdfe] to-[#e6f7f9] flex justify-center py-5">
+
       {/* 🚀 FLOATING NAV BAR - CHỈ HIỆN NÚT VÀ CĂN GIỮA */}
       <AnimatePresence>
         {showFloatingNav && (
@@ -271,11 +286,11 @@ const LessonContentPage: React.FC = () => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            
+
             // Dùng fixed, căn giữa (left-1/2, -translate-x-1/2) và top cố định (top-5)
             className="fixed top-5 left-1/2 transform -translate-x-1/2 z-[9999]"
           >
-            <NavTabButtons isFloating={true} /> 
+            <NavTabButtons isFloating={true} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -284,7 +299,7 @@ const LessonContentPage: React.FC = () => {
       <div className="flex-1 flex flex-col lg:flex-row max-w-7xl py-10 px-6">
         {/* CỘT TRÁI (Nội dung chính) */}
         <div className="lg:w-3/4 pr-0 lg:pr-8 space-y-4">
-          
+
           {/* VỊ TRÍ BAN ĐẦU (Gán Ref để theo dõi cuộn) */}
           <div ref={navRef} className="pb-4">
             <NavTabButtons />
@@ -319,7 +334,7 @@ const LessonContentPage: React.FC = () => {
         </div>
 
         {/* SIDEBAR (Giữ nguyên) */}
-        <div 
+        <div
             className="lg:w-1/4 mt-8 lg:mt-0 bg-white/70 backdrop-blur-xl rounded-3xl shadow-lg p-6 space-y-6 border border-gray-100 h-fit sticky top-20 transition-all duration-500 z-30"
         >
           {/* Ô tìm kiếm */}

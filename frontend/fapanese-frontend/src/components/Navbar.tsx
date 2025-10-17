@@ -49,21 +49,12 @@ const Navbar: React.FC<NavbarProps> = ({
 
     try {
       const res = await axios.get(
-<<<<<<< HEAD
         // "https://5180368dcd09.ngrok-free.app/fapanese/api/users/profile",
         "http://localhost:8080/fapanese/api/users/profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,
             "ngrok-skip-browser-warning": "any-value",
-=======
-        //"https://1eb4ad2349e8.ngrok-free.app/fapanese/api/users/profile",
-         "http://localhost:8080/fapanese/api/users/profile",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-           // "ngrok-skip-browser-warning": "any-value",
->>>>>>> f6a9b8e495186c1f813143aeed547ee23b4761c8
           },
         } // <-- token ở đây
       );
@@ -97,11 +88,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const menuItems = [
     { name: "VỀ CHÚNG TÔI", link: "/aboutus" },
     { name: "TRANG CHỦ", link: "/" },
-<<<<<<< HEAD
     { name: "KHÓA HỌC", link: "/course" },
-=======
-    { name: "KHÓA HỌC", link: "/courses" },
->>>>>>> f6a9b8e495186c1f813143aeed547ee23b4761c8
     { name: "THÀNH TÍCH", link: "/dashboard/student" },
     { name: "GÓC CHIA SẺ", link: "/" },
   ];
@@ -237,11 +224,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   Xin chào,
                   <span className="font-semibold text-[#0b7a75]">
                     {userProfile
-<<<<<<< HEAD
                       ? `${userProfile.firstName} ${userProfile.lastName}` 
-=======
-                      ? `${userProfile.firstName} ${userProfile.lastName}`
->>>>>>> f6a9b8e495186c1f813143aeed547ee23b4761c8
                       : "Đang tải..."}
                   </span>
                 </span>

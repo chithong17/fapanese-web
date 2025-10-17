@@ -26,19 +26,7 @@ public class Question {
 
     private String fillAnswer;
 
-    @ManyToMany
-    @JoinTable(
-            name = "vocabulary_question",
-            joinColumns = @JoinColumn(name = "question_id"),
-            inverseJoinColumns = @JoinColumn(name = "vocab_id")
-    )
-    private List<Vocabulary> vocabularies;
-
-    @ManyToMany
-    @JoinTable(
-            name = "grammar_question",
-            joinColumns = @JoinColumn(name = "question_id"),
-            inverseJoinColumns = @JoinColumn(name = "grammar_id")
-    )
-    private List<Grammar> grammars;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lesson_id", nullable = false)
+    private Lesson lesson;
 }

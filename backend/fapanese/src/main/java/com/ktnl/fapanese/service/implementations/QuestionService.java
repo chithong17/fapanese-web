@@ -1,7 +1,10 @@
 package com.ktnl.fapanese.service.implementations;
 
 import com.ktnl.fapanese.dto.request.QuestionRequest;
+import com.ktnl.fapanese.dto.request.UserAnswer;
+import com.ktnl.fapanese.dto.response.QuestionCheckResponse;
 import com.ktnl.fapanese.dto.response.QuestionResponse;
+import com.ktnl.fapanese.dto.response.SubmitQuizResponse;
 import com.ktnl.fapanese.entity.Question;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
@@ -12,6 +15,7 @@ import com.ktnl.fapanese.service.interfaces.IQuestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,5 +85,60 @@ public class QuestionService implements IQuestionService {
         List<Question> questions = questionRepository.findByCategory(category);
         if (questions.isEmpty()) throw new AppException(ErrorCode.QUESTION_NOT_FOUND);
         return questionMapper.toQuestionResponseList(questions);
+    }
+
+    @Override
+    public SubmitQuizResponse checkAndSubmitAnswers(List<UserAnswer> userAnswers) {
+        if (userAnswers == null || userAnswers.isEmpty()) {
+            throw new AppException(ErrorCode.INVALID_INPUT);
+        }
+
+        List<QuestionCheckResponse> detailedResults = new ArrayList<>();
+        int correctCount = 0;
+
+        for (UserAnswer userAnswer : userAnswers) {
+            Question question = questionRepository.findById(userAnswer.getQuestionId())
+                    .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
+
+            String questionType = question.getQuestionType();
+            String storedAnswer;
+            boolean isCorrect = false;
+
+            if ("MULTIPLE_CHOICE".equalsIgnoreCase(questionType)) {
+                storedAnswer = question.getCorrectAnswer();
+                if (storedAnswer != null && storedAnswer.equalsIgnoreCase(userAnswer.getUserAnswer())) {
+                    isCorrect = true;
+                }
+            } else if ("FILL_IN_THE_BLANK".equalsIgnoreCase(questionType)) {
+                storedAnswer = question.getFillAnswer();
+                if (storedAnswer != null && storedAnswer.trim().equalsIgnoreCase(userAnswer.getUserAnswer().trim())) {
+                    isCorrect = true;
+                }
+            } else {
+                storedAnswer = "UNKNOWN_TYPE";
+                isCorrect = false;
+            }
+
+            if (isCorrect) {
+                correctCount++;
+            }
+
+            detailedResults.add(QuestionCheckResponse.builder()
+                    .questionId(question.getId())
+                    .questionType(questionType)
+                    .isCorrect(isCorrect)
+                    .userAnswer(userAnswer.getUserAnswer())
+                    .correctAnswer(storedAnswer)
+                    .build());
+        }
+
+        double scorePercentage = ((double) correctCount / userAnswers.size()) * 100;
+
+        return SubmitQuizResponse.builder()
+                .totalQuestions(userAnswers.size())
+                .correctCount(correctCount)
+                .scorePercentage(Math.round(scorePercentage * 100.0) / 100.0)
+                .detailedResults(detailedResults)
+                .build();
     }
 }

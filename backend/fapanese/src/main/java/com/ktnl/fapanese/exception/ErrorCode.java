@@ -28,7 +28,15 @@ public enum ErrorCode {
     PASSWORD_INVALID(2004, "Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
     ROLE_REQUIRED(2005, "Role is required", HttpStatus.BAD_REQUEST),
     DOB_INVALID(2006, "Date of birth must be in the past", HttpStatus.BAD_REQUEST),
-    CAMPUS_REQUIRED(2007, "Campus is required", HttpStatus.BAD_REQUEST);
+    CAMPUS_REQUIRED(2007, "Campus is required", HttpStatus.BAD_REQUEST),
+
+
+
+    LESSON_NOT_FOUND(2001, "Lesson not found", HttpStatus.NOT_FOUND),
+
+    // Vocabulary
+    VOCABULARY_NOT_FOUND(2002, "Vocabulary not found", HttpStatus.NOT_FOUND);
+
 
 
 

@@ -55,6 +55,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/courses/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/lessons/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/vocabularies/**").permitAll()
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .anyRequest().authenticated()
         );

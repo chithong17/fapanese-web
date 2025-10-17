@@ -1,4 +1,4 @@
-package com.ktnl.fapanese.mappper;
+package com.ktnl.fapanese.mapper;
 
 import com.ktnl.fapanese.dto.request.UserRequest;
 import com.ktnl.fapanese.dto.response.UserResponse;

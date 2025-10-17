@@ -2,7 +2,10 @@ package com.ktnl.fapanese.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "question")
@@ -26,19 +29,10 @@ public class Question {
 
     private String fillAnswer;
 
-    @ManyToMany
-    @JoinTable(
-            name = "vocabulary_question",
-            joinColumns = @JoinColumn(name = "question_id"),
-            inverseJoinColumns = @JoinColumn(name = "vocab_id")
-    )
-    private List<Vocabulary> vocabularies;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lesson_id", nullable = false)
+    private Lesson lesson;
 
-    @ManyToMany
-    @JoinTable(
-            name = "grammar_question",
-            joinColumns = @JoinColumn(name = "question_id"),
-            inverseJoinColumns = @JoinColumn(name = "grammar_id")
-    )
-    private List<Grammar> grammars;
+    @ManyToMany(mappedBy = "questions")
+    private List<FinalExam> finalExams;
 }

@@ -8,7 +8,7 @@ import com.ktnl.fapanese.entity.Student;
 import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
-import com.ktnl.fapanese.mappper.UserMapper;
+import com.ktnl.fapanese.mapper.UserMapper;
 import com.ktnl.fapanese.repository.LecturerRepository;
 import com.ktnl.fapanese.repository.RoleRepository;
 import com.ktnl.fapanese.repository.StudentRepository;

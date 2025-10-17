@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CourseResponse {
-    Long id;
-    String courseName;
-    String description;
-    String imgUrl;
+    private Long id;
+    private String courseName;
+    private String description;
+    private String imgUrl;
 }

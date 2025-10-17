@@ -1,12 +1,12 @@
 package com.ktnl.fapanese.mapper;
 
-import com.ktnl.fapanese.dto.response.LessonResponse;
+import com.ktnl.fapanese.dto.response.LessonRespone;
 import com.ktnl.fapanese.entity.Lesson;
 
 public interface LessonMapper {
-    static LessonResponse toLessonResponse(Lesson lesson) {
+    static LessonRespone toLessonResponse(Lesson lesson) {
         if (lesson == null) return null;
-        return LessonResponse.builder()
+        return LessonRespone.builder()
                 .id(lesson.getId())
                 .lessonTitle(lesson.getLessonTitle())
                 .orderIndex(lesson.getOrderIndex())

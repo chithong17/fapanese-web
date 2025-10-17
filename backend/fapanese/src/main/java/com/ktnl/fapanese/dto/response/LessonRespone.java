@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 
-public class LessonResponse {
+public class LessonRespone {
     private String id;
     private String lessonTitle;
     private Integer orderIndex;

@@ -12,8 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class GrammarResponse {
-    private Long id;
-    private Long lessonId;
+    private String id;
+    private String lessonId;
     private String title;
     private String explanation;
     private List<GrammarDetailResponse> details;

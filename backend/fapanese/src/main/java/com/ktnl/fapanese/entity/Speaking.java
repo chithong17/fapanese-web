@@ -30,4 +30,6 @@ public class Speaking {
 
     @OneToMany(mappedBy = "speaking", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SpeakingQuestion> speakingQuestions;
+
+
 }

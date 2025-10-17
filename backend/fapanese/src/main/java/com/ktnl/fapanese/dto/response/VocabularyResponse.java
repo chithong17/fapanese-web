@@ -14,5 +14,5 @@ public class VocabularyResponse {
     private String romaji;
     private String meaning;
     private String wordType;
-    private Long lessonId;
+    private String lessonId;
 }

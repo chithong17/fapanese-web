@@ -1,6 +1,6 @@
 package com.ktnl.fapanese.controller;
 
-import com.ktnl.fapanese.dto.response.LessonRespone;
+import com.ktnl.fapanese.dto.response.LessonResponse;
 import com.ktnl.fapanese.service.interfaces.ILessonService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,19 +19,19 @@ public class LessonController {
 
     // GET /api/lessons
     @GetMapping
-    public ResponseEntity<List<LessonRespone>> getAllLessons() {
+    public ResponseEntity<List<LessonResponse>> getAllLessons() {
         return ResponseEntity.ok(lessonService.getAllLesson());
     }
 
     // GET /api/lessons/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<LessonRespone> getLessonById(@PathVariable Long id) {
+    public ResponseEntity<LessonResponse> getLessonById(@PathVariable String id) {
         return ResponseEntity.ok(lessonService.getLessonByLessonId(id));
     }
 
     // GET /api/lessons/by-course/{courseId}
     @GetMapping("/by_course/{courseId}")
-    public ResponseEntity<List<LessonRespone>> getLessonsByCourseId(@PathVariable Long courseId) {
+    public ResponseEntity<List<LessonResponse>> getLessonsByCourseId(@PathVariable Long courseId) {
         return ResponseEntity.ok(lessonService.getLessonByCourseId(courseId));
     }
 }

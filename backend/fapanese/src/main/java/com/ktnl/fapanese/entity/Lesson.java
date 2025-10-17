@@ -14,8 +14,7 @@ import java.util.List;
 @Builder
 public class Lesson {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String lessonTitle;
     private Integer orderIndex;

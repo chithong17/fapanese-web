@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class GrammarRequest {
-    private Long lessonId;
+    private String lessonId;
     private String title;
     private String explanation;
     private List<GrammarDetailRequest> details;

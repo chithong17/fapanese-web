@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface VocabularyRepository extends JpaRepository<Vocabulary, Long> {
-    List<Vocabulary> findByLesson_Id(Long lessonId);
+    List<Vocabulary> findByLesson_Id(String lessonId);
 }

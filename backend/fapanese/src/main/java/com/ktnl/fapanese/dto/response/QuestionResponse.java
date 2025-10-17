@@ -18,5 +18,5 @@ public class QuestionResponse {
     private String correctAnswer;
     private String fillAnswer;
 
-    private Long lessonId;
+    private String lessonId;
 }

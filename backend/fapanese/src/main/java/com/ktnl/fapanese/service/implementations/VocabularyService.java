@@ -71,7 +71,7 @@ public class VocabularyService implements IVocabularyService {
     }
 
     @Override
-    public List<VocabularyResponse> getVocabulariesByLessonId(Long lessonId) {
+    public List<VocabularyResponse> getVocabulariesByLessonId(String lessonId) {
         return vocabularyMapper.toVocabularyResponseList(vocabularyRepository.findByLesson_Id(lessonId));
     }
 }

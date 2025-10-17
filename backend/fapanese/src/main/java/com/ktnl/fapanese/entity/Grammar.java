@@ -3,9 +3,7 @@ package com.ktnl.fapanese.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "grammar")
@@ -16,14 +14,21 @@ public class Grammar {
     private Long id;
 
     private String title;
+    private String structure;
+    private String meaning;
 
     @Column(columnDefinition = "TEXT")
     private String explaination;
+
+    @Column(columnDefinition = "TEXT")
+    private String exampleSentence;
+
+    private String exampleMeaning;
 
     @ManyToOne
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 
-    @OneToMany(mappedBy = "grammar", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<GrammarDetail> details = new HashSet<>();
+    @ManyToMany(mappedBy = "grammars")
+    private List<Question> questions;
 }

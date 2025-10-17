@@ -21,6 +21,9 @@ import StudentDashboard from "./pages/dashboard/StudentDashboard";
 import AboutUs from "./pages/AboutUs";
 import ProfilePage from "./pages/ProfilePage";
 import Course from "./pages/courses/Course";
+import Lesson from "./pages/lesson/LessonContentPage"
+
+
 
 // Component quản lý Loading khi route thay đổi
 const LoadingWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -156,10 +159,17 @@ function App() {
           <Route path="/dashboard/student" element={<StudentDashboard />} />
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/course" element={<Course />} />
+          <Route path="/course" element={<Course/>} />
+          <Route 
+            path="/lesson/:courseId/:lessonId/:contentType" 
+            element={<Lesson />} 
+          />
+          
+ 
+
         </Routes>
       </LoadingWrapper>
     </Router>
   );
 }
- export default App;
+export default App;

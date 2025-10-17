@@ -21,7 +21,7 @@ public class User {
 
     //0: dki chua xac thuc email
     //1: da xac thuc email chua active
-    //2: da xac thuc da active cho admin duyet
+    //2: da xac thuc da active cho admin duyet (Lecturer)
     //3: dc active, hoat dong binh thuong
     @Column(nullable = false)
     private int status = 0;

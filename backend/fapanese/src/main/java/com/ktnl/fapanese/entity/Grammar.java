@@ -18,7 +18,7 @@ public class Grammar {
     private String meaning;
 
     @Column(columnDefinition = "TEXT")
-    private String explaination;
+    private String explanation;
 
     @Column(columnDefinition = "TEXT")
     private String exampleSentence;

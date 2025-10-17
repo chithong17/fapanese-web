@@ -13,5 +13,5 @@ public class VocabularyRequest {
     private String romaji;
     private String meaning;
     private String wordType;
-    private Long lessonId; // tham chiếu đến Lesson
+    private String lessonId; // tham chiếu đến Lesson
 }

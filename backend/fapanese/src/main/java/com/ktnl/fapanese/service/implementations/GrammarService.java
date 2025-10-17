@@ -35,7 +35,7 @@ public class GrammarService implements IGrammarService {
     GrammarMapper grammarMapper;
     GrammarDetailMapper detailMapper; // Đã tiêm GrammarDetailMapper
 
-    private Lesson findLessonOrThrow(Long lessonId) {
+    private Lesson findLessonOrThrow(String lessonId) {
         return lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new AppException(ErrorCode.LESSON_NOT_FOUND));
     }
@@ -77,7 +77,7 @@ public class GrammarService implements IGrammarService {
     }
 
     @Override
-    public List<GrammarResponse> getGrammarsByLesson(Long lessonId) {
+    public List<GrammarResponse> getGrammarsByLesson(String lessonId) {
         if (!lessonRepository.existsById(lessonId)) {
             throw new AppException(ErrorCode.LESSON_NOT_FOUND);
         }

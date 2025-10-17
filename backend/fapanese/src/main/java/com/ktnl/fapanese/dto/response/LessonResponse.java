@@ -8,8 +8,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 
-public class LessonRespone {
-    private Long id;
+public class LessonResponse {
+    private String id;
     private String lessonTitle;
     private Integer orderIndex;
     private Long courseId;

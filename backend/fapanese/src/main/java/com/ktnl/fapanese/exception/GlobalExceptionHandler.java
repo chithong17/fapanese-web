@@ -80,7 +80,7 @@ public class GlobalExceptionHandler {
             case "password" -> ErrorCode.PASSWORD_INVALID;
             case "role" -> ErrorCode.ROLE_REQUIRED;
             case "dateOfBirth" -> ErrorCode.DOB_INVALID;
-            case "campus" -> ErrorCode.CAMPUS_REQUIRED;
+         //   case "campus" -> ErrorCode.CAMPUS_REQUIRED;
             default -> ErrorCode.INVALID_KEY; // fallback
         };
     }

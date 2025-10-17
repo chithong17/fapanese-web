@@ -1,7 +1,7 @@
 
 package com.ktnl.fapanese.service.implementations;
 
-import com.ktnl.fapanese.dto.response.LessonRespone;
+import com.ktnl.fapanese.dto.response.LessonResponse;
 import com.ktnl.fapanese.entity.Lesson;
 import com.ktnl.fapanese.mapper.LessonMapper;
 import com.ktnl.fapanese.repository.LessonRepository;
@@ -22,7 +22,7 @@ public class LessonService implements ILessonService {
 
 
     @Override
-    public List<LessonRespone> getAllLesson() {
+    public List<LessonResponse> getAllLesson() {
         return lessonRepository.findAll()
                 .stream()
                 .map(LessonMapper::toLessonResponse)
@@ -30,7 +30,7 @@ public class LessonService implements ILessonService {
     }
 
     @Override
-    public List<LessonRespone> getLessonByCourseId(Long courseId) {
+    public List<LessonResponse> getLessonByCourseId(Long courseId) {
         return lessonRepository.findByCourseId(courseId)
                 .stream()
                 .map(LessonMapper::toLessonResponse)
@@ -38,7 +38,7 @@ public class LessonService implements ILessonService {
     }
 
     @Override
-    public LessonRespone getLessonByLessonId(Long lessonId) {
+    public LessonResponse getLessonByLessonId(String lessonId) {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new RuntimeException("Lesson not found with id: " + lessonId));
         return LessonMapper.toLessonResponse(lesson);

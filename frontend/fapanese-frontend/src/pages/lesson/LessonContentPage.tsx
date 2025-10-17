@@ -113,7 +113,7 @@ const LessonContentPage: React.FC = () => {
           return (
             <div className="p-6">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Từ vựng: 第1課ーはじめて
+                第1課ーはじめて
               </h1>
               <p className="text-gray-600 mb-6">
                 Bạn sẽ học các từ vựng cơ bản về chào hỏi, giới thiệu bản thân.

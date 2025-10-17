@@ -1,165 +1,172 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { motion, type Variants, easeOut } from "framer-motion";
-import { FaBookOpen, FaComments, FaLanguage } from "react-icons/fa";
+import { motion, type Variants } from "framer-motion";
+// Bỏ import các icon FaBookOpen, FaComments, FaLanguage vì không dùng nữa
+import CourseBanner from "../../assets/jpd113-coursebanner.svg";
+
+// Tạo motion Link component để hỗ trợ animation props
+const MotionLink = motion(Link);
+
+// Sửa lỗi TYPESCRIPT: Custom easing cho chuyển động "sang xịn"
+const customEase = [0.4, 0, 0.2, 1] as const; 
 
 const fadeInUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 50 },
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: easeOut },
+    transition: { duration: 1.2, ease: customEase, staggerChildren: 0.1 },
   },
 };
 
+const itemFadeIn: Variants = {
+  hidden: { opacity: 0, y: 40 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: customEase } },
+};
+
+// Hàm tạo Neumorphism Shadow
+const neumorphicShadow = "20px 20px 60px #d4d7dc, -20px -20px 60px #ffffff";
+const buttonShadow = "4px 4px 10px rgba(33, 147, 176, 0.4), -4px -4px 10px rgba(109, 213, 237, 0.3)";
+
 const JPD113: React.FC = () => {
+  // KHÔI PHỤC: Cấu trúc dữ liệu tối giản (bỏ details)
   const lessons = [
     {
-      title: "第1課ーはじめて",
-      lessonId: "bai1", // KEY DUY NHẤT CỦA BÀI HỌC
-      details: [
-        { type: "Từ vựng", key: "tuvung", icon: <FaLanguage /> }, // KEY DUY NHẤT CỦA MỤC
-        { type: "Ngữ pháp", key: "nguphap", icon: <FaBookOpen /> },
-        { type: "Speaking", key: "speaking", icon: <FaComments /> },
-      ],
+      title: "第1課 ー はじめて",
+      lessonId: "bai1",
+      desc: "Giới thiệu bản thân, các câu chào hỏi cơ bản, chữ cái và con số, đặt nền móng giao tiếp.",
     },
     {
-      title: "第２課ー買い物◦食事",
+      title: "第２課 ー 買い物◦食事",
       lessonId: "bai2",
-      details: [
-        { type: "Từ vựng", key: "tuvung", icon: <FaLanguage />　 },
-        { type: "Ngữ pháp", key: "nguphap", icon: <FaBookOpen /> },
-        { type: "Speaking", key: "speaking", icon: <FaComments /> },
-      ],
+      desc: "Thực hành mua sắm và gọi món ăn. Nắm vững đại từ chỉ định và danh từ chỉ đồ vật.",
     },
     {
-      title: "第３課ースケジュール",
+      title: "第３課 ー スケジュール",
       lessonId: "bai3",
-      details: [
-        { type: "Từ vựng", key: "tuvung", icon: <FaLanguage /> },
-        { type: "Ngữ pháp", key: "nguphap", icon: <FaBookOpen /> },
-        { type: "Speaking", key: "speaking", icon: <FaComments /> },
-      ],
+      desc: "Thảo luận về lịch trình cá nhân, thời gian. Học các động từ di chuyển quan trọng và cách hỏi giờ.",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#e0f7fa] via-[#f1f8ff] to-[#e3f2fd] py-16 px-6">
+    // Nền: Tông màu trắng xám nhạt cao cấp
+    <div className="min-h-screen bg-[#e8ebf0] py-20"> 
       <motion.div
         initial="hidden"
         animate="show"
         variants={fadeInUp}
-        className="max-w-6xl mx-auto bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl p-10 space-y-12"
+        className="mx-auto space-y-32"
       >
-        {/* Header (Giữ nguyên) */}
+        {/* Header (Giữ nguyên phong cách cao cấp) */}
         <motion.div
-          variants={fadeInUp}
-          className="text-center space-y-4"
+          variants={itemFadeIn}
+          className="text-center space-y-6"
         >
-          <h1 className="text-5xl font-extrabold text-gray-900 tracking-tight">
-            Khóa học JPD113
-          </h1>
-          <p className="text-gray-700 text-lg">
-            Khóa học tiếng Nhật cơ bản toàn diện – Từ bảng chữ cái đến giao tiếp tự tin
-          </p>
-          <p className="text-gray-800 font-semibold">🎓 Chứng chỉ hoàn thành</p>
-          <Link
-            to="#"
-            className="inline-block mt-4 px-8 py-3 bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white font-semibold rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
-          >
-            Bắt đầu học ngay
-          </Link>
-        </motion.div>
-
-        {/* Lộ trình học tập chi tiết (Đã sửa key) */}
-        <motion.div variants={fadeInUp} className="space-y-6 mt-12">
-          <h2 className="text-3xl font-bold text-gray-900 text-center">
-            Lộ trình học tập chi tiết
-          </h2>
-          <p className="text-gray-700 text-center max-w-2xl mx-auto">
-            Chương trình học được thiết kế bài bản từ cơ bản đến nâng cao giúp bạn nắm vững nền tảng và ứng dụng vào thực tế.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-            {[
-              { title: "Bảng chữ cái", desc: "Hiểu và ghi nhớ Hiragana, Katakana", color: "from-sky-50 to-sky-100" },
-              { title: "Từ vựng", desc: "Mở rộng vốn từ cơ bản theo chủ đề", color: "from-amber-50 to-yellow-100" },
-              { title: "Ngữ pháp", desc: "Nắm vững cấu trúc câu cơ bản", color: "from-pink-50 to-rose-100" },
-              { title: "Speaking", desc: "Tăng khả năng phản xạ tự nhiên", color: "from-green-50 to-emerald-100" },
-              { title: "Ôn tập & kiểm tra", desc: "Củng cố kiến thức toàn khóa", color: "from-indigo-50 to-blue-100" },
-              { title: "Chứng chỉ", desc: "Xác nhận năng lực và hoàn thành khóa", color: "from-purple-50 to-fuchsia-100" },
-            ].map((item, i) => (
-              <motion.div
-                key={item.title} // Dùng title làm key vì danh sách này cố định
-                variants={fadeInUp}
-                whileHover={{ scale: 1.05 }}
-                className={`bg-gradient-to-br ${item.color} rounded-2xl shadow-md p-6 transition`}
-              >
-                <h3 className="font-semibold text-gray-800 text-lg">{item.title}</h3>
-                <p className="text-gray-600 mt-1">{item.desc}</p>
-              </motion.div>
-            ))}
+          <div className="shadow-2xl shadow-gray-400/30 rounded-b-[60px] overflow-hidden">
+            <img 
+                src={CourseBanner} 
+                alt="JPD113 Course Banner" 
+                className="w-full h-auto object-cover" 
+            />
           </div>
         </motion.div>
 
-        {/* Danh sách bài học (Đã sửa key) */}
-        <motion.div variants={fadeInUp} className="space-y-10 mt-16">
-          <h2 className="text-3xl font-bold text-gray-900 text-center">
-            Danh sách bài học chi tiết
-          </h2>
-
-          {lessons.map((lesson) => ( // Lấy lesson thay vì idx
-            <motion.div
-              key={lesson.lessonId} // SỬA: Dùng lessonId làm key
-              variants={fadeInUp}
-              whileHover={{ scale: 1.02 }}
-              className="bg-white/90 rounded-2xl shadow-lg p-8 hover:shadow-2xl transition-transform duration-300"
-            >
-              <h3 className="text-2xl font-semibold text-gray-900 mb-6">
-                {lesson.title}
-              </h3>
-              <ul className="space-y-4">
-                {lesson.details.map((item) => ( // Lấy item thay vì i
-                  <motion.li
-                    key={item.key} // SỬA: Dùng item.key (tuvung, nguphap, speaking)
-                    whileHover={{ scale: 1.02 }}
-                    className="flex justify-between items-center bg-gradient-to-r from-gray-50 to-gray-100 hover:from-sky-50 hover:to-white p-4 rounded-xl transition duration-200"
-                  >
-                    <div className="flex items-center gap-3 text-gray-800 font-medium">
-                      {item.icon}
-                      <span>{item.type}</span>
-                    </div>
-                    <Link
-                      to={`/lesson/jpd113/${lesson.lessonId}/${item.key}`}
-                      className="px-4 py-2 bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white font-semibold rounded-lg shadow hover:scale-105 transition-transform"
+        {/* Nội dung chính: Đặt trong container tập trung */}
+        <div className="max-w-7xl mx-auto px-10 space-y-24">
+            
+            {/* Lộ trình học tập chi tiết (Giữ nguyên phong cách Neumorphism) */}
+            <motion.div variants={itemFadeIn} className="space-y-12">
+                <h2 className="text-4xl font-light text-gray-700 text-center tracking-tight">
+                    Tổng quan Lộ trình Học tập
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {[
+                        { title: "1. Bảng chữ cái", desc: "Nắm vững Hiragana, Katakana và phát âm chuẩn." },
+                        { title: "2. Từ vựng Cốt lõi", desc: "Mở rộng vốn từ vựng cơ bản theo các chủ đề thiết yếu." },
+                        { title: "3. Ngữ pháp Chìa khóa", desc: "Thành thạo cấu trúc câu đơn giản và thể thông thường." },
+                        { title: "4. Luyện giao tiếp", desc: "Thực hành phản xạ, tự tin nói các tình huống cơ bản." },
+                        { title: "5. Ôn tập Chuyên sâu", desc: "Củng cố kiến thức, làm bài tập và kiểm tra định kỳ." },
+                        { title: "6. Hoàn thành & Chứng nhận", desc: "Đánh giá cuối khóa và nhận chứng chỉ hoàn thành." },
+                    ].map((item) => (
+                    <motion.div
+                        key={item.title}
+                        variants={itemFadeIn}
+                        whileHover={{ 
+                            scale: 1.05, 
+                            boxShadow: "0 15px 30px rgba(0, 0, 0, 0.1)" 
+                        }}
+                        transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                        style={{ boxShadow: neumorphicShadow }}
+                        className={`bg-[#e8ebf0] rounded-[25px] p-8 transition-all duration-500 transform cursor-pointer border-2 border-transparent`}
                     >
-                      Học ngay
-                    </Link>
-                  </motion.li>
-                ))}
-              </ul>
+                        <h3 className="font-medium text-gray-800 text-xl tracking-tight mb-3">{item.title}</h3>
+                        <p className="text-gray-500 mt-2 text-base font-normal">{item.desc}</p>
+                    </motion.div>
+                    ))}
+                </div>
             </motion.div>
-          ))}
-        </motion.div>
 
-        {/* CTA (Giữ nguyên) */}
-        <motion.div
-          variants={fadeInUp}
-          className="text-center space-y-4 mt-16"
-        >
-          <p className="text-gray-800 font-semibold text-xl">
-            Sẵn sàng bắt đầu hành trình học tiếng Nhật?
-          </p>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Hãy tham gia cùng hàng nghìn học viên đã chinh phục tiếng Nhật cùng Fapanese.
-          </p>
-          <Link
-            to="#"
-            className="inline-block mt-3 px-8 py-3 bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] text-white font-semibold rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
-          >
-            Đăng ký ngay
-          </Link>
-        </motion.div>
+            {/* Danh sách bài học (CHỈ CÒN 1 NÚT, LINK ĐẾN TỪ VỰNG) */}
+            <motion.div variants={itemFadeIn} className="space-y-12">
+                <h2 className="text-4xl font-light text-gray-700 text-center tracking-tight">
+                    Chi tiết Các Bài học Chính
+                </h2>
+
+                <div className="space-y-8">
+                    {lessons.map((lesson) => (
+                    <motion.div
+                        key={lesson.lessonId}
+                        variants={itemFadeIn}
+                        whileHover={{ y: -8, scale: 1.01, boxShadow: "0 25px 50px rgba(45, 110, 150, 0.2)" }} 
+                        transition={{ type: "spring", stiffness: 250, damping: 18 }}
+                        className="bg-white rounded-[30px] shadow-2xl shadow-gray-300/50 p-8 md:p-12 transition-all duration-300 transform flex flex-col md:flex-row justify-between items-start md:items-center space-y-6 md:space-y-0"
+                    >
+                        {/* Typography Sang trọng */}
+                        <div className="flex flex-col">
+                            <p className="text-1xl font-semibold uppercase text-cyan-600 tracking-widest mb-1 opacity-75">BÀI HỌC</p>
+                            <h3 className="text-4xl font-medium text-gray-900 mb-2 tracking-tighter">
+                                {lesson.title}
+                            </h3>
+                            <p className="text-xl text-gray-500 max-w-2xl font-light mt-1">{lesson.desc}</p>
+                        </div>
+
+                        {/* Nút Học ngay (Dẫn thẳng đến Từ vựng) */}
+                        <MotionLink
+                            // SỬA LINK: Cố định tham số cuối cùng là 'tuvung'
+                            to={`/lesson/jpd113/${lesson.lessonId}/tuvung`} 
+                            whileHover={{ scale: 1.05, boxShadow: "0 8px 15px rgba(33, 147, 176, 0.6)" }}
+                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                            style={{ boxShadow: buttonShadow }}
+                            className="inline-block px-12 py-4 bg-gradient-to-r from-[#B2EBF2] to-[#80DEEA] text-white font-medium rounded-full shadow-lg transition-all duration-300 transform text-lg tracking-wider"
+                        >
+                            Bắt đầu học
+                        </MotionLink>
+                    </motion.div>
+                    ))}
+                </div>
+            </motion.div>
+
+            {/* CTA */}
+            <motion.div
+            variants={itemFadeIn}
+            className="text-center space-y-6 pt-16"
+            >
+            <h3 className="text-gray-900 font-extralight text-5xl tracking-tight">
+                Hành trình chinh phục tiếng Nhật bắt đầu từ đây.
+            </h3>
+            <p className="text-gray-500 max-w-3xl mx-auto text-xl font-light mt-3">
+                Hãy tham gia cùng cộng đồng học viên tinh hoa và xây dựng nền tảng ngôn ngữ vững chắc nhất.
+            </p>
+            <MotionLink 
+                to="#" 
+                whileHover={{ scale: 1.05, boxShadow: "0 10px 30px rgba(45, 110, 150, 0.4)" }}
+                transition={{ type: "spring", stiffness: 150, damping: 15 }} 
+                className="inline-block mt-8 px-16 py-5 bg-gradient-to-r from-[#B2EBF2] to-[#80DEEA] text-white font-bold text-xl rounded-full shadow-2xl shadow-cyan-600/50 hover:shadow-cyan-700/60 transition-all duration-500 transform tracking-wider"
+            >
+                Đăng ký Khóa học Ngay
+            </MotionLink>
+            </motion.div>
+        </div>
       </motion.div>
     </div>
   );

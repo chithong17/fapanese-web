@@ -23,6 +23,9 @@ import ProfilePage from "./pages/ProfilePage";
 import Course from "./pages/courses/Course";
 import Lesson from "./pages/lesson/LessonContentPage"
 
+// 💡 ĐÃ THÊM: Import Page mới cho tính năng AI Voice
+import VoiceInterview from "./pages/VoiceInterview";
+
 
 // Component quản lý Loading khi route thay đổi
 const LoadingWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -160,12 +163,16 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/course" element={<Course/>} />
           <Route 
-                path="/lesson/:courseId/:lessonId/:contentType" 
-                element={<Lesson />} 
-             />
+            path="/lesson/:courseId/:lessonId/:contentType" 
+            element={<Lesson />} 
+          />
+          
+          {/* 🚀 ĐÃ THÊM: Route cho trang Phỏng Vấn AI Voice */}
+          <Route path="/ai-interview" element={<VoiceInterview />} />
+
         </Routes>
       </LoadingWrapper>
     </Router>
   );
 }
- export default App;
+export default App;

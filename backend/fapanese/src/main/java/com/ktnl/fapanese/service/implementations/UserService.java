@@ -1,5 +1,6 @@
 package com.ktnl.fapanese.service.implementations;
 
+import com.ktnl.fapanese.dto.request.ChangePasswordRequest;
 import com.ktnl.fapanese.dto.request.UserRequest;
 import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.entity.Lecturer;
@@ -195,5 +196,19 @@ public class UserService implements IUserService {
             throw new RuntimeException("User not found with email: " + email);
         }
         userRepo.deleteByEmail(email);
+    }
+
+    @Override
+    public void changePassword(String username, ChangePasswordRequest request) { // <--- Nhận vào username (email)
+        User user = userRepo.findByEmail(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword_hash())) {
+            throw new AppException(ErrorCode.PASSWORD_INCORRECT);
+        }
+
+        user.setPassword_hash(passwordEncoder.encode(request.getNewPassword()));
+
+        userRepo.save(user);
     }
 }

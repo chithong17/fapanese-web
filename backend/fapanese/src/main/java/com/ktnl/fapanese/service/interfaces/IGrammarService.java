@@ -11,5 +11,5 @@ public interface IGrammarService {
     GrammarResponse getGrammarById(Long id);
     GrammarResponse updateGrammar(Long id, GrammarRequest request);
     void deleteGrammar(Long id);
-    List<GrammarResponse> getGrammarsByLesson(Long lessonId);
+    List<GrammarResponse> getGrammarsByLesson(String lessonId);
 }

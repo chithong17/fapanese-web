@@ -38,7 +38,7 @@ public class LessonService implements ILessonService {
     }
 
     @Override
-    public LessonRespone getLessonByLessonId(Long lessonId) {
+    public LessonRespone getLessonByLessonId(String lessonId) {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new RuntimeException("Lesson not found with id: " + lessonId));
         return LessonMapper.toLessonResponse(lesson);

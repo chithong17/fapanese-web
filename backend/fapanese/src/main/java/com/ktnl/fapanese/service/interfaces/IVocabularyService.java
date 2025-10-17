@@ -11,5 +11,5 @@ public interface IVocabularyService {
     VocabularyResponse getVocabularyById(Long id);
     VocabularyResponse updateVocabulary(Long id, VocabularyRequest request);
     void deleteVocabulary(Long id);
-    List<VocabularyResponse> getVocabulariesByLessonId(Long lessonId);
+    List<VocabularyResponse> getVocabulariesByLessonId(String lessonId);
 }

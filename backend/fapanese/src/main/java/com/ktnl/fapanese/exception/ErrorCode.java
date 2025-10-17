@@ -31,22 +31,13 @@ public enum ErrorCode {
     PASSWORD_INVALID(2004, "Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
     ROLE_REQUIRED(2005, "Role is required", HttpStatus.BAD_REQUEST),
     DOB_INVALID(2006, "Date of birth must be in the past", HttpStatus.BAD_REQUEST),
-<<<<<<< HEAD
+
     CAMPUS_REQUIRED(2007, "Campus is required", HttpStatus.BAD_REQUEST),
 
-    QUESTION_NOT_FOUND(2004, "Question not found", HttpStatus.NOT_FOUND),
-
-    LESSON_NOT_FOUND(2001, "Lesson not found", HttpStatus.NOT_FOUND),
-
-    // Vocabulary
-    VOCABULARY_NOT_FOUND(2002, "Vocabulary not found", HttpStatus.NOT_FOUND);
+    QUESTION_NOT_FOUND(2008, "Question not found", HttpStatus.NOT_FOUND),
 
 
 
-
-=======
-    CAMPUS_REQUIRED(2007, "Campus is required", HttpStatus.BAD_REQUEST);
->>>>>>> 31f2da156453a0bba473bcb1614fb2737fd435cf
     ;
     private int code;
     private String message;

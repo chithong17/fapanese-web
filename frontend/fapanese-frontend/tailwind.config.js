@@ -1,4 +1,4 @@
-// tailwind.config.js
+/** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./index.html",
@@ -7,9 +7,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Nunito', 'sans-serif'], // Ghi đè font-sans thành Nunito
+        poppins: ['"Poppins"', "sans-serif"],
+        nunito: ['"Nunito"', "sans-serif"],
       },
     },
   },
   plugins: [],
-}
+};

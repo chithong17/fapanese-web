@@ -23,8 +23,6 @@ import ProfilePage from "./pages/ProfilePage";
 import Course from "./pages/courses/Course";
 import Lesson from "./pages/lesson/LessonContentPage"
 
-// 💡 ĐÃ THÊM: Import Page mới cho tính năng AI Voice
-import VoiceInterview from "./pages/VoiceInterview";
 
 
 // Component quản lý Loading khi route thay đổi
@@ -167,8 +165,7 @@ function App() {
             element={<Lesson />} 
           />
           
-          {/* 🚀 ĐÃ THÊM: Route cho trang Phỏng Vấn AI Voice */}
-          <Route path="/ai-interview" element={<VoiceInterview />} />
+ 
 
         </Routes>
       </LoadingWrapper>

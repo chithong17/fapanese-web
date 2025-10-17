@@ -1,6 +1,8 @@
 package com.ktnl.fapanese.service.implementations;
 
+import com.ktnl.fapanese.dto.request.StudentRegisterResquest;
 import com.ktnl.fapanese.dto.request.UserRequest;
+import com.ktnl.fapanese.dto.response.StudentRegisterResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.entity.Lecturer;
 import com.ktnl.fapanese.entity.Role;
@@ -8,13 +10,17 @@ import com.ktnl.fapanese.entity.Student;
 import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
-import com.ktnl.fapanese.mappper.UserMapper;
+import com.ktnl.fapanese.mail.AccountCreatedEmailTemplate;
+import com.ktnl.fapanese.mapper.UserMapper;
 import com.ktnl.fapanese.repository.LecturerRepository;
 import com.ktnl.fapanese.repository.RoleRepository;
 import com.ktnl.fapanese.repository.StudentRepository;
 import com.ktnl.fapanese.repository.UserRepository;
 import com.ktnl.fapanese.service.interfaces.IUserService;
 import jakarta.transaction.Transactional;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -22,6 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -29,20 +36,18 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService implements IUserService {
-    @Autowired
-    private UserRepository userRepo;
-    @Autowired
-    private LecturerRepository lecturerRepo;
-    @Autowired
-    private StudentRepository studentRepo;
-    @Autowired
-    private RoleRepository roleRepo;
-    @Autowired
-    private UserMapper mapper;
-    @Autowired
+    UserRepository userRepo;
+    LecturerRepository lecturerRepo;
+    StudentRepository studentRepo;
+    RoleRepository roleRepo;
+    UserMapper mapper;
     PasswordEncoder passwordEncoder;
+    EmailService emailService;
 
+    @Override
     public UserResponse registerUser(UserRequest userRequest) {
         log.info("Register request payload: {}", userRequest);
         Optional<User> existingUserOpt  = userRepo.findByEmail(userRequest.getEmail());
@@ -79,6 +84,7 @@ public class UserService implements IUserService {
         return mapper.toUserResponse(savedUser);
     }
 
+    @Override
     public UserResponse getCurrentUserProfile() {
         // Lấy thông tin Authentication từ SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -117,6 +123,7 @@ public class UserService implements IUserService {
         return builder.build();
     }
 
+    @Override
     public UserResponse updateUserProfile(UserRequest userRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -177,6 +184,7 @@ public class UserService implements IUserService {
 
     }
 
+    @Override
     public void updateStatusUserAfterVerifyOtp(String email){
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -196,4 +204,46 @@ public class UserService implements IUserService {
         }
         userRepo.deleteByEmail(email);
     }
+
+    @Override
+    public StudentRegisterResponse registerStudent(StudentRegisterResquest studentRegisterResquest) {
+        Optional<User> existingUserOpt  = userRepo.findByEmail(studentRegisterResquest.getEmail());
+
+        if(existingUserOpt.isPresent())
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+
+        User user = mapper.toUser(studentRegisterResquest);
+        String randomPassword = generateRandomPassword(8);
+        user.setPassword_hash(passwordEncoder.encode(randomPassword));
+        Role role = roleRepo.findByRoleName("STUDENT");
+        user.setRoles(Set.of(role));
+        user.setStatus(0);
+
+        Student student = mapper.toStudent(studentRegisterResquest);
+        student.setUser(user);       // Quan hệ từ Student -> User
+        student.setAvtUrl("https://drive.google.com/file/d/1KZJdE58UiYN8UjoZ0y7wUw0Ptge8FZ0i/view?usp=drive_link");
+        user.setStudent(student);    // Quan hệ ngược lại từ User -> Student
+
+        // 3. Chỉ cần LƯU USER MỘT LẦN DUY NHẤT ở cuối cùng
+        // Do có CascadeType.ALL, JPA sẽ tự động lưu cả Lecturer/Student liên quan
+        User savedUser = userRepo.save(user);
+
+        emailService.sendEmail(savedUser.getEmail(), new AccountCreatedEmailTemplate(), savedUser.getEmail(), randomPassword);
+
+        // 4. Map từ đối tượng đã được lưu (có đầy đủ thông tin) và trả về
+        return mapper.toStudentRegisterResquest(studentRegisterResquest);
+
+    }
+
+    private String generateRandomPassword(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%";
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return sb.toString();
+    }
+
+
 }

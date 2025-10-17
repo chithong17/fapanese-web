@@ -1,7 +1,9 @@
 package com.ktnl.fapanese.controller;
 
+import com.ktnl.fapanese.dto.request.StudentRegisterResquest;
 import com.ktnl.fapanese.dto.request.UserRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
+import com.ktnl.fapanese.dto.response.StudentRegisterResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.service.interfaces.IUserService;
 import jakarta.validation.Valid;
@@ -19,8 +21,9 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequestMapping("/api/users")
 public class UserController {
-    @Autowired
     IUserService iUserService;
+
+
     @PostMapping("/register")
     public ApiResponse<UserResponse> register(@Valid @RequestBody UserRequest request){
         log.info("Register request: {}", request);
@@ -56,5 +59,14 @@ public class UserController {
     public ResponseEntity<String> deleteUserByEmail(@PathVariable String email) {
         iUserService.deleteUserByEmail(email);
         return ResponseEntity.ok("User with email " + email + " has been deleted.");
+    }
+
+    @PostMapping("/students")
+    public ApiResponse<StudentRegisterResponse> registerStudent(@RequestBody StudentRegisterResquest resquest){
+        StudentRegisterResponse response = iUserService.registerStudent(resquest);
+
+        return ApiResponse.<StudentRegisterResponse>builder()
+                .result(response)
+                .build();
     }
 }

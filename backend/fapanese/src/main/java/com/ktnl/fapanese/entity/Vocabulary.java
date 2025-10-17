@@ -26,7 +26,4 @@ public class Vocabulary {
     @ManyToOne
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
-
-    @ManyToMany(mappedBy = "vocabularies")
-    private List<Question> questions;
 }

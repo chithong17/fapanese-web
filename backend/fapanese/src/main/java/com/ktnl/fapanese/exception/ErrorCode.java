@@ -30,7 +30,7 @@ public enum ErrorCode {
     DOB_INVALID(2006, "Date of birth must be in the past", HttpStatus.BAD_REQUEST),
     CAMPUS_REQUIRED(2007, "Campus is required", HttpStatus.BAD_REQUEST),
 
-
+    QUESTION_NOT_FOUND(2004, "Question not found", HttpStatus.NOT_FOUND),
 
     LESSON_NOT_FOUND(2001, "Lesson not found", HttpStatus.NOT_FOUND),
 

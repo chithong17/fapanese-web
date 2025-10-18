@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 
 public class LessonRespone {
-    private String id;
+    private Long id;
     private String lessonTitle;
     private Integer orderIndex;
     private Long courseId;

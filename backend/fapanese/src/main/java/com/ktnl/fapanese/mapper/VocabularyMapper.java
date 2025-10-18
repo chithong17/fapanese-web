@@ -11,15 +11,12 @@ import java.util.List;
 public interface VocabularyMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "lesson", ignore = true) // sẽ gán thủ công trong service
     Vocabulary toVocabulary(VocabularyRequest request);
 
-    @Mapping(target = "lessonId", source = "lesson.id")
     VocabularyResponse toVocabularyResponse(Vocabulary vocabulary);
 
     List<VocabularyResponse> toVocabularyResponseList(List<Vocabulary> vocabularies);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "lesson", ignore = true)
     void updateVocabulary(@MappingTarget Vocabulary vocabulary, VocabularyRequest request);
 }

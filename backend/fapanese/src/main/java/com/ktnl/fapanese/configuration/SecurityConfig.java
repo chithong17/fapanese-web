@@ -32,7 +32,13 @@ public class SecurityConfig {
             "/api/auth/send-otp",
             "/api/auth/verify-otp",
             "/api/auth/forgot-password",
-            "/api/auth/reset-password"};
+            "/api/auth/reset-password"
+    };
+
+    private final String[] PUBLIC_GET_ENDPOINT = {
+            "/api/courses",
+            "/api/courses/{id}",
+    };
 
     private final String[] SWAGGER_WHITELIST  = {
             "/swagger-ui/**",
@@ -52,11 +58,8 @@ public class SecurityConfig {
                         // THÊM DÒNG NÀY ĐỂ GIẢI QUYẾT LỖI CORS PREFLIGHT
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/courses/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/lessons/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/vocabularies/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/questions/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").permitAll()//để tạm thời sẽ xóa đi sau này
+                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINT).permitAll()
 
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .anyRequest().authenticated()

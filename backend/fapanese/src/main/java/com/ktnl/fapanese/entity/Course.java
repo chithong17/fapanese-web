@@ -2,28 +2,37 @@ package com.ktnl.fapanese.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "course")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
-    private String courseName;
+    @Column(name = "course_name")
+    String courseName;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(name = "description", columnDefinition = "TEXT")
+    String description;
 
-    private String imgUrl;
+    @Column(name = "imgUrl")
+    String imgUrl;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Lesson> lessons;
+    Set<Lesson> lessons = new HashSet<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<Overview> overviews = new HashSet<>();
 }

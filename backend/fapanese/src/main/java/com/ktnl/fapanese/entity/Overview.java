@@ -4,32 +4,29 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
-@Table(name = "GrammarDetail")
+@Table(name = "Overview")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class GrammarDetail {
+public class Overview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "grammar_id")
-    Grammar grammar;
+    @JoinColumn(name = "course_id")
+    Course course;
 
-    @Column(name = "structure")
-    String structure;
+    @Column(name = "overview_title")
+    String overviewTitle;
 
-    @Column(name = "meaning")
-    String meaning;
-
-    @Column(name = "example_sentence")
-    String exampleSentence;
-
-    @Column(name = "example_meaning")
-    String exampleMeaning;
+    @OneToMany(mappedBy = "overview", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<OverviewPart> overviewParts = new HashSet<>();
 }

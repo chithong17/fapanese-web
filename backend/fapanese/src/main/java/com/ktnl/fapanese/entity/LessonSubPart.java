@@ -1,19 +1,20 @@
 package com.ktnl.fapanese.entity;
 
+import com.ktnl.fapanese.entity.enums.LessonSubPartType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 
 @Entity
-@Table(name = "Vocabulary")
+@Table(name = "LessonSubPart")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Vocabulary {
+public class LessonSubPart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -22,18 +23,10 @@ public class Vocabulary {
     @JoinColumn(name = "lesson_part_id")
     LessonPart lessonPart;
 
-    @Column(name = "word_kana")
-    String wordKana;
+    @Column(name = "title")
+    String title;
 
-    @Column(name = "word_kanji")
-    String wordKanji;
-
-    @Column(name = "romaji")
-    String romaji;
-
-    @Column(name = "meaning")
-    String meaning;
-
-    @Column(name = "word_type")
-    String wordType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    LessonSubPartType type;
 }

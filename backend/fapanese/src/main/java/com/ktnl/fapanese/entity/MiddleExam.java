@@ -5,18 +5,17 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "FinalExam")
+@Table(name = "MiddleExam")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class FinalExam {
+public class MiddleExam {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -31,10 +30,10 @@ public class FinalExam {
     @Column(name = "semester")
     String semester;
 
-    // Bảng `FinalExamQuestion` được xử lý bằng @ManyToMany
+    // Bảng `MiddleExamQuestion` được xử lý bằng @ManyToMany
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "FinalExamQuestion",
+            name = "MiddleExamQuestion",
             joinColumns = @JoinColumn(name = "exam_id"),
             inverseJoinColumns = @JoinColumn(name = "question_id")
     )

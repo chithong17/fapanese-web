@@ -21,10 +21,10 @@ public class Speaking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    // Tên cột "overview_part_id" trong schema trỏ đến "SpeakingExam.id"
+    // Tên cột "speaking_exam_id" trong schema trỏ đến "SpeakingExam.id"
     // nên ta map nó với speakingExam
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "overview_part_id")
+    @JoinColumn(name = "speaking_exam_id")
     SpeakingExam speakingExam;
 
     @Column(name = "topic")

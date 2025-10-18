@@ -1,35 +1,54 @@
 package com.ktnl.fapanese.entity;
 
+import com.ktnl.fapanese.entity.enums.SpeakingType;
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.List;
+import lombok.experimental.FieldDefaults;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "speaking")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Table(name = "Speaking")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Speaking {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
-    private String topic;
-    private String type;
-    private String imgUrl;
+    // Tên cột "overview_part_id" trong schema trỏ đến "SpeakingExam.id"
+    // nên ta map nó với speakingExam
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "overview_part_id")
+    SpeakingExam speakingExam;
 
-    @Column(columnDefinition = "TEXT")
-    private String passage;
-    @Column(columnDefinition = "TEXT")
-    private String passageRomaji;
-    @Column(columnDefinition = "TEXT")
-    private String passageMeaning;
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(name = "topic")
+    String topic;
 
-    @ManyToOne
-    @JoinColumn(name = "lesson_id")
-    private Lesson lesson;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    SpeakingType type;
+
+    @Column(name = "img_url")
+    String imgUrl;
+
+    @Column(name = "passage")
+    String passage;
+
+    @Column(name = "passage_romaji")
+    String passageRomaji;
+
+    @Column(name = "passage_meaning")
+    String passageMeaning;
+
+    @Column(name = "description")
+    String description;
 
     @OneToMany(mappedBy = "speaking", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SpeakingQuestion> speakingQuestions;
-
-
+    Set<SpeakingQuestion> speakingQuestions = new HashSet<>();
 }

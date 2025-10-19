@@ -7,8 +7,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
     CourseResponse getCourseById(@PathVariable Long id);
+    Optional<Course> findByCode(String code);
 }

@@ -11,6 +11,7 @@ import lombok.*;
 public class LessonRespone {
     private Long id;
     private String lessonTitle;
+    private String description;
     private Integer orderIndex;
-    private Long courseId;
+
 }

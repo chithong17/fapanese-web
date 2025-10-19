@@ -11,19 +11,23 @@ import BannerGrammar from "../../assets/2.svg";
 import BannerSpeaking from "../../assets/3.svg";
 import BannerTest from "../../assets/4.svg";
 
+import { useParams } from "react-router-dom"; // Nếu lấy ID từ URL
+import { getVocabulariesByLessonPartId } from "../../api/vocabulary";
+import { VocabularyResponse } from "../../types/api"; // Đường dẫn đến file định nghĩa type
+
 // ----------------------------- DỮ LIỆU GIẢ -----------------------------
-const vocabularyContent = [
-  { jp: "はじめまして", vn: "Rất hân hạnh (Lần đầu gặp mặt)" },
-  { jp: "わたし", vn: "Tôi" },
-  { jp: "にほん", vn: "Nhật Bản" },
-  { jp: "がくせい", vn: "Học sinh, sinh viên" },
-  { jp: "せんせい", vn: "Giáo viên, giảng viên" },
-  { jp: "おきなわ", vn: "Okinawa (Địa danh)" },
-  { jp: "えいご", vn: "Tiếng Anh" },
-  { jp: "ちゅうごく", vn: "Trung Quốc" },
-  { jp: "せんもん", vn: "Chuyên môn" },
-  { jp: "かた", vn: "Vị (Kính ngữ của người)" },
-];
+// const vocabularyContent = [
+//   { jp: "はじめまして", vn: "Rất hân hạnh (Lần đầu gặp mặt)" },
+//   { jp: "わたし", vn: "Tôi" },
+//   { jp: "にほん", vn: "Nhật Bản" },
+//   { jp: "がくせい", vn: "Học sinh, sinh viên" },
+//   { jp: "せんせい", vn: "Giáo viên, giảng viên" },
+//   { jp: "おきなわ", vn: "Okinawa (Địa danh)" },
+//   { jp: "えいご", vn: "Tiếng Anh" },
+//   { jp: "ちゅうごく", vn: "Trung Quốc" },
+//   { jp: "せんもん", vn: "Chuyên môn" },
+//   { jp: "かた", vn: "Vị (Kính ngữ của người)" },
+// ];
 
 const quizData = {
   title: "Giới thiệu chữ Hán trong tiếng Nhật",

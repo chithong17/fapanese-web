@@ -1,5 +1,10 @@
 import { useRef, useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import Flashcards from "./components/Flashcards";
 import Navbar from "./components/Navbar";
@@ -13,22 +18,19 @@ import Quotes from "./components/Quotes";
 import AlphabetLearning from "./components/AlphabetLearning";
 import AuthPopup from "./components/AuthPopup";
 import BottomNav from "./components/BottomNav";
-import JPD113 from "./pages/courses/JPD113";
-import JPD123 from "./pages/courses/JPD123";
-import JPD133 from "./pages/courses/JPD133";
 import HeroQr from "./components/HeroQr";
 import StudentDashboard from "./pages/dashboard/StudentDashboard";
 import AboutUs from "./pages/AboutUs";
 import ProfilePage from "./pages/ProfilePage";
 import Course from "./pages/courses/Course";
-import Lesson from "./pages/lesson/LessonContentPage"
+import Lesson from "./pages/lesson/LessonContentPage";
 import CourseLessonsPage from "./pages/courses/CourseLessonsPage";
-
-
-
+import FlashcardPage from "./pages/lesson/flashcard/FlashcardPage";
 
 // Component quản lý Loading khi route thay đổi
-const LoadingWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const LoadingWrapper: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
 
@@ -45,14 +47,18 @@ const LoadingWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =
           <CircularProgress />
         </div>
       )}
-      <div className={loading ? "opacity-50 pointer-events-none" : ""}>{children}</div>
+      <div className={loading ? "opacity-50 pointer-events-none" : ""}>
+        {children}
+      </div>
     </>
   );
 };
 
 function App() {
   const alphabetRef = useRef<any>(null);
-  const [activeTab, setActiveTab] = useState<"hiragana" | "katakana">("hiragana");
+  const [activeTab, setActiveTab] = useState<"hiragana" | "katakana">(
+    "hiragana"
+  );
 
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState<"login" | "signup">("login");
@@ -161,15 +167,13 @@ function App() {
           <Route path="/dashboard/student" element={<StudentDashboard />} />
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/courses" element={<Course/>} />
+          <Route path="/courses" element={<Course />} />
           <Route path="/courses/:courseCode" element={<CourseLessonsPage />} />
-          <Route 
-            path="/lesson/:courseId/:lessonId/:lessonPartId" 
-            element={<Lesson />} 
+          <Route
+            path="/lesson/:courseId/:lessonId/:lessonPartId"
+            element={<Lesson />}
           />
-          
- 
-
+          <Route path="/flashcard/:lessonPartId" element={<FlashcardPage />} />
         </Routes>
       </LoadingWrapper>
     </Router>

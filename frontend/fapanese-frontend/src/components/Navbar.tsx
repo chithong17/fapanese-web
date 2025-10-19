@@ -87,7 +87,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const menuItems = [
     { name: "VỀ CHÚNG TÔI", link: "/aboutus" },
     { name: "TRANG CHỦ", link: "/" },
-    { name: "KHÓA HỌC", link: "/course" },
+    { name: "KHÓA HỌC", link: "/courses" },
     { name: "THÀNH TÍCH", link: "/dashboard/student" },
     { name: "GÓC CHIA SẺ", link: "/" },
   ];

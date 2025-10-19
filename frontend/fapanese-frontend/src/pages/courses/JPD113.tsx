@@ -117,7 +117,7 @@ const JPD113: React.FC = () => {
                     <motion.div
                         key={lesson.lessonId}
                         variants={itemFadeIn}
-                        whileHover={{ y: -8, scale: 1.01, boxShadow: "0 25px 50px rgba(45, 110, 150, 0.2)" }} 
+                        whileHover={{ y: -8, scale: 1.01, boxShadow: "0 10px 50px rgba(45, 110, 150, 0.2)" }} 
                         transition={{ type: "spring", stiffness: 250, damping: 18 }}
                         className="bg-white rounded-[30px] shadow-2xl shadow-gray-300/50 p-8 md:p-12 transition-all duration-300 transform flex flex-col md:flex-row justify-between items-start md:items-center space-y-6 md:space-y-0"
                     >
@@ -133,7 +133,7 @@ const JPD113: React.FC = () => {
                         {/* Nút Học ngay (Dẫn thẳng đến Từ vựng) */}
                         <MotionLink
                             // SỬA LINK: Cố định tham số cuối cùng là 'tuvung'
-                            to={`/lesson/jpd113/${lesson.lessonId}/tuvung`} 
+                            to={`/lesson/jpd113/${lesson.lessonId}/1`}
                             whileHover={{ scale: 1.05, boxShadow: "0 8px 15px rgba(33, 147, 176, 0.6)" }}
                             transition={{ type: "spring", stiffness: 300, damping: 20 }}
                             style={{ boxShadow: buttonShadow }}

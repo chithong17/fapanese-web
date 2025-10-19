@@ -28,8 +28,6 @@ public class QuestionService implements IQuestionService {
 
     @Override
     public QuestionResponse createQuestion(QuestionRequest request) {
-        lessonRepository.findById(request.getLessonId())
-                .orElseThrow(() -> new AppException(ErrorCode.LESSON_NOT_FOUND));
 
         Question question = questionMapper.toQuestion(request);
         Question saved = questionRepository.save(question);
@@ -56,8 +54,6 @@ public class QuestionService implements IQuestionService {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
 
-        lessonRepository.findById(request.getLessonId())
-                .orElseThrow(() -> new AppException(ErrorCode.LESSON_NOT_FOUND));
 
         questionMapper.updateQuestion(question, request);
         Question updated = questionRepository.save(question);
@@ -100,7 +96,7 @@ public class QuestionService implements IQuestionService {
             Question question = questionRepository.findById(userAnswer.getQuestionId())
                     .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
 
-            String questionType = question.getQuestionType();
+            String questionType = question.getQuestionType().name();
             String storedAnswer;
             boolean isCorrect = false;
 

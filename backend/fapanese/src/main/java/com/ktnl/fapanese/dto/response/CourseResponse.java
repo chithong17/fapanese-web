@@ -14,4 +14,9 @@ public class CourseResponse {
     private String courseName;
     private String description;
     private String imgUrl;
+    private String price;
+    private String level;
+    private String code;
+    private String title;
+    private String duration;
 }

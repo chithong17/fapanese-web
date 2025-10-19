@@ -2,28 +2,41 @@ package com.ktnl.fapanese.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
+
 
 @Entity
-@Table(name = "speaking_question")
+@Table(name = "SpeakingQuestion")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class SpeakingQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
-    private String question;
-    private String questionRomaji;
-    private String questionMeaning;
-
-    private String answer;
-    private String answerRomaji;
-    private String answerMeaning;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "speaking_id")
-    private Speaking speaking;
+    Speaking speaking;
+
+    @Column(name = "question")
+    String question;
+
+    @Column(name = "question_romaji")
+    String questionRomaji;
+
+    @Column(name = "question_meaning")
+    String questionMeaning;
+
+    @Column(name = "answer")
+    String answer;
+
+    @Column(name = "answer_romaji")
+    String answerRomaji;
+
+    @Column(name = "answer_meaning")
+    String answerMeaning;
 }

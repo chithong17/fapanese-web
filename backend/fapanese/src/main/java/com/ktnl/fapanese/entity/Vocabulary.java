@@ -2,29 +2,38 @@ package com.ktnl.fapanese.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-import java.util.List;
 
 @Entity
-@Table(name = "vocabulary")
+@Table(name = "Vocabulary")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Vocabulary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
-    private String wordKana;
-    private String wordKanji;
-    private String romaji;
-    private String meaning;
-    private String wordType;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lesson_part_id")
+    LessonPart lessonPart;
 
-    @ManyToOne
-    @JoinColumn(name = "lesson_id")
-    private Lesson lesson;
+    @Column(name = "word_kana")
+    String wordKana;
 
+    @Column(name = "word_kanji")
+    String wordKanji;
+
+    @Column(name = "romaji")
+    String romaji;
+
+    @Column(name = "meaning")
+    String meaning;
+
+    @Column(name = "word_type")
+    String wordType;
 }

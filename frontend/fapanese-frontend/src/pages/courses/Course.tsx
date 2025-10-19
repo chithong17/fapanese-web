@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ScrollReveal from "../../components/ScrollReveal";
 import { Link } from "react-router-dom";
 import LogoJPD113 from "../../assets/jpd113.svg";
@@ -6,6 +6,14 @@ import LogoJPD123 from "../../assets/jpd123.svg";
 import LogoJPD133 from "../../assets/jpd133.svg";
 import Footer from "../../components/Footer";
 
+// Map các chuỗi tên logo từ API sang các biến đã import
+const logoMap: { [key: string]: string } = {
+  LogoJPD113: LogoJPD113,
+  LogoJPD123: LogoJPD123,
+  LogoJPD133: LogoJPD133,
+};
+
+// Interface cho component (dữ liệu đã được chuyển đổi)
 interface Course {
   img: string;
   nameCourse: string;
@@ -15,57 +23,80 @@ interface Course {
   title: string;
   description: string;
   description2: string;
-
   duration: string;
 }
 
-const courses: Course[] = [
-  {
-    nameCourse: "できる日本語 (SƠ)",
-    img: LogoJPD113,
-    price: "MIỄN PHÍ",
-    level: "Cơ bản",
-    code: "JPD113",
-    title: "JPD113",
-    description: "できる日本語! - Tiến bộ nhanh chóng cùng",
-    description2: "FAPANESE!",
-    duration: "12 tuần",
-  },
-  {
-    nameCourse: "できる日本語 (TRUNG)",
-
-    img: LogoJPD123,
-    level: "Trung cấp",
-    price: "MIỄN PHÍ",
-    code: "JPD123",
-    title: "JPD123",
-    description: "できる日本語! - Tiến bộ nhanh chóng cùng",
-    description2: "FAPANESE!",
-
-    duration: "10 tuần",
-  },
-  {
-    nameCourse: "できる日本語 (CAO)",
-    img: LogoJPD133,
-    level: "Nâng cao",
-    price: "MIỄN PHÍ",
-    code: "JPD133",
-    title: "JPD133",
-    description: "できる日本語! - Tiến bộ nhanh chóng cùng",
-    description2: "FAPANESE!",
-
-    duration: "14 tuần",
-  },
-];
+// Interface cho dữ liệu thô từ API
+interface ApiCourse {
+  id: number;
+  courseName: string; // Khác với 'nameCourse'
+  description: string;
+  imgUrl: string; // Khác với 'img' và là chuỗi
+  price: string;
+  level: string;
+  code: string;
+  title: string;
+  duration: string;
+  // API không có 'description2'
+}
 
 const Course: React.FC = () => {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/fapanese/api/courses");
+        if (!response.ok) {
+          throw new Error("Không thể tải dữ liệu khóa học");
+        }
+        const apiData: ApiCourse[] = await response.json();
+
+        // Chuyển đổi dữ liệu từ API sang dạng mà component mong đợi
+        const transformedCourses = apiData.map((apiCourse) => ({
+          nameCourse: apiCourse.courseName,
+          img: logoMap[apiCourse.imgUrl] || "", // Ánh xạ chuỗi imgUrl sang import
+          price: apiCourse.price,
+          level: apiCourse.level,
+          code: apiCourse.code,
+          title: apiCourse.title,
+          description: apiCourse.description,
+          description2: "FAPANESE!", // Thêm description2 bị thiếu
+          duration: apiCourse.duration,
+        }));
+
+        setCourses(transformedCourses);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Đã xảy ra lỗi không xác định");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []); // Mảng rỗng đảm bảo useEffect chỉ chạy một lần khi component mount
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">Đang tải...</div>;
+  }
+
+  if (error) {
+    return <div className="flex justify-center items-center h-screen text-red-500">Lỗi: {error}</div>;
+  }
+
   return (
     <ScrollReveal>
-      <section className="w-full bg-gray-100 py-30 px-6  break-all">
+      <section className="w-full bg-gray-100 py-30 px-6 break-all">
         <div className="max-w-7xl mx-auto grid gap-10">
           {courses.map((course, idx) => (
             <div
-              key={idx}
+              key={idx} // Tốt hơn nên dùng course.id hoặc course.code nếu chúng là duy nhất
               className="relative group bg-white/90 backdrop-blur-md border border-gray-200 rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transform transition-all duration-500 hover:-translate-y-2"
             >
               <div className="grid grid-cols-10 items-center p-6 sm:p-3 gap-6">
@@ -77,32 +108,10 @@ const Course: React.FC = () => {
                     alt={course.title}
                     className="h-[75%] object-cover rounded-2xl shadow-md transition duration-500 -mb-0.5"
                   />
-                  {/* SVG caro overlay */}
-                  {/* <svg
-                    className="absolute inset-0 w-full h-full z-0 pointer-events-none rounded-2xl"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <defs>
-                      <pattern
-                        id="grid"
-                        width="15"
-                        height="15"
-                        patternUnits="userSpaceOnUse"
-                      >
-                        <path
-                          d="M 40 0 L 0 0 0 40"
-                          fill="none"
-                          stroke="rgba(0,0,0,0.1)" // Màu đen với độ mờ nhẹ
-                          strokeWidth="1"
-                        />
-                      </pattern>
-                    </defs>
-                    <rect width="100%" height="100%" fill="url(#grid)" />
-                  </svg> */}
                 </div>
 
                 {/* Bên trái: thông tin khóa học */}
-                <div className="col-span-10 sm:col-span-4 text-right space-y-3 px-5 py-5  tracking-wider">
+                <div className="col-span-10 sm:col-span-4 text-right space-y-3 px-5 py-5 tracking-wider">
                   <div>
                     <span className="bg-red-700 rounded-2xl px-3 py-1 font-bold text-white">
                       {course.price}

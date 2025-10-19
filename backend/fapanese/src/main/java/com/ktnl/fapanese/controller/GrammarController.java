@@ -39,10 +39,10 @@ public class GrammarController {
     }
 
     @GetMapping("/by-lesson/{lessonId}")
-    public ApiResponse<List<GrammarResponse>> getGrammarsByLesson(@PathVariable String lessonId) {
-        List<GrammarResponse> result = grammarService.getGrammarsByLesson(lessonId);
+    public ApiResponse<List<GrammarResponse>> getGrammarsByLesson(@PathVariable Long lessonPartId) {
+        List<GrammarResponse> result = grammarService.getGrammarsByLessonPart(lessonPartId);
         return ApiResponse.<List<GrammarResponse>>builder()
-                .message("Grammars fetched successfully for lesson " + lessonId)
+                .message("Grammars fetched successfully for lesson " + lessonPartId)
                 .result(result)
                 .build();
     }

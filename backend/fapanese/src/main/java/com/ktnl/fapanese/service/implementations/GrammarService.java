@@ -6,11 +6,13 @@ import com.ktnl.fapanese.dto.response.GrammarResponse;
 import com.ktnl.fapanese.entity.Grammar;
 import com.ktnl.fapanese.entity.GrammarDetail;
 import com.ktnl.fapanese.entity.Lesson;
+import com.ktnl.fapanese.entity.LessonPart;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mapper.GrammarDetailMapper;
 import com.ktnl.fapanese.mapper.GrammarMapper;
 import com.ktnl.fapanese.repository.GrammarRepository;
+import com.ktnl.fapanese.repository.LessonPartRepository;
 import com.ktnl.fapanese.repository.LessonRepository;
 import com.ktnl.fapanese.service.interfaces.IGrammarService;
 import lombok.AccessLevel;
@@ -31,21 +33,22 @@ import java.util.stream.Collectors;
 public class GrammarService implements IGrammarService {
 
     GrammarRepository grammarRepository;
-    LessonRepository lessonRepository;
+    LessonPartRepository lessonPartRepository;
     GrammarMapper grammarMapper;
-    GrammarDetailMapper detailMapper; // Đã tiêm GrammarDetailMapper
+    GrammarDetailMapper detailMapper;
 
-    private Lesson findLessonOrThrow(String lessonId) {
-        return lessonRepository.findById(lessonId)
-                .orElseThrow(() -> new AppException(ErrorCode.LESSON_NOT_FOUND));
+    private LessonPart findLessonPartOrThrow(Long lessonPartId) {
+        return lessonPartRepository.findById(lessonPartId)
+                .orElseThrow(() -> new AppException(ErrorCode.LESSON_PART_NOT_FOUND));
     }
 
     @Override
     public GrammarResponse createGrammar(GrammarRequest request) {
-        Lesson lesson = findLessonOrThrow(request.getLessonId());
+        LessonPart lessonPart = findLessonPartOrThrow(request.getLessonPartId());
 
         Grammar newGrammar = grammarMapper.toGrammar(request);
-        newGrammar.setLesson(lesson);
+
+        newGrammar.setLessonPart(lessonPart);
 
         if (request.getDetails() != null) {
             Set<GrammarDetail> details = request.getDetails().stream()
@@ -55,7 +58,7 @@ public class GrammarService implements IGrammarService {
                         return detail;
                     })
                     .collect(Collectors.toSet());
-            newGrammar.setDetails(details);
+            newGrammar.setGrammarDetails(details);
         }
 
         Grammar savedGrammar = grammarRepository.save(newGrammar);
@@ -63,43 +66,56 @@ public class GrammarService implements IGrammarService {
     }
 
     @Override
+
     public List<GrammarResponse> getAllGrammars() {
+
         return grammarRepository.findAll().stream()
+
                 .map(grammarMapper::toGrammarResponse)
+
                 .collect(Collectors.toList());
+
     }
 
+
+
     @Override
+
     public GrammarResponse getGrammarById(Long id) {
+
         Grammar grammar = grammarRepository.findById(id)
+
                 .orElseThrow(() -> new AppException(ErrorCode.GRAMMAR_NOT_FOUND));
+
         return grammarMapper.toGrammarResponse(grammar);
+
     }
 
     @Override
-    public List<GrammarResponse> getGrammarsByLesson(String lessonId) {
-        if (!lessonRepository.existsById(lessonId)) {
-            throw new AppException(ErrorCode.LESSON_NOT_FOUND);
+    public List<GrammarResponse> getGrammarsByLessonPart(Long lessonPartId) {
+        if (!lessonPartRepository.existsById(lessonPartId)) {
+            throw new AppException(ErrorCode.LESSON_PART_NOT_FOUND);
         }
-
-        return grammarRepository.findByLessonId(lessonId).stream()
+        return grammarRepository.findByLessonPart_Id(lessonPartId).stream()
                 .map(grammarMapper::toGrammarResponse)
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public GrammarResponse updateGrammar(Long id, GrammarRequest request) {
         Grammar existingGrammar = grammarRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.GRAMMAR_NOT_FOUND));
 
-        if (!existingGrammar.getLesson().getId().equals(request.getLessonId())) {
-            Lesson newLesson = findLessonOrThrow(request.getLessonId());
-            existingGrammar.setLesson(newLesson);
+        if (request.getLessonPartId() != null &&
+                (existingGrammar.getLessonPart() == null || !existingGrammar.getLessonPart().getId().equals(request.getLessonPartId()))) {
+            LessonPart newLessonPart = findLessonPartOrThrow(request.getLessonPartId());
+            existingGrammar.setLessonPart(newLessonPart);
         }
 
         grammarMapper.updateGrammar(existingGrammar, request);
 
-        Map<Long, GrammarDetail> existingDetailsMap = existingGrammar.getDetails().stream()
+        Map<Long, GrammarDetail> existingDetailsMap = existingGrammar.getGrammarDetails().stream()
                 .collect(Collectors.toMap(GrammarDetail::getId, Function.identity()));
 
         Set<GrammarDetail> detailsToKeepOrAdd = new HashSet<>();
@@ -118,8 +134,8 @@ public class GrammarService implements IGrammarService {
             }
         }
 
-        existingGrammar.getDetails().clear();
-        existingGrammar.getDetails().addAll(detailsToKeepOrAdd);
+        existingGrammar.getGrammarDetails().clear();
+        existingGrammar.getGrammarDetails().addAll(detailsToKeepOrAdd);
 
         Grammar updatedGrammar = grammarRepository.save(existingGrammar);
         return grammarMapper.toGrammarResponse(updatedGrammar);

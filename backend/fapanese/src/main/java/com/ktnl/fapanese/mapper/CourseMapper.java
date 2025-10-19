@@ -14,6 +14,7 @@ public interface CourseMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "lessons", ignore = true)
+    @Mapping(target = "overviews", ignore = true)
     Course toCourse(CourseRequest request);
 
     CourseResponse toCourseResponse(Course course);
@@ -22,5 +23,6 @@ public interface CourseMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "lessons", ignore = true)
+    @Mapping(target = "overviews", ignore = true)
     void updateCourse(@MappingTarget Course course, CourseRequest request);
 }

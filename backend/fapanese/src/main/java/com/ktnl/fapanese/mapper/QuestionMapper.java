@@ -12,16 +12,13 @@ import java.util.List;
 public interface QuestionMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "course", ignore = true)
     Question toQuestion(QuestionRequest request);
 
-    @Mapping(target = "courseId", source = "course.id")
     QuestionResponse toQuestionResponse(Question question);
 
     List<QuestionResponse> toQuestionResponseList(List<Question> questions);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "course", ignore = true)
     void updateQuestion(@MappingTarget Question question, QuestionRequest request);
 
     default Lesson toLesson(Long lessonId) {

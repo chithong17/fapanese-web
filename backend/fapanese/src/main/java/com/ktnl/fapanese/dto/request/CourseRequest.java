@@ -12,4 +12,9 @@ public class CourseRequest {
     String courseName;
     String description;
     String imgUrl;
+    String price;
+    String level;
+    String code;
+    String title;
+    String duration;
 }

@@ -117,7 +117,7 @@ const JPD113: React.FC = () => {
                     <motion.div
                         key={lesson.lessonId}
                         variants={itemFadeIn}
-                        whileHover={{ y: -8, scale: 1.01, boxShadow: "0 25px 50px rgba(45, 110, 150, 0.2)" }} 
+                        whileHover={{ y: -8, scale: 1.01, boxShadow: "0 10px 50px rgba(45, 110, 150, 0.2)" }} 
                         transition={{ type: "spring", stiffness: 250, damping: 18 }}
                         className="bg-white rounded-[30px] shadow-2xl shadow-gray-300/50 p-8 md:p-12 transition-all duration-300 transform flex flex-col md:flex-row justify-between items-start md:items-center space-y-6 md:space-y-0"
                     >

@@ -10,10 +10,10 @@ import BannerVocab from "../../assets/1.svg";
 import BannerGrammar from "../../assets/2.svg";
 import BannerSpeaking from "../../assets/3.svg";
 import BannerTest from "../../assets/4.svg";
+import { useParams } from "react-router-dom";
 
-import { useParams } from "react-router-dom"; // Nếu lấy ID từ URL
 import { getVocabulariesByLessonPartId } from "../../api/vocabulary";
-import { VocabularyResponse } from "../../types/api"; // Đường dẫn đến file định nghĩa type
+import type { ApiResponse, VocabularyResponse } from "../../types/api";
 
 // ----------------------------- DỮ LIỆU GIẢ -----------------------------
 // const vocabularyContent = [
@@ -43,6 +43,13 @@ const quizData = {
 
 // ----------------------------- COMPONENT CHÍNH -----------------------------
 const LessonContentPage: React.FC = () => {
+  const { lessonPartId } = useParams(); // 👈 Lấy param từ URL
+
+  const [vocabularyContent, setVocabularyContent] = useState<
+    VocabularyResponse[]
+  >([]);
+  const [loadingVocab, setLoadingVocab] = useState(true);
+
   const [activeTab, setActiveTab] = useState<"lesson" | "exercise">("lesson");
   const [contentType, setContentType] = useState<
     "vocab" | "grammar" | "speaking" | "test"
@@ -71,21 +78,41 @@ const LessonContentPage: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   // ===================================
-  
+
   // === 🆕 LOGIC SCROLL TO TOP MỖI KHI CHUYỂN TAB/NỘI DUNG ===
   useEffect(() => {
     // Cuộn về đầu trang (vị trí (0, 0))
     window.scrollTo({
-        top: 0,
-        behavior: 'smooth' // Có thể dùng 'auto' nếu không muốn hiệu ứng cuộn mượt
+      top: 0,
+      behavior: "smooth", // Có thể dùng 'auto' nếu không muốn hiệu ứng cuộn mượt
     });
     // Đặt lại trạng thái Quiz khi chuyển sang nội dung mới hoặc tab Bài tập
-    if (activeTab === 'exercise' || contentType !== 'test') {
-        setSelectedOption(null);
+    if (activeTab === "exercise" || contentType !== "test") {
+      setSelectedOption(null);
     }
   }, [activeTab, contentType]); // Chạy mỗi khi activeTab hoặc contentType thay đổi
   // ===================================
 
+  // === 🆕 LOGIC TẢI TỪ VỰNG TỪ API KHI Ở TAB BÀI HỌC VÀ NỘI DUNG LÀ TỪ VỰNG ===
+  useEffect(() => {
+    const fetchVocabularies = async () => {
+      try {
+        if (!lessonPartId) return;
+        setLoadingVocab(true);
+        const res = await getVocabulariesByLessonPartId(Number(lessonPartId));
+        console.log("📘 API vocab response:", res);
+        setVocabularyContent(Array.isArray(res) ? res : res.result || []);
+      } catch (err) {
+        console.error("Không thể tải từ vựng:", err);
+      } finally {
+        setLoadingVocab(false);
+      }
+    };
+
+    if (activeTab === "lesson" && contentType === "vocab") {
+      fetchVocabularies();
+    }
+  }, [activeTab, contentType, lessonPartId]);
 
   const bannerImage = {
     vocab: BannerVocab,
@@ -96,8 +123,11 @@ const LessonContentPage: React.FC = () => {
 
   // ----------------------------- COMPONENT THANH CHUYỂN ĐỔI CHUNG -----------------------------
   const NavTabButtons = ({ isFloating = false }: { isFloating?: boolean }) => (
-    <div className={`relative mt-15 flex justify-between w-72 mx-auto bg-gray-200 rounded-full p-1 shadow-inner overflow-hidden ${isFloating ? 'shadow-2xl' : ''}`}>
-
+    <div
+      className={`relative mt-15 flex justify-between w-72 mx-auto bg-gray-200 rounded-full p-1 shadow-inner overflow-hidden ${
+        isFloating ? "shadow-2xl" : ""
+      }`}
+    >
       {/* THANH TRƯỢT MÀU XANH */}
       <motion.div
         className="absolute top-1 bottom-1 w-1/2 rounded-full bg-gradient-to-r from-[#B2EBF2] to-[#80DEEA] shadow-md"
@@ -128,58 +158,58 @@ const LessonContentPage: React.FC = () => {
   // ----------------------------- BÀI TẬP (Giữ nguyên) -----------------------------
   const renderExerciseContent = () => (
     <div className="w-full p-10 bg-gradient-to-br from-white via-[#f8fdfe] to-[#f2faff] rounded-xl">
-        <div className="mb-8">
-            <p className="text-xl font-medium text-gray-700 mb-2">
-                1/{quizData.totalQuestions}
-            </p>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-                <motion.div
-                    className="bg-gradient-to-r from-[#00BCD4] to-[#4DD0E1] h-2.5"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(1 / quizData.totalQuestions) * 100}%` }}
-                    transition={{ duration: 0.8 }}
-                />
-            </div>
+      <div className="mb-8">
+        <p className="text-xl font-medium text-gray-700 mb-2">
+          1/{quizData.totalQuestions}
+        </p>
+        <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+          <motion.div
+            className="bg-gradient-to-r from-[#00BCD4] to-[#4DD0E1] h-2.5"
+            initial={{ width: 0 }}
+            animate={{ width: `${(1 / quizData.totalQuestions) * 100}%` }}
+            transition={{ duration: 0.8 }}
+          />
         </div>
+      </div>
 
-        <div className="mb-10 space-y-3">
-            <p className="text-gray-500 text-sm">{quizData.title}</p>
-            <p className="text-gray-400 text-xs">Chọn đáp án đúng</p>
-            <h2 className="text-2xl font-semibold text-gray-800 pt-3">
-                {quizData.question}
-            </h2>
-        </div>
+      <div className="mb-10 space-y-3">
+        <p className="text-gray-500 text-sm">{quizData.title}</p>
+        <p className="text-gray-400 text-xs">Chọn đáp án đúng</p>
+        <h2 className="text-2xl font-semibold text-gray-800 pt-3">
+          {quizData.question}
+        </h2>
+      </div>
 
-        <div className="grid grid-cols-2 gap-6 mb-12">
-            {quizData.options.map((option) => (
-                <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    key={option.id}
-                    onClick={() => setSelectedOption(option.id)}
-                    className={`p-5 rounded-4xl text-left shadow-sm border-2 transition-all duration-300
+      <div className="grid grid-cols-2 gap-6 mb-12">
+        {quizData.options.map((option) => (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            key={option.id}
+            onClick={() => setSelectedOption(option.id)}
+            className={`p-5 rounded-4xl text-left shadow-sm border-2 transition-all duration-300
                     ${
-                        selectedOption === option.id
+                      selectedOption === option.id
                         ? "bg-[#E0F7FA] border-[#00BCD4] text-[#00BCD4] shadow-lg"
                         : "bg-white border-gray-200 hover:border-[#B2EBF2] text-gray-800"
                     }`}
-                >
-                    <span className="font-bold mr-2">{option.id}.</span> {option.text}
-                </motion.button>
-            ))}
-        </div>
+          >
+            <span className="font-bold mr-2">{option.id}.</span> {option.text}
+          </motion.button>
+        ))}
+      </div>
 
-        <button
-            disabled={selectedOption === null}
-            className={`w-full py-4 font-bold text-lg transition-all duration-300 rounded-4xl
+      <button
+        disabled={selectedOption === null}
+        className={`w-full py-4 font-bold text-lg transition-all duration-300 rounded-4xl
             ${
-                selectedOption !== null
+              selectedOption !== null
                 ? "bg-gradient-to-r from-[#00BCD4] to-[#26C6DA] text-white shadow-md hover:shadow-xl hover:opacity-95"
                 : "bg-gray-200 text-gray-500 cursor-not-allowed"
             }`}
-        >
-            KIỂM TRA
-        </button>
+      >
+        KIỂM TRA
+      </button>
     </div>
   );
 
@@ -196,61 +226,76 @@ const LessonContentPage: React.FC = () => {
               <p className="text-gray-600 mb-6">
                 Bạn sẽ học các từ vựng cơ bản về chào hỏi, giới thiệu bản thân.
               </p>
-              <div className="space-y-4">
-                {vocabularyContent.map((word, index) => (
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    key={index}
-                    className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <span className="text-2xl font-bold text-[#00BCD4] w-12 text-center">
-                        {index + 1}
-                      </span>
-                      <div>
-                        <p className="text-xl font-semibold text-gray-900">
-                          {word.jp}
-                        </p>
-                        <p className="text-sm text-gray-500">{word.vn}</p>
+              {loadingVocab ? (
+                <p className="text-gray-500 italic text-center py-6">
+                  Đang tải từ vựng...
+                </p>
+              ) : vocabularyContent.length === 0 ? (
+                <p className="text-gray-500 italic text-center py-6">
+                  Không có từ vựng nào trong phần này.
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {vocabularyContent.map((word, index) => (
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      key={word.id || index}
+                      className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <span className="text-2xl font-bold text-[#00BCD4] w-12 text-center">
+                          {index + 1}
+                        </span>
+                        <div>
+                          <p className="text-xl font-semibold text-gray-900">
+                            {word.wordKanji || word.wordKana}
+                          </p>
+                          {word.romaji && (
+                            <p className="text-sm text-gray-400">
+                              {word.romaji}
+                            </p>
+                          )}
+                          <p className="text-sm text-gray-500">
+                            {word.meaning}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    <button className="text-white bg-[#00BCD4] hover:bg-[#00ACC1] p-3 rounded-full shadow-md transition transform hover:scale-110 duration-300">
-                      <FaComments />
-                    </button>
-                  </motion.div>
-                ))}
-              </div>
+                      <button className="text-white bg-[#00BCD4] hover:bg-[#00ACC1] p-3 rounded-full shadow-md transition transform hover:scale-110 duration-300">
+                        <FaComments />
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </div>
           );
         case "grammar":
-            return (
-                <div className="p-6 text-gray-700">
-                    <h1 className="text-3xl font-bold mb-3">
-                      Ngữ pháp: Cấu trúc cơ bản Desu / Desu ka
-                    </h1>
-                    <p className="text-gray-600">
-                      Nội dung chi tiết về ngữ pháp và các ví dụ liên quan...
-                    </p>
-                </div>
-              );
-            case "speaking":
-                return (
-                    <div className="p-6 text-gray-700">
-                      <h1 className="text-3xl font-bold mb-3">
-                        Speaking: Giao tiếp chào hỏi cơ bản
-                      </h1>
-                      <p>Các đoạn hội thoại mẫu và công cụ luyện tập...</p>
-                    </div>
-                  );
-            case "test":
-                return (
-                    <div className="p-6 text-gray-700">
-                      <h1 className="text-3xl font-bold mb-3">
-                        Kiểm tra cuối khóa
-                      </h1>
-                      <p>Bài kiểm tra tổng hợp kiến thức đã học trong chương này.</p>
-                    </div>
-                  );
+          return (
+            <div className="p-6 text-gray-700">
+              <h1 className="text-3xl font-bold mb-3">
+                Ngữ pháp: Cấu trúc cơ bản Desu / Desu ka
+              </h1>
+              <p className="text-gray-600">
+                Nội dung chi tiết về ngữ pháp và các ví dụ liên quan...
+              </p>
+            </div>
+          );
+        case "speaking":
+          return (
+            <div className="p-6 text-gray-700">
+              <h1 className="text-3xl font-bold mb-3">
+                Speaking: Giao tiếp chào hỏi cơ bản
+              </h1>
+              <p>Các đoạn hội thoại mẫu và công cụ luyện tập...</p>
+            </div>
+          );
+        case "test":
+          return (
+            <div className="p-6 text-gray-700">
+              <h1 className="text-3xl font-bold mb-3">Kiểm tra cuối khóa</h1>
+              <p>Bài kiểm tra tổng hợp kiến thức đã học trong chương này.</p>
+            </div>
+          );
       }
     };
 
@@ -280,7 +325,6 @@ const LessonContentPage: React.FC = () => {
   // ----------------------------- TRẢ VỀ GIAO DIỆN CHÍNH -----------------------------
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-[#f8fdfe] to-[#e6f7f9] flex justify-center py-5">
-
       {/* 🚀 FLOATING NAV BAR - CHỈ HIỆN NÚT VÀ CĂN GIỮA */}
       <AnimatePresence>
         {showFloatingNav && (
@@ -290,7 +334,6 @@ const LessonContentPage: React.FC = () => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-
             // Dùng fixed, căn giữa (left-1/2, -translate-x-1/2) và top cố định (top-5)
             className="fixed top-5 left-1/2 transform -translate-x-1/2 z-[9999]"
           >
@@ -303,7 +346,6 @@ const LessonContentPage: React.FC = () => {
       <div className="flex-1 flex flex-col lg:flex-row max-w-7xl py-10 px-6">
         {/* CỘT TRÁI (Nội dung chính) */}
         <div className="lg:w-3/4 pr-0 lg:pr-8 space-y-4">
-
           {/* VỊ TRÍ BAN ĐẦU (Gán Ref để theo dõi cuộn) */}
           <div ref={navRef} className="pb-4">
             <NavTabButtons />
@@ -338,12 +380,12 @@ const LessonContentPage: React.FC = () => {
         </div>
 
         {/* SIDEBAR (Giữ nguyên) */}
-        <div
-            className="lg:w-1/4 mt-8 lg:mt-0 bg-white/70 backdrop-blur-xl rounded-3xl shadow-lg p-6 space-y-6 border border-gray-100 h-fit sticky top-20 transition-all duration-500 z-30"
-        >
+        <div className="lg:w-1/4 mt-8 lg:mt-0 bg-white/70 backdrop-blur-xl rounded-3xl shadow-lg p-6 space-y-6 border border-gray-100 h-fit sticky top-20 transition-all duration-500 z-30">
           {/* Ô tìm kiếm */}
           <div className="relative">
-            <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg">
+              <FiSearch />
+            </span>
             <input
               type="text"
               placeholder="Tìm kiếm bài học..."
@@ -358,10 +400,42 @@ const LessonContentPage: React.FC = () => {
             </h3>
 
             {[
-              { type: "Từ vựng", key: "vocab", icon: <FaLanguage className="text-gray-500" /> },
-              { type: "Ngữ pháp", key: "grammar", icon: <FaBookOpen className="text-gray-500" /> },
-              { type: "Speaking", key: "speaking", icon: <FaComments className="text-gray-500" /> },
-              { type: "Kiểm tra cuối khóa", key: "test", icon: <FiCheckCircle className="text-gray-500" /> },
+              {
+                type: "Từ vựng",
+                key: "vocab",
+                icon: (
+                  <span className="text-gray-500">
+                    <FaLanguage />
+                  </span>
+                ),
+              },
+              {
+                type: "Ngữ pháp",
+                key: "grammar",
+                icon: (
+                  <span className="text-gray-500">
+                    <FaBookOpen />
+                  </span>
+                ),
+              },
+              {
+                type: "Speaking",
+                key: "speaking",
+                icon: (
+                  <span className="text-gray-500">
+                    <FaComments />
+                  </span>
+                ),
+              },
+              {
+                type: "Kiểm tra cuối khóa",
+                key: "test",
+                icon: (
+                  <span className="text-gray-500">
+                    <FiCheckCircle />
+                  </span>
+                ),
+              },
             ].map((part, idx) => (
               <Link
                 key={idx}
@@ -375,7 +449,9 @@ const LessonContentPage: React.FC = () => {
               >
                 <div
                   className={`w-11 h-11 flex items-center justify-center rounded-xl transition-transform duration-300 ${
-                    contentType === part.key ? "bg-white shadow-sm scale-105" : "bg-gray-100"
+                    contentType === part.key
+                      ? "bg-white shadow-sm scale-105"
+                      : "bg-gray-100"
                   }`}
                 >
                   {React.cloneElement(part.icon, {

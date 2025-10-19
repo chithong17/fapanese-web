@@ -133,7 +133,7 @@ const JPD113: React.FC = () => {
                         {/* Nút Học ngay (Dẫn thẳng đến Từ vựng) */}
                         <MotionLink
                             // SỬA LINK: Cố định tham số cuối cùng là 'tuvung'
-                            to={`/lesson/jpd113/${lesson.lessonId}/tuvung`} 
+                            to={`/lesson/jpd113/${lesson.lessonId}/1`}
                             whileHover={{ scale: 1.05, boxShadow: "0 8px 15px rgba(33, 147, 176, 0.6)" }}
                             transition={{ type: "spring", stiffness: 300, damping: 20 }}
                             style={{ boxShadow: buttonShadow }}

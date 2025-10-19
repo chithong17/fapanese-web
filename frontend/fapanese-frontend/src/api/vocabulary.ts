@@ -1,17 +1,22 @@
 import axios from "axios";
-import { ApiResponse, VocabularyResponse } from "../types/api"; // Đảm bảo đường dẫn đúng
+import type { ApiResponse, VocabularyResponse } from "../types/api";
 
-const API_URL = "http://localhost:8080/fapanese/api"; // Giữ nguyên nếu đúng
+const API_URL = "http://localhost:8080/fapanese/api";
 
-export const getVocabulariesByLessonPartId = async (lessonPartId: number): Promise<VocabularyResponse[]> => {
+export const getVocabulariesByLessonPartId = async (lessonPartId: number) => {
   try {
-    const response = await axios.get<ApiResponse<VocabularyResponse[]>>(
-      `${API_URL}/vocabularies/by-lesson-part/${lessonPartId}`
+    const token = localStorage.getItem("token"); // 🔹 lấy token sau khi login
+    const response = await axios.get(
+      `${API_URL}/vocabularies/by-lesson-part/${lessonPartId}`,
+      {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      }
     );
-    return response.data.result;
+    return response.data;
   } catch (error: any) {
-    console.error("Error fetching vocabularies:", error.response?.data || error.message || error);
-    throw error.response?.data || error;
+    console.error("Không thể tải từ vựng:", error);
+    throw error;
   }
 };
-

@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class GrammarResponse {
     private String id;
-    private String lessonId;
+    private Long lessonPartId;
     private String title;
     private String explanation;
     private List<GrammarDetailResponse> details;

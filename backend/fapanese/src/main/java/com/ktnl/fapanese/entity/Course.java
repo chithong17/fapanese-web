@@ -21,7 +21,7 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "course_name")
+    @Column(name = "course_name", nullable = false)
     String courseName;
 
     @Column(name = "description", columnDefinition = "TEXT")
@@ -29,6 +29,20 @@ public class Course {
 
     @Column(name = "imgUrl")
     String imgUrl;
+    @Column(name = "price")
+    String price;
+
+    @Column(name = "level")
+    String level;
+
+    @Column(name = "code", unique = true) 
+    String code;
+
+    @Column(name = "title")
+    String title;
+
+    @Column(name = "duration")
+    String duration;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Lesson> lessons = new HashSet<>();

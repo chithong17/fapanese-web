@@ -16,18 +16,7 @@ import { getVocabulariesByLessonPartId } from "../../api/vocabulary";
 import type { ApiResponse, VocabularyResponse } from "../../types/api";
 
 // ----------------------------- DỮ LIỆU GIẢ -----------------------------
-// const vocabularyContent = [
-//   { jp: "はじめまして", vn: "Rất hân hạnh (Lần đầu gặp mặt)" },
-//   { jp: "わたし", vn: "Tôi" },
-//   { jp: "にほん", vn: "Nhật Bản" },
-//   { jp: "がくせい", vn: "Học sinh, sinh viên" },
-//   { jp: "せんせい", vn: "Giáo viên, giảng viên" },
-//   { jp: "おきなわ", vn: "Okinawa (Địa danh)" },
-//   { jp: "えいご", vn: "Tiếng Anh" },
-//   { jp: "ちゅうごく", vn: "Trung Quốc" },
-//   { jp: "せんもん", vn: "Chuyên môn" },
-//   { jp: "かた", vn: "Vị (Kính ngữ của người)" },
-// ];
+// (Dữ liệu giả đã được comment lại, giữ nguyên)
 
 const quizData = {
   title: "Giới thiệu chữ Hán trong tiếng Nhật",
@@ -213,10 +202,11 @@ const LessonContentPage: React.FC = () => {
     </div>
   );
 
-  // ----------------------------- BÀI HỌC (Giữ nguyên) -----------------------------
+  // ----------------------------- BÀI HỌC (ĐÃ CẬP NHẬT) -----------------------------
   const renderLessonContent = () => {
     const renderContentSection = () => {
       switch (contentType) {
+        // ⭐⭐⭐ START: THAY ĐỔI TẠI ĐÂY ⭐⭐⭐
         case "vocab":
           return (
             <div className="p-6">
@@ -235,40 +225,89 @@ const LessonContentPage: React.FC = () => {
                   Không có từ vựng nào trong phần này.
                 </p>
               ) : (
-                <div className="space-y-4">
-                  {vocabularyContent.map((word, index) => (
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      key={word.id || index}
-                      className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <span className="text-2xl font-bold text-[#00BCD4] w-12 text-center">
-                          {index + 1}
-                        </span>
-                        <div>
-                          <p className="text-xl font-semibold text-gray-900">
-                            {word.wordKanji || word.wordKana}
-                          </p>
-                          {word.romaji && (
-                            <p className="text-sm text-gray-400">
-                              {word.romaji}
+                // Bảng từ vựng đã cập nhật
+                <div className="overflow-x-auto rounded-xl shadow-md border border-gray-100">
+                  <table className="w-full min-w-[600px] bg-white">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-16">
+                          STT
+                        </th>
+                        <th className="px-10 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          Kana
+                        </th>
+                        <th className="px-10 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          Hán tự
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          Ý nghĩa
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          Romaji
+                        </th>
+                        <th className="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          Âm thanh
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {vocabularyContent.map((word, index) => (
+                        <motion.tr
+                          key={word.id || index}
+                          className="hover:bg-gray-50 transition-colors duration-200"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: index * 0.05 }}
+                        >
+                          {/* STT */}
+                          <td className="px-4 py-4 text-center text-sm font-bold text-[#00BCD4]">
+                            {index + 1}
+                          </td>
+                          {/* 🆕 KANA (In đậm) */}
+                          <td className="px-10 py-4">
+                            <p className="text-sm font-bold text-gray-900">
+                              {word.wordKana}
                             </p>
-                          )}
-                          <p className="text-sm text-gray-500">
+                          </td>
+                          {/* ✍️ HÁN TỰ (Bình thường) */}
+                          <td className="px-10 py-4">
+                            {word.wordKanji ? (
+                              <p className="text-sm text-gray-900">
+                                {word.wordKanji}
+                              </p>
+                            ) : (
+                              <span className="text-gray-300 text-xl">—</span>
+                            )}
+                          </td>
+                          {/* Ý NGHĨA */}
+                          <td className="px-6 py-4 text-sm text-gray-600">
                             {word.meaning}
-                          </p>
-                        </div>
-                      </div>
-                      <button className="text-white bg-[#00BCD4] hover:bg-[#00ACC1] p-3 rounded-full shadow-md transition transform hover:scale-110 duration-300">
-                        <FaComments />
-                      </button>
-                    </motion.div>
-                  ))}
+                          </td>
+                          {/* ROMAJI */}
+                          <td className="px-4 py-4">
+                            {word.romaji ? (
+                              <p className="text-sm text-gray-400">
+                                {word.romaji}
+                              </p>
+                            ) : (
+                              <span className="text-gray-300">—</span>
+                            )}
+                          </td>
+                          {/* ÂM THANH */}
+                          <td className="px-6 py-4 text-center">
+                            <button className="text-white bg-[#00BCD4] hover:bg-[#00ACC1] p-3 rounded-full shadow-md transition transform hover:scale-110 duration-300">
+                              <FaComments />
+                            </button>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </div>
           );
+        // ⭐⭐⭐ END: THAY ĐỔI TẠI ĐÂY ⭐⭐⭐
         case "grammar":
           return (
             <div className="p-6 text-gray-700">
@@ -322,7 +361,7 @@ const LessonContentPage: React.FC = () => {
     );
   };
 
-  // ----------------------------- TRẢ VỀ GIAO DIỆN CHÍNH -----------------------------
+  // ----------------------------- TRẢ VỀ GIAO DIỆN CHÍNH (Giữ nguyên) -----------------------------
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-[#f8fdfe] to-[#e6f7f9] flex justify-center py-5">
       {/* 🚀 FLOATING NAV BAR - CHỈ HIỆN NÚT VÀ CĂN GIỮA */}

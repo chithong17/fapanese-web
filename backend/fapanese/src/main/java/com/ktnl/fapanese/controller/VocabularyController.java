@@ -42,8 +42,8 @@ public class VocabularyController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/by-lesson/{lessonId}")
-    public ResponseEntity<List<VocabularyResponse>> getVocabulariesByLesson(@PathVariable String lessonId) {
-        return ResponseEntity.ok(vocabularyService.getVocabulariesByLessonId(lessonId));
+    @GetMapping("/by-lesson-part/{lessonPartId}")
+    public ResponseEntity<List<VocabularyResponse>> getVocabulariesByLesson(@PathVariable Long lessonPartId) {
+        return ResponseEntity.ok(vocabularyService.getVocabulariesByLessonPartId(lessonPartId));
     }
 }

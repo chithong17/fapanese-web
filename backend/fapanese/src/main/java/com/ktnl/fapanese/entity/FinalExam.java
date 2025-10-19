@@ -2,28 +2,41 @@ package com.ktnl.fapanese.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "final_exam")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Table(name = "FinalExam")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class FinalExam {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
-    private String examTitle;
-    private String semester;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "overview_part_id")
+    OverviewPart overviewPart;
 
-    @ManyToOne
-    @JoinColumn(name = "lesson_id")
-    private Lesson lesson;
+    @Column(name = "exam_title")
+    String examTitle;
 
-    @ManyToMany
+    @Column(name = "semester")
+    String semester;
+
+    // Bảng `FinalExamQuestion` được xử lý bằng @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "final_exam_question",
+            name = "FinalExamQuestion",
             joinColumns = @JoinColumn(name = "exam_id"),
             inverseJoinColumns = @JoinColumn(name = "question_id")
     )
-    private List<Question> questions;
+    Set<Question> questions = new HashSet<>();
 }

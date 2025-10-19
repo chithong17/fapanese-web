@@ -2,25 +2,34 @@ package com.ktnl.fapanese.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "grammar_detail")
+@Table(name = "GrammarDetail")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class GrammarDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "grammar_id", nullable = false)
-    private Grammar grammar;
+    @JoinColumn(name = "grammar_id")
+    Grammar grammar;
 
-    private String structure;
-    private String meaning;
-    private String example_sentence;
-    private String example_meaning;
+    @Column(name = "structure")
+    String structure;
+
+    @Column(name = "meaning")
+    String meaning;
+
+    @Column(name = "example_sentence")
+    String exampleSentence;
+
+    @Column(name = "example_meaning")
+    String exampleMeaning;
 }

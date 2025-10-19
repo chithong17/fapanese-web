@@ -2,28 +2,35 @@ package com.ktnl.fapanese.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "grammar")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Table(name = "Grammar")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Grammar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    Long id;
 
-    private String title;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lesson_part_id")
+    LessonPart lessonPart;
 
-    @Column(columnDefinition = "TEXT")
-    private String explanation;
+    @Column(name = "title")
+    String title;
 
-    @ManyToOne
-    @JoinColumn(name = "lesson_id")
-    private Lesson lesson;
+    @Column(name = "explanation", columnDefinition = "TEXT")
+    String explanation;
 
     @OneToMany(mappedBy = "grammar", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<GrammarDetail> details = new HashSet<>();
+    Set<GrammarDetail> grammarDetails = new HashSet<>();
 }

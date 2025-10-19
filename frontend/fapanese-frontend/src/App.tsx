@@ -22,6 +22,8 @@ import AboutUs from "./pages/AboutUs";
 import ProfilePage from "./pages/ProfilePage";
 import Course from "./pages/courses/Course";
 import Lesson from "./pages/lesson/LessonContentPage"
+import CourseLessonsPage from "./pages/courses/CourseLessonsPage";
+
 
 
 
@@ -153,15 +155,16 @@ function App() {
               </main>
             }
           />
-          <Route path="/courses/JPD113" element={<JPD113 />} />
+          {/* <Route path="/courses/JPD113" element={<JPD113 />} />
           <Route path="/courses/JPD123" element={<JPD123 />} />
-          <Route path="/courses/JPD133" element={<JPD133 />} />
+          <Route path="/courses/JPD133" element={<JPD133 />} /> */}
           <Route path="/dashboard/student" element={<StudentDashboard />} />
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/course" element={<Course/>} />
+          <Route path="/courses" element={<Course/>} />
+          <Route path="/courses/:courseCode" element={<CourseLessonsPage />} />
           <Route 
-            path="/lesson/:courseId/:lessonId/:contentType" 
+            path="/lesson/:courseId/:lessonId/:lessonPartId" 
             element={<Lesson />} 
           />
           

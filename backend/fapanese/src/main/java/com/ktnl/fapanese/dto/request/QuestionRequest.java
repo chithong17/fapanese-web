@@ -17,5 +17,4 @@ public class QuestionRequest {
     private String correctAnswer;
     private String fillAnswer;
 
-    private String lessonId;
 }

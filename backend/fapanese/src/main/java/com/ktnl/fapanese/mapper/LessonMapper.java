@@ -10,7 +10,6 @@ public interface LessonMapper {
                 .id(lesson.getId())
                 .lessonTitle(lesson.getLessonTitle())
                 .orderIndex(lesson.getOrderIndex())
-                .courseId(lesson.getCourse() != null ? lesson.getCourse().getId() : null)
                 .build();
     }
 }

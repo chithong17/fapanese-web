@@ -1,32 +1,54 @@
 package com.ktnl.fapanese.entity;
 
+import com.ktnl.fapanese.entity.enums.QuestionCategory;
+import com.ktnl.fapanese.entity.enums.QuestionType;
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.List;
+import lombok.experimental.FieldDefaults;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "question")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Table(name = "Question")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
+    @Column(name = "content", columnDefinition = "TEXT")
+    String content;
 
-    private String category;
-    private String questionType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category")
+    QuestionCategory category;
 
-    private String optionA;
-    private String optionB;
-    private String optionC;
-    private String optionD;
-    private String correctAnswer;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "question_type")
+    QuestionType questionType;
 
-    private String fillAnswer;
+    @Column(name = "option_a")
+    String optionA;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lesson_id", nullable = false)
-    private Lesson lesson;
+    @Column(name = "option_b")
+    String optionB;
+
+    @Column(name = "option_c")
+    String optionC;
+
+    @Column(name = "option_d")
+    String optionD;
+
+    @Column(name = "correct_answer")
+    String correctAnswer;
+
+    @Column(name = "fill_answer")
+    String fillAnswer;
+
 }

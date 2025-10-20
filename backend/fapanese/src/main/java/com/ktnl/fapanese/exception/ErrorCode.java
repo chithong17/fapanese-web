@@ -27,6 +27,7 @@ public enum ErrorCode {
     VOCABULARY_NOT_FOUND(1014, "Không tìm thấy từ vựng", HttpStatus.NOT_FOUND),
     QUESTION_NOT_FOUND(1014, "Không tìm thấy câu hỏi", HttpStatus.NOT_FOUND),
     LESSON_PART_NOT_FOUND(1014, "Không tìm thấy lesson part", HttpStatus.NOT_FOUND),
+    SPEAKING_NOT_FOUND(1014, "Không tìm thấy Speaking", HttpStatus.NOT_FOUND),
     // 👉 Validation specific error codes
     FIRSTNAME_REQUIRED(2001, "First name is required", HttpStatus.BAD_REQUEST),
     LASTNAME_REQUIRED(2002, "Last name is required", HttpStatus.BAD_REQUEST),

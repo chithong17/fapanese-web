@@ -510,24 +510,7 @@ const LessonContentPage: React.FC = () => {
                             </span>
                         ),
                     },
-                    {
-                        type: "Speaking",
-                        key: "speaking",
-                        icon: (
-                            <span className="text-gray-500">
-                                <FaComments />
-                            </span>
-                        ),
-                    },
-                    {
-                        type: "Kiểm tra cuối khóa",
-                        key: "test",
-                        icon: (
-                            <span className="text-gray-500">
-                                <FiCheckCircle />
-                            </span>
-                        ),
-                    },
+                    
                 ].map((part, idx) => (
                     <Link
                         key={idx}

@@ -1,213 +1,484 @@
-import React, { useState, useEffect } from "react";
-import ScrollReveal from "../../components/ScrollReveal";
-import { Link } from "react-router-dom";
-import LogoJPD113 from "../../assets/jpd113.svg";
-import LogoJPD123 from "../../assets/jpd123.svg";
-import LogoJPD133 from "../../assets/jpd133.svg";
-import Footer from "../../components/Footer";
+import React from "react";
+// Import các icons cần thiết
+import { FaReact, FaDocker, FaCodeBranch, FaHandsHelping, FaHeart, FaUsers, FaChartLine, FaLightbulb, FaInfinity, FaGlobe, FaQuoteRight, FaAngleDoubleDown, FaChevronRight, FaRegStar } from "react-icons/fa";
+import {
+  SiTailwindcss,
+  SiMysql,
+  SiSpringboot,
+  SiTypescript,
+  SiJavascript,
+  SiNodedotjs,
+  SiFigma,
+} from "react-icons/si";
 
-// Map các chuỗi tên logo từ API sang các biến đã import
-const logoMap: { [key: string]: string } = {
-  LogoJPD113: LogoJPD113,
-  LogoJPD123: LogoJPD123,
-  LogoJPD133: LogoJPD133,
-};
+// Giả định component Footer tồn tại
+// import Footer from "../components/Footer"; 
 
-// Interface cho component (dữ liệu đã được chuyển đổi)
-interface Course {
-  img: string;
-  nameCourse: string;
-  price: string;
-  level: string;
-  code: string;
-  title: string;
-  description: string;
-  description2: string;
-  duration: string;
-}
+// =======================================================
+// FAKE URLs CHO ASSETS (GIỮ NGUYÊN)
+// =======================================================
+const AboutUsBanner = "https://picsum.photos/seed/ultra_elite_sky/1600/900"; 
+const AboutUsSide = "https://picsum.photos/seed/ultra_elite_team/800/1000";
+const Avatar1 = "https://i.pravatar.cc/150?img=68"; 
+const Avatar2 = "https://i.pravatar.cc/150?img=52";
+// =======================================================
 
-// Interface cho dữ liệu thô từ API
-interface ApiCourse {
-  id: number;
-  courseName: string; // Khác với 'nameCourse'
-  description: string;
-  imgUrl: string; // Khác với 'img' và là chuỗi
-  price: string;
-  level: string;
-  code: string;
-  title: string;
-  duration: string;
-  // API không có 'description2'
-}
+// CẤU HÌNH MÀU SẮC ULTRA-ELITE
+const PRIMARY_HEX = "#007B8A"; // Dark Cyan/Teal sắc nét
+const PRIMARY_LIGHT = "#00B8D9"; // Cyan chủ đạo (chỉ dùng cho text accent)
+const ACCENT_COLOR_TEXT = "text-[#007B8A]";
+const BACKGROUND_LIGHT = "#F5F7FA"; // Nền chính Tinh khiết (hơi xám nhẹ)
+const BACKGROUND_DARK = "#FFFFFF"; // Nền phụ (trắng tinh)
+const CARD_BG = "bg-white"; 
+const TEXT_DARK = "text-gray-900";
+const TEXT_MEDIUM = "text-gray-600";
 
-const Course: React.FC = () => {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+// CẤU HÌNH MÀU GRADIENT & HOVER
+const GRADIENT_FROM = "#9bced5";
+const GRADIENT_TO = "#9cdfe8";
+const BUTTON_GRADIENT = `bg-gradient-to-r from-[${GRADIENT_FROM}] to-[${GRADIENT_TO}] text-gray-800`;
+// Hiệu ứng Hover mạnh mẽ hơn
+const BUTTON_HOVER_STYLE = `hover:shadow-3xl hover:shadow-cyan-400/50 hover:scale-[1.07] hover:from-[#7fb6c0] hover:to-[#81c7d2]`;
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/fapanese/api/courses");
-        if (!response.ok) {
-          throw new Error("Không thể tải dữ liệu khóa học");
-        }
-        const apiData: ApiCourse[] = await response.json();
 
-        // Chuyển đổi dữ liệu từ API sang dạng mà component mong đợi
-        const transformedCourses = apiData.map((apiCourse) => ({
-          nameCourse: apiCourse.courseName,
-          img: logoMap[apiCourse.imgUrl] || "", // Ánh xạ chuỗi imgUrl sang import
-          price: apiCourse.price,
-          level: apiCourse.level,
-          code: apiCourse.code,
-          title: apiCourse.title,
-          description: apiCourse.description,
-          description2: "FAPANESE!", // Thêm description2 bị thiếu
-          duration: apiCourse.duration,
-        }));
+const technologies = [
+  { icon: <FaReact />, name: "React", color: "text-blue-500" },
+  { icon: <SiTypescript />, name: "TypeScript", color: "text-blue-600" },
+  { icon: <SiJavascript />, name: "JavaScript", color: "text-yellow-500" },
+  { icon: <SiTailwindcss />, name: "TailwindCSS", color: "text-cyan-600" },
+  { icon: <SiMysql />, name: "MySQL", color: "text-blue-900" },
+  { icon: <FaDocker />, name: "Docker", color: "text-blue-700" },
+  { icon: <SiSpringboot />, name: "Spring Boot", color: "text-green-600" },
+  { icon: <SiNodedotjs />, name: "Node.js", color: "text-green-700" },
+  { icon: <FaGlobe />, name: "Cloud Native", color: "text-indigo-600" },
+];
 
-        setCourses(transformedCourses);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("Đã xảy ra lỗi không xác định");
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
+const coreValues = [
+  { title: "Đổi Mới Tối Thượng", desc: "Vượt lên mọi giới hạn, kiến tạo giải pháp giáo dục thế hệ mới.", icon: <FaLightbulb /> },
+  { title: "Văn Hóa Hợp Tác", desc: "Sức mạnh từ sự tin tưởng. Mọi ý tưởng đều được phát triển tối đa.", icon: <FaHandsHelping /> },
+  { title: "Trải Nghiệm Cá Nhân", desc: "Đồng hành 1:1, hỗ trợ tận tâm để đảm bảo hiệu quả cao nhất.", icon: <FaHeart /> },
+  { title: "Tầm Nhìn Bền Vững", desc: "Xây dựng nền tảng lâu dài, ổn định, mang lại giá trị vĩnh cửu.", icon: <FaInfinity /> },
+];
 
-    fetchCourses();
-  }, []); // Mảng rỗng đảm bảo useEffect chỉ chạy một lần khi component mount
+const statistics = [
+  { number: "350K+", label: "Người học toàn cầu", icon: <FaUsers className="text-3xl" /> },
+  { number: "99.99%", label: "Tỉ lệ hài lòng", icon: <FaChartLine className="text-3xl" /> },
+  { number: "12+", label: "Đối tác chiến lược", icon: <FaCodeBranch className="text-3xl" /> },
+];
 
-  if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Đang tải...</div>;
-  }
+// Mini Component cho Tech Card (Smooth Lift + Skew on Hover)
+const TechCard: React.FC<typeof technologies[0]> = ({ icon, name, color }) => (
+  <div
+    className={`${CARD_BG} flex flex-col items-center text-center group transform transition-all duration-700 hover:scale-[1.08] hover:skew-y-1 p-7 rounded-2xl border border-gray-100 cursor-pointer shadow-lg hover:shadow-2xl`}
+    style={{ transitionTimingFunction: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }}
+  >
+    <div
+      className={`${color} text-7xl mb-3 transition-transform duration-500 group-hover:scale-110 drop-shadow-lg`}
+    >
+      {icon}
+    </div>
+    <p className={`${TEXT_DARK} font-extrabold text-xl mt-3 whitespace-nowrap`}>
+      {name}
+    </p>
+  </div>
+);
 
-  if (error) {
-    return <div className="flex justify-center items-center h-screen text-red-500">Lỗi: {error}</div>;
-  }
+// Mini Component cho Value Card - Gradient Bottom Border + Subtle Depth
+const GradientDepthValueCard: React.FC<typeof coreValues[0]> = ({ title, desc, icon }) => (
+  <div
+    className="group transform transition-all duration-700 p-8 rounded-2xl relative overflow-hidden bg-white hover:translate-y-[-12px] cursor-pointer shadow-xl hover:shadow-2xl hover-gradient-border"
+    style={{ transitionTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' }}
+  >
+    <div className={`text-6xl mb-4 ${ACCENT_COLOR_TEXT} relative z-10 transition-transform duration-500 group-hover:scale-[1.05]`}>
+      {icon}
+    </div>
+    <h3 className={`text-2xl font-black ${TEXT_DARK} mb-3 relative z-10 underline-hover-gradient pb-2`}>
+      {title}
+    </h3>
+    <p className={`text-lg ${TEXT_MEDIUM} relative z-10 font-light`}>{desc}</p>
+    <FaChevronRight className={`${ACCENT_COLOR_TEXT} absolute bottom-5 right-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-xl`} />
+  </div>
+);
 
-  return (
-    <ScrollReveal>
-      <section className="w-full bg-gray-100 py-30 px-6 break-all">
-        <div className="max-w-7xl mx-auto grid gap-10">
-          {courses.map((course, idx) => (
-            <div
-              key={idx} // Tốt hơn nên dùng course.id hoặc course.code nếu chúng là duy nhất
-              className="relative group bg-white/90 backdrop-blur-md border border-gray-200 rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transform transition-all duration-500 hover:-translate-y-2"
-            >
-              <div className="grid grid-cols-10 items-center p-6 sm:p-3 gap-6">
-                {/* Bên phải: hình và button */}
-                <div className="col-span-10 sm:col-span-6 relative flex flex-col items-center justify-center space-y-4">
-                  {/* Hình ảnh chính */}
-                  <img
-                    src={course.img}
-                    alt={course.title}
-                    className="h-[75%] object-cover rounded-2xl shadow-md transition duration-500 -mb-0.5"
-                  />
-                </div>
-
-                {/* Bên trái: thông tin khóa học */}
-                <div className="col-span-10 sm:col-span-4 text-right space-y-3 px-5 py-5 tracking-wider">
-                  <div>
-                    <span className="bg-red-700 rounded-2xl px-3 py-1 font-bold text-white">
-                      {course.price}
-                    </span>
-                    <span className="text-green-950 font-semibold text-3xl font-sans">
-                      {" "}
-                      {course.nameCourse}
-                    </span>
-                  </div>
-
-                  <h2 className="text-6xl font-bold text-[#023333] font-sans">
-                    {course.title}
-                  </h2>
-                  <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                    {course.description}
-                  </p>
-                  <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                    {course.description2}
-                  </p>
-                  <p className="text-gray-900 font-semibold">
-                    ⏱ Thời lượng: {course.duration}
-                  </p>
-                  <div className="flex justify-end">
-                    <svg
-                      className="w-4 h-4 text-yellow-400 me-1"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      viewBox="0 0 22 20"
-                    >
-                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                    </svg>
-                    <svg
-                      className="w-4 h-4 text-yellow-400 me-1"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      viewBox="0 0 22 20"
-                    >
-                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                    </svg>
-                    <svg
-                      className="w-4 h-4 text-yellow-400 me-1"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      viewBox="0 0 22 20"
-                    >
-                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                    </svg>
-                    <svg
-                      className="w-4 h-4 text-yellow-400 me-1"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      viewBox="0 0 22 20"
-                    >
-                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                    </svg>
-                    <svg
-                      className="w-4 h-4 text-yellow-400 me-1"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      viewBox="0 0 22 20"
-                    >
-                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                    </svg>
-                    <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
-                      5
-                    </p>
-                    <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
-                      /
-                    </p>
-                    <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
-                      5
-                    </p>
-                    <br />
-                  </div>
-                  <br />
-
-                  <Link
-                    to={`/courses/${course.code}`}
-                    className=" py-2 bg-gradient-to-r from-[#9bced5] to-[#9cdfe8] shadow-lg border-[#B2EBF2] text-white rounded-3xl font-bold px-20 "
-                  >
-                    BẮT ĐẦU HỌC!
-                  </Link>
-                </div>
-              </div>
+// Component Testimonial (Clean White + Subtle Shadow)
+const TestimonialCard: React.FC<{ quote: string; name: string; title: string; avatar: string }> = ({ quote, name, title, avatar }) => (
+    <div className="bg-white rounded-3xl p-10 shadow-lg relative border border-gray-100 transform transition-all duration-700 hover:scale-[1.03] hover:shadow-3xl"
+        style={{ transitionTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' }}
+    >
+        <FaQuoteRight className={`${ACCENT_COLOR_TEXT} text-5xl absolute top-8 right-8 opacity-5`} />
+        <p className={`text-xl italic ${TEXT_MEDIUM} mb-6 mt-8 relative z-10 leading-relaxed font-light`}>"{quote}"</p>
+        <div className="flex items-center mt-6 border-t pt-4 border-gray-100">
+            {/* Ảnh Avatar với viền Gradient tinh tế */}
+            <div className="w-16 h-16 rounded-full p-[3px] gradient-border-avatar mr-4">
+                <img src={avatar} alt={name} className="w-full h-full rounded-full object-cover" />
             </div>
-          ))}
+            <div>
+                <p className={`font-black text-xl ${TEXT_DARK}`}>{name}</p>
+                <p className="text-base text-gray-500">{title}</p>
+            </div>
+        </div>
+    </div>
+);
+
+// Giả định một component Footer đơn giản
+const Footer = () => (
+    <footer className={`bg-gray-800 text-white py-12`}>
+        <div className="max-w-7xl mx-auto px-6 text-center">
+            <p className="text-base font-light">© 2024 Fapanese Elite. All rights reserved. | Ultra-Elite Design.</p>
+        </div>
+    </footer>
+);
+
+
+const AboutUs: React.FC = () => {
+  return (
+    <div className={`bg-[${BACKGROUND_LIGHT}] min-h-screen overflow-hidden font-nunito`}>
+      
+      {/* Hero Section - Maximum Typography Impact */}
+      <section className="relative h-[85vh] overflow-hidden hero-section">
+        {/* Parallax Layer 1: Background Image */}
+        <div className="absolute top-0 left-0 w-full h-full z-0 parallax-bg" style={{ background: 'black' }}>
+            <img 
+                src={AboutUsBanner} 
+                alt="Hero Banner" 
+                className="w-full h-full object-cover object-center transition-transform duration-[1500ms] hover:scale-105" 
+                style={{ opacity: 0.8 }} // Tăng độ tương phản
+            />
+        </div>
+
+        {/* Parallax Layer 2: Simple Overlay */}
+        <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center"></div>
+        
+        {/* Parallax Layer 3: Content (Clean Text) */}
+        <div className="absolute top-[50%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full flex flex-col justify-center items-center z-20 text-center">
+            <div className="max-w-7xl mx-auto px-6">
+                <p className="text-xl font-extrabold uppercase tracking-[0.6em] text-cyan-300 mb-6 animate-fadeInUp delay-500">
+                    SỨ MỆNH TINH HOA
+                </p>
+                <h1 className={`text-8xl md:text-[150px] font-black uppercase tracking-[0.1em] text-white leading-none mb-8 animate-fadeInUp delay-700`}
+                    style={{ 
+                        textShadow: `0 8px 30px rgba(0, 0, 0, 1)`, // Bóng đổ cực sâu
+                    }}
+                >
+                    VỀ CHÚNG TÔI
+                </h1>
+                <p className="text-2xl font-extrabold uppercase tracking-[0.4em] text-gray-200 mt-6 max-w-4xl mx-auto animate-fadeInUp delay-[900ms]">
+                    TẦM VÓC TOÀN CẦU, GIÁ TRỊ VĨNH CỬU
+                </p>
+                <a href="#about-content" className="inline-block mt-16 text-white hover:text-[#9cdfe8] transition duration-500">
+                    <FaAngleDoubleDown className="text-6xl drop-shadow-xl animate-bounce-slow" />
+                </a>
+            </div>
         </div>
       </section>
-      <Footer></Footer>
-    </ScrollReveal>
+
+      {/* About Section - Gradient Border Accent */}
+      <section id="about-content" className={`py-40 px-6 bg-[${BACKGROUND_LIGHT}] relative overflow-hidden`}>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+            <div className="lg:col-span-7 animate-fadeInLeft delay-300">
+                <p className="text-md font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2">
+                    TẦM NHÌN & SỨ MỆNH
+                </p>
+                <h2 className={`text-5xl md:text-7xl font-black ${TEXT_DARK} leading-tight mb-10`}>
+                    Kiến Tạo <span className={`text-[#00B8D9]`}>Tương Lai</span> Học Tập Toàn Cầu
+                </h2>
+                {/* Border Left Gradient */}
+                <div className="p-10 rounded-[30px] shadow-2xl transition duration-500 bg-white hover:shadow-3xl border-l-[10px] border-transparent left-gradient-border hover:skew-x-1">
+                    <FaQuoteRight className={`text-5xl mb-6 ${ACCENT_COLOR_TEXT} opacity-70`} />
+                    <p className={`text-2xl ${TEXT_MEDIUM} mb-6 italic font-semibold leading-relaxed`}>
+                        "Chúng tôi là đối tác kiến tạo sự nghiệp. Cam kết mang lại trải nghiệm cá nhân hóa, hiệu quả và đầy cảm hứng, giúp bạn vượt qua mọi giới hạn."
+                    </p>
+                    <p className={`text-lg ${TEXT_MEDIUM} border-t pt-4 mt-4 border-gray-100`}>
+                        Nền tảng của chúng tôi là sự kết hợp hoàn hảo giữa công nghệ tiên tiến (AI-Driven), dữ liệu lớn và phương pháp sư phạm hiện đại.
+                    </p>
+                </div>
+                {/* CTA Button với Gradient và hiệu ứng mượt mà */}
+                <a
+                    href="#"
+                    className={`inline-flex items-center mt-12 px-16 py-5 font-black text-xl rounded-full shadow-2xl transform transition-all duration-700 ${BUTTON_GRADIENT} ${BUTTON_HOVER_STYLE}`}
+                    >
+                    Khám Phá Chi Tiết <FaChevronRight className="ml-3 text-2xl transition-transform group-hover:translate-x-2" />
+                </a>
+            </div>
+            
+            {/* Statistics Section (Clean, Vertical) */}
+            <div className="lg:col-span-5 animate-fadeInRight delay-500 pt-10">
+                   <h3 className={`text-3xl font-black ${TEXT_DARK} mb-10 border-b-2 border-gray-300 pb-4 flex items-center`}>
+                    <FaRegStar className={`${ACCENT_COLOR_TEXT} mr-3 text-2xl`} /> Đánh Giá Định Lượng
+                   </h3>
+                <div className="space-y-8">
+                    {statistics.map((stat, idx) => (
+                        <div 
+                            key={idx} 
+                            className="flex items-center p-8 rounded-2xl bg-white shadow-xl border border-gray-100 transition duration-700 transform hover:scale-[1.03] hover:shadow-2xl"
+                            style={{ transitionTimingFunction: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }}
+                        >
+                            {/* Icon Box với Gradient Border */}
+                            <div className={`flex items-center text-5xl font-extrabold text-white mr-6 p-4 rounded-xl shadow-lg gradient-border-icon`}
+                                style={{ backgroundColor: PRIMARY_HEX }}
+                            >
+                                {stat.icon}
+                            </div>
+                            <div>
+                                <p className={`text-5xl font-black ${TEXT_DARK} mb-0`}>{stat.number}</p>
+                                <p className={`text-lg uppercase ${TEXT_MEDIUM} font-bold tracking-wider`}>{stat.label}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+      </section>
+
+      {/* Core Values Section (Clean Grid) */}
+      <section className={`py-40 bg-[${BACKGROUND_DARK}] relative overflow-hidden`}>
+        <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-20">
+                <p className="text-md font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2">
+                    TRIẾT LÝ HOẠT ĐỘNG
+                </p>
+                <h2 className={`text-4xl md:text-6xl font-black ${TEXT_DARK}`}>
+                    Giá Trị <span className={`text-[#00B8D9]`}>Cốt Lõi</span>
+                </h2>
+            </div>
+            
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
+            {coreValues.map((value, idx) => (
+                <GradientDepthValueCard key={idx} {...value} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+      {/* Technologies Section (Marquee Nâng Cấp) */}
+      <section className={`py-32 relative overflow-hidden bg-[#F0F3F6]`}>
+        <div className="max-w-7xl mx-auto text-center mb-16 px-6">
+            <p className="text-md font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2">
+                NỀN TẢNG
+            </p>
+          <h3 className={`text-4xl md:text-5xl font-black ${TEXT_DARK}`}>
+            Công Nghệ <span className={`text-[#00B8D9]`}>Đột Phá</span>
+          </h3>
+        </div>
+
+        <div className="relative w-full overflow-hidden py-12 border-y-2 border-gray-200">
+          {/* Fading Edges */}
+          <div className={`absolute top-0 left-0 w-40 h-full bg-gradient-to-r from-[#F0F3F6] to-transparent z-20 pointer-events-none`}></div>
+          <div className={`absolute top-0 right-0 w-40 h-full bg-gradient-to-l from-[#F0F3F6] to-transparent z-20 pointer-events-none`}></div>
+
+          <div className="flex space-x-20 animate-marquee-slow">
+            {[...technologies, ...technologies].map((tech, i) => (
+              <TechCard key={i} {...tech} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section (Clean Design) */}
+      <section className={`py-40 px-6 bg-[${BACKGROUND_DARK}] relative overflow-hidden`}>
+        <div className="max-w-7xl mx-auto text-center mb-20">
+            <p className="text-md font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2">
+                PHẢN HỒI CHÂN THỰC
+            </p>
+            <h2 className={`text-4xl md:text-6xl font-black ${TEXT_DARK}`}>
+                Đối Tác <span className={`text-[#00B8D9]`}>Chiến Lược</span>
+            </h2>
+        </div>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16">
+            <TestimonialCard 
+                quote="Họ đã vượt xa mọi mong đợi của chúng tôi. Giải pháp của họ không chỉ hiệu quả mà còn thể hiện sự tinh tế trong từng chi tiết. Một trải nghiệm Elite thực sự."
+                name="Nguyễn Văn A"
+                title="CEO, EdTech Innovations"
+                avatar={Avatar1}
+            />
+            <TestimonialCard 
+                quote="Đội ngũ hỗ trợ cực kỳ chuyên nghiệp và tận tâm. Chúng tôi thực sự ấn tượng với chất lượng và sự đổi mới mà họ mang lại trong mọi dự án."
+                name="Lê Thị B"
+                title="Giám đốc Sản phẩm, Global Learning"
+                avatar={Avatar2} 
+            />
+        </div>
+      </section>
+
+      {/* Mission Section (Image + Quote/CTA) - Nâng cấp ảnh */}
+      <section className={`py-40 px-6 bg-[#F0F3F6] relative overflow-hidden`}>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-20 items-center">
+            
+          <div className="md:col-span-7 text-center md:text-left animate-fadeInLeft delay-500 order-2 md:order-1">
+            <p className="text-lg font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2">Hành trình Khác Biệt</p>
+            <h2 className={`text-5xl md:text-7xl font-black ${TEXT_DARK} mb-8 leading-tight`}>
+              Tạo Ra <span className={`text-[#00B8D9]`}>Giá Trị</span> Cho Sự Nghiệp Của Bạn
+            </h2>
+            <blockquote className={`text-2xl ${TEXT_MEDIUM} leading-relaxed mb-10 border-l-4 border-[#00B8D9] pl-6 font-medium italic ${CARD_BG} p-8 rounded-xl shadow-lg`}>
+                <FaQuoteRight className={`${ACCENT_COLOR_TEXT} inline mr-3 text-3xl opacity-80`} />
+              "Chúng tôi tin vào việc trao quyền. Mỗi người học là một tương lai cần được khai phóng. Chúng tôi tạo ra giá trị khác biệt cho mỗi người học."
+            </blockquote>
+            
+            {/* CTA Button với Gradient và hiệu ứng mượt mà */}
+            <a
+              href="#"
+              className={`inline-flex items-center px-16 py-5 font-black text-xl rounded-full shadow-2xl transform transition-all duration-700 ${BUTTON_GRADIENT} ${BUTTON_HOVER_STYLE}`}
+            >
+              Bắt Đầu Ngay <FaChevronRight className="ml-3 text-2xl transition-transform group-hover:translate-x-2" />
+            </a>
+          </div>
+
+          {/* Khối Ảnh - Smooth Depth Rotation + Border Gradient */}
+          <div className="relative md:col-span-5 animate-fadeInRight delay-700 order-1 md:order-2">
+            <div 
+              className="rounded-[45px] p-[5px] gradient-border-wrap relative z-10 shadow-3xl transition duration-1000 hover:shadow-4xl hover:scale-[1.03] hover:rotate-[-0.5deg]"
+              style={{ transitionTimingFunction: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }}
+            >
+              <img
+                src={AboutUsSide}
+                alt="Learning"
+                className="w-full h-auto object-cover rounded-[40px] transform transition-transform hover:scale-[1.05] duration-1000"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+
+      {/* ANIMATIONS VÀ CUSTOM CSS (Ultra-Elite Polish) */}
+      <style>
+        {`
+          /* FONT CUSTOM */
+          @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+          .font-nunito {
+            font-family: 'Nunito', sans-serif;
+          }
+
+          /* HERO SECTION - PARALLAX */
+          .hero-section {
+            perspective: 1px;
+            transform-style: preserve-3d;
+            overflow-y: auto;
+            overflow-x: hidden;
+          }
+          .parallax-bg {
+            transform: translateZ(-1px) scale(2); 
+          }
+
+          /* CUSTOM GRADIENT STYLES (Tăng độ dày border) */
+          .left-gradient-border {
+            border-image-source: linear-gradient(to bottom, ${GRADIENT_FROM}, ${GRADIENT_TO});
+            border-image-slice: 1;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); /* Shadow tinh tế */
+          }
+
+          .gradient-border-icon {
+              border: 4px solid transparent;
+              background-image: linear-gradient(white, white), 
+                                linear-gradient(to right, ${GRADIENT_FROM}, ${GRADIENT_TO});
+              background-origin: border-box;
+              background-clip: content-box, border-box;
+          }
+
+          .gradient-border-avatar {
+              background-image: linear-gradient(to right, ${GRADIENT_FROM}, ${GRADIENT_TO});
+              padding: 5px; /* Dày hơn */
+              box-shadow: 0 5px 15px rgba(0, 123, 138, 0.2); /* Shadow Cyan nhẹ */
+          }
+          
+          .gradient-border-wrap {
+            background: linear-gradient(45deg, ${GRADIENT_FROM}, ${GRADIENT_TO});
+            border-radius: 45px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+          }
+
+
+          /* HOVER GRADIENT BORDER cho Value Card */
+          .underline-hover-gradient {
+              position: relative;
+          }
+          .underline-hover-gradient:after {
+              content: '';
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              width: 0;
+              height: 3px;
+              background: linear-gradient(to right, ${GRADIENT_FROM}, ${GRADIENT_TO});
+              transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+          }
+          .underline-hover-gradient:hover:after {
+              width: 50%;
+          }
+
+          .hover-gradient-border {
+              position: relative;
+          }
+          .hover-gradient-border:after {
+              content: '';
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              width: 100%;
+              height: 4px; /* Dày 4px */
+              background: linear-gradient(to right, ${GRADIENT_FROM}, ${GRADIENT_TO});
+              opacity: 0;
+              transition: opacity 0.5s ease;
+          }
+          .hover-gradient-border:hover:after {
+              opacity: 1;
+          }
+
+
+          /* ANIMATION MARQUEE TỐC ĐỘ CHẬM HƠN */
+          @keyframes marquee-slow { 
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+          }
+          .animate-marquee-slow {
+            display: flex;
+            animation: marquee-slow 40s linear infinite; /* Siêu chậm và mượt */
+            width: max-content;
+          }
+          .animate-marquee-slow:hover {
+            animation-play-state: paused;
+          }
+          
+          /* FADE IN TỪ TRÊN (Mượt mà và sâu hơn) */
+          @keyframes fadeInUp {
+            0% {opacity: 0; transform: translateY(40px) translateZ(0);}
+            100% {opacity: 1; transform: translateY(0) translateZ(0);}
+          }
+          .animate-fadeInUp {
+            animation: fadeInUp 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+          }
+
+          /* FADE IN TỪ TRÁI VÀ PHẢI (Mượt mà và sâu hơn) */
+          @keyframes fadeInLeft {
+            0% {opacity: 0; transform: translateX(-60px);}
+            100% {opacity: 1; transform: translateX(0);}
+          }
+          .animate-fadeInLeft {
+            animation: fadeInLeft 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+          }
+
+          @keyframes fadeInRight {
+            0% {opacity: 0; transform: translateX(60px);}
+            100% {opacity: 1; transform: translateX(0);}
+          }
+          .animate-fadeInRight {
+            animation: fadeInRight 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+          }
+
+          /* SIMPLE BOUNCE CHO DẤU MŨI TÊN (Chậm và sâu hơn) */
+          @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+          }
+          .animate-bounce-slow {
+              animation: bounce-slow 2.5s infinite;
+          }
+        `}
+      </style>
+    </div>
   );
 };
 
-export default Course;
+export default AboutUs;

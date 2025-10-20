@@ -18,7 +18,10 @@ const shuffleArray = <T extends any>(array: T[]): T[] => {
 
 // --- Định nghĩa Types ---
 interface VocabularyItem {
-  id: number; wordKana: string; meaning: string;
+  id: number; 
+  wordKana: string; 
+  meaning: string;
+  romaji: string;
 }
 interface Flashcard {
   [key: string]: any; id: number; front: string; back: string;
@@ -56,7 +59,7 @@ const FlashcardPage: React.FC = () => {
         
         const convertedCards: Flashcard[] = vocabularies.map(
           (item: VocabularyItem, index) => ({
-            id: item.id, front: item.wordKana, back: item.meaning,
+            id: item.id, front: item.wordKana, back: `${item.meaning} ( ${item.romaji} )`,
             timerDuration: 0, 
             label: ` `, // 
             currentIndex: index,

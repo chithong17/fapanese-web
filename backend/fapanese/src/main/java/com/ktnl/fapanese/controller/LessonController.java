@@ -30,10 +30,10 @@ public class LessonController {
     }
 
     // GET /api/lessons/{id}
-//    @GetMapping("/{id}")
-//    public ResponseEntity<LessonRespone> getLessonById(@PathVariable String id) {
-//        return ResponseEntity.ok(lessonService.getLessonByLessonId(id));
-//    }
+    @GetMapping("/{id}")
+    public ResponseEntity<LessonRespone> getLessonById(@PathVariable String id) {
+        return ResponseEntity.ok(lessonService.getLessonByLessonId(id));
+    }
 
     // GET /api/lessons/by-course/{courseId}
 //    @GetMapping("/by-course/{courseId}")

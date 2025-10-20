@@ -195,7 +195,7 @@ const Course: React.FC = () => {
 
                   <Link
                     to={`/courses/${course.code}`}
-                    className=" py-2 bg-[#80D9E6] text-white rounded-3xl font-bold px-20 "
+                    className=" py-2 bg-gradient-to-r from-[#9bced5] to-[#9cdfe8] shadow-lg border-[#B2EBF2] text-white rounded-3xl font-bold px-20 "
                   >
                     BẮT ĐẦU HỌC!
                   </Link>

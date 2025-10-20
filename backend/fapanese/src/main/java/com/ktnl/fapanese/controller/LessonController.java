@@ -17,7 +17,6 @@ public class LessonController {
     private final ILessonService lessonService;
     private final ICourseService icourseService;
 
-
     public LessonController(ILessonService lessonService, ICourseService icourseService) {
         this.lessonService = lessonService;
         this.icourseService = icourseService;
@@ -36,10 +35,11 @@ public class LessonController {
     }
 
     // GET /api/lessons/by-course/{courseId}
-//    @GetMapping("/by-course/{courseId}")
-//    public ResponseEntity<List<LessonRespone>> getLessonsByCourseId(@PathVariable Long courseId) {
-//        return ResponseEntity.ok(lessonService.getLessonByCourseId(courseId));
-//    }
+    // @GetMapping("/by-course/{courseId}")
+    // public ResponseEntity<List<LessonRespone>> getLessonsByCourseId(@PathVariable
+    // Long courseId) {
+    // return ResponseEntity.ok(lessonService.getLessonByCourseId(courseId));
+    // }
 
     @GetMapping("/by-course/{courseCode}")
     public ResponseEntity<?> getLessonsByCourse(@PathVariable String courseCode) {

@@ -9,6 +9,6 @@ import java.util.List;
 public interface ILessonService {
     List<LessonRespone> getAllLesson();
     List<LessonRespone> getLessonByCourseId(Long courseId);
-    LessonRespone getLessonByLessonId(String lessonId);
+    LessonRespone getLessonByLessonId(Long lessonId);
     List<LessonRespone> findByCourseCode(String course);
 }

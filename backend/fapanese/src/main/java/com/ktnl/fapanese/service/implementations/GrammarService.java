@@ -96,6 +96,8 @@ public class GrammarService implements IGrammarService {
         if (!lessonPartRepository.existsById(lessonPartId)) {
             throw new AppException(ErrorCode.LESSON_PART_NOT_FOUND);
         }
+
+
         return grammarRepository.findByLessonPart_Id(lessonPartId).stream()
                 .map(grammarMapper::toGrammarResponse)
                 .collect(Collectors.toList());

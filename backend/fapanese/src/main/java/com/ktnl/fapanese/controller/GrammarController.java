@@ -72,4 +72,13 @@ public class GrammarController {
                 .message("Grammar deleted successfully")
                 .build();
     }
+
+    @GetMapping("/by-lesson-part/{lessonPartId}")
+    public ApiResponse<List<GrammarResponse>> getGrammarsByLessonPart(@PathVariable Long lessonPartId) {
+        List<GrammarResponse> result = grammarService.getGrammarsByLessonPart(lessonPartId);
+        return ApiResponse.<List<GrammarResponse>>builder()
+                .message("Grammars fetched successfully for LessonPart " + lessonPartId)
+                .result(result)
+                .build();
+    }
 }

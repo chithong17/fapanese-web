@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface GrammarDetailMapper {
@@ -17,7 +18,7 @@ public interface GrammarDetailMapper {
 
     GrammarDetailResponse toGrammarDetailResponse(GrammarDetail detail);
 
-    List<GrammarDetailResponse> toGrammarDetailResponseList(List<GrammarDetail> details);
+    Set<GrammarDetailResponse> toGrammarDetailResponseList(Set<GrammarDetail> details);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "grammar", ignore = true)

@@ -170,9 +170,10 @@ function App() {
           <Route path="/courses" element={<Course />} />
           <Route path="/courses/:courseCode" element={<CourseLessonsPage />} />
           <Route
-            path="/lesson/:courseId/:lessonId/:lessonPartId"
+            path="/lesson/:courseCode/:lessonId/:lessonPartId"
             element={<Lesson />}
           />
+
           <Route path="/flashcard/:lessonPartId" element={<FlashcardPage />} />
         </Routes>
       </LoadingWrapper>

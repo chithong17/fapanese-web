@@ -6,6 +6,8 @@ import com.ktnl.fapanese.dto.response.QuestionCheckResponse;
 import com.ktnl.fapanese.dto.response.QuestionResponse;
 import com.ktnl.fapanese.dto.response.SubmitQuizResponse;
 import com.ktnl.fapanese.entity.Question;
+import com.ktnl.fapanese.entity.enums.QuestionCategory;
+import com.ktnl.fapanese.entity.enums.QuestionType;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mapper.QuestionMapper;
@@ -70,14 +72,14 @@ public class QuestionService implements IQuestionService {
 
     // ✅ Các method mới
     @Override
-    public List<QuestionResponse> getQuestionsByType(String questionType) {
+    public List<QuestionResponse> getQuestionsByType(QuestionType questionType) {
         List<Question> questions = questionRepository.findByQuestionType(questionType);
         if (questions.isEmpty()) throw new AppException(ErrorCode.QUESTION_NOT_FOUND);
         return questionMapper.toQuestionResponseList(questions);
     }
 
     @Override
-    public List<QuestionResponse> getQuestionsByCategory(String category) {
+    public List<QuestionResponse> getQuestionsByCategory(QuestionCategory category) {
         List<Question> questions = questionRepository.findByCategory(category);
         if (questions.isEmpty()) throw new AppException(ErrorCode.QUESTION_NOT_FOUND);
         return questionMapper.toQuestionResponseList(questions);

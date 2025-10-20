@@ -5,6 +5,8 @@ import com.ktnl.fapanese.dto.request.UserAnswer;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.QuestionResponse;
 import com.ktnl.fapanese.dto.response.SubmitQuizResponse;
+import com.ktnl.fapanese.entity.enums.QuestionCategory;
+import com.ktnl.fapanese.entity.enums.QuestionType;
 import com.ktnl.fapanese.service.interfaces.IQuestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,40 +22,66 @@ public class QuestionController {
     private final IQuestionService questionService;
 
     @PostMapping
-    public ResponseEntity<QuestionResponse> createQuestion(@RequestBody QuestionRequest request) {
-        return ResponseEntity.ok(questionService.createQuestion(request));
+    public ApiResponse<QuestionResponse> createQuestion(@RequestBody QuestionRequest request) {
+        QuestionResponse result = questionService.createQuestion(request);
+        return ApiResponse.<QuestionResponse>builder()
+                .result(result)
+                .message("Create Question success")
+                .build();
     }
 
     @GetMapping
-    public ResponseEntity<List<QuestionResponse>> getAllQuestions() {
-        return ResponseEntity.ok(questionService.getAllQuestions());
+    public ApiResponse<List<QuestionResponse>> getAllQuestions() {
+        List<QuestionResponse> result = questionService.getAllQuestions();
+        return ApiResponse.<List<QuestionResponse>>builder()
+                .result(result)
+                .message("Get all question success")
+                .build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuestionResponse> getQuestionById(@PathVariable Long id) {
-        return ResponseEntity.ok(questionService.getQuestionById(id));
+    public ApiResponse<QuestionResponse> getQuestionById(@PathVariable Long id) {
+        QuestionResponse result = questionService.getQuestionById(id);
+        return ApiResponse.<QuestionResponse>builder()
+                .result(result)
+                .message("Get question by Id success")
+                .build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<QuestionResponse> updateQuestion(@PathVariable Long id, @RequestBody QuestionRequest request) {
-        return ResponseEntity.ok(questionService.updateQuestion(id, request));
+    public ApiResponse<QuestionResponse> updateQuestion(@PathVariable Long id, @RequestBody QuestionRequest request) {
+        QuestionResponse result = questionService.updateQuestion(id, request);
+        return ApiResponse.<QuestionResponse>builder()
+                .result(result)
+                .message("Update question success")
+                .build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteQuestion(@PathVariable Long id) {
+    public ApiResponse<Void> deleteQuestion(@PathVariable Long id) {
         questionService.deleteQuestion(id);
-        return ResponseEntity.noContent().build();
+        return ApiResponse.<Void>builder()
+                .message("Delete question success")
+                .build();
     }
 
     // ✅ API mới:
     @GetMapping("/type/{questionType}")
-    public ResponseEntity<List<QuestionResponse>> getQuestionsByType(@PathVariable String questionType) {
-        return ResponseEntity.ok(questionService.getQuestionsByType(questionType));
+    public ApiResponse<List<QuestionResponse>> getQuestionsByType(@PathVariable QuestionType questionType) {
+        List<QuestionResponse> result = questionService.getQuestionsByType(questionType);
+        return ApiResponse.<List<QuestionResponse>>builder()
+                .result(result)
+                .message("Get question by type success")
+                .build();
     }
 
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<QuestionResponse>> getQuestionsByCategory(@PathVariable String category) {
-        return ResponseEntity.ok(questionService.getQuestionsByCategory(category));
+    public ApiResponse<List<QuestionResponse>> getQuestionsByCategory(@PathVariable QuestionCategory category) {
+        List<QuestionResponse> result = questionService.getQuestionsByCategory(category);
+        return ApiResponse.<List<QuestionResponse>>builder()
+                .result(result)
+                .message("Get question by category success")
+                .build();
     }
 
 

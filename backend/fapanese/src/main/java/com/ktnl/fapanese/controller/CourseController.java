@@ -1,6 +1,7 @@
 package com.ktnl.fapanese.controller;
 
 import com.ktnl.fapanese.dto.request.CourseRequest;
+import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.CourseResponse;
 import com.ktnl.fapanese.service.interfaces.ICourseService;
 import org.springframework.http.ResponseEntity;
@@ -19,31 +20,46 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CourseResponse>> getAllCourses() {
-        List<CourseResponse> courses = icourseService.getAllCourses();
-        return ResponseEntity.ok(courses);
+    public ApiResponse<List<CourseResponse>> getAllCourses() {
+        List<CourseResponse> result = icourseService.getAllCourses();
+        return ApiResponse.<List<CourseResponse>>builder()
+                .result(result)
+                .message("Get all course success")
+                .build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CourseResponse> getCourseById(@PathVariable Long id) {
-        return ResponseEntity.ok(icourseService.getCourseById(id));
+    public ApiResponse<CourseResponse> getCourseById(@PathVariable Long id) {
+        CourseResponse result = icourseService.getCourseById(id);
+        return ApiResponse.<CourseResponse>builder()
+                .result(result)
+                .message("Get course success")
+                .build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CourseResponse> updateCourse(@PathVariable Long id, @RequestBody CourseRequest request) {
-        CourseResponse response = icourseService.updateCourse(id, request);
-        return ResponseEntity.ok(response);
+    public ApiResponse<CourseResponse> updateCourse(@PathVariable Long id, @RequestBody CourseRequest request) {
+        CourseResponse result = icourseService.updateCourse(id, request);
+        return ApiResponse.<CourseResponse>builder()
+                .result(result)
+                .message("Update course success")
+                .build();
     }
 
     @PostMapping
-    public ResponseEntity<CourseResponse> createCourse(@RequestBody CourseRequest request) {
-        CourseResponse response = icourseService.createCourse(request);
-        return ResponseEntity.ok(response);
+    public ApiResponse<CourseResponse> createCourse(@RequestBody CourseRequest request) {
+        CourseResponse result = icourseService.createCourse(request);
+        return ApiResponse.<CourseResponse>builder()
+                .result(result)
+                .message("Create course success")
+                .build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
+    public ApiResponse<Void> deleteCourse(@PathVariable Long id) {
         icourseService.deleteCourse(id);
-        return ResponseEntity.noContent().build();
+        return ApiResponse.<Void>builder()
+                .message("Delete course success")
+                .build();
     }
 }

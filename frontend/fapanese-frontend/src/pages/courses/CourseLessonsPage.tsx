@@ -39,13 +39,7 @@ const CourseLessonsPage: React.FC = () => {
         const res = await getLessonsByCourseCode(courseCode);
         setLessons(res);
       } catch (err) {
-        if (err?.response?.data?.code === 1001) {
-          
-          alert("Bạn cần đăng nhập để thực hiện tính năng này.");
-        } else {
-          // Xử lý các lỗi khác như bình thường
-          console.error("Không thể tải bài học:", err);
-        }
+        console.error("Không thể tải bài học:", err);
       } finally {
         setLoading(false);
       }

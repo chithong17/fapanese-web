@@ -48,14 +48,16 @@ const Course: React.FC = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch("http://localhost:8080/fapanese/api/courses");
+        const response = await fetch(
+          "http://localhost:8080/fapanese/api/courses"
+        );
         if (!response.ok) {
           throw new Error("Không thể tải dữ liệu khóa học");
         }
-        const apiData: ApiCourse[] = await response.json();
-
+        const data = await response.json();
+        const apiCourses: ApiCourse[] = data.result || [];
         // Chuyển đổi dữ liệu từ API sang dạng mà component mong đợi
-        const transformedCourses = apiData.map((apiCourse) => ({
+        const transformedCourses = apiCourses.map((apiCourse) => ({
           nameCourse: apiCourse.courseName,
           img: logoMap[apiCourse.imgUrl] || "", // Ánh xạ chuỗi imgUrl sang import
           price: apiCourse.price,
@@ -83,11 +85,19 @@ const Course: React.FC = () => {
   }, []); // Mảng rỗng đảm bảo useEffect chỉ chạy một lần khi component mount
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Đang tải...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Đang tải...
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="flex justify-center items-center h-screen text-red-500">Lỗi: {error}</div>;
+    return (
+      <div className="flex justify-center items-center h-screen text-red-500">
+        Lỗi: {error}
+      </div>
+    );
   }
 
   return (

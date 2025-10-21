@@ -7,4 +7,5 @@ public enum FinalExamType {
     B5_RE,
     B3_FE,
     B3_RE,
+    ME,
 }

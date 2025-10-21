@@ -1,5 +1,6 @@
 package com.ktnl.fapanese.entity;
 
+import com.ktnl.fapanese.entity.enums.FinalExamType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -30,6 +31,10 @@ public class FinalExam {
 
     @Column(name = "semester")
     String semester;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    FinalExamType type;
 
     // Bảng `FinalExamQuestion` được xử lý bằng @ManyToMany
     @ManyToMany(fetch = FetchType.LAZY)

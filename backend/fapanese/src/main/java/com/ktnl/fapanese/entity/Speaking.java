@@ -21,8 +21,6 @@ public class Speaking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    // Tên cột "speaking_exam_id" trong schema trỏ đến "SpeakingExam.id"
-    // nên ta map nó với speakingExam
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "speaking_exam_id")
     SpeakingExam speakingExam;
@@ -37,16 +35,21 @@ public class Speaking {
     @Column(name = "img_url")
     String imgUrl;
 
-    @Column(name = "passage")
+    @Lob
+    // Chỉ định rõ ràng kiểu cột là "TEXT" (hoặc "LONGTEXT" nếu bạn muốn)
+    @Column(name = "passage", columnDefinition="TEXT")
     String passage;
 
-    @Column(name = "passage_romaji")
+    @Lob
+    @Column(name = "passage_romaji", columnDefinition="TEXT")
     String passageRomaji;
 
-    @Column(name = "passage_meaning")
+    @Lob
+    @Column(name = "passage_meaning", columnDefinition="TEXT")
     String passageMeaning;
 
-    @Column(name = "description")
+    @Lob
+    @Column(name = "description", columnDefinition="TEXT")
     String description;
 
     @OneToMany(mappedBy = "speaking", cascade = CascadeType.ALL, orphanRemoval = true)

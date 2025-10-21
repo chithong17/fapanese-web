@@ -27,6 +27,9 @@ public class Overview {
     @Column(name = "overview_title")
     String overviewTitle;
 
+    @Column(name = "description")
+    String description;
+
     @OneToMany(mappedBy = "overview", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<OverviewPart> overviewParts = new HashSet<>();
 }

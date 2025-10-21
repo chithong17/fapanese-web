@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequestMapping("/api/users")
 public class UserController {
-    @Autowired
-    IUserService iUserService;
+    final IUserService iUserService;
+
     @PostMapping("/register")
     public ApiResponse<UserResponse> register(@Valid @RequestBody UserRequest request){
         log.info("Register request: {}", request);
@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    private ApiResponse<UserResponse> getProfile(){
+    public ApiResponse<UserResponse> getProfile(){
         log.info("Get profile request");
 
         UserResponse userResponse = iUserService.getCurrentUserProfile();

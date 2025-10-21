@@ -20,4 +20,5 @@ public interface IQuestionService {
     List<QuestionResponse> getQuestionsByCategory(QuestionCategory category);
 
     SubmitQuizResponse checkAndSubmitAnswers(List<UserAnswer> userAnswers);
+    List<QuestionResponse> getQuestionsByLessonPart(Long lessonPartId);
 }

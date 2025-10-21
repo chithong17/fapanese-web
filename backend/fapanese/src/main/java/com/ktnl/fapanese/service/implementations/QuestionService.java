@@ -139,4 +139,11 @@ public class QuestionService implements IQuestionService {
                 .detailedResults(detailedResults)
                 .build();
     }
+
+
+    public List<QuestionResponse> getQuestionsByLessonPart(Long lessonPartId) {
+        return questionMapper.toQuestionResponseList(
+                questionRepository.findByLessonPart_Id(lessonPartId)
+        );
+    }
 }

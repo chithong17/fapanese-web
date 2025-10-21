@@ -97,4 +97,20 @@ public class QuestionController {
                 .result(result)
                 .build();
     }
+
+
+
+    @GetMapping("/by-lesson-part/{lessonPartId}")
+    public ApiResponse<List<QuestionResponse>> getQuestionsByLessonPart(
+            @PathVariable Long lessonPartId) {
+
+        List<QuestionResponse> result = questionService.getQuestionsByLessonPart(lessonPartId);
+
+        return ApiResponse.<List<QuestionResponse>>builder()
+                .message("Questions fetched successfully for LessonPart " + lessonPartId)
+                .result(result)
+                .build();
+    }
+
+
 }

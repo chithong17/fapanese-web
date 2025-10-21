@@ -42,11 +42,6 @@ public class LessonPart {
     Set<Grammar> grammars = new HashSet<>();
 
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "LessonPartQuestion", // Tên bảng trung gian sẽ được tạo
-            joinColumns = @JoinColumn(name = "lesson_part_id"), // Cột trỏ về LessonPart
-            inverseJoinColumns = @JoinColumn(name = "question_id") // Cột trỏ về Question
-    )
+    @OneToMany(mappedBy = "lessonPart", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Question> questions = new HashSet<>();
 }

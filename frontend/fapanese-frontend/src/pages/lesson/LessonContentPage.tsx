@@ -23,25 +23,30 @@ import type { VocabularyResponse } from "../../types/api";
 import { getGrammarsByLessonPartId } from "../../api/grammar";
 import { getLessonPartsByLesson } from "../../api/lessonPart";
 import { getLessonById } from "../../api/lesson";
+import { getQuestionsByLessonPartId } from "../../api/question";
+import { submitQuizAnswers } from "../../api/quiz";
 
 // ----------------------------- DỮ LIỆU GIẢ -----------------------------
-const quizData = {
-  title: "Giới thiệu chữ Hán trong tiếng Nhật",
-  totalQuestions: 8,
-  question: "Chữ Hán có nguồn gốc từ đâu?",
-  options: [
-    { id: 1, text: "Ấn Độ" },
-    { id: 2, text: "Ai Cập" },
-    { id: 3, text: "Trung Quốc" },
-    { id: 4, text: "Triều Tiên" },
-  ],
-};
+// const quizData = {
+//   title: "Giới thiệu chữ Hán trong tiếng Nhật",
+//   totalQuestions: 8,
+//   question: "Chữ Hán có nguồn gốc từ đâu?",
+//   options: [
+//     { id: 1, text: "Ấn Độ" },
+//     { id: 2, text: "Ai Cập" },
+//     { id: 3, text: "Trung Quốc" },
+//     { id: 4, text: "Triều Tiên" },
+//   ],
+// };
 
 // ----------------------------- COMPONENT CHÍNH -----------------------------
 const LessonContentPage: React.FC = () => {
   const { courseCode, lessonId, lessonPartId } = useParams();
   const navigate = useNavigate(); // Hook chuyển trang
   const [lessonInfo, setLessonInfo] = useState<any>(null);
+
+  const [questions, setQuestions] = useState<any[]>([]);
+  const [loadingQuestions, setLoadingQuestions] = useState(true);
 
   const [vocabularyContent, setVocabularyContent] = useState<
     VocabularyResponse[]
@@ -148,6 +153,25 @@ const LessonContentPage: React.FC = () => {
   }, [lessonId]);
 
   useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        if (!lessonPartId) return;
+        setLoadingQuestions(true);
+        const res = await getQuestionsByLessonPartId(Number(lessonPartId));
+        setQuestions(res.result || []);
+      } catch (err) {
+        console.error("Không thể tải câu hỏi:", err);
+      } finally {
+        setLoadingQuestions(false);
+      }
+    };
+
+    if (activeTab === "exercise") {
+      fetchQuestions();
+    }
+  }, [activeTab, lessonPartId]);
+
+  useEffect(() => {
     const fetchLessonInfo = async () => {
       try {
         if (!lessonId) return;
@@ -249,63 +273,247 @@ const LessonContentPage: React.FC = () => {
     </div>
   ); // ----------------------------- BÀI TẬP (Giữ nguyên) -----------------------------
 
+  const [quizResult, setQuizResult] = useState<any | null>(null);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const currentQuestion = questions[currentQuestionIndex] || null;
+  const [userAnswers, setUserAnswers] = useState<any[]>([]);
+  const [isAnswered, setIsAnswered] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+
+  const handleAnswerSelect = (i: number) => {
+    if (!currentQuestion || isAnswered) return; // tránh chọn lại sau khi đã trả lời
+
+    setSelectedOption(i);
+
+    const chosenAnswer =
+      currentQuestion[`option${String.fromCharCode(65 + i)}`];
+    const correct =
+      chosenAnswer?.trim() === currentQuestion.correctAnswer?.trim();
+
+    setIsAnswered(true);
+    setIsCorrect(correct);
+  };
+
+  const handleSubmitQuiz = () => {
+    const total = questions.length;
+    const correct = userAnswers.filter((a) => a?.isCorrect).length;
+    const percent = ((correct / total) * 100).toFixed(1);
+
+    setQuizResult({
+      totalQuestions: total,
+      correctCount: correct,
+      scorePercentage: percent,
+    });
+  };
+
+  // 🧠 Hàm nộp bài
+
   const renderExerciseContent = () => (
-    // ... (Giữ nguyên nội dung renderExerciseContent)
     <div className="w-full p-10 bg-gradient-to-br from-white via-[#f8fdfe] to-[#f2faff] rounded-xl">
-      <div className="mb-8">
-        <p className="text-xl font-medium text-gray-700 mb-2">
-          1/{quizData.totalQuestions}
+      {loadingQuestions ? (
+        <p className="text-gray-500 italic text-center py-6">
+          Đang tải câu hỏi...
         </p>
-        <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-          <motion.div
-            className="bg-gradient-to-r from-[#00BCD4] to-[#4DD0E1] h-2.5"
-            initial={{ width: 0 }}
-            animate={{ width: `${(1 / quizData.totalQuestions) * 100}%` }}
-            transition={{ duration: 0.8 }}
-          />
-        </div>
-      </div>
+      ) : questions.length === 0 ? (
+        <p className="text-gray-500 italic text-center py-6">
+          Không có câu hỏi nào trong phần này.
+        </p>
+      ) : (
+        <>
+          {/* Thanh tiến độ + điều hướng */}
+          <div className="mb-6">
+            <p className="text-xl font-medium text-gray-700 mb-2">
+              {currentQuestionIndex + 1}/{questions.length}
+            </p>
+            <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden mb-4">
+              <motion.div
+                className="bg-gradient-to-r from-[#00BCD4] to-[#4DD0E1] h-2.5"
+                initial={{ width: 0 }}
+                animate={{
+                  width: `${
+                    ((currentQuestionIndex + 1) / questions.length) * 100
+                  }%`,
+                }}
+                transition={{ duration: 0.6 }}
+              />
+            </div>
 
-      <div className="mb-10 space-y-3">
-        <p className="text-gray-500 text-sm">{quizData.title}</p>
-        <p className="text-gray-400 text-xs">Chọn đáp án đúng</p>
-        <h2 className="text-2xl font-semibold text-gray-800 pt-3">
-          {quizData.question}
-        </h2>
-      </div>
-
-      <div className="grid grid-cols-2 gap-6 mb-12">
-        {quizData.options.map((option) => (
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            key={option.id}
-            onClick={() => setSelectedOption(option.id)}
-            className={`p-5 rounded-4xl text-left shadow-sm border-2 transition-all duration-300
-                            ${
-                              selectedOption === option.id
-                                ? "bg-[#E0F7FA] border-[#00BCD4] text-[#00BCD4] shadow-lg"
-                                : "bg-white border-gray-200 hover:border-[#B2EBF2] text-gray-800"
-                            }`}
-          >
-            <span className="font-bold mr-2">{option.id}.</span> {option.text}
-          </motion.button>
-        ))}
-      </div>
-
-      <button
-        disabled={selectedOption === null}
-        className={`w-full py-4 font-bold text-lg transition-all duration-300 rounded-4xl
-                ${
-                  selectedOption !== null
-                    ? "bg-gradient-to-r from-[#00BCD4] to-[#26C6DA] text-white shadow-md hover:shadow-xl hover:opacity-95"
-                    : "bg-gray-200 text-gray-500 cursor-not-allowed"
+            <div className="flex justify-between mt-4">
+              <button
+                disabled={currentQuestionIndex === 0}
+                onClick={() => {
+                  setCurrentQuestionIndex((prev) => prev - 1);
+                  setSelectedOption(null);
+                  setIsAnswered(false);
+                  setIsCorrect(null);
+                }}
+                className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                  currentQuestionIndex === 0
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-[#B2EBF2] hover:bg-[#80DEEA] text-gray-800"
                 }`}
-      >
-        KIỂM TRA
-      </button>
+              >
+                ◀ Câu trước
+              </button>
+
+              {currentQuestionIndex < questions.length - 1 ? (
+                <button
+                  onClick={() => {
+                    setCurrentQuestionIndex((prev) => prev + 1);
+                    setSelectedOption(null);
+                    setIsAnswered(false);
+                    setIsCorrect(null);
+                  }}
+                  className="px-6 py-3 rounded-lg font-semibold bg-[#00BCD4] hover:bg-[#0097A7] text-white"
+                >
+                  Câu tiếp theo ▶
+                </button>
+              ) : (
+                <button
+                  onClick={handleSubmitQuiz}
+                  className="px-6 py-3 rounded-lg font-semibold bg-gradient-to-r from-[#00BCD4] to-[#26C6DA] text-white shadow-md hover:shadow-xl"
+                >
+                  Hoàn thành
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Câu hỏi */}
+          {currentQuestion && (
+            <div className="text-center mt-8">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">
+                Câu {currentQuestionIndex + 1}/{questions.length}
+              </h3>
+
+              <p className="text-gray-500 text-sm mb-1">
+                {currentQuestion.category}
+              </p>
+              <p className="text-gray-400 text-xs mb-6">
+                {currentQuestion.questionType === "MULTIPLE_CHOICE"
+                  ? "Chọn đáp án đúng"
+                  : currentQuestion.questionType === "TRUE_FALSE"
+                  ? "Chọn Đúng hoặc Sai"
+                  : "Điền đáp án của bạn"}
+              </p>
+
+              <p className="text-xl font-semibold text-gray-800 mb-6">
+                {currentQuestion.content}
+              </p>
+
+              {/* MULTIPLE CHOICE */}
+              {currentQuestion.questionType === "MULTIPLE_CHOICE" && (
+                <div className="grid grid-cols-2 gap-6 mb-12">
+                  {[
+                    currentQuestion.optionA,
+                    currentQuestion.optionB,
+                    currentQuestion.optionC,
+                    currentQuestion.optionD,
+                  ]
+                    .filter(Boolean)
+                    .map((opt, i) => (
+                      <motion.button
+                        key={i}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleAnswerSelect(i)}
+                        disabled={isAnswered}
+                        className={`p-5 rounded-4xl text-left shadow-sm border-2 transition-all duration-300
+                        ${
+                          selectedOption === i
+                            ? "bg-[#E0F7FA] border-[#00BCD4] text-[#00BCD4]"
+                            : "bg-white border-gray-200 hover:border-[#B2EBF2] text-gray-800"
+                        }`}
+                      >
+                        <span className="font-bold mr-2">
+                          {String.fromCharCode(65 + i)}.
+                        </span>
+                        {opt}
+                      </motion.button>
+                    ))}
+                </div>
+              )}
+
+              {/* FILL TYPE */}
+              {currentQuestion.questionType === "FILL" && (
+                <div className="mt-6 mb-10">
+                  <input
+                    type="text"
+                    placeholder="Nhập đáp án..."
+                    disabled={isAnswered}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !isAnswered) {
+                        const value = e.currentTarget.value.trim();
+                        const correct =
+                          value === currentQuestion.correctAnswer?.trim();
+                        setIsCorrect(correct);
+                        setIsAnswered(true);
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-700 focus:ring-2 focus:ring-[#00BCD4] outline-none"
+                  />
+                </div>
+              )}
+
+              {/* TRUE/FALSE */}
+              {currentQuestion.questionType === "TRUE_FALSE" && (
+                <div className="flex gap-6 mt-6 mb-10">
+                  {["True", "False"].map((val, i) => (
+                    <motion.button
+                      key={i}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      disabled={isAnswered}
+                      onClick={() => {
+                        setSelectedOption(i);
+                        const correct =
+                          val.toLowerCase() ===
+                          currentQuestion.correctAnswer?.toLowerCase();
+                        setIsCorrect(correct);
+                        setIsAnswered(true);
+                      }}
+                      className={`flex-1 py-4 rounded-4xl text-center border-2 font-medium transition-all
+                    ${
+                      selectedOption === i
+                        ? "bg-[#E0F7FA] border-[#00BCD4] text-[#00BCD4]"
+                        : "bg-white border-gray-200 hover:border-[#B2EBF2]"
+                    }`}
+                    >
+                      {val}
+                    </motion.button>
+                  ))}
+                </div>
+              )}
+
+              {/* Hiển thị đáp án */}
+              {isAnswered && (
+                <div
+                  className={`mt-6 p-4 rounded-xl text-center font-semibold ${
+                    isCorrect
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {isCorrect ? (
+                    "✅ Chính xác!"
+                  ) : (
+                    <>
+                      ❌ Sai rồi. <br />
+                      <span className="font-medium text-gray-800">
+                        Đáp án đúng: {currentQuestion.correctAnswer}
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
     </div>
-  ); // ----------------------------- BÀI HỌC (ĐÃ CẬP NHẬT: Thêm ref và nút Flashcard) -----------------------------
+  );
+
+  // ----------------------------- BÀI HỌC (ĐÃ CẬP NHẬT: Thêm ref và nút Flashcard) -----------------------------
 
   const renderLessonContent = () => {
     const renderContentSection = () => {

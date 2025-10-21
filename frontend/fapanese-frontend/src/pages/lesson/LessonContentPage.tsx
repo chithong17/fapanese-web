@@ -8,6 +8,7 @@ import {
   FaBookOpen,
   FaComments,
   FaClipboardList,
+  FaVolumeUp,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -194,6 +195,23 @@ const LessonContentPage: React.FC = () => {
       fetchGrammars();
     }
   }, [activeTab, contentType, lessonParts]);
+
+  const handlePlaySound = (textToSpeak) => {
+  // 1. Kiểm tra xem trình duyệt có hỗ trợ SpeechSynthesis không
+  if ('speechSynthesis' in window) {
+    // 2. Tạo một yêu cầu phát âm (utterance)
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    
+    // 3. Quan trọng: Đặt ngôn ngữ là tiếng Nhật để phát âm chính xác
+    utterance.lang = 'ja-JP'; 
+    
+    // 4. Thực hiện phát âm
+    window.speechSynthesis.speak(utterance);
+  } else {
+    // Thông báo nếu trình duyệt không hỗ trợ
+    alert('Trình duyệt của bạn không hỗ trợ chức năng phát âm thanh này.');
+  }
+};
 
   const handleSwitchContent = async (type: "vocab" | "grammar") => {
     if (!lessonParts.length) {
@@ -715,8 +733,8 @@ const renderExerciseContent = () => {
                                                    {" "}
                           <td className="px-6 py-4 text-center">
                                                        {" "}
-                            <button className="text-white bg-[#00BCD4] hover:bg-[#00ACC1] p-3 rounded-full shadow-md transition transform hover:scale-110 duration-300">
-                                                            <FaComments />     
+                            <button className="text-white bg-[#00BCD4] hover:bg-[#00ACC1] p-3 rounded-full shadow-md transition transform hover:scale-110 duration-300" onClick={() => handlePlaySound(word.wordKana)}>
+                                                            <FaVolumeUp />     
                                                    {" "}
                             </button>
                                                      {" "}

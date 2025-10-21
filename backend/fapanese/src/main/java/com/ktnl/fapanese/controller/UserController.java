@@ -5,6 +5,7 @@ import com.ktnl.fapanese.dto.request.UserRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.service.interfaces.IUserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -55,10 +57,14 @@ public class UserController {
                 .build();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{email}")
-    public ResponseEntity<String> deleteUserByEmail(@PathVariable String email) {
+    public ApiResponse<Void> deleteUserByEmail(@PathVariable String email) {
         iUserService.deleteUserByEmail(email);
-        return ResponseEntity.ok("User with email " + email + " has been deleted.");
+
+        return ApiResponse.<Void>builder()
+                .message("User with email " + email + " has been deleted.")
+                .build();
     }
 
 
@@ -71,6 +77,26 @@ public class UserController {
 
         return ApiResponse.<Void>builder()
                 .message("Đổi mật khẩu thành công")
+                .build();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PutMapping("/{email}/active")
+    public ApiResponse<Void> activateUserByAdmin(@PathVariable String email) {
+        iUserService.setActiveStatusByEmail(email, 3);
+
+        return ApiResponse.<Void>builder()
+                .message("Đã kích hoạt tài khoản " + email + " thành công")
+                .build();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PutMapping("/{email}/deactivate")
+    public ApiResponse<Void> deactivateUserByAdmin(@PathVariable String email) {
+        iUserService.setActiveStatusByEmail(email, 1);
+
+        return ApiResponse.<Void>builder()
+                .message("Vô hiệu hóa tài khoản " + email + " thành công")
                 .build();
     }
 }

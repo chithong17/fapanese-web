@@ -7,6 +7,7 @@ import OtpVerification from "../pages/OtpVerification";
 import ForgotPasswordPopup from "../pages/ResetPassword";
 import CircularProgress from "@mui/material/CircularProgress";
 import NotificationModal from "./NotificationModal"; // <-- THÊM IMPORT NÀY
+import { useNavigate } from "react-router-dom";
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -100,6 +101,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
     }
   };
 
+  const navigate = useNavigate();
   // --- Login ---
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,17 +109,37 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
     try {
       const response = await axios.post(
-        // "https://5180368dcd09.ngrok-free.app/fapanese/api/auth/login",
         "http://localhost:8080/fapanese/api/auth/login",
         { email: loginEmail, password: loginPassword }
       );
 
-      if (response.data?.result?.authenticated) {
-        localStorage.setItem("token", response.data.result.token);
+      const data = response.data?.result;
+
+      if (data?.authenticated && data?.token) {
+        const token = data.token;
+
+        // 🔍 Decode JWT để lấy scope
+        const base64Url = token.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const decodedPayload = JSON.parse(atob(base64));
+        const scope = decodedPayload.scope || "";
+        const role = scope.replace("ROLE_", "");
+
+        // Lưu lại
+        localStorage.setItem("token", token);
         localStorage.setItem("email", loginEmail);
-        window.dispatchEvent(new Event("loginSuccess"));
+        localStorage.setItem("role", role);
+
         setNotifMessage("Đăng nhập thành công!");
-        window.location.reload();
+
+        // 🔁 Reload đúng role
+        if (role === "ADMIN") {
+          window.location.href = "/admin";
+        } else if (role === "STUDENT") {
+          window.location.href = "/";
+        } else {
+          window.location.href = "/";
+        }
       }
     } catch (err: any) {
       if (err.response?.data?.code === 1008) {

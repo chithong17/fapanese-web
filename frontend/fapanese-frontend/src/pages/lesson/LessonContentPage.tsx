@@ -143,10 +143,26 @@ const LessonContentPage: React.FC = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        if (!lessonPartId) return;
+        if (!lessonParts.length) return;
+
+        // 🔍 Lấy đúng lessonPartId theo contentType hiện tại
+        const targetPart =
+          contentType === "grammar"
+            ? lessonParts.find((p) => p.type === "GRAMMAR")
+            : lessonParts.find((p) => p.type === "VOCABULARY");
+
+        if (!targetPart?.id) {
+          console.warn(
+            "⚠️ Không tìm thấy lesson part tương ứng với",
+            contentType
+          );
+          return;
+        }
+
         setLoadingQuestions(true);
-        const res = await getQuestionsByLessonPartId(Number(lessonPartId));
+        const res = await getQuestionsByLessonPartId(Number(targetPart.id));
         setQuestions(res.result || []);
+        console.log("📘 Questions fetched:", res.result);
       } catch (err) {
         console.error("Không thể tải câu hỏi:", err);
       } finally {
@@ -157,7 +173,7 @@ const LessonContentPage: React.FC = () => {
     if (activeTab === "exercise") {
       fetchQuestions();
     }
-  }, [activeTab, lessonPartId]);
+  }, [activeTab, contentType, lessonParts]);
 
   useEffect(() => {
     const fetchLessonInfo = async () => {
@@ -196,22 +212,22 @@ const LessonContentPage: React.FC = () => {
     }
   }, [activeTab, contentType, lessonParts]);
 
-  const handlePlaySound = (textToSpeak) => {
-  // 1. Kiểm tra xem trình duyệt có hỗ trợ SpeechSynthesis không
-  if ('speechSynthesis' in window) {
-    // 2. Tạo một yêu cầu phát âm (utterance)
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    
-    // 3. Quan trọng: Đặt ngôn ngữ là tiếng Nhật để phát âm chính xác
-    utterance.lang = 'ja-JP'; 
-    
-    // 4. Thực hiện phát âm
-    window.speechSynthesis.speak(utterance);
-  } else {
-    // Thông báo nếu trình duyệt không hỗ trợ
-    alert('Trình duyệt của bạn không hỗ trợ chức năng phát âm thanh này.');
-  }
-};
+  const handlePlaySound = (textToSpeak: string) => {
+    // 1. Kiểm tra xem trình duyệt có hỗ trợ SpeechSynthesis không
+    if ("speechSynthesis" in window) {
+      // 2. Tạo một yêu cầu phát âm (utterance)
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+
+      // 3. Quan trọng: Đặt ngôn ngữ là tiếng Nhật để phát âm chính xác
+      utterance.lang = "ja-JP";
+
+      // 4. Thực hiện phát âm
+      window.speechSynthesis.speak(utterance);
+    } else {
+      // Thông báo nếu trình duyệt không hỗ trợ
+      alert("Trình duyệt của bạn không hỗ trợ chức năng phát âm thanh này.");
+    }
+  };
 
   const handleSwitchContent = async (type: "vocab" | "grammar") => {
     if (!lessonParts.length) {
@@ -286,222 +302,304 @@ const LessonContentPage: React.FC = () => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   const handleAnswerSelect = (i: number) => {
-    if (!currentQuestion || isAnswered) return; // tránh chọn lại sau khi đã trả lời
+    if (!currentQuestion || isAnswered) return;
 
     setSelectedOption(i);
 
-    const chosenAnswer =
-      currentQuestion[`option${String.fromCharCode(65 + i)}`];
-    const correct =
-      chosenAnswer?.trim() === currentQuestion.correctAnswer?.trim();
+    // ✅ Lấy giá trị người chọn
+    let chosenAnswer = "";
+    if (currentQuestion.questionType === "TRUE_FALSE") {
+      chosenAnswer = i === 0 ? "True" : "False";
+    } else {
+      chosenAnswer = currentQuestion[`option${String.fromCharCode(65 + i)}`];
+    }
+
+    // ✅ So sánh đúng sai
+    let correct = false;
+
+    if (
+      currentQuestion.questionType === "MULTIPLE_CHOICE" ||
+      currentQuestion.questionType === "TRUE_FALSE"
+    ) {
+      correct =
+        chosenAnswer?.trim().toLowerCase() ===
+        currentQuestion.correctAnswer?.trim().toLowerCase();
+    } else if (currentQuestion.questionType === "FILL") {
+      correct =
+        chosenAnswer?.trim().toLowerCase() ===
+        currentQuestion.fillAnswer?.trim().toLowerCase();
+    }
 
     setIsAnswered(true);
     setIsCorrect(correct);
+
+    // ✅ Lưu lại kết quả kèm correctAnswer
+    const updatedAnswers = [...userAnswers];
+    updatedAnswers[currentQuestionIndex] = {
+      questionId: currentQuestion.id,
+      userAnswer: chosenAnswer,
+      correctAnswer:
+        currentQuestion.questionType === "FILL"
+          ? currentQuestion.fillAnswer
+          : currentQuestion.correctAnswer,
+      isCorrect: correct,
+    };
+    setUserAnswers(updatedAnswers);
   };
 
-  const handleSubmitQuiz = () => {
-    const total = questions.length;
-    const correct = userAnswers.filter((a) => a?.isCorrect).length;
-    const percent = ((correct / total) * 100).toFixed(1);
+  const handleSubmitQuiz = async () => {
+    if (userAnswers.length === 0) {
+      alert("Bạn chưa trả lời câu nào!");
+      return;
+    }
 
-    setQuizResult({
-      totalQuestions: total,
-      correctCount: correct,
-      scorePercentage: percent,
-    });
+    try {
+      // Lọc bỏ null hoặc undefined
+      const filteredAnswers = userAnswers
+        .filter((a) => a && a.questionId && a.userAnswer)
+        .map((a) => ({
+          questionId: a.questionId,
+          userAnswer: a.userAnswer,
+        }));
+
+      console.log("📤 Payload gửi đi:", filteredAnswers);
+
+      const res = await submitQuizAnswers(filteredAnswers);
+
+      console.log("Quiz Result:", res.result.detailedResults); // 🧠 Log để kiểm tra backend trả gì
+      setQuizResult(res.result);
+    } catch (err) {
+      console.error("Lỗi khi nộp bài:", err);
+    }
   };
 
   // 🧠 Hàm nộp bài
 
-  // Hàm renderExerciseContent đã được tối ưu hóa giao diện (giữ nguyên logic inline)
+  const renderExerciseContent = () => {
+    const getOptions = () => {
+      return [
+        currentQuestion.optionA,
+        currentQuestion.optionB,
+        currentQuestion.optionC,
+        currentQuestion.optionD,
+      ].filter(Boolean);
+    };
 
-const renderExerciseContent = () => {
-  const getOptions = () => {
-    return [
-      currentQuestion.optionA,
-      currentQuestion.optionB,
-      currentQuestion.optionC,
-      currentQuestion.optionD,
-    ].filter(Boolean);
-  };
+    // Hàm helper để xác định class cho các tùy chọn (được trích từ Question.tsx gốc)
+    const getOptionClass = (i: number) => {
+      let base =
+        "p-5 rounded-4xl text-left shadow-md border-2 transition-all duration-300 transform"; // Thêm shadow-md và transform
 
-  // Hàm helper để xác định class cho các tùy chọn (được trích từ Question.tsx gốc)
-  const getOptionClass = (i: number) => {
-    let base =
-      "p-5 rounded-4xl text-left shadow-md border-2 transition-all duration-300 transform"; // Thêm shadow-md và transform
+      if (isAnswered) {
+        const isChosen = selectedOption === i;
+        // Trong hàm này, ta không có sẵn getOptions() như Question.tsx,
+        // nhưng vì logic của bạn rất dài, ta giả định getOptions() có thể được định nghĩa hoặc
+        // ta sử dụng logic trực tiếp cho MULTIPLE_CHOICE:
+        const options = getOptions();
+        const isCorrectOption =
+          options[i]?.trim().toLowerCase() ===
+          currentQuestion.correctAnswer?.trim().toLowerCase();
 
-    if (isAnswered) {
-      const isChosen = selectedOption === i;
-      // Trong hàm này, ta không có sẵn getOptions() như Question.tsx, 
-      // nhưng vì logic của bạn rất dài, ta giả định getOptions() có thể được định nghĩa hoặc 
-      // ta sử dụng logic trực tiếp cho MULTIPLE_CHOICE:
-      const options = getOptions();
-      const isCorrectOption =
-        options[i]?.trim().toLowerCase() === currentQuestion.correctAnswer?.trim().toLowerCase();
+        // TRUE/FALSE logic (xử lý riêng ở dưới cho True/False để tránh phức tạp)
 
-      // TRUE/FALSE logic (xử lý riêng ở dưới cho True/False để tránh phức tạp)
-
-      if (currentQuestion.questionType === "MULTIPLE_CHOICE") {
-        if (isChosen && isCorrect) {
-          // Chọn đúng
-          return `${base} bg-green-100 border-green-500 text-green-800 cursor-default shadow-lg`;
-        } else if (isChosen && !isCorrect) {
-          // Chọn sai
-          return `${base} bg-red-100 border-red-500 text-red-800 cursor-default shadow-lg`;
-        } else if (isCorrectOption) {
-          // Đáp án đúng (làm nổi bật sau khi trả lời sai)
-          return `${base} bg-green-50 border-green-400 text-green-700 cursor-default`;
-        } else {
-          // Các tùy chọn còn lại sau khi trả lời
+        if (currentQuestion.questionType === "MULTIPLE_CHOICE") {
+          if (isChosen && isCorrect) {
+            // Chọn đúng
+            return `${base} bg-green-100 border-green-500 text-green-800 cursor-default shadow-lg`;
+          } else if (isChosen && !isCorrect) {
+            // Chọn sai
+            return `${base} bg-red-100 border-red-500 text-red-800 cursor-default shadow-lg`;
+          } else if (isCorrectOption) {
+            // Đáp án đúng (làm nổi bật sau khi trả lời sai)
+            return `${base} bg-green-50 border-green-400 text-green-700 cursor-default`;
+          } else {
+            // Các tùy chọn còn lại sau khi trả lời
+            return `${base} bg-gray-50 border-gray-200 text-gray-400 cursor-default`;
+          }
+        }
+        // Nếu không phải Multiple Choice, ta chỉ cần phân biệt đáp án đã chọn (sai) và đáp án đúng.
+        else if (currentQuestion.questionType === "TRUE_FALSE") {
+          // Logic TRUE_FALSE được xử lý trực tiếp trong JSX của bạn, nên ta chỉ cần giữ logic cho MC ở đây.
+          // Để làm đẹp chung, ta vẫn giữ màu sắc như trên:
           return `${base} bg-gray-50 border-gray-200 text-gray-400 cursor-default`;
         }
-      } 
-      // Nếu không phải Multiple Choice, ta chỉ cần phân biệt đáp án đã chọn (sai) và đáp án đúng.
-      else if (currentQuestion.questionType === "TRUE_FALSE") {
-        // Logic TRUE_FALSE được xử lý trực tiếp trong JSX của bạn, nên ta chỉ cần giữ logic cho MC ở đây.
-        // Để làm đẹp chung, ta vẫn giữ màu sắc như trên:
-        return `${base} bg-gray-50 border-gray-200 text-gray-400 cursor-default`;
+      } else {
+        // Chưa trả lời: Tối ưu hóa hiệu ứng hover
+        if (selectedOption === i) {
+          return `${base} bg-[#E0F7FA] border-[#00BCD4] text-[#00BCD4] shadow-lg scale-[1.01]`;
+        }
+        return `${base} bg-white border-gray-200 hover:border-[#00BCD4] text-gray-800 hover:shadow-lg hover:-translate-y-0.5`;
       }
-      
-    } else {
-      // Chưa trả lời: Tối ưu hóa hiệu ứng hover
-      if (selectedOption === i) {
-        return `${base} bg-[#E0F7FA] border-[#00BCD4] text-[#00BCD4] shadow-lg scale-[1.01]`;
-      }
-      return `${base} bg-white border-gray-200 hover:border-[#00BCD4] text-gray-800 hover:shadow-lg hover:-translate-y-0.5`;
+    };
+
+    // --- UI RENDER BẮT ĐẦU ---
+
+    if (loadingQuestions) {
+      return (
+        <div className="w-full p-12 bg-white shadow-xl rounded-3xl border border-gray-100">
+          <p className="text-gray-500 italic text-center py-8">
+            Đang tải câu hỏi...
+          </p>
+        </div>
+      );
     }
-  };
 
-
-  // --- UI RENDER BẮT ĐẦU ---
-
-  if (loadingQuestions) {
-    return (
-      <div className="w-full p-12 bg-white shadow-xl rounded-3xl border border-gray-100">
-        <p className="text-gray-500 italic text-center py-8">
-          Đang tải câu hỏi...
-        </p>
-      </div>
-    );
-  }
-
-  if (questions.length === 0) {
-    return (
-      <div className="w-full p-12 bg-white shadow-xl rounded-3xl border border-gray-100">
-        <p className="text-gray-500 italic text-center py-8">
-          Không có câu hỏi nào trong phần này.
-        </p>
-      </div>
-    );
-  }
-
-  // Giả định logic hiển thị kết quả quiz được đặt ở ngoài hoặc sử dụng hàm riêng.
-  // Ta chỉ tập trung vào việc render câu hỏi.
-
-  return (
-    <div className="w-full p-8 md:p-12 bg-white shadow-2xl rounded-3xl border border-gray-100">
-      {/* Thanh tiến độ + điều hướng */}
-      <div className="mb-8">
-        {/* Tiêu đề tiến độ được làm rõ nét và sang trọng hơn */}
-        <div className="flex justify-between items-center mb-2">
-            <p className="text-lg font-bold text-[#00796B] tracking-wider">
-                TIẾN ĐỘ BÀI TẬP
-            </p>
-            <p className="text-2xl font-extrabold text-gray-800">
-                {currentQuestionIndex + 1} / {questions.length}
-            </p>
+    if (questions.length === 0) {
+      return (
+        <div className="w-full p-12 bg-white shadow-xl rounded-3xl border border-gray-100">
+          <p className="text-gray-500 italic text-center py-8">
+            Không có câu hỏi nào trong phần này.
+          </p>
         </div>
-        
-        {/* Thanh tiến độ với đổ bóng và màu gradient hiện đại */}
-        <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden shadow-inner">
-          <motion.div
-            className="bg-gradient-to-r from-[#00BCD4] to-[#4DD0E1] h-3 rounded-full"
-            initial={{ width: 0 }}
-            animate={{
-              width: `${
-                ((currentQuestionIndex + 1) / questions.length) * 100
-              }%`,
-            }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          />
-        </div>
+      );
+    }
 
-        {/* Nút Điều hướng: Thêm hiệu ứng hover, shadow, và làm tròn */}
-        <div className="flex justify-between mt-8">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            disabled={currentQuestionIndex === 0}
+    if (quizResult) {
+      return (
+        <div className="mt-10 text-center bg-[#E0F7FA]/60 rounded-2xl p-8 shadow-inner">
+          <h2 className="text-3xl font-bold text-[#00796B] mb-3">
+            🎉 Bạn đã hoàn thành bài luyện tập!
+          </h2>
+          <p className="text-gray-700 text-lg mb-2">
+            Số câu đúng:{" "}
+            <span className="font-bold text-[#0097A7]">
+              {quizResult.correctCount}/{quizResult.totalQuestions}
+            </span>
+          </p>
+          <p className="text-gray-700 text-lg mb-6">
+            Điểm số:{" "}
+            <span className="font-bold text-[#00ACC1]">
+              {quizResult.scorePercentage}%
+            </span>
+          </p>
+
+          <button
             onClick={() => {
-              setCurrentQuestionIndex((prev) => prev - 1);
-              setSelectedOption(null);
+              // Làm lại bài
+              setQuizResult(null);
+              setCurrentQuestionIndex(0);
               setIsAnswered(false);
               setIsCorrect(null);
+              setSelectedOption(null);
+              setUserAnswers([]);
             }}
-            className={`px-8 py-3 rounded-full font-semibold transition-all shadow-md ${
-              currentQuestionIndex === 0
-                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                : "bg-[#B2EBF2] hover:bg-[#80DEEA] text-gray-800"
-            }`}
+            className="mt-4 px-6 py-3 rounded-lg bg-gradient-to-r from-[#00BCD4] to-[#26C6DA] text-white font-semibold hover:shadow-lg transition-all"
           >
-            ◀ Câu trước
-          </motion.button>
+            🔄 Làm lại bài
+          </button>
+        </div>
+      );
+    }
 
-          {currentQuestionIndex < questions.length - 1 ? (
+    // Giả định logic hiển thị kết quả quiz được đặt ở ngoài hoặc sử dụng hàm riêng.
+    // Ta chỉ tập trung vào việc render câu hỏi.
+
+    return (
+      <div className="w-full p-8 md:p-12 bg-white shadow-2xl rounded-3xl border border-gray-100">
+        {/* Thanh tiến độ + điều hướng */}
+        <div className="mb-8">
+          {/* Tiêu đề tiến độ được làm rõ nét và sang trọng hơn */}
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-lg font-bold text-[#00796B] tracking-wider">
+              TIẾN ĐỘ BÀI TẬP
+            </p>
+            <p className="text-2xl font-extrabold text-gray-800">
+              {currentQuestionIndex + 1} / {questions.length}
+            </p>
+          </div>
+
+          {/* Thanh tiến độ với đổ bóng và màu gradient hiện đại */}
+          <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden shadow-inner">
+            <motion.div
+              className="bg-gradient-to-r from-[#00BCD4] to-[#4DD0E1] h-3 rounded-full"
+              initial={{ width: 0 }}
+              animate={{
+                width: `${
+                  ((currentQuestionIndex + 1) / questions.length) * 100
+                }%`,
+              }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            />
+          </div>
+
+          {/* Nút Điều hướng: Thêm hiệu ứng hover, shadow, và làm tròn */}
+          <div className="flex justify-between mt-8">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              disabled={currentQuestionIndex === 0}
               onClick={() => {
-                setCurrentQuestionIndex((prev) => prev + 1);
+                setCurrentQuestionIndex((prev) => prev - 1);
                 setSelectedOption(null);
                 setIsAnswered(false);
                 setIsCorrect(null);
               }}
-              className="px-8 py-3 rounded-full font-semibold bg-[#00BCD4] hover:bg-[#0097A7] text-white shadow-lg"
+              className={`px-8 py-3 rounded-full font-semibold transition-all shadow-md ${
+                currentQuestionIndex === 0
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-[#B2EBF2] hover:bg-[#80DEEA] text-gray-800"
+              }`}
             >
-              Câu tiếp theo ▶
+              ◀ Câu trước
             </motion.button>
-          ) : (
-            <motion.button
-              whileHover={{ scale: 1.05, boxShadow: "0 8px 15px rgba(0, 188, 212, 0.5)" }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleSubmitQuiz}
-              className="px-8 py-3 rounded-full font-bold bg-gradient-to-r from-[#00BCD4] to-[#26C6DA] text-white text-lg shadow-xl"
-            >
-              HOÀN THÀNH 🚀
-            </motion.button>
-          )}
+
+            {currentQuestionIndex < questions.length - 1 ? (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  setCurrentQuestionIndex((prev) => prev + 1);
+                  setSelectedOption(null);
+                  setIsAnswered(false);
+                  setIsCorrect(null);
+                }}
+                className="px-8 py-3 rounded-full font-semibold bg-[#00BCD4] hover:bg-[#0097A7] text-white shadow-lg"
+              >
+                Câu tiếp theo ▶
+              </motion.button>
+            ) : (
+              <motion.button
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 8px 15px rgba(0, 188, 212, 0.5)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleSubmitQuiz}
+                className="px-8 py-3 rounded-full font-bold bg-gradient-to-r from-[#00BCD4] to-[#26C6DA] text-white text-lg shadow-xl"
+              >
+                HOÀN THÀNH 🚀
+              </motion.button>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Câu hỏi (Chi tiết) */}
-      {currentQuestion && (
-        <div className="text-center mt-10">
-          <h3 className="text-3xl font-extrabold mb-8 text-gray-900 border-b pb-4 border-gray-100">
-            Câu {currentQuestionIndex + 1}
-          </h3>
+        {/* Câu hỏi (Chi tiết) */}
+        {currentQuestion && (
+          <div className="text-center mt-10">
+            <h3 className="text-3xl font-extrabold mb-8 text-gray-900 border-b pb-4 border-gray-100">
+              Câu {currentQuestionIndex + 1}
+            </h3>
 
-          {/* Metadata */}
-          <p className="text-[#00BCD4] text-sm font-semibold uppercase mb-1 tracking-wider">
-            {currentQuestion.category}
-          </p>
-          <p className="text-gray-500 text-xs mb-6 font-medium italic">
-            {currentQuestion.questionType === "MULTIPLE_CHOICE"
-              ? "Chọn đáp án đúng"
-              : currentQuestion.questionType === "TRUE_FALSE"
-              ? "Chọn Đúng hoặc Sai"
-              : "Điền đáp án của bạn"}
-          </p>
+            {/* Metadata */}
+            <p className="text-[#00BCD4] text-sm font-semibold uppercase mb-1 tracking-wider">
+              {currentQuestion.category}
+            </p>
+            <p className="text-gray-500 text-xs mb-6 font-medium italic">
+              {currentQuestion.questionType === "MULTIPLE_CHOICE"
+                ? "Chọn đáp án đúng"
+                : currentQuestion.questionType === "TRUE_FALSE"
+                ? "Chọn Đúng hoặc Sai"
+                : "Điền đáp án của bạn"}
+            </p>
 
-          <p className="text-2xl font-bold text-gray-800 mb-10 p-4 bg-gray-50 rounded-xl shadow-inner">
-            {currentQuestion.content}
-          </p>
+            <p className="text-2xl font-bold text-gray-800 mb-10 p-4 bg-gray-50 rounded-xl shadow-inner">
+              {currentQuestion.content}
+            </p>
 
-          {/* MULTIPLE CHOICE: Sử dụng getOptionClass và motion cho hiệu ứng */}
-          {currentQuestion.questionType === "MULTIPLE_CHOICE" && (
-            <div className="grid grid-cols-2 gap-6 mb-12">
-              {getOptions()
-                .map((opt, i) => (
+            {/* MULTIPLE CHOICE: Sử dụng getOptionClass và motion cho hiệu ứng */}
+            {currentQuestion.questionType === "MULTIPLE_CHOICE" && (
+              <div className="grid grid-cols-2 gap-6 mb-12">
+                {getOptions().map((opt, i) => (
                   <motion.button
                     key={i}
                     whileHover={{ scale: isAnswered ? 1.0 : 1.02 }}
@@ -509,7 +607,7 @@ const renderExerciseContent = () => {
                     onClick={() => handleAnswerSelect(i)}
                     disabled={isAnswered}
                     // Sử dụng getOptionClass để áp dụng style sang trọng/kết quả
-                    className={getOptionClass(i) + " font-medium"} 
+                    className={getOptionClass(i) + " font-medium"}
                   >
                     <span className="font-bold mr-2">
                       {String.fromCharCode(65 + i)}.
@@ -517,105 +615,140 @@ const renderExerciseContent = () => {
                     {opt}
                   </motion.button>
                 ))}
-            </div>
-          )}
+              </div>
+            )}
 
-          {/* FILL TYPE: Tối ưu hóa input */}
-          {currentQuestion.questionType === "FILL" && (
-            <div className="mt-6 mb-10">
-              <input
-                type="text"
-                placeholder="Nhập đáp án..."
-                disabled={isAnswered}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !isAnswered) {
-                    const value = e.currentTarget.value.trim();
-                                    }
-                }}
-                className={`w-full border-4 rounded-xl px-6 py-4 text-gray-800 text-lg shadow-lg transition-all ${
-                    isAnswered ? "border-gray-300 bg-gray-100 cursor-default" 
-                               : "border-gray-200 focus:border-[#00BCD4] focus:ring-4 focus:ring-[#B2EBF2] outline-none"
-                }`}
-              />
-            </div>
-          )}
-
-          {/* TRUE/FALSE: Tối ưu hóa button */}
-          {currentQuestion.questionType === "TRUE_FALSE" && (
-            <div className="flex gap-6 mt-6 mb-10">
-              {["True", "False"].map((val, i) => (
-                <motion.button
-                  key={i}
-                  whileHover={{ scale: isAnswered ? 1.0 : 1.03 }}
-                  whileTap={{ scale: isAnswered ? 1.0 : 0.97 }}
+            {/* FILL TYPE: Tối ưu hóa input */}
+            {currentQuestion.questionType === "FILL" && (
+              <div className="mt-6 mb-10">
+                <input
+                  key={currentQuestion.id} // 💡 thêm dòng này để reset khi đổi câu
+                  type="text"
+                  placeholder="Nhập đáp án và nhấn Enter..."
                   disabled={isAnswered}
-                  onClick={() => handleAnswerSelect(i)} 
-                  className={`flex-1 py-5 rounded-full text-center border-2 font-bold transition-all shadow-lg ${
-                    isAnswered
-                      ? val.toLowerCase() ===
-                        currentQuestion.correctAnswer?.toLowerCase()
-                        ? "bg-green-100 border-green-500 text-green-800 cursor-default" // Đáp án đúng
-                        : selectedOption === i
-                        ? "bg-red-100 border-red-500 text-red-800 cursor-default" // Đáp án sai đã chọn
-                        : "bg-gray-50 border-gray-200 text-gray-400 cursor-default" // Các đáp án khác
-                      : selectedOption === i
-                      ? "bg-[#E0F7FA] border-[#00BCD4] text-[#00BCD4] shadow-xl"
-                      : "bg-white border-gray-200 hover:border-[#00BCD4] hover:text-gray-900 hover:shadow-xl"
-                  }`}
-                >
-                  {val}
-                </motion.button>
-              ))}
-            </div>
-          )}
+                  autoFocus // ✨ tự focus mỗi khi sang câu mới
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !isAnswered) {
+                      e.preventDefault(); // 🔒 chặn hành vi mặc định của Enter
 
-          {/* Hiển thị đáp án: Sử dụng motion và màu sắc tinh tế hơn */}
-         {isAnswered && (
-    <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, type: "tween" }} // Hiệu ứng mượt (tween)
-        className={`mt-10 p-8 rounded-2xl text-center font-bold text-xl shadow-2xl transition-all duration-500 
+                      const value = e.currentTarget.value.trim();
+                      if (!value) return;
+
+                      let correct = false;
+
+                      if (currentQuestion.fillAnswer) {
+                        correct =
+                          value.trim().toLowerCase() ===
+                          currentQuestion.fillAnswer.trim().toLowerCase();
+                      } else {
+                        correct =
+                          value.trim().toLowerCase() ===
+                          currentQuestion.correctAnswer?.trim().toLowerCase();
+                      }
+
+                      setIsAnswered(true);
+                      setIsCorrect(correct);
+
+                      const updatedAnswers = [...userAnswers];
+                      updatedAnswers[currentQuestionIndex] = {
+                        questionId: currentQuestion.id,
+                        userAnswer: value,
+                        correctAnswer:
+                          currentQuestion.fillAnswer ||
+                          currentQuestion.correctAnswer,
+                        isCorrect: correct,
+                      };
+                      setUserAnswers(updatedAnswers);
+
+                      e.currentTarget.blur();
+                    }
+                  }}
+                  className={`w-full border-4 rounded-xl px-6 py-4 text-gray-800 text-lg shadow-lg transition-all ${
+                    isAnswered
+                      ? "border-gray-300 bg-gray-100 cursor-default"
+                      : "border-gray-200 focus:border-[#00BCD4] focus:ring-4 focus:ring-[#B2EBF2] outline-none"
+                  }`}
+                />
+              </div>
+            )}
+
+            {/* TRUE/FALSE: Tối ưu hóa button */}
+            {currentQuestion.questionType === "TRUE_FALSE" && (
+              <div className="flex gap-6 mt-6 mb-10">
+                {["True", "False"].map((val, i) => (
+                  <motion.button
+                    key={i}
+                    whileHover={{ scale: isAnswered ? 1.0 : 1.03 }}
+                    whileTap={{ scale: isAnswered ? 1.0 : 0.97 }}
+                    disabled={isAnswered}
+                    onClick={() => handleAnswerSelect(i)}
+                    className={`flex-1 py-5 rounded-full text-center border-2 font-bold transition-all shadow-lg ${
+                      isAnswered
+                        ? val.toLowerCase() ===
+                          currentQuestion.correctAnswer?.toLowerCase()
+                          ? "bg-green-100 border-green-500 text-green-800 cursor-default" // Đáp án đúng
+                          : selectedOption === i
+                          ? "bg-red-100 border-red-500 text-red-800 cursor-default" // Đáp án sai đã chọn
+                          : "bg-gray-50 border-gray-200 text-gray-400 cursor-default" // Các đáp án khác
+                        : selectedOption === i
+                        ? "bg-[#E0F7FA] border-[#00BCD4] text-[#00BCD4] shadow-xl"
+                        : "bg-white border-gray-200 hover:border-[#00BCD4] hover:text-gray-900 hover:shadow-xl"
+                    }`}
+                  >
+                    {val}
+                  </motion.button>
+                ))}
+              </div>
+            )}
+
+            {/* Hiển thị đáp án: Sử dụng motion và màu sắc tinh tế hơn */}
+            {isAnswered && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, type: "tween" }} // Hiệu ứng mượt (tween)
+                className={`mt-10 p-8 rounded-2xl text-center font-bold text-xl shadow-2xl transition-all duration-500 
             // Loại bỏ hoàn toàn border
             
             ${
-                isCorrect
-                    // Màu xanh lá cây Tinh tế, Chuyên nghiệp
-                    ? "bg-green-50 text-green-700 shadow-green-300/50" 
-                    // Màu đỏ Rõ ràng, Nghiêm túc
-                    : "bg-red-50 text-red-700 shadow-red-300/50" 
+              isCorrect
+                ? // Màu xanh lá cây Tinh tế, Chuyên nghiệp
+                  "bg-green-50 text-green-700 shadow-green-300/50"
+                : // Màu đỏ Rõ ràng, Nghiêm túc
+                  "bg-red-50 text-red-700 shadow-red-300/50"
             }`}
-    >
-        {isCorrect ? (
-            // Nội dung Chính xác (Rõ ràng và Nổi bật)
-            <>
-                <p className="text-2xl mb-2 font-extrabold text-green-800">
-                    CHÍNH XÁC TUYỆT VỜI!
-                </p>
-                <span className="font-medium text-lg text-gray-600">
-                    Bạn đã hiểu rõ kiến thức này.
-                </span>
-            </>
-        ) : (
-            <>
-                <p className="text-2xl mb-2 font-extrabold text-red-800">
-                    RẤT TIẾC, CHƯA CHÍNH XÁC.
-                </p>
-                <div className="text-lg font-medium text-gray-700 mt-4 pt-4 border-t border-red-200/50">
-                    Đáp án đúng:
-                    <span className="font-extrabold text-gray-900 ml-2 block sm:inline">
-                        {currentQuestion.correctAnswer}
+              >
+                {isCorrect ? (
+                  // Nội dung Chính xác (Rõ ràng và Nổi bật)
+                  <>
+                    <p className="text-2xl mb-2 font-extrabold text-green-800">
+                      CHÍNH XÁC TUYỆT VỜI!
+                    </p>
+                    <span className="font-medium text-lg text-gray-600">
+                      Bạn đã hiểu rõ kiến thức này.
                     </span>
-                </div>
-            </>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-2xl mb-2 font-extrabold text-red-800">
+                      RẤT TIẾC, CHƯA CHÍNH XÁC.
+                    </p>
+                    <div className="text-lg font-medium text-gray-700 mt-4 pt-4 border-t border-red-200/50">
+                      Đáp án đúng:
+                      <span className="font-extrabold text-gray-900 ml-2 block sm:inline">
+                        {currentQuestion.fillAnswer ||
+                          currentQuestion.correctAnswer}
+                      </span>
+                    </div>
+                  </>
+                )}
+              </motion.div>
+            )}
+          </div>
         )}
-    </motion.div>
-)}
-        </div>
-      )}
-    </div>
-  );
-};
+      </div>
+    );
+  };
 
   // ----------------------------- BÀI HỌC (ĐÃ CẬP NHẬT: Thêm ref và nút Flashcard) -----------------------------
 
@@ -733,7 +866,10 @@ const renderExerciseContent = () => {
                                                    {" "}
                           <td className="px-6 py-4 text-center">
                                                        {" "}
-                            <button className="text-white bg-[#00BCD4] hover:bg-[#00ACC1] p-3 rounded-full shadow-md transition transform hover:scale-110 duration-300" onClick={() => handlePlaySound(word.wordKana)}>
+                            <button
+                              className="text-white bg-[#00BCD4] hover:bg-[#00ACC1] p-3 rounded-full shadow-md transition transform hover:scale-110 duration-300"
+                              onClick={() => handlePlaySound(word.wordKana)}
+                            >
                                                             <FaVolumeUp />     
                                                    {" "}
                             </button>
@@ -753,95 +889,125 @@ const renderExerciseContent = () => {
             </div>
           );
         case "grammar":
-  // Giữ nguyên các màu sắc ban đầu để tuân thủ yêu cầu
-  const PRIMARY_TEAL = "text-[#00ACC1]";
-  const STRUCTURE_GREEN = "text-[#00796B]";
-  const EXAMPLE_BG_LIGHT = "bg-[#E0F7FA]";
-  const BORDER_TEAL = "border-[#00ACC1]";
+          // Giữ nguyên các màu sắc ban đầu để tuân thủ yêu cầu
+          const PRIMARY_TEAL = "text-[#00ACC1]";
+          const STRUCTURE_GREEN = "text-[#00796B]";
+          const EXAMPLE_BG_LIGHT = "bg-[#E0F7FA]";
+          const BORDER_TEAL = "border-[#00ACC1]";
 
-  return (
-    <div className="p-10 lg:p-14 space-y-12 bg-gray-50 min-h-screen">
-      <div className="max-w-4xl mx-auto">
-        
-        {/* TIÊU ĐỀ CHÍNH - Lớn, đậm, và có đường phân cách rõ ràng */}
-        <h1 className={`text-4xl lg:text-4xl font-extrabold text-gray-900 pb-3 mb-10 
-                       border-b-4 ${BORDER_TEAL} tracking-tight`}>
-          Ngữ pháp - Bài học {lessonPartId}
-        </h1>
+          return (
+            <div className="p-10 lg:p-14 space-y-12 bg-gray-50 min-h-screen">
+              <div className="max-w-4xl mx-auto">
+                {/* TIÊU ĐỀ CHÍNH - Lớn, đậm, và có đường phân cách rõ ràng */}
+                <h1
+                  className={`text-4xl lg:text-4xl font-extrabold text-gray-900 pb-3 mb-10 
+                       border-b-4 ${BORDER_TEAL} tracking-tight`}
+                >
+                  Ngữ pháp - Bài học {lessonPartId}
+                </h1>
 
-        {/* CÁC TRẠNG THÁI */}
-        {loadingGrammar ? (
-          <p className="italic text-gray-600 text-center py-12 text-xl animate-pulse">
-            <span className="inline-block mr-3">⏳</span> Đang tải ngữ pháp...
-          </p>
-        ) : grammarContent.length === 0 ? (
-          <p className="italic text-gray-500 text-center py-12 text-lg">
-            Phần này không có nội dung ngữ pháp.
-          </p>
-        ) : (
-          /* DANH SÁCH NGỮ PHÁP */
-          <div className="space-y-10">
-            {grammarContent.map((grammar, index) => (
-              <motion.div
-                key={grammar.id || index}
-                // Thẻ ngữ pháp: Shadows tinh tế hơn và hiệu ứng tương tác cao cấp
-                className="bg-white rounded-3xl p-8 shadow-xl ring-1 ring-gray-100 
+                {/* CÁC TRẠNG THÁI */}
+                {loadingGrammar ? (
+                  <p className="italic text-gray-600 text-center py-12 text-xl animate-pulse">
+                    <span className="inline-block mr-3">⏳</span> Đang tải ngữ
+                    pháp...
+                  </p>
+                ) : grammarContent.length === 0 ? (
+                  <p className="italic text-gray-500 text-center py-12 text-lg">
+                    Phần này không có nội dung ngữ pháp.
+                  </p>
+                ) : (
+                  /* DANH SÁCH NGỮ PHÁP */
+                  <div className="space-y-10">
+                    {grammarContent.map((grammar, index) => (
+                      <motion.div
+                        key={grammar.id || index}
+                        // Thẻ ngữ pháp: Shadows tinh tế hơn và hiệu ứng tương tác cao cấp
+                        className="bg-white rounded-3xl p-8 shadow-xl ring-1 ring-gray-100 
                            hover:shadow-2xl hover:ring-2 hover:ring-[#00ACC1]/50 
                            hover:translate-y-[-2px] transition-all duration-500 ease-out"
-                initial={{ opacity: 0, y: 40 }}
-                // Dùng type: "spring" cho animation mượt mà
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.08, type: "spring", stiffness: 120, damping: 18 }}
-              >
-                {/* TIÊU ĐỀ NGỮ PHÁP */}
-                <h2 className={`text-3xl font-bold ${PRIMARY_TEAL} border-b border-gray-100 pb-3 mb-5`}>
-                  {grammar.title}
-                </h2>
-                <p className="text-gray-700 mb-6 leading-relaxed text-base">
-                  {grammar.explanation}
-                </p>
+                        initial={{ opacity: 0, y: 40 }}
+                        // Dùng type: "spring" cho animation mượt mà
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          delay: index * 0.08,
+                          type: "spring",
+                          stiffness: 120,
+                          damping: 18,
+                        }}
+                      >
+                        {/* TIÊU ĐỀ NGỮ PHÁP */}
+                        <h2
+                          className={`text-3xl font-bold ${PRIMARY_TEAL} border-b border-gray-100 pb-3 mb-5`}
+                        >
+                          {grammar.title}
+                        </h2>
+                        <p className="text-gray-700 mb-6 leading-relaxed text-base">
+                          {grammar.explanation}
+                        </p>
 
-                {/* CHI TIẾT NGỮ PHÁP */}
-                {grammar.details?.map((detail: any, idx: number) => (
-                  <div
-                    key={idx}
-                    // Đường phân cách dày và rõ ràng hơn
-                    className="border-t border-gray-200 pt-6 mt-6 space-y-4"
-                  >
-                    {/* CẤU TRÚC */}
-                    <p className="font-semibold text-gray-800 flex items-center">
-                      {/* Icon trực quan hóa cấu trúc */}
-                      <svg className={`w-5 h-5 mr-3 ${STRUCTURE_GREEN}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-                      Cấu trúc:{" "}
-                      {/* Cấu trúc được làm nổi bật như một khối code */}
-                      <span className={`ml-3 ${STRUCTURE_GREEN} font-mono ${EXAMPLE_BG_LIGHT} px-3 py-1 rounded-lg text-1xl shadow-inner`}>
-                        {detail.structure}
-                      </span>
-                    </p>
-                    
-                    {/* NGHĨA */}
-                    <p className="text-gray-600">
-                      Ý nghĩa: <span className="font-medium text-gray-800">{detail.meaning}</span>
-                    </p>
+                        {/* CHI TIẾT NGỮ PHÁP */}
+                        {grammar.details?.map((detail: any, idx: number) => (
+                          <div
+                            key={idx}
+                            // Đường phân cách dày và rõ ràng hơn
+                            className="border-t border-gray-200 pt-6 mt-6 space-y-4"
+                          >
+                            {/* CẤU TRÚC */}
+                            <p className="font-semibold text-gray-800 flex items-center">
+                              {/* Icon trực quan hóa cấu trúc */}
+                              <svg
+                                className={`w-5 h-5 mr-3 ${STRUCTURE_GREEN}`}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                                ></path>
+                              </svg>
+                              Cấu trúc:{" "}
+                              {/* Cấu trúc được làm nổi bật như một khối code */}
+                              <span
+                                className={`ml-3 ${STRUCTURE_GREEN} font-mono ${EXAMPLE_BG_LIGHT} px-3 py-1 rounded-lg text-1xl shadow-inner`}
+                              >
+                                {detail.structure}
+                              </span>
+                            </p>
 
-                    {/* KHỐI VÍ DỤ NỔI BẬT */}
-                    <div className={`${EXAMPLE_BG_LIGHT} rounded-xl p-5 border-l-4 ${BORDER_TEAL} shadow-md`}>
-                      <p className="whitespace-pre-line text-lg font-medium text-gray-900">
-                        {detail.exampleSentence}
-                      </p>
-                      <p className="text-gray-500 text-sm mt-3 border-t border-gray-200 pt-2">
-                        <span className="font-bold">Dịch nghĩa:</span> {detail.exampleMeaning}
-                      </p>
-                    </div>
+                            {/* NGHĨA */}
+                            <p className="text-gray-600">
+                              Ý nghĩa:{" "}
+                              <span className="font-medium text-gray-800">
+                                {detail.meaning}
+                              </span>
+                            </p>
+
+                            {/* KHỐI VÍ DỤ NỔI BẬT */}
+                            <div
+                              className={`${EXAMPLE_BG_LIGHT} rounded-xl p-5 border-l-4 ${BORDER_TEAL} shadow-md`}
+                            >
+                              <p className="whitespace-pre-line text-lg font-medium text-gray-900">
+                                {detail.exampleSentence}
+                              </p>
+                              <p className="text-gray-500 text-sm mt-3 border-t border-gray-200 pt-2">
+                                <span className="font-bold">Dịch nghĩa:</span>{" "}
+                                {detail.exampleMeaning}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </motion.div>
+                    ))}
                   </div>
-                ))}
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+                )}
+              </div>
+            </div>
+          );
       }
     };
 

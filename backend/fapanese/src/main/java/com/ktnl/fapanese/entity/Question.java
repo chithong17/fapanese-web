@@ -51,4 +51,7 @@ public class Question {
     @Column(name = "fill_answer")
     String fillAnswer;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lesson_part_id", nullable = false)
+    LessonPart lessonPart;
 }

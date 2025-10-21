@@ -2,7 +2,6 @@ package com.ktnl.fapanese.controller;
 
 
 import com.ktnl.fapanese.dto.response.ApiResponse;
-import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.service.interfaces.IFileUploadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +15,8 @@ import java.io.IOException;
 
 @Slf4j
 @RestController
-@RequestMapping({"/api/file-upload"})
-public class FileUploadController {
+@RequestMapping("/api/files")
+public class FileController {
     @Autowired
     private IFileUploadService iFileUploadService;
 

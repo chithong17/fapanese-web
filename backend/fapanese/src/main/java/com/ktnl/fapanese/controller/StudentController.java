@@ -6,11 +6,13 @@ import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.StudentRegisterResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.service.interfaces.IStudentService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.control.MappingControl;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.List;
 public class StudentController {
     IStudentService iStudentService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'LECTURER')")
     @PostMapping
     public ApiResponse<StudentRegisterResponse> registerStudent(@RequestBody StudentRegisterResquest resquest){
         StudentRegisterResponse response = iStudentService.registerStudent(resquest);
@@ -32,6 +35,7 @@ public class StudentController {
                 .build();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'LECTURER')")
     @GetMapping
     public ApiResponse<List<UserResponse>> getAllStudent(){
         List<UserResponse> list = iStudentService.getAllStudent();
@@ -41,6 +45,7 @@ public class StudentController {
                 .build();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'LECTURER')")
     @GetMapping("/{email}")
     public ApiResponse<UserResponse> getStudentByEmail(@PathVariable String email) {
         UserResponse response = iStudentService.getStudentByEmail(email);
@@ -50,6 +55,7 @@ public class StudentController {
                 .build();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'LECTURER')")
     @PutMapping("/{email}")
     public ApiResponse<UserResponse> updateStudent(
             @PathVariable String email,
@@ -62,6 +68,7 @@ public class StudentController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{email}")
     public ApiResponse<Void> deleteStudent(@PathVariable String email) {
         iStudentService.deleteStudent(email);

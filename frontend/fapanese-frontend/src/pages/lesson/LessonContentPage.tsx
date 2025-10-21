@@ -649,89 +649,95 @@ const LessonContentPage: React.FC = () => {
             </div>
           );
         case "grammar":
-          return (
-            <div className="p-8 space-y-10 text-gray-700">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                Ngữ pháp - Bài học {lessonPartId}
-              </h1>
+  // Giữ nguyên các màu sắc ban đầu để tuân thủ yêu cầu
+  const PRIMARY_TEAL = "text-[#00ACC1]";
+  const STRUCTURE_GREEN = "text-[#00796B]";
+  const EXAMPLE_BG_LIGHT = "bg-[#E0F7FA]";
+  const BORDER_TEAL = "border-[#00ACC1]";
 
-              {loadingGrammar ? (
-                <p className="italic text-gray-500 text-center py-6">
-                  Đang tải ngữ pháp...
+  return (
+    <div className="p-10 lg:p-14 space-y-12 bg-gray-50 min-h-screen">
+      <div className="max-w-4xl mx-auto">
+        
+        {/* TIÊU ĐỀ CHÍNH - Lớn, đậm, và có đường phân cách rõ ràng */}
+        <h1 className={`text-4xl lg:text-4xl font-extrabold text-gray-900 pb-3 mb-10 
+                       border-b-4 ${BORDER_TEAL} tracking-tight`}>
+          Ngữ pháp - Bài học {lessonPartId}
+        </h1>
+
+        {/* CÁC TRẠNG THÁI */}
+        {loadingGrammar ? (
+          <p className="italic text-gray-600 text-center py-12 text-xl animate-pulse">
+            <span className="inline-block mr-3">⏳</span> Đang tải ngữ pháp...
+          </p>
+        ) : grammarContent.length === 0 ? (
+          <p className="italic text-gray-500 text-center py-12 text-lg">
+            Phần này không có nội dung ngữ pháp.
+          </p>
+        ) : (
+          /* DANH SÁCH NGỮ PHÁP */
+          <div className="space-y-10">
+            {grammarContent.map((grammar, index) => (
+              <motion.div
+                key={grammar.id || index}
+                // Thẻ ngữ pháp: Shadows tinh tế hơn và hiệu ứng tương tác cao cấp
+                className="bg-white rounded-3xl p-8 shadow-xl ring-1 ring-gray-100 
+                           hover:shadow-2xl hover:ring-2 hover:ring-[#00ACC1]/50 
+                           hover:translate-y-[-2px] transition-all duration-500 ease-out"
+                initial={{ opacity: 0, y: 40 }}
+                // Dùng type: "spring" cho animation mượt mà
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.08, type: "spring", stiffness: 120, damping: 18 }}
+              >
+                {/* TIÊU ĐỀ NGỮ PHÁP */}
+                <h2 className={`text-3xl font-bold ${PRIMARY_TEAL} border-b border-gray-100 pb-3 mb-5`}>
+                  {grammar.title}
+                </h2>
+                <p className="text-gray-700 mb-6 leading-relaxed text-base">
+                  {grammar.explanation}
                 </p>
-              ) : grammarContent.length === 0 ? (
-                <p className="italic text-gray-500 text-center py-6">
-                  Không có ngữ pháp nào trong phần này.
-                </p>
-              ) : (
-                grammarContent.map((grammar, index) => (
-                  <motion.div
-                    key={grammar.id || index}
-                    className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
+
+                {/* CHI TIẾT NGỮ PHÁP */}
+                {grammar.details?.map((detail: any, idx: number) => (
+                  <div
+                    key={idx}
+                    // Đường phân cách dày và rõ ràng hơn
+                    className="border-t border-gray-200 pt-6 mt-6 space-y-4"
                   >
-                    <h2 className="text-2xl font-semibold text-[#00ACC1] mb-2">
-                      {grammar.title}
-                    </h2>
-                    <p className="text-gray-600 mb-4 leading-relaxed">
-                      {grammar.explanation}
+                    {/* CẤU TRÚC */}
+                    <p className="font-semibold text-gray-800 flex items-center">
+                      {/* Icon trực quan hóa cấu trúc */}
+                      <svg className={`w-5 h-5 mr-3 ${STRUCTURE_GREEN}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                      Cấu trúc:{" "}
+                      {/* Cấu trúc được làm nổi bật như một khối code */}
+                      <span className={`ml-3 ${STRUCTURE_GREEN} font-mono ${EXAMPLE_BG_LIGHT} px-3 py-1 rounded-lg text-1xl shadow-inner`}>
+                        {detail.structure}
+                      </span>
+                    </p>
+                    
+                    {/* NGHĨA */}
+                    <p className="text-gray-600">
+                      Ý nghĩa: <span className="font-medium text-gray-800">{detail.meaning}</span>
                     </p>
 
-                    {grammar.details?.map((detail: any, idx: number) => (
-                      <div
-                        key={idx}
-                        className="border-t border-gray-100 pt-4 mt-4 space-y-3"
-                      >
-                        <p className="font-semibold text-gray-800">
-                          Cấu trúc:{" "}
-                          <span className="text-[#00796B] font-mono">
-                            {detail.structure}
-                          </span>
-                        </p>
-                        <p className="text-gray-600">
-                          Nghĩa:{" "}
-                          <span className="font-medium">{detail.meaning}</span>
-                        </p>
-
-                        <div className="bg-[#E0F7FA]/50 rounded-xl p-4 text-gray-800">
-                          <p className="whitespace-pre-line text-sm font-medium">
-                            {detail.exampleSentence}
-                          </p>
-                          <p className="text-gray-500 text-sm mt-2">
-                            {detail.exampleMeaning}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </motion.div>
-                ))
-              )}
-            </div>
-          );
-        case "speaking":
-          return (
-            <div className="p-6 text-gray-700">
-                           {" "}
-              <h1 className="text-3xl font-bold mb-3">
-                                Speaking: Giao tiếp chào hỏi cơ bản            
-                 {" "}
-              </h1>
-                           {" "}
-              <p>Các đoạn hội thoại mẫu và công cụ luyện tập...</p>           {" "}
-            </div>
-          );
-        case "test":
-          return (
-            <div className="p-6 text-gray-700">
-                           {" "}
-              <h1 className="text-3xl font-bold mb-3">Kiểm tra cuối khóa</h1>   
-                       {" "}
-              <p>Bài kiểm tra tổng hợp kiến thức đã học trong chương này.</p>   
-                     {" "}
-            </div>
-          );
+                    {/* KHỐI VÍ DỤ NỔI BẬT */}
+                    <div className={`${EXAMPLE_BG_LIGHT} rounded-xl p-5 border-l-4 ${BORDER_TEAL} shadow-md`}>
+                      <p className="whitespace-pre-line text-lg font-medium text-gray-900">
+                        {detail.exampleSentence}
+                      </p>
+                      <p className="text-gray-500 text-sm mt-3 border-t border-gray-200 pt-2">
+                        <span className="font-bold">Dịch nghĩa:</span> {detail.exampleMeaning}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
       }
     };
 

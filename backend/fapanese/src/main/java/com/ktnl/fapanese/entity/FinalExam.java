@@ -36,6 +36,9 @@ public class FinalExam {
     @Column(name = "type")
     FinalExamType type;
 
+    @Column(name = "year")
+    int year;
+
     // Bảng `FinalExamQuestion` được xử lý bằng @ManyToMany
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

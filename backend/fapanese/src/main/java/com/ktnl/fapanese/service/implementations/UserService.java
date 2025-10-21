@@ -211,4 +211,12 @@ public class UserService implements IUserService {
 
         userRepo.save(user);
     }
+
+    @Override
+    public void setActiveStatusByEmail(String email, int status) {
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        user.setStatus(status);
+    }
 }

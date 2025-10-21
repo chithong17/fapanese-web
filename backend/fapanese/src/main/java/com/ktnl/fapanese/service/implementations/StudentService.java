@@ -120,9 +120,14 @@ public class StudentService implements IStudentService {
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        validateStudentRole(user);
-        user.setStatus(99); // soft delete
-        userRepo.save(user);
+        validateStudentRole(user); // vẫn giữ để tránh lỡ xóa user khác role
+
+        // ❌ Xóa mềm (hiện tại)
+        // user.setStatus(99);
+        // userRepo.save(user);
+
+        // ✅ Xóa cứng
+        userRepo.delete(user);
     }
 
     private void validateStudentRole(User user) {

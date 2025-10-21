@@ -222,7 +222,7 @@ const AboutUs: React.FC = () => {
                 <div className="p-8 rounded-xl shadow-2xl transition duration-500 bg-white hover:shadow-3xl border-l-[10px] border-transparent left-gradient-border hover:skew-x-1"> 
                     <FaQuoteRight className={`text-4xl mb-5 ${ACCENT_COLOR_TEXT} opacity-70`} /> 
                     <p className={`text-xl ${TEXT_MEDIUM} mb-5 italic font-semibold leading-relaxed`}> 
-                        "Chúng tôi là đối tác kiến tạo sự nghiệp. Cam kết mang lại trải nghiệm cá nhân hóa, hiệu quả và đầy cảm hứng, giúp bạn vượt qua mọi giới hạn."
+                        "Chúng tôi là một nhóm sinh viên trẻ, mang trong mình khát khao thay đổi cách học tiếng Nhật truyền thống. Với tinh thần sáng tạo và niềm đam mê công nghệ, chúng tôi xây dựng nền tảng học tập hiện đại, thú vị và đầy cảm hứng.."
                     </p>
                     <p className={`text-base ${TEXT_MEDIUM} border-t pt-4 mt-4 border-gray-100`}>
                         Nền tảng của chúng tôi là sự kết hợp hoàn hảo giữa công nghệ tiên tiến (AI-Driven), dữ liệu lớn và phương pháp sư phạm hiện đại.
@@ -267,7 +267,7 @@ const AboutUs: React.FC = () => {
       {/* Core Values Section - ĐÃ THÊM HIỆU ỨNG CUỘN */}
       <section 
         ref={valuesRef}
-        className={`py-32 bg-[${BACKGROUND_DARK}] relative overflow-hidden animate-on-scroll ${valuesInView ? 'visible' : ''}`}
+        className={`py-15 bg-[${BACKGROUND_DARK}] relative overflow-hidden animate-on-scroll ${valuesInView ? 'visible' : ''}`}
       > 
         <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16"> 

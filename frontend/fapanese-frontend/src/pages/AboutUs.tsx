@@ -1,4 +1,6 @@
 import React from "react";
+// Import Hook cần thiết
+import { useInView } from "react-intersection-observer"; 
 // Import các icons cần thiết
 import { FaReact, FaDocker, FaCodeBranch, FaHandsHelping, FaHeart, FaUsers, FaChartLine, FaLightbulb, FaInfinity, FaGlobe, FaQuoteRight, FaAngleDoubleDown, FaChevronRight, FaRegStar } from "react-icons/fa";
 import {
@@ -10,18 +12,13 @@ import {
   SiNodedotjs,
   SiFigma,
 } from "react-icons/si";
+import Footer from "../components/Footer";
+import AboutUsBanner from "../assets/abusbanner.svg"
+import AboutUsSide from "../assets/abusside.svg"
+  
 
-// Giả định component Footer tồn tại
-// import Footer from "../components/Footer"; 
-
-// =======================================================
-// FAKE URLs CHO ASSETS (GIỮ NGUYÊN)
-// =======================================================
-const AboutUsBanner = "https://picsum.photos/seed/ultra_elite_sky/1600/900"; 
-const AboutUsSide = "https://picsum.photos/seed/ultra_elite_team/800/1000";
 const Avatar1 = "https://i.pravatar.cc/150?img=68"; 
 const Avatar2 = "https://i.pravatar.cc/150?img=52";
-// =======================================================
 
 // CẤU HÌNH MÀU SẮC ULTRA-ELITE 
 const PRIMARY_HEX = "#007B8A"; 
@@ -33,7 +30,7 @@ const CARD_BG = "bg-white";
 const TEXT_DARK = "text-gray-900";
 const TEXT_MEDIUM = "text-gray-600";
 
-// CẤU HÌNH MÀU GRADIENT & HOVER 
+// CẤU HỒNG MÀU GRADIENT & HOVER 
 const GRADIENT_FROM = "#9bced5";
 const GRADIENT_TO = "#9cdfe8";
 const BUTTON_GRADIENT = `bg-gradient-to-r from-[${GRADIENT_FROM}] to-[${GRADIENT_TO}] text-gray-800`;
@@ -86,7 +83,6 @@ const TechCard: React.FC<typeof technologies[0]> = ({ icon, name, color }) => (
 const GradientDepthValueCard: React.FC<typeof coreValues[0]> = ({ title, desc, icon }) => (
   <div
     className="group transform transition-all duration-700 p-7 rounded-xl relative overflow-hidden bg-white hover:translate-y-[-10px] cursor-pointer shadow-xl hover:shadow-2xl hover-gradient-border"
-    // SỬA LỖI TẠI ĐÂY: Loại bỏ khoảng trắng giữa 'transitionTiming' và 'Function'
     style={{ transitionTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' }} 
   >
     <div className={`text-5xl mb-3 ${ACCENT_COLOR_TEXT} relative z-10 transition-transform duration-500 group-hover:scale-[1.05]`}> 
@@ -103,7 +99,8 @@ const GradientDepthValueCard: React.FC<typeof coreValues[0]> = ({ title, desc, i
 // Component Testimonial (Clean White + Subtle Shadow)
 const TestimonialCard: React.FC<{ quote: string; name: string; title: string; avatar: string }> = ({ quote, name, title, avatar }) => (
     <div className="bg-white rounded-2xl p-8 shadow-lg relative border border-gray-100 transform transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl"
-        style={{ transitionTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' }}
+        // LỖI ĐÃ ĐƯỢC SỬA: 'transitionTiming Function' -> 'transitionTimingFunction'
+        style={{ transitionTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' }} 
     >
         <FaQuoteRight className={`${ACCENT_COLOR_TEXT} text-4xl absolute top-6 right-6 opacity-5`} /> 
         <p className={`text-lg italic ${TEXT_MEDIUM} mb-5 mt-6 relative z-10 leading-relaxed font-light`}>"{quote}"</p> 
@@ -120,22 +117,56 @@ const TestimonialCard: React.FC<{ quote: string; name: string; title: string; av
     </div>
 );
 
-// Giả định một component Footer đơn giản 
-const Footer = () => (
-    <footer className={`bg-gray-800 text-white py-12`}>
-        <div className="max-w-7xl mx-auto px-6 text-center">
-            <p className="text-base font-light">© 2024 Fapanese Elite. All rights reserved. | Ultra-Elite Design.</p>
-        </div>
-    </footer>
-);
-
-
 const AboutUs: React.FC = () => {
+    
+  // HÀM XỬ LÝ SCROLL MƯỢT (Giữ nguyên)
+  const handleScrollToContent = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault(); 
+    const targetId = e.currentTarget.getAttribute('href'); 
+    if (targetId) {
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
+  // 1. Hook cho About Section
+  const [aboutRef, aboutInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1, // Kích hoạt khi 10% phần tử hiển thị
+  });
+
+  // 2. Hook cho Core Values Section
+  const [valuesRef, valuesInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  // 3. Hook cho Technologies Section
+  const [techRef, techInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  // 4. Hook cho Testimonials Section
+  const [testimonialsRef, testimonialsInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  // 5. Hook cho Mission Section
+  const [missionRef, missionInView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+
   return (
     <div className={`bg-[${BACKGROUND_LIGHT}] min-h-screen overflow-hidden font-nunito`}>
       
-      {/* Hero Section - Kích thước chữ lớn được điều chỉnh */}
-      <section className="relative h-[80vh] overflow-hidden hero-section"> 
+      {/* Hero Section */}
+      <section className="relative h-[100vh] overflow-hidden hero-section"> 
         {/* Parallax Layer 1: Background Image */}
         <div className="absolute top-0 left-0 w-full h-full z-0 parallax-bg" style={{ background: 'black' }}>
             <img 
@@ -147,14 +178,11 @@ const AboutUs: React.FC = () => {
         </div>
 
         {/* Parallax Layer 2: Simple Overlay */}
-        <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center"></div>
+        <div className="absolute inset-0 bg-black/5 z-10 flex items-center justify-center"></div>
         
         {/* Parallax Layer 3: Content (Clean Text) */}
         <div className="absolute top-[50%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full flex flex-col justify-center items-center z-20 text-center">
             <div className="max-w-7xl mx-auto px-6">
-                <p className="text-lg font-extrabold uppercase tracking-[0.5em] text-cyan-300 mb-4 animate-fadeInUp delay-500"> 
-                    SỨ MỆNH TINH HOA
-                </p>
                 <h1 className={`text-7xl md:text-[100px] font-black uppercase tracking-[0.1em] text-white leading-none mb-6 animate-fadeInUp delay-700`} 
                     style={{ 
                         textShadow: `0 8px 30px rgba(0, 0, 0, 1)`,
@@ -165,24 +193,32 @@ const AboutUs: React.FC = () => {
                 <p className="text-xl font-extrabold uppercase tracking-[0.3em] text-gray-200 mt-5 max-w-4xl mx-auto animate-fadeInUp delay-[900ms]"> 
                     TẦM VÓC TOÀN CẦU, GIÁ TRỊ VĨNH CỬU
                 </p>
-                <a href="#about-content" className="inline-block mt-12 text-white hover:text-[#9cdfe8] transition duration-500"> 
+                <a 
+                    href="#about-content" 
+                    onClick={handleScrollToContent} 
+                    className="inline-block mt-12 text-white hover:text-[#9cdfe8] transition duration-500 cursor-pointer"
+                > 
                     <FaAngleDoubleDown className="text-5xl drop-shadow-xl animate-bounce-slow" /> 
                 </a>
             </div>
         </div>
       </section>
 
-      {/* About Section - Giảm Padding */}
-      <section id="about-content" className={`py-32 px-6 bg-[${BACKGROUND_LIGHT}] relative overflow-hidden`}> 
+      {/* About Section - ĐÃ THÊM HIỆU ỨNG CUỘN */}
+      <section 
+          id="about-content" 
+          ref={aboutRef}
+          className={`py-32 px-6 bg-[${BACKGROUND_LIGHT}] relative overflow-hidden animate-on-scroll ${aboutInView ? 'visible' : ''}`}
+      > 
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-start"> 
             <div className="lg:col-span-7 animate-fadeInLeft delay-300">
-                <p className="text-md font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2">
+                {/* Đã sửa lỗi cú pháp: dùng ${ACCENT_COLOR_TEXT} thay vì ${ACCENT_COLOR_TEXT} */}
+                <p className={`text-md font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2`}>
                     TẦM NHÌN & SỨ MỆNH
                 </p>
                 <h2 className={`text-4xl md:text-6xl font-black ${TEXT_DARK} leading-tight mb-8`}> 
                     Kiến Tạo <span className={`text-[#00B8D9]`}>Tương Lai</span> Học Tập Toàn Cầu
                 </h2>
-                {/* Border Left Gradient */}
                 <div className="p-8 rounded-xl shadow-2xl transition duration-500 bg-white hover:shadow-3xl border-l-[10px] border-transparent left-gradient-border hover:skew-x-1"> 
                     <FaQuoteRight className={`text-4xl mb-5 ${ACCENT_COLOR_TEXT} opacity-70`} /> 
                     <p className={`text-xl ${TEXT_MEDIUM} mb-5 italic font-semibold leading-relaxed`}> 
@@ -192,7 +228,6 @@ const AboutUs: React.FC = () => {
                         Nền tảng của chúng tôi là sự kết hợp hoàn hảo giữa công nghệ tiên tiến (AI-Driven), dữ liệu lớn và phương pháp sư phạm hiện đại.
                     </p>
                 </div>
-                {/* CTA Button với Gradient và hiệu ứng mượt mà */}
                 <a
                     href="#"
                     className={`inline-flex items-center mt-10 px-14 py-4 font-black text-lg rounded-full shadow-2xl transform transition-all duration-700 ${BUTTON_GRADIENT} ${BUTTON_HOVER_STYLE}`} 
@@ -201,7 +236,7 @@ const AboutUs: React.FC = () => {
                 </a>
             </div>
             
-            {/* Statistics Section (Tối ưu hóa kích thước) */}
+            {/* Statistics Section */}
             <div className="lg:col-span-5 animate-fadeInRight delay-500 pt-10">
                    <h3 className={`text-2xl font-black ${TEXT_DARK} mb-8 border-b-2 border-gray-300 pb-3 flex items-center`}> 
                     <FaRegStar className={`${ACCENT_COLOR_TEXT} mr-3 text-xl`} /> Đánh Giá Định Lượng
@@ -213,7 +248,6 @@ const AboutUs: React.FC = () => {
                             className="flex items-center p-6 rounded-xl bg-white shadow-xl border border-gray-100 transition duration-700 transform hover:scale-[1.03] hover:shadow-2xl" 
                             style={{ transitionTimingFunction: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }}
                         >
-                            {/* Icon Box với Gradient Border */}
                             <div className={`flex items-center text-4xl font-extrabold text-white mr-5 p-3 rounded-lg shadow-lg gradient-border-icon`} 
                                 style={{ backgroundColor: PRIMARY_HEX }}
                             >
@@ -230,11 +264,15 @@ const AboutUs: React.FC = () => {
         </div>
       </section>
 
-      {/* Core Values Section (Giảm Padding) */}
-      <section className={`py-32 bg-[${BACKGROUND_DARK}] relative overflow-hidden`}> 
+      {/* Core Values Section - ĐÃ THÊM HIỆU ỨNG CUỘN */}
+      <section 
+        ref={valuesRef}
+        className={`py-32 bg-[${BACKGROUND_DARK}] relative overflow-hidden animate-on-scroll ${valuesInView ? 'visible' : ''}`}
+      > 
         <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16"> 
-                <p className="text-md font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2">
+                {/* Đã sửa lỗi cú pháp: dùng ${ACCENT_COLOR_TEXT} thay vì ${ACCENT_COLOR_TEXT} */}
+                <p className={`text-md font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2`}>
                     TRIẾT LÝ HOẠT ĐỘNG
                 </p>
                 <h2 className={`text-4xl md:text-5xl font-black ${TEXT_DARK}`}> 
@@ -251,10 +289,14 @@ const AboutUs: React.FC = () => {
       </section>
 
 
-      {/* Technologies Section (Giảm Padding) */}
-      <section className={`py-24 relative overflow-hidden bg-[#F0F3F6]`}> 
+      {/* Technologies Section - ĐÃ THÊM HIỆU ỨNG CUỘN */}
+      <section 
+          ref={techRef}
+          className={`py-24 relative overflow-hidden bg-[#F0F3F6] animate-on-scroll ${techInView ? 'visible' : ''}`}
+      > 
         <div className="max-w-7xl mx-auto text-center mb-10 px-6"> 
-            <p className="text-md font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2">
+            {/* Đã sửa lỗi cú pháp: dùng ${ACCENT_COLOR_TEXT} thay vì ${ACCENT_COLOR_TEXT} */}
+            <p className={`text-md font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2`}>
                 NỀN TẢNG
             </p>
           <h3 className={`text-4xl md:text-5xl font-black ${TEXT_DARK}`}>
@@ -275,10 +317,14 @@ const AboutUs: React.FC = () => {
         </div>
       </section>
 
-      {/* Testimonials Section (Giảm Padding) */}
-      <section className={`py-32 px-6 bg-[${BACKGROUND_DARK}] relative overflow-hidden`}> 
+      {/* Testimonials Section - ĐÃ THÊM HIỆU ỨNG CUỘN */}
+      <section 
+          ref={testimonialsRef}
+          className={`py-32 px-6 bg-[${BACKGROUND_DARK}] relative overflow-hidden animate-on-scroll ${testimonialsInView ? 'visible' : ''}`}
+      > 
         <div className="max-w-7xl mx-auto text-center mb-16"> 
-            <p className="text-md font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2">
+            {/* Đã sửa lỗi cú pháp: dùng ${ACCENT_COLOR_TEXT} thay vì ${ACCENT_COLOR_TEXT} */}
+            <p className={`text-md font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2`}>
                 PHẢN HỒI CHÂN THỰC
             </p>
             <h2 className={`text-4xl md:text-5xl font-black ${TEXT_DARK}`}> 
@@ -301,12 +347,16 @@ const AboutUs: React.FC = () => {
         </div>
       </section>
 
-      {/* Mission Section (Giảm Padding) */}
-      <section className={`py-32 px-6 bg-[#F0F3F6] relative overflow-hidden`}> 
+      {/* Mission Section - ĐÃ THÊM HIỆU ỨNG CUỘN */}
+      <section 
+          ref={missionRef}
+          className={`py-32 px-6 bg-[#F0F3F6] relative overflow-hidden animate-on-scroll ${missionInView ? 'visible' : ''}`}
+      > 
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-16 items-center"> 
             
           <div className="md:col-span-7 text-center md:text-left animate-fadeInLeft delay-500 order-2 md:order-1">
-            <p className="text-lg font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2">Hành trình Khác Biệt</p>
+            {/* Đã sửa lỗi cú pháp: dùng ${ACCENT_COLOR_TEXT} thay vì ${ACCENT_COLOR_TEXT} */}
+            <p className={`text-lg font-extrabold uppercase tracking-[0.4em] ${ACCENT_COLOR_TEXT} mb-2`}>Hành trình Khác Biệt</p>
             <h2 className={`text-5xl md:text-6xl font-black ${TEXT_DARK} mb-7 leading-tight`}> 
               Tạo Ra <span className={`text-[#00B8D9]`}>Giá Trị</span> Cho Sự Nghiệp Của Bạn
             </h2>
@@ -315,7 +365,6 @@ const AboutUs: React.FC = () => {
               "Chúng tôi tin vào việc trao quyền. Mỗi người học là một tương lai cần được khai phóng. Chúng tôi tạo ra giá trị khác biệt cho mỗi người học."
             </blockquote>
             
-            {/* CTA Button với Gradient và hiệu ứng mượt mà */}
             <a
               href="#"
               className={`inline-flex items-center px-14 py-4 font-black text-lg rounded-full shadow-2xl transform transition-all duration-700 ${BUTTON_GRADIENT} ${BUTTON_HOVER_STYLE}`} 
@@ -324,7 +373,6 @@ const AboutUs: React.FC = () => {
             </a>
           </div>
 
-          {/* Khối Ảnh - Smooth Depth Rotation */}
           <div className="relative md:col-span-5 animate-fadeInRight delay-700 order-1 md:order-2">
             <div 
               className="rounded-[40px] p-[5px] gradient-border-wrap relative z-10 shadow-3xl transition duration-1000 hover:shadow-4xl hover:scale-[1.03] hover:rotate-[-0.5deg]" 
@@ -339,9 +387,9 @@ const AboutUs: React.FC = () => {
           </div>
         </div>
       </section>
+      <Footer></Footer>
 
-      <Footer />
-
+      
       {/* CUSTOM CSS (Đã kiểm tra và tối ưu hóa) */}
       <style>
         {`
@@ -362,35 +410,43 @@ const AboutUs: React.FC = () => {
             transform: translateZ(-1px) scale(2); 
           }
 
-          /* CUSTOM GRADIENT STYLES (Đã kiểm tra và giữ nguyên độ tinh tế) */
+          /* CUSTOM GRADIENT STYLES (Đã thêm các styles bị thiếu để Tailwind hoạt động đúng) */
           .left-gradient-border {
             border-image-source: linear-gradient(to bottom, ${GRADIENT_FROM}, ${GRADIENT_TO});
             border-image-slice: 1;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
           }
 
-          .gradient-border-icon {
-              border: 3px solid transparent; 
-              background-image: linear-gradient(white, white), 
-                                linear-gradient(to right, ${GRADIENT_FROM}, ${GRADIENT_TO});
-              background-origin: border-box;
-              background-clip: content-box, border-box;
+          .gradient-border-avatar {
+              background: linear-gradient(45deg, ${GRADIENT_FROM}, ${GRADIENT_TO});
+              padding: 3px;
           }
 
-          .gradient-border-avatar {
-              background-image: linear-gradient(to right, ${GRADIENT_FROM}, ${GRADIENT_TO});
-              padding: 4px; 
-              box-shadow: 0 5px 15px rgba(0, 123, 138, 0.2);
+          .gradient-border-icon {
+              background: linear-gradient(135deg, ${GRADIENT_FROM}, ${GRADIENT_TO});
+          }
+
+          .shadow-3xl {
+              box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+          }
+
+          .shadow-4xl {
+              box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.2);
           }
           
-          .gradient-border-wrap {
-            background: linear-gradient(45deg, ${GRADIENT_FROM}, ${GRADIENT_TO});
-            border-radius: 40px; 
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+          /* HIỆU ỨNG XUẤT HIỆN KHI CUỘN (Scroll Reveal Effect) */
+          .animate-on-scroll {
+              opacity: 0;
+              transform: translateY(40px); /* Bắt đầu từ dưới lên */
+              transition: opacity 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
           }
 
+          .animate-on-scroll.visible {
+              opacity: 1;
+              transform: translateY(0);
+          }
 
-          /* HOVER GRADIENT BORDER cho Value Card */
+          /* HOVER GRADIENT BORDER cho Value Card (Giữ nguyên) */
           .underline-hover-gradient {
               position: relative;
           }

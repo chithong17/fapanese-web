@@ -107,7 +107,7 @@ public class QuestionService implements IQuestionService {
                 if (storedAnswer != null && storedAnswer.equalsIgnoreCase(userAnswer.getUserAnswer())) {
                     isCorrect = true;
                 }
-            } else if ("FILL_IN_THE_BLANK".equalsIgnoreCase(questionType)) {
+            } else if ("FILL".equalsIgnoreCase(questionType)) {
                 storedAnswer = question.getFillAnswer();
                 if (storedAnswer != null && storedAnswer.trim().equalsIgnoreCase(userAnswer.getUserAnswer().trim())) {
                     isCorrect = true;
@@ -130,10 +130,22 @@ public class QuestionService implements IQuestionService {
                     .build());
         }
 
-        double scorePercentage = ((double) correctCount / userAnswers.size()) * 100;
+        Long lessonPartId = null;
+        if (!userAnswers.isEmpty()) {
+            Question firstQuestion = questionRepository.findById(userAnswers.get(0).getQuestionId())
+                    .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
+            lessonPartId = firstQuestion.getLessonPart().getId();
+        }
+
+        long totalQuestions = (lessonPartId != null)
+                ? questionRepository.countByLessonPartId(lessonPartId)
+                : userAnswers.size();
+
+
+        double scorePercentage = ((double) correctCount / totalQuestions) * 100;
 
         return SubmitQuizResponse.builder()
-                .totalQuestions(userAnswers.size())
+                .totalQuestions((int) totalQuestions)
                 .correctCount(correctCount)
                 .scorePercentage(Math.round(scorePercentage * 100.0) / 100.0)
                 .detailedResults(detailedResults)

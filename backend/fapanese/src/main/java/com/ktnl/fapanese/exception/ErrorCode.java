@@ -37,9 +37,14 @@ public enum ErrorCode {
     DOB_INVALID(2006, "Date of birth must be in the past", HttpStatus.BAD_REQUEST),
     CAMPUS_REQUIRED(2007, "Campus is required", HttpStatus.BAD_REQUEST),
 
-    FILE_REQUIRED(3001, "File không được rỗng", HttpStatus.BAD_REQUEST);
+    FILE_REQUIRED(3001, "File không được rỗng", HttpStatus.BAD_REQUEST),
+
+    OVERVIEW_PART_NOT_FOUND(4001, "Không tìm thấy Overview Part", HttpStatus.NOT_FOUND),
+    EXAM_NOT_FOUND(4002, "Không tìm thấy bài kiểm tra", HttpStatus.NOT_FOUND),
+    OVERVIEW_NOT_FOUND(4003, "Không tìm thấy Overview", HttpStatus.NOT_FOUND)
 
 
+    ;
     private int code;
     private String message;
     private HttpStatusCode statusCode;

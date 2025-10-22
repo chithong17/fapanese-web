@@ -31,6 +31,7 @@ public class Grammar {
     @Column(name = "explanation", columnDefinition = "TEXT")
     String explanation;
 
+    @Builder.Default
     @OneToMany(mappedBy = "grammar", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<GrammarDetail> grammarDetails = new HashSet<>();
 }

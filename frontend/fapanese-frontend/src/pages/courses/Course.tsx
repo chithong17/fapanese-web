@@ -215,7 +215,6 @@ const Course: React.FC = () => {
           ))}
         </div>
       </section>
-      <Footer></Footer>
     </ScrollReveal>
   );
 };

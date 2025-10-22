@@ -455,47 +455,104 @@ const LessonContentPage: React.FC = () => {
     }
 
     if (quizResult) {
-      return (
-        <div className="mt-10 text-center bg-[#E0F7FA]/60 rounded-2xl p-8 shadow-inner">
-          <h2 className="text-3xl font-bold text-[#00796B] mb-3">
-            🎉 Bạn đã hoàn thành bài luyện tập!
-          </h2>
-          <p className="text-gray-700 text-lg mb-2">
-            Số câu đúng:{" "}
-            <span className="font-bold text-[#0097A7]">
-              {quizResult.correctCount}/{quizResult.totalQuestions}
-            </span>
-          </p>
-          <p className="text-gray-700 text-lg mb-6">
-            Điểm số:{" "}
-            <span className="font-bold text-[#00ACC1]">
-              {quizResult.scorePercentage}%
-            </span>
-          </p>
+  // Chuẩn bị dữ liệu hiển thị
+  const score = quizResult.scorePercentage;
+  const correct = quizResult.correctCount;
+  const total = quizResult.totalQuestions;
 
-          <button
-            onClick={() => {
-              // Làm lại bài
-              setQuizResult(null);
-              setCurrentQuestionIndex(0);
-              setIsAnswered(false);
-              setIsCorrect(null);
-              setSelectedOption(null);
-              setUserAnswers([]);
-            }}
-            className="mt-4 px-6 py-3 rounded-lg bg-gradient-to-r from-[#00BCD4] to-[#26C6DA] text-white font-semibold hover:shadow-lg transition-all"
-          >
-            🔄 Làm lại bài
-          </button>
+  // Tùy chỉnh thông điệp dựa trên điểm số
+  const message = score >= 80 
+    ? "Xin chúc mừng! Mức độ thành thạo xuất sắc." 
+    : score >= 50 
+    ? "Kết quả tốt. Cần thêm một chút luyện tập nữa." 
+    : "Hãy tiếp tục rèn luyện để đạt hiệu quả cao hơn.";
+  
+  // Màu sắc điểm số sử dụng màu Teal/Cyan để đồng bộ với gradient
+  const scoreColor = score >= 80 ? 'text-[#00ACC1]' : score >= 50 ? 'text-[#0097A7]' : 'text-gray-700';
+
+  return (
+    <div className="mt-16 p-14 bg-white rounded-3xl shadow-neumorphic-lg border border-gray-50 max-w-lg mx-auto 
+                    transform transition-all duration-500 hover:shadow-neumorphic-xl">
+      
+      <div className="text-center">
+        {/* Tiêu đề chính */}
+        <h2 className="text-4xl font-extralight text-gray-800 mb-2 tracking-widest uppercase">
+          Kết Quả 
+        </h2>
+        <p className="text-lg text-gray-500 mb-12 font-light italic border-b pb-6">
+          {message}
+        </p>
+        
+        {/* Điểm số - Khối nổi bật nhất */}
+        <div className="mb-12 p-8 bg-white rounded-2xl shadow-inner-neumorphic border border-gray-100">
+            <p className="text-sm text-gray-400 mb-4 font-medium uppercase tracking-widest">
+                Tổng Điểm Đạt Được
+            </p>
+            <span className={`text-8xl font-black ${scoreColor} transition-colors duration-500`}>
+              {score}
+              <span className="text-5xl align-top font-bold">%</span>
+            </span>
         </div>
-      );
-    }
+
+        {/* Thông tin chi tiết - Bố cục dọc, phân tách bằng đường kẻ mỏng */}
+        <div className="space-y-6 text-center">
+          
+          {/* Số câu đúng */}
+          <div className="py-2 border-b border-gray-100">
+            <p className="text-base text-gray-600 font-light mb-1">
+              Số câu trả lời đúng
+            </p>
+            <span className="text-3xl font-semibold text-[#0097A7]">
+              {correct}
+            </span>
+            <span className="text-xl font-normal text-gray-400">
+              /{total}
+            </span>
+          </div>
+
+          {/* Tỷ lệ sai (Thêm một chỉ số mới cho đầy đủ) */}
+          <div className="py-2 border-b border-gray-100">
+            <p className="text-base text-gray-600 font-light mb-1">
+              Tỷ lệ chính xác
+            </p>
+            <span className="text-3xl font-semibold text-[#00ACC1]">
+              {score}%
+            </span>
+          </div>
+          
+        </div>
+
+        {/* Nút Làm Lại - Gradient cũ, hiệu ứng 3D nhẹ */}
+        <button
+          onClick={() => {
+            // Logic làm lại bài
+            setQuizResult(null);
+            setCurrentQuestionIndex(0);
+            setIsAnswered(false);
+            setIsCorrect(null);
+            setSelectedOption(null);
+            setUserAnswers([]);
+          }}
+          className="mt-16 w-full px-8 py-5 text-xl rounded-2xl 
+                     bg-gradient-to-r from-[#00BCD4] to-[#26C6DA] 
+                     text-white font-semibold tracking-wider shadow-btn-neumorphic
+                     transition-all duration-300 
+                     hover:shadow-btn-hover-neumorphic hover:scale-[1.01] 
+                     active:shadow-btn-active-neumorphic active:scale-[0.99]
+                     focus:outline-none focus:ring-4 focus:ring-[#00BCD4]/50"
+        >
+          Làm Lại Bài Luyện Tập
+        </button>
+      </div>
+    </div>
+  );
+}
 
     // Giả định logic hiển thị kết quả quiz được đặt ở ngoài hoặc sử dụng hàm riêng.
     // Ta chỉ tập trung vào việc render câu hỏi.
 
     return (
-      <div className="w-full p-8 md:p-12 bg-white shadow-2xl rounded-3xl border border-gray-100">
+      <div className="w-full p-8 md:p-12 bg-white">
         {/* Thanh tiến độ + điều hướng */}
         <div className="mb-8">
           {/* Tiêu đề tiến độ được làm rõ nét và sang trọng hơn */}
@@ -576,21 +633,29 @@ const LessonContentPage: React.FC = () => {
         {/* Câu hỏi (Chi tiết) */}
         {currentQuestion && (
           <div className="text-center mt-10">
-            <h3 className="text-3xl font-extrabold mb-8 text-gray-900 border-b pb-4 border-gray-100">
-              Câu {currentQuestionIndex + 1}
-            </h3>
+            <div className="flex flex-col mb-4 p-2 border-b border-gray-200">
+              {/* Dòng 1: Tiêu đề và Category (Sử dụng flex để sắp xếp) */}
+              <div className="flex justify-between items-end mb-2">
+                {/* Tiêu đề chính (Câu X) */}
+                <h3 className="text-4xl font-extrabold text-gray-900 leading-none">
+                  Câu {currentQuestionIndex + 1}
+                </h3>
 
-            {/* Metadata */}
-            <p className="text-[#00BCD4] text-sm font-semibold uppercase mb-1 tracking-wider">
-              {currentQuestion.category}
-            </p>
-            <p className="text-gray-500 text-xs mb-6 font-medium italic">
-              {currentQuestion.questionType === "MULTIPLE_CHOICE"
-                ? "Chọn đáp án đúng"
-                : currentQuestion.questionType === "TRUE_FALSE"
-                ? "Chọn Đúng hoặc Sai"
-                : "Điền đáp án của bạn"}
-            </p>
+                {/* Category (Metadata 1) */}
+                <span className="text-[#00BCD4] text-sm font-semibold uppercase tracking-wider px-3 py-1 bg-[#E0F7FA] rounded-full">
+                  {currentQuestion.category}
+                </span>
+              </div>
+
+              {/* Dòng 2: Hướng dẫn (Metadata 2) */}
+              <span className="text-gray-500 text-sm font-medium italic mt-1">
+                {currentQuestion.questionType === "MULTIPLE_CHOICE"
+                  ? "Vui lòng chọn đáp án đúng"
+                  : currentQuestion.questionType === "TRUE_FALSE"
+                  ? "Vui lòng chọn Đúng hoặc Sai"
+                  : "Vui lòng điền đáp án của bạn"}
+              </span>
+            </div>
 
             <p className="text-2xl font-bold text-gray-800 mb-10 p-4 bg-gray-50 rounded-xl shadow-inner">
               {currentQuestion.content}
@@ -707,7 +772,7 @@ const LessonContentPage: React.FC = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, type: "tween" }} // Hiệu ứng mượt (tween)
-                className={`mt-10 p-8 rounded-2xl text-center font-bold text-xl shadow-2xl transition-all duration-500 
+                className={`mt-5 p-5 rounded-2xl text-center font-bold text-xl shadow-2xl transition-all duration-500 
             // Loại bỏ hoàn toàn border
             
             ${
@@ -721,19 +786,19 @@ const LessonContentPage: React.FC = () => {
                 {isCorrect ? (
                   // Nội dung Chính xác (Rõ ràng và Nổi bật)
                   <>
-                    <p className="text-2xl mb-2 font-extrabold text-green-800">
+                    <p className="text-1xl mb-2 font-extrabold text-green-800">
                       CHÍNH XÁC TUYỆT VỜI!
                     </p>
-                    <span className="font-medium text-lg text-gray-600">
+                    <span className="font-medium text-1xl text-gray-600">
                       Bạn đã hiểu rõ kiến thức này.
                     </span>
                   </>
                 ) : (
                   <>
-                    <p className="text-2xl mb-2 font-extrabold text-red-800">
+                    <p className="text-1xl mb-2 font-extrabold text-red-800">
                       RẤT TIẾC, CHƯA CHÍNH XÁC.
                     </p>
-                    <div className="text-lg font-medium text-gray-700 mt-4 pt-4 border-t border-red-200/50">
+                    <div className="text-1xl font-medium text-gray-700 mt-4 pt-2 border-t border-red-200/50">
                       Đáp án đúng:
                       <span className="font-extrabold text-gray-900 ml-2 block sm:inline">
                         {currentQuestion.fillAnswer ||

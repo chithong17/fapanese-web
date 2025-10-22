@@ -4,23 +4,20 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class QuestionResponse {
-    Long id;
-    String content;
-    String category;
-    String questionType;
+public class OverviewResponse {
+    private Long id;
+    private Long courseId;
+    private String overviewTitle;
+    private String description;
 
-    String optionA;
-    String optionB;
-    String optionC;
-    String optionD;
-    String correctAnswer;
-    String fillAnswer;
-
+    // 👈 Dùng DTO, không dùng Entity
+    private Set<OverviewPartResponse> overviewParts;
 }

@@ -1,8 +1,11 @@
 package com.ktnl.fapanese.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ktnl.fapanese.entity.enums.FinalExamType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -10,17 +13,11 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class QuestionResponse {
+public class MiddleExamResponse {
     Long id;
-    String content;
-    String category;
-    String questionType;
-
-    String optionA;
-    String optionB;
-    String optionC;
-    String optionD;
-    String correctAnswer;
-    String fillAnswer;
-
+    String examTitle;
+    String semester;
+    FinalExamType type;
+    int year;
+    Set<QuestionResponse> questions; // Dùng DTO, không dùng Entity
 }

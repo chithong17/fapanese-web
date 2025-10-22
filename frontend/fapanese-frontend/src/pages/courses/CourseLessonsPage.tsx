@@ -132,7 +132,7 @@ const CourseLessonsPage: React.FC = () => {
             variants={sectionFadeIn}
             className="space-y-12 mb-20"
           >
-            <h2 className="text-4xl font-light text-gray-700 text-center tracking-tight border-b-2 border-cyan-100 pb-3">
+            <h2 className="text-4xl font-light text-gray-700 text-center tracking-tight border-b-2 border-gray-300 pb-3">
               Tổng quan Lộ trình Học tập
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -160,7 +160,7 @@ const CourseLessonsPage: React.FC = () => {
             variants={sectionFadeIn}
             className="space-y-12"
           >
-            <h2 className="text-4xl font-light text-gray-700 text-center tracking-tight border-b-2 border-cyan-100 pb-3">
+            <h2 className="text-4xl font-light text-gray-700 text-center tracking-tight border-b-2 border-gray-300 pb-3">
               Chi tiết Các Bài học
             </h2>
 

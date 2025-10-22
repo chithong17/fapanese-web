@@ -148,7 +148,6 @@ function App() {
         <Route path="/flashcard/:lessonPartId" element={<FlashcardPage />} />
       </Routes>
 
-      {!isAdminPage && <Footer />}
     </>
   );
 }

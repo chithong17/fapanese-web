@@ -1,221 +1,256 @@
 import React, { useEffect, useState } from "react";
 import { motion, type Variants } from "framer-motion";
 import { getLessonsByCourseCode } from "../../api/lesson";
-import CourseBanner from "../../assets/jpd113-coursebanner.svg"; // ảnh banner chung
+import CourseBanner from "../../assets/jpd113-coursebanner.svg"; 
 import { getLessonPartsByLesson } from "../../api/lessonPart";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import NotificationModal from "../../components/NotificationModal"; // <-- 1. IMPORT MODAL
+import NotificationModal from "../../components/NotificationModal"; 
 
-// ... (animation config giữ nguyên) ...
+// --- Cấu hình Animation Tối Ưu ---
 const customEase = [0.4, 0, 0.2, 1] as const;
 
-const fadeInUp: Variants = {
- hidden: { opacity: 0, y: 50 },
- show: {
-  opacity: 1,
-  y: 0,
-  transition: { duration: 1.2, ease: customEase, staggerChildren: 0.1 },
- },
+// Container chính (FadeIn & Scale nhẹ)
+const containerVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.98 },
+  show: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 1, ease: customEase, staggerChildren: 0.2, delay: 0.1 },
+  },
 };
 
-const itemFadeIn: Variants = {
- hidden: { opacity: 0, y: 40 },
- show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: customEase } },
+// Dùng cho Banner, Title lớn
+const headerFadeIn: Variants = {
+  hidden: { opacity: 0, y: -40, scale: 0.95 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 1.2, ease: customEase } },
 };
 
-// neumorphism
-const neumorphicShadow = "20px 20px 60px #d4d7dc, -20px -20px 60px #ffffff";
-const buttonShadow =
- "4px 4px 10px rgba(33, 147, 176, 0.4), -4px -4px 10px rgba(109, 213, 237, 0.3)";
-// ...
+// Dùng cho các section chi tiết (Lộ trình, Danh sách bài học)
+const sectionFadeIn: Variants = {
+  hidden: { opacity: 0, y: 60 },
+  show: { opacity: 1, y: 0, transition: { duration: 1.2, ease: customEase } },
+};
+
+// Dùng cho từng item trong danh sách
+const itemVariants: Variants = {
+  hidden: { opacity: 0, x: -30 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.8, ease: customEase } },
+};
+
+// --- Cấu hình Neumorphism & Màu Sắc ---
+const mainBg = "#e8ebf0"; 
+// Shadow Neumorphism Sâu hơn
+const neumorphicShadow = "20px 20px 40px #c6c9cc, -10px -10px 40px #ffffff"; 
+// Shadow nút (Cyan/Teal)
+const buttonShadow = "4px 4px 10px rgba(33, 147, 176, 0.4), -4px -4px 10px rgba(109, 213, 237, 0.3)";
+
 
 const CourseLessonsPage: React.FC = () => {
- const { courseCode } = useParams();
- const [lessons, setLessons] = useState<any[]>([]);
- const [loading, setLoading] = useState(true);
- const navigate = useNavigate();
+  const { courseCode } = useParams();
+  const [lessons, setLessons] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [notifMessage, setNotifMessage] = useState<string | null>(null);
+  const [isAuthError, setIsAuthError] = useState(false);
 
- // --- 2. STATE CHO MODAL ---
- const [notifMessage, setNotifMessage] = useState<string | null>(null);
-  // 🔹 Thêm state "cờ" để nhớ hành động cần làm (giống unverifiedEmail trong AuthPopup)
- const [isAuthError, setIsAuthError] = useState(false);
+  useEffect(() => {
+    const fetchLessons = async () => {
+      try {
+        if (!courseCode) return;
+        setLoading(true);
+        const res = await getLessonsByCourseCode(courseCode);
+        setLessons(res);
+      } catch (err: any) {
+        if (err?.response?.data?.code === 1001) {
+          setNotifMessage("Vui lòng đăng nhập để thực hiện tính năng này.");
+          setIsAuthError(true); 
+        } else {
+          console.error("Không thể tải bài học:", err);
+          setNotifMessage(err.response?.data?.message || "Lỗi khi tải bài học.");
+          setIsAuthError(false);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLessons();
+  }, [courseCode]);
 
- useEffect(() => {
-  const fetchLessons = async () => {
-   try {
-    if (!courseCode) return;
-    setLoading(true);
-    const res = await getLessonsByCourseCode(courseCode);
-    setLessons(res);
-   } catch (err: any) { // 🔹 Đặt kiểu 'any' để truy cập err.response
-    if (err?.response?.data?.code === 1001) {
-          // 🔹 3. SỬA LOGIC CATCH
-          // Chỉ hiển thị thông báo và đặt cờ, KHÔNG chuyển trang ngay
-     setNotifMessage("Vui lòng đăng nhập để thực hiện tính năng này.");
-     setIsAuthError(true); // Đặt cờ để biết cần chuyển trang khi đóng modal
-    } else {
-     console.error("Không thể tải bài học:", err);
-     setNotifMessage(err.response?.data?.message || "Lỗi khi tải bài học.");
-          setIsAuthError(false); // Đảm bảo cờ được xóa
-    }
-   } finally {
-    setLoading(false);
-   }
-  };
-  fetchLessons();
-    // 🔹 navigate không được gọi trực tiếp trong effect, 
-    // nên ta chỉ cần phụ thuộc vào courseCode
- }, [courseCode]);
-
-  // 🔹 4. TẠO HÀM XỬ LÝ ĐÓNG MODAL (Giống hệt logic của AuthPopup)
   const handleNotifClose = () => {
-    // Lưu lại trạng thái cờ trước khi reset
     const wasAuthError = isAuthError;
-
-    // Reset tất cả state
     setNotifMessage(null);
     setIsAuthError(false);
-
-    // Kiểm tra cờ và thực hiện hành động (nếu có)
     if (wasAuthError) {
-      navigate("/courses"); // Chuyển trang NGAY SAU KHI đóng modal
+      navigate("/courses"); 
     }
-    // Nếu không phải lỗi auth, không làm gì thêm
   };
 
- // --- 5. CẬP NHẬT HÀM ĐỂ SỬ DỤNG MODAL (Và xóa cờ) ---
- const handleStartLesson = async (lessonId: number) => {
-  try {
-      // 🔹 Đảm bảo cờ được xóa khi có hành động mới
+  const handleStartLesson = async (lessonId: number) => {
+    try {
       setIsAuthError(false); 
-   const parts = await getLessonPartsByLesson(lessonId);
-   if (parts.length > 0) {
-    const firstPartId = parts[0].id;
-    navigate(`/lesson/${courseCode}/${lessonId}/${firstPartId}`);
-   } else {
-    setNotifMessage("Bài học này chưa có nội dung nào!");
-   }
-  } catch (err: any) { // 🔹 Đặt kiểu 'any'
-   console.error("Không thể tải lesson part:", err);
-      setIsAuthError(false); // 🔹 Xóa cờ
-   setNotifMessage(err.response?.data?.message || "Lỗi khi mở bài học!");
-  }
- };
+      const parts = await getLessonPartsByLesson(lessonId);
+      if (parts.length > 0) {
+        const firstPartId = parts[0].id;
+        navigate(`/lesson/${courseCode}/${lessonId}/${firstPartId}`);
+      } else {
+        setNotifMessage("Bài học này chưa có nội dung nào!");
+      }
+    } catch (err: any) {
+      console.error("Không thể tải lesson part:", err);
+      setIsAuthError(false); 
+      setNotifMessage(err.response?.data?.message || "Lỗi khi mở bài học!");
+    }
+  };
 
- return (
-  <div className="min-h-screen bg-[#e8ebf0] py-20">
-   <motion.div
-        // ... (Toàn bộ phần JSX Banner và Lộ trình giữ nguyên) ...
-   >
-        {/* ... Banner ... */}
-    <motion.div variants={itemFadeIn} className="text-center space-y-6">
-     <div className="shadow-2xl shadow-gray-400/30 rounded-b-[60px] overflow-hidden">
-      <img
-       src={CourseBanner}
-       alt="Course Banner"
-       className="w-full h-auto object-cover"
-      />
-     </div>
-     <h1 className="text-5xl font-semibold text-gray-800 mt-8">
-      Khóa học: {courseCode?.toUpperCase()}
-     </h1>
-    </motion.div>
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: mainBg }}>
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="py-20" 
+      >
+        {/* --- 1. Banner và Tiêu đề (Header Fade In) --- */}
+        <motion.div variants={headerFadeIn} className="text-center space-y-6 mb-16">
+          
+          {/* Vùng Banner: GIỮ NGUYÊN CODE TỪ PHIÊN BẢN TRƯỚC */}
+          <div className="w-full flex justify-center items-center overflow-hidden shadow-2xl shadow-gray-400/30 bg-white min-h-[300px] sm:min-h-[400px] mb-8">
+            <img
+              src={CourseBanner}
+              alt="Course Banner"
+              className=" w-full object-contain transform hover:scale-[1.03] transition duration-700" 
+            />
+          </div>
 
-        {/* ... Lộ trình ... */}
-    <motion.div
-     variants={itemFadeIn}
-     className="space-y-12 max-w-7xl mx-auto px-10"
-    >
-          {/* ... */}
-     <h2 className="text-4xl font-light text-gray-700 text-center tracking-tight">
-      Tổng quan Lộ trình Học tập
-     </h2>
-     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {[
-              /* ... các item ... */
-      ].map((item) => (
-       <motion.div
-        key={item.title}
-// ...
-       >
-        <h3 className="font-medium text-gray-800 text-xl mb-3">{item.title}</h3>
-        <p className="text-gray-500 text-base font-normal">{item.desc}</p>
-       </motion.div>
-      ))}
-     </div>
-    </motion.div>
-
-    {/* Danh sách bài học */}
-    <motion.div
-     variants={itemFadeIn}
-     className="space-y-12 max-w-7xl mx-auto px-10"
-    >
-     <h2 className="text-4xl font-light text-gray-700 text-center tracking-tight">
-      Chi tiết Các Bài học
-     </h2>
-
-     {loading ? (
-      <p className="text-center text-gray-500">Đang tải dữ liệu...</p>
-     ) : lessons.length === 0 ? (
-      <p className="text-center italic text-gray-500">
-       Không có bài học nào trong khóa này.
-      </p>
-     ) : (
-      <div className="space-y-8">
-              {/* 🔹 6. SỬA LẠI THẺ LINK THÀNH BUTTON */}
-       {lessons.map((lesson) => (
-        <motion.div
-         key={lesson.id}
-                  // ... (props của motion.div giữ nguyên) ...
-         className="bg-white rounded-[30px] shadow-2xl shadow-gray-300/50 p-8 md:p-12 flex flex-col md:flex-row justify-between items-start md:items-center"
-        >
-         <div className="flex flex-col">
-                    {/* ... (thông tin bài học giữ nguyên) ... */}
-          <p className="text-1xl font-semibold uppercase text-cyan-600 tracking-widest mb-1 opacity-75">
-        Tóm tắt: 
-           BÀI HỌC
-          </p>
-          <h3 className="text-4xl font-medium text-gray-900 mb-2">
-           {lesson.lessonTitle || "Chưa đặt tiêu đề"}
-          </h3>
-          <p className="text-lg text-gray-500 max-w-2xl font-light">
-           {lesson.description || "Chưa có mô tả cho bài học này."}
-          </p>
-         </div>
-                  
-                  {/* 🔹 THAY <Link> BẰNG <button> ĐỂ GỌI handleStartLesson */}
-         <button
-          onClick={() => handleStartLesson(lesson.id)}
-          className="inline-block px-12 py-4 bg-gradient-to-r from-[#B2EBF2] to-[#80DEEA] text-white font-medium rounded-full shadow-lg transition-all duration-300 transform text-lg tracking-wider hover:scale-105"
-          style={{ boxShadow: buttonShadow }}
-     _
-        >
-          Bắt đầu học
-         </button>
         </motion.div>
-       ))}
-      </div>
-     )}
-    </motion.div>
 
-    {/* ... (CTA giữ nguyên) ... */}
-    <motion.div
-     variants={itemFadeIn}
-     className="text-center space-y-6 pt-16"
-    >
-          {/* ... */}
-    </motion.div>
-   </motion.div>
+        {/* Các section còn lại */}
+        <div className="max-w-7xl mx-auto px-6 lg:px-10"> 
+          
+          {/* --- 2. Lộ trình Học tập (Section Fade In) --- */}
+          <motion.div
+            variants={sectionFadeIn}
+            className="space-y-12 mb-20"
+          >
+            <h2 className="text-4xl font-light text-gray-700 text-center tracking-tight border-b-2 border-cyan-100 pb-3">
+              Tổng quan Lộ trình Học tập
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                  { title: "Ngữ pháp cốt lõi", desc: "Nền tảng vững chắc cho mọi cấp độ JLPT." },
+                  { title: "Từ vựng chuyên sâu", desc: "Mở rộng vốn từ vựng theo chủ đề ứng dụng." },
+                  { title: "Kỹ năng Đọc & Nghe", desc: "Thực hành các bài tập theo định dạng thi JLPT." },
+                ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemVariants}
+                  // Thẻ lộ trình: Hiệu ứng Neumorphism đẹp mắt
+                  className="p-8 rounded-2xl bg-white transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] cursor-default"
+                  style={{ boxShadow: neumorphicShadow }}
+                >
+                  <h3 className="font-semibold text-gray-800 text-xl mb-3 border-b pb-2 border-gray-100">{item.title}</h3>
+                  <p className="text-gray-500 text-base font-normal">{item.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
 
-   {/* --- 7. RENDER MODAL VÀ GỌI HÀM MỚI --- */}
-   {notifMessage && (
-    <NotificationModal
-     message={notifMessage}
-     onClose={handleNotifClose} // 🔹 Sử dụng hàm xử lý mới
-    />
-   )}
-  </div>
- );
+          {/* --- 3. Danh sách Bài học (Section Fade In & Item Variants) --- */}
+          <motion.div
+            variants={sectionFadeIn}
+            className="space-y-12"
+          >
+            <h2 className="text-4xl font-light text-gray-700 text-center tracking-tight border-b-2 border-cyan-100 pb-3">
+              Chi tiết Các Bài học
+            </h2>
+
+            {loading ? (
+              <p className="text-center text-gray-500">Đang tải dữ liệu...</p>
+            ) : lessons.length === 0 ? (
+              <p className="text-center italic text-gray-500">
+                Không có bài học nào trong khóa này.
+              </p>
+            ) : (
+              <motion.div
+                initial="hidden"
+                animate="show"
+                variants={{ show: { transition: { staggerChildren: 0.15 } } }} 
+                className="space-y-6"
+              >
+                {lessons.map((lesson) => (
+                  <motion.div
+                    key={lesson.id}
+                    variants={itemVariants} 
+                    // Thẻ bài học: Neumorphism và hover state
+                    className="bg-white rounded-[30px] p-8 md:p-12 flex flex-col md:flex-row justify-between items-start md:items-center 
+                               transition-all duration-300 hover:shadow-2xl hover:bg-[#F0F8FF]"
+                    style={{ boxShadow: neumorphicShadow }}
+                  >
+                    <div className="flex flex-col mb-4 md:mb-0">
+                      <p className="text-base font-semibold uppercase text-cyan-600 tracking-widest mb-1 opacity-75">
+                        BÀI HỌC {lesson.id}: 
+                      </p>
+                      <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2 leading-tight">
+                        {lesson.lessonTitle || "Chưa đặt tiêu đề"}
+                      </h3>
+                      <p className="text-lg text-gray-600 max-w-2xl font-light">
+                        {lesson.description || "Chưa có mô tả cho bài học này."}
+                      </p>
+                    </div>
+                    
+                    {/* Nút Bắt đầu Học: Hiệu ứng Tương tác Neumorphism */}
+                    <motion.button
+                      onClick={() => handleStartLesson(lesson.id)}
+                      className="flex-shrink-0 px-12 py-4 bg-gradient-to-r from-[#B2EBF2] to-[#80DEEA] text-white font-medium rounded-full shadow-lg transition-all duration-300 transform text-lg tracking-wider w-full md:w-auto"
+                      style={{ boxShadow: buttonShadow }}
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      // Hiệu ứng nhấn sâu (inset shadow)
+                      whileTap={{ 
+                        scale: 0.95, 
+                        y: 0, 
+                        boxShadow: "inset 6px 6px 15px rgba(33, 147, 176, 0.4), inset -6px -6px 15px rgba(109, 213, 237, 0.3)" 
+                      }} 
+                    >
+                      Bắt đầu học
+                    </motion.button>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </motion.div>
+
+          {/* --- 4. CTA (Call to Action): Nút chuyên nghiệp hơn --- */}
+          <motion.div
+            variants={sectionFadeIn}
+            className="text-center space-y-6 pt-24 pb-10"
+          >
+            <h3 className="text-3xl font-light text-gray-700">
+              Sẵn sàng chinh phục {courseCode?.toUpperCase()}?
+            </h3>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
+                <Link
+                  to="/contact"
+                  className="inline-block px-12 py-4 bg-gray-800 text-white font-bold rounded-lg shadow-xl hover:bg-gray-700 transition duration-300 transform text-lg tracking-wider"
+                >
+                  Liên hệ Tư vấn Khóa học
+                </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+      </motion.div>
+
+      {/* --- Notification Modal --- */}
+      {notifMessage && (
+        <NotificationModal
+          message={notifMessage}
+          onClose={handleNotifClose}
+        />
+      )}
+    </div>
+  );
 };
 
 export default CourseLessonsPage;

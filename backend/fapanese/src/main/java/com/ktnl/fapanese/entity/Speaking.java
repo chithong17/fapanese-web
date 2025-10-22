@@ -52,6 +52,7 @@ public class Speaking {
     @Column(name = "description", columnDefinition="TEXT")
     String description;
 
+    @Builder.Default
     @OneToMany(mappedBy = "speaking", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<SpeakingQuestion> speakingQuestions = new HashSet<>();
 }

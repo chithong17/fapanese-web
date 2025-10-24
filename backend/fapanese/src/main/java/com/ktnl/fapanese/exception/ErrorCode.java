@@ -4,6 +4,8 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
+import java.text.MessageFormat;
+
 @Getter
 public enum ErrorCode {
     USER_NOT_EXISTED(1000, "Không tìm thấy người dùng", HttpStatus.NOT_FOUND),
@@ -41,10 +43,15 @@ public enum ErrorCode {
     CAMPUS_REQUIRED(2007, "Campus is required", HttpStatus.BAD_REQUEST),
 
     FILE_REQUIRED(3001, "File không được rỗng", HttpStatus.BAD_REQUEST),
+    EXCEL_MISSING_HEADER(3002, "File Excel thiếu cột {0}", HttpStatus.BAD_REQUEST),
+    INVALID_COLUMN(3003, "Cột {0} không được để trống.", HttpStatus.BAD_REQUEST),
+    DOB_FORMAT_INVALID(3004, "Định dạng ngày {0} ở cột {1} không hợp lệ (cần dd/MM/yyyy hoặc yyyy-MM-dd).", HttpStatus.BAD_REQUEST),
+    EXCEL_INVALID_DATA_TYPE(3005, "Kiểu dữ liệu ở cột {0} không phải ngày tháng hợp lệ.", HttpStatus.BAD_REQUEST),
+    EXCEL_READ_ERROR(3006, "Lỗi khi đọc ngày tháng ở cột {0}", HttpStatus.BAD_REQUEST),
 
     OVERVIEW_PART_NOT_FOUND(4001, "Không tìm thấy Overview Part", HttpStatus.NOT_FOUND),
     EXAM_NOT_FOUND(4002, "Không tìm thấy bài kiểm tra", HttpStatus.NOT_FOUND),
-    OVERVIEW_NOT_FOUND(4003, "Không tìm thấy Overview", HttpStatus.NOT_FOUND)
+    OVERVIEW_NOT_FOUND(4003, "Không tìm thấy Overview", HttpStatus.NOT_FOUND),
 
 
     ;
@@ -56,5 +63,19 @@ public enum ErrorCode {
         this.code = code;
         this.message = message;
         this.statusCode = statusCode;
+    }
+
+    /**
+     * Lấy chuỗi message đã được định dạng.
+     * @param args Các giá trị cần truyền vào placeholder (ví dụ: {0}, {1}, ...)
+     * @return Chuỗi message hoàn chỉnh
+     */
+    public String getMessage(Object... args) {
+        return MessageFormat.format(this.message, args);
+    }
+
+    // Bạn cũng có thể thêm một getter cho message gốc nếu cần
+    public String getMessageTemplate() {
+        return message;
     }
 }

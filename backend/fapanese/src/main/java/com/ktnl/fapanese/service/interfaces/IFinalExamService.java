@@ -15,4 +15,6 @@ public interface IFinalExamService {
     FinalExamResponse updateFinalExam(Long id, FinalExamRequest request);
 
     void deleteFinalExam(Long id);
+
+    List<FinalExamResponse> getAllFinalExamsByOverviewPartId(Long partId);
 }

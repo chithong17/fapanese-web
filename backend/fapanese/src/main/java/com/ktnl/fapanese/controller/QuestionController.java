@@ -40,7 +40,7 @@ public class QuestionController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<QuestionResponse> getQuestionById(@PathVariable Long id) {
+    public ApiResponse<QuestionResponse> getQuestionById(@PathVariable("id") Long id) {
         QuestionResponse result = questionService.getQuestionById(id);
         return ApiResponse.<QuestionResponse>builder()
                 .result(result)
@@ -49,7 +49,7 @@ public class QuestionController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<QuestionResponse> updateQuestion(@PathVariable Long id, @RequestBody QuestionRequest request) {
+    public ApiResponse<QuestionResponse> updateQuestion(@PathVariable("id") Long id, @RequestBody QuestionRequest request) {
         QuestionResponse result = questionService.updateQuestion(id, request);
         return ApiResponse.<QuestionResponse>builder()
                 .result(result)
@@ -58,7 +58,7 @@ public class QuestionController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deleteQuestion(@PathVariable Long id) {
+    public ApiResponse<Void> deleteQuestion(@PathVariable("id") Long id) {
         questionService.deleteQuestion(id);
         return ApiResponse.<Void>builder()
                 .message("Delete question success")
@@ -67,7 +67,7 @@ public class QuestionController {
 
     // ✅ API mới:
     @GetMapping("/type/{questionType}")
-    public ApiResponse<List<QuestionResponse>> getQuestionsByType(@PathVariable QuestionType questionType) {
+    public ApiResponse<List<QuestionResponse>> getQuestionsByType(@PathVariable("questionType") QuestionType questionType) {
         List<QuestionResponse> result = questionService.getQuestionsByType(questionType);
         return ApiResponse.<List<QuestionResponse>>builder()
                 .result(result)
@@ -76,7 +76,7 @@ public class QuestionController {
     }
 
     @GetMapping("/category/{category}")
-    public ApiResponse<List<QuestionResponse>> getQuestionsByCategory(@PathVariable QuestionCategory category) {
+    public ApiResponse<List<QuestionResponse>> getQuestionsByCategory(@PathVariable("category") QuestionCategory category) {
         List<QuestionResponse> result = questionService.getQuestionsByCategory(category);
         return ApiResponse.<List<QuestionResponse>>builder()
                 .result(result)
@@ -102,7 +102,7 @@ public class QuestionController {
 
     @GetMapping("/by-lesson-part/{lessonPartId}")
     public ApiResponse<List<QuestionResponse>> getQuestionsByLessonPart(
-            @PathVariable Long lessonPartId) {
+            @PathVariable("lessonPartId") Long lessonPartId) {
 
         List<QuestionResponse> result = questionService.getQuestionsByLessonPart(lessonPartId);
 

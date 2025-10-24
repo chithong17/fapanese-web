@@ -3,6 +3,7 @@ package com.ktnl.fapanese.controller;
 import com.ktnl.fapanese.dto.request.FinalExamRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.FinalExamResponse;
+import com.ktnl.fapanese.dto.response.FinalExamResponse;
 import com.ktnl.fapanese.service.interfaces.IFinalExamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +58,15 @@ public class FinalExamController {
         finalExamService.deleteFinalExam(id);
         return ApiResponse.<String>builder()
                 .message("Delete final exam success")
+                .build();
+    }
+
+    @GetMapping("/by-overview-part/{partId}")
+    public ApiResponse<List<FinalExamResponse>> getAllFinalExams(@PathVariable Long partId) {
+        List<FinalExamResponse> result = finalExamService.getAllFinalExamsByOverviewPartId(partId);
+        return ApiResponse.<List<FinalExamResponse>>builder()
+                .result(result)
+                .message("Get all final exams success")
                 .build();
     }
 }

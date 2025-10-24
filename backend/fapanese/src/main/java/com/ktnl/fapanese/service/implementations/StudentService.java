@@ -1,6 +1,6 @@
 package com.ktnl.fapanese.service.implementations;
 
-import com.ktnl.fapanese.dto.request.StudentRegisterResquest;
+import com.ktnl.fapanese.dto.request.StudentRegisterRequest;
 import com.ktnl.fapanese.dto.response.StudentRegisterResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.entity.Role;
@@ -10,9 +10,7 @@ import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mail.AccountCreatedEmailTemplate;
 import com.ktnl.fapanese.mapper.UserMapper;
-import com.ktnl.fapanese.repository.LecturerRepository;
 import com.ktnl.fapanese.repository.RoleRepository;
-import com.ktnl.fapanese.repository.StudentRepository;
 import com.ktnl.fapanese.repository.UserRepository;
 import com.ktnl.fapanese.service.interfaces.IStudentService;
 import lombok.AccessLevel;
@@ -40,20 +38,20 @@ public class StudentService implements IStudentService {
     EmailService emailService;
 
     @Override
-    public StudentRegisterResponse registerStudent(StudentRegisterResquest studentRegisterResquest) {
-        Optional<User> existingUserOpt  = userRepo.findByEmail(studentRegisterResquest.getEmail());
+    public StudentRegisterResponse registerStudent(StudentRegisterRequest studentRegisterRequest) {
+        Optional<User> existingUserOpt  = userRepo.findByEmail(studentRegisterRequest.getEmail());
 
         if(existingUserOpt.isPresent())
             throw new AppException(ErrorCode.EMAIL_EXISTED);
 
-        User user = mapper.toUser(studentRegisterResquest);
+        User user = mapper.toUser(studentRegisterRequest);
         String randomPassword = generateRandomPassword(8);
         user.setPassword_hash(passwordEncoder.encode(randomPassword));
         Role role = roleRepo.findByRoleName("STUDENT");
         user.setRoles(Set.of(role));
         user.setStatus(0);
 
-        Student student = mapper.toStudent(studentRegisterResquest);
+        Student student = mapper.toStudent(studentRegisterRequest);
         student.setUser(user);       // Quan hệ từ Student -> User
         student.setAvtUrl("https://drive.google.com/file/d/1KZJdE58UiYN8UjoZ0y7wUw0Ptge8FZ0i/view?usp=drive_link");
         user.setStudent(student);    // Quan hệ ngược lại từ User -> Student
@@ -65,7 +63,7 @@ public class StudentService implements IStudentService {
         emailService.sendEmail(savedUser.getEmail(), new AccountCreatedEmailTemplate(), savedUser.getEmail(), randomPassword);
 
         // 4. Map từ đối tượng đã được lưu (có đầy đủ thông tin) và trả về
-        return mapper.toStudentRegisterResquest(studentRegisterResquest);
+        return mapper.toStudentRegisterRequest(studentRegisterRequest);
 
     }
 
@@ -99,7 +97,7 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public UserResponse updateStudent(String email, StudentRegisterResquest studentUpdateRequest) {
+    public UserResponse updateStudent(String email, StudentRegisterRequest studentUpdateRequest) {
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_ISACTIVED));
 

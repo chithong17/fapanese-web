@@ -13,9 +13,9 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OverviewResponse {
-    private Long id;
-    private Long courseId;
-    private String overviewTitle;
-    private String description;
+    Long id;
+    Long courseId;
+    String overviewTitle;
+    String description;
 
 }

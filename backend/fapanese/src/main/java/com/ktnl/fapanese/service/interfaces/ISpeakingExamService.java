@@ -15,4 +15,6 @@ public interface ISpeakingExamService {
     SpeakingExamResponse updateSpeakingExam(Long id, SpeakingExamRequest request);
 
     void deleteSpeakingExam(Long id);
+
+    List<SpeakingExamResponse> getAllSpeakingExamsByOverviewPartId(Long partId);
 }

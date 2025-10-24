@@ -59,4 +59,13 @@ public class SpeakingExamController {
                 .message("Delete speaking exam success")
                 .build();
     }
+
+    @GetMapping("/by-overview-part/{partId}")
+    public ApiResponse<List<SpeakingExamResponse>> getAllSpeakingExams(@PathVariable Long partId) {
+        List<SpeakingExamResponse> result = speakingExamService.getAllSpeakingExamsByOverviewPartId(partId);
+        return ApiResponse.<List<SpeakingExamResponse>>builder()
+                .result(result)
+                .message("Get all speaking exams success")
+                .build();
+    }
 }

@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
-import { FaBookOpen, FaMicrophoneAlt, FaFileAlt } from "react-icons/fa"; 
 
+// Giả định các hàm API này đã được import
 import { getOverviewPartsByOverview } from "../../api/overviewPart";
 import { getSpeakingExamsByPartId } from "../../api/speakingExam";
 import { getMiddleExamsByPartId } from "../../api/middleExam";
 import { getFinalExamsByPartId } from "../../api/finalExam";
-import { submitQuizAnswers } from "../../api/quiz"; 
+// ✅ Import submitExamAnswers (đã được đổi tên từ submitQuizAnswers để rõ ràng hơn)
+import { submitExamAnswers } from "../../api/quiz";
+
 
 import NotificationModal from "../../components/NotificationModal"; 
 import PassageViewer from "../../components/PassageViewer";
@@ -19,12 +21,18 @@ import final from "../../assets/final.svg"
 
 
 const PART_BANNERS: Record<string, string> = {
-    SPEAKING: spk, // Link ảnh cho mục SPEAKING
-    MIDDLE_EXAM: mid, // Link ảnh cho mục MIDDLE_EXAM
-    FINAL_EXAM: final, // Link ảnh cho mục FINAL_EXAM
+    SPEAKING: spk, 
+    MIDDLE_EXAM: mid, 
+    FINAL_EXAM: final, 
 };
 
-// --- Định nghĩa Interfaces (GIỮ NGUYÊN) ---
+// --- Định nghĩa Interfaces ---
+// Tự định nghĩa UserAnswer ngay trong file này
+interface UserAnswer {
+    questionId: number;
+    userAnswer: string;
+}
+
 interface OverviewPart {
     id: number;
     overviewId: number;
@@ -85,8 +93,23 @@ interface Exam {
     questions: ExamQuestion[];
 }
 
+// --- ✅ HÀM TIỆN ÍCH: FORMAT CONTENT (Đã thêm) ---
+/**
+ * Chuyển đổi ký tự xuống dòng '\n' trong chuỗi (từ database) thành <br /> trong JSX
+ * để hiển thị nội dung đa dòng.
+ */
+const formatContent = (text: string | undefined): React.ReactNode => {
+    if (!text) return null;
+    return text.split('\n').map((line, index) => (
+        <React.Fragment key={index}>
+            {line}
+            {/* Thêm <br /> cho mọi dòng trừ dòng cuối cùng */}
+            {index < text.split('\n').length - 1 && <br />}
+        </React.Fragment>
+    ));
+};
 
-// Component chính
+// --- Component chính ---
 const OverviewContentPage: React.FC = () => {
     const { courseCode, overviewId, partId } = useParams();
     const navigate = useNavigate();
@@ -95,15 +118,15 @@ const OverviewContentPage: React.FC = () => {
     const [contentGroups, setContentGroups] = useState<any[]>([]); 
     const [currentPartType, setCurrentPartType] = useState<string | null>(null);
     const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
-    const [loadingContent, setLoadingContent] = useState(true); // Đổi tên để rõ ràng hơn
-    const [loadingBanner, setLoadingBanner] = useState(true); // State mới cho banner
+    const [loadingContent, setLoadingContent] = useState(true); 
+    const [loadingBanner, setLoadingBanner] = useState(true); 
     const [error, setError] = useState<string | null>(null);
 
     const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [submitResult, setSubmitResult] = useState<any>(null);
 
-    // --- LOGIC FETCH DATA ---
+    // --- LOGIC FETCH DATA (GIỮ NGUYÊN) ---
     useEffect(() => {
         const fetchSidebarParts = async () => {
             if (!overviewId) return;
@@ -133,8 +156,8 @@ const OverviewContentPage: React.FC = () => {
                 return;
             }
 
-            setLoadingContent(true); // Bắt đầu ẩn nội dung cũ
-            setLoadingBanner(true); // Bắt đầu ẩn banner cũ
+            setLoadingContent(true); 
+            setLoadingBanner(true); 
             setError(null);
             setCurrentPartType(currentPart.type);
             setSelectedGroupId(null);
@@ -162,7 +185,6 @@ const OverviewContentPage: React.FC = () => {
                 console.error("Failed to fetch content:", err);
                 setError(err.response?.data?.message || "Lỗi khi tải nội dung.");
             } finally {
-                // Đặt loadingContent về false sau một khoảng thời gian ngắn để kích hoạt transition
                 setTimeout(() => {
                     setLoadingContent(false);
                 }, 100); 
@@ -172,12 +194,13 @@ const OverviewContentPage: React.FC = () => {
         fetchContentGroups();
     }, [partId, sidebarParts, overviewId, courseCode, navigate]);
     
-    // Hàm nộp bài trắc nghiệm (GIỮ NGUYÊN)
+    // --- HÀM NỘP BÀI ĐÃ SỬA LỖI 400 VÀ LỖI UNDEFINED ---
     const handleSubmitQuiz = async (
         examId: number,
         questions: ExamQuestion[]
     ) => {
-        const answersArray = Object.entries(userAnswers).map(([qid, ans]) => ({
+        // Định dạng payload chính xác
+        const answersArray: UserAnswer[] = Object.entries(userAnswers).map(([qid, ans]) => ({
             questionId: Number(qid),
             userAnswer: ans,
         }));
@@ -188,14 +211,30 @@ const OverviewContentPage: React.FC = () => {
         }
 
         try {
-            const data = await submitQuizAnswers(answersArray); 
+            console.log("📤 Gọi API /exam/submit với payload:", answersArray);
 
+            // Gọi hàm submitExamAnswers từ file api/quiz
+            // Lưu ý: Nếu bạn chỉ import submitQuizAnswers, hãy sửa lại tên hàm gọi tại đây:
+            const data = await submitExamAnswers(answersArray); 
+
+            console.log("📩 Kết quả từ server:", data);
+
+            // Xử lý kết quả thành công
             setSubmitResult(data.result);
             setIsSubmitted(true);
             window.scrollTo({ top: 0, behavior: "smooth" });
+
         } catch (err: any) {
+            // Xử lý lỗi Axios
             console.error("❌ Submit error:", err);
-            setError(err.response?.data?.message || "Không thể nộp bài! Vui lòng thử lại.");
+            const serverMessage = err.response?.data?.message; 
+            const defaultMessage = "Lỗi nộp bài! Vui lòng kiểm tra lại câu trả lời và kết nối mạng.";
+
+            setError(serverMessage || defaultMessage); 
+            
+            // Đặt lại trạng thái
+            setIsSubmitted(false); 
+            setSubmitResult(null);
         }
     };
     
@@ -218,15 +257,13 @@ const OverviewContentPage: React.FC = () => {
             if (nextQuestionElement) {
                 nextQuestionElement.scrollIntoView({ 
                     behavior: 'smooth', 
-                    block: 'center'      
+                    block: 'center'    
                 });
             }
         }
     };
 
-    
-
-    // Hàm lấy URL Banner theo loại Part
+    // Hàm lấy URL Banner theo loại Part (GIỮ NGUYÊN)
     const getBannerImage = () => {
         return PART_BANNERS[currentPartType as string] || PART_BANNERS.DEFAULT;
     };
@@ -307,7 +344,7 @@ const OverviewContentPage: React.FC = () => {
         </div>
     );
 
-    // --- B. Render CHI TIẾT 1 Đề thi (Middle/Final) (GIỮ NGUYÊN) ---
+    // --- B. Render CHI TIẾT 1 Đề thi (Middle/Final) ---
     const renderExamDetail = (exam: Exam) => {
         return (
             <div className="p-6 sm:p-10 bg-white rounded-2xl shadow-xl transition-all duration-300 transform hover:shadow-2xl">
@@ -352,7 +389,8 @@ const OverviewContentPage: React.FC = () => {
                             >
                                 <p className="font-bold text-gray-900 mb-4 text-xl flex items-start">
                                     <span className="text-cyan-600 mr-3 mt-1">{index + 1}.</span>
-                                    {q.content}
+                                    {/* ✅ ÁP DỤNG formatContent cho nội dung câu hỏi */}
+                                    {formatContent(q.content)} 
                                 </p>
 
                                 <div className="space-y-3 text-lg text-gray-700 ml-8">
@@ -395,11 +433,12 @@ const OverviewContentPage: React.FC = () => {
                                                     className={`w-5 h-5 text-cyan-600 border-gray-300 focus:ring-cyan-500 rounded-full ${isSubmitted ? 'opacity-60' : ''}`}
                                                 />
                                                 <span className="flex-1">
-                                                    <span className="font-bold mr-1">{opt}.</span> {value}
+                                                    <span className="font-bold mr-1">{opt}.</span> 
+                                                    {/* ✅ ÁP DỤNG formatContent cho nội dung đáp án */}
+                                                    {formatContent(value)}
                                                 </span>
                                                 
-                                                {isSubmitted && isCorrectAnswer && <span className="text-green-600 text-xl font-black ml-auto">✅</span>}
-                                                {isSubmitted && isUserSelected && !isCorrectAnswer && <span className="text-red-600 text-xl font-black ml-auto">❌</span>}
+                                               
                                             </label>
                                         );
                                     })}
@@ -423,9 +462,8 @@ const OverviewContentPage: React.FC = () => {
         );
     };
 
-    // --- Render nội dung chính ---
+    // --- Render nội dung chính (GIỮ NGUYÊN) ---
     const renderMainContent = () => {
-        // 💡 SỬA ĐỔI Ở ĐÂY: Thêm điều kiện !selectedGroupId
         if (loadingContent && !selectedGroupId) {
             return (
                 <div className="flex justify-center items-center h-64">
@@ -441,7 +479,7 @@ const OverviewContentPage: React.FC = () => {
                      <p className="text-lg">{error}</p>
                  </div>
              );
-           }
+            }
 
         const selectedItem = selectedGroupId
             ? contentGroups.find((item) => item.id === selectedGroupId)
@@ -450,7 +488,7 @@ const OverviewContentPage: React.FC = () => {
         // 1. Hiển thị chi tiết (giữ nguyên hiệu ứng cho chi tiết)
         if (selectedItem) {
             return (
-                <div className="space-y-8 animate-fade-in-up"> {/* Giữ hiệu ứng này cho toàn bộ phần chi tiết */}
+                <div className="space-y-8 animate-fade-in-up"> 
                     <button
                         onClick={() => setSelectedGroupId(null)}
                         className="flex items-center px-5 py-2.5 bg-white text-gray-700 text-lg rounded-xl shadow-md hover:bg-gray-100 transition-all duration-300 border border-gray-200 font-medium group"
@@ -467,7 +505,7 @@ const OverviewContentPage: React.FC = () => {
             );
         }
 
-        // 2. Hiển thị danh sách (đã điều chỉnh hiệu ứng cho banner và danh sách riêng)
+        // 2. Hiển thị danh sách (giữ nguyên)
         if (contentGroups.length === 0) {
             return (
                 <div className="text-center p-10 bg-white rounded-2xl shadow-xl animate-fade-in">
@@ -486,19 +524,19 @@ const OverviewContentPage: React.FC = () => {
 
 
         return (
-            <div className="space-y-8"> {/* Loại bỏ animate-fade-in-up ở đây, thay bằng các phần tử con */}
+            <div className="space-y-8"> 
                 {/* Banner với hiệu ứng fade-in */}
                 <img 
                     src={getBannerImage()} 
                     alt={`Banner ${partTitle}`} 
                     className={`rounded-2xl w-full h-auto shadow-lg transition-all duration-700 ease-out 
-                                ${loadingBanner ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
+                                 ${loadingBanner ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
                     onLoad={() => setLoadingBanner(false)} // Khi ảnh tải xong, bỏ loading banner
                 />
                 
                 {/* Phần mô tả và các card bài tập sẽ có hiệu ứng riêng */}
-                <div className={`transition-opacity duration-700 ease-in-out delay-200 ${ // Thêm delay cho phần này
-                                loadingContent ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+                <div className={`transition-opacity duration-700 ease-in-out delay-200 ${ 
+                                 loadingContent ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
 
                     <p className="text-xl text-gray-700 font-light leading-relaxed mb-6">
                         Chọn một mục dưới đây để bắt đầu ôn luyện. Mỗi phần được thiết kế để giúp bạn nắm vững kiến thức một cách hiệu quả.
@@ -510,7 +548,6 @@ const OverviewContentPage: React.FC = () => {
                                 key={item.id}
                                 className={`p-6 ${cardBg} rounded-2xl shadow-md cursor-pointer transition-all duration-300 hover:shadow-xl hover:bg-opacity-80 flex flex-col justify-between min-h-[160px] transform hover:scale-[1.02]`}
                                 onClick={() => {
-                                    // 💡 ĐÃ SỬA: BỎ DÒNG setLoadingContent(true);
                                     setSelectedGroupId(item.id);
                                     setIsSubmitted(false);
                                     setUserAnswers({});
@@ -549,8 +586,8 @@ const OverviewContentPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-gray-50 antialiased"> 
             
-            {/* Notification */}
-            {error && !loadingContent && ( // Điều kiện hiển thị notification
+            {/* Notification Modal (Hiển thị tất cả lỗi từ Fetch Data và Submit Quiz) */}
+            {error && ( 
                 <NotificationModal 
                     message={error} 
                     onClose={() => setError(null)} 
@@ -611,7 +648,7 @@ const OverviewContentPage: React.FC = () => {
                     
                     {/* Content Area */}
                     <main className="w-full md:flex-1">
-                        {renderMainContent()} {/* renderMainContent sẽ tự quản lý hiệu ứng */}
+                        {renderMainContent()} 
                     </main>
                 </div>
             </div>

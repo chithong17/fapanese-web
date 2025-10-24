@@ -18,6 +18,4 @@ public class OverviewResponse {
     private String overviewTitle;
     private String description;
 
-    // 👈 Dùng DTO, không dùng Entity
-    private Set<OverviewPartResponse> overviewParts;
 }

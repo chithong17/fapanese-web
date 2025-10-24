@@ -18,8 +18,4 @@ public class OverviewPartResponse {
     private String title;
     private OverviewPartType type;
 
-    // 👈 Dùng DTO, không dùng Entity
-    private Set<SpeakingExamResponse> speakingExams;
-    private Set<FinalExamResponse> finalExams;
-    private Set<MiddleExamResponse> middleExams;
 }

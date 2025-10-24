@@ -1,14 +1,44 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AiOutlineEdit, AiOutlineDelete, AiOutlinePlus } from "react-icons/ai";
-import {
-  getAllCourses,
-  createCourse,
-  updateCourse,
-  deleteCourse,
-} from "../../api/course"; // Đường dẫn tùy theo cấu trúc thư mục của bạn
+import { IoIosAddCircleOutline, IoIosCloseCircleOutline } from "react-icons/io";
+import { FaEdit, FaTrashAlt, FaSave } from "react-icons/fa";
+import { getAllCourses, createCourse, updateCourse, deleteCourse } from "../../api/course";
 
-interface CourseResponse {
+// --- CẤU HÌNH MÀU & ANIMATION (đồng bộ với StudentManagementPage) ---
+const PRIMARY_CYAN = "bg-cyan-600";
+const HOVER_CYAN = "hover:bg-cyan-700";
+const TABLE_HEADER_BG = "bg-gray-100";
+const BORDER_COLOR = "border-gray-200";
+
+// Biến thể cho form
+const formVariants = {
+  hidden: { opacity: 0, height: 0, y: -20 },
+  visible: {
+    opacity: 1,
+    height: "auto",
+    y: 0,
+    transition: { duration: 0.3, ease: "easeInOut" },
+  },
+  exit: {
+    opacity: 0,
+    height: 0,
+    y: -20,
+    transition: { duration: 0.2, ease: "easeOut" },
+  },
+};
+
+// Biến thể cho từng dòng bảng
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.05, duration: 0.3 },
+  }),
+};
+
+// Interface
+interface CourseForm {
   id: number;
   courseName: string;
   description: string;
@@ -19,43 +49,19 @@ interface CourseResponse {
   duration: string;
 }
 
-const CourseManagementPage: React.FC = () => {
-  const [courses, setCourses] = useState<CourseResponse[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [editingCourse, setEditingCourse] = useState<CourseResponse | null>(null);
-  const [formData, setFormData] = useState<CourseResponse>({
-    id: 0,
-    courseName: "",
-    description: "",
-    imgUrl: "",
-    price: "",
-    level: "",
-    title: "",
-    duration: "",
-  });
+export default function CourseManagementPage() {
+  const [courses, setCourses] = useState<CourseForm[]>([]);
+  const [form, setForm] = useState<CourseForm | null>(null);
+  const token = localStorage.getItem("token") ?? "";
 
-  // Lấy token từ localStorage
-  const token = localStorage.getItem("token") || "";
-
-  // Animation
-  const modalVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 0.9 },
-  };
-
-  // Fetch courses
+  // Fetch dữ liệu
   const fetchCourses = async () => {
     try {
-      const result = await getAllCourses(token);
-      setCourses(result || []);
+      const data = await getAllCourses(token);
+      setCourses(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("❌ Lỗi khi tải danh sách khóa học:", err);
-      setError("Không thể tải danh sách khóa học.");
-    } finally {
-      setLoading(false);
+      alert("Không thể tải danh sách khóa học. Kiểm tra quyền truy cập.");
     }
   };
 
@@ -63,41 +69,26 @@ const CourseManagementPage: React.FC = () => {
     fetchCourses();
   }, []);
 
-  // Mở modal (thêm hoặc sửa)
-  const openModal = (course?: CourseResponse) => {
-    if (course) {
-      setEditingCourse(course);
-      setFormData(course);
-    } else {
-      setEditingCourse(null);
-      setFormData({
-        id: 0,
-        courseName: "",
-        description: "",
-        imgUrl: "",
-        price: "",
-        level: "",
-        title: "",
-        duration: "",
-      });
+  // Thêm / sửa khóa học
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form?.courseName || !form.level || !form.price) {
+      alert("Vui lòng nhập đầy đủ thông tin khóa học!");
+      return;
     }
-    setShowModal(true);
-  };
 
-  // Lưu khóa học
-  const handleSave = async () => {
     try {
-      if (editingCourse) {
-        await updateCourse(formData.id, formData, token);
+      if (form.id) {
+        await updateCourse(form.id, form, token);
         alert("✅ Cập nhật khóa học thành công!");
       } else {
-        await createCourse(formData, token);
+        await createCourse(form, token);
         alert("✅ Thêm khóa học mới thành công!");
       }
-      setShowModal(false);
+      setForm(null);
       fetchCourses();
     } catch (err) {
-      console.error("❌ Không thể lưu khóa học:", err);
+      console.error("❌ Lỗi khi lưu khóa học:", err);
       alert("Không thể lưu khóa học.");
     }
   };
@@ -115,168 +106,186 @@ const CourseManagementPage: React.FC = () => {
     }
   };
 
-  const handleChange = (field: keyof CourseResponse, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleAdd = () => {
+    setForm({
+      id: 0,
+      courseName: "",
+      description: "",
+      imgUrl: "",
+      price: "",
+      level: "",
+      title: "",
+      duration: "",
+    });
   };
 
-  // UI Loading/Error
-  if (loading)
-    return <p className="text-gray-500 text-center mt-8">Đang tải...</p>;
-  if (error)
-    return <p className="text-red-500 text-center mt-8">{error}</p>;
-
   return (
-    <div className="p-6 bg-gray-50 rounded-2xl shadow-inner min-h-[85vh]">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800">
-          Quản lý khóa học
-        </h2>
-        <motion.button
-          onClick={() => openModal()}
-          className="flex items-center gap-2 bg-cyan-600 text-white px-4 py-2 rounded-full hover:bg-cyan-700 shadow-md"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <AiOutlinePlus /> Thêm khóa học
-        </motion.button>
-      </div>
+    <div className="p-0 bg-white min-h-full">
+      {/* Nút thêm khóa học */}
+      <motion.button
+        onClick={handleAdd}
+        className={`flex items-center gap-2 ${PRIMARY_CYAN} text-white px-4 py-2 rounded-lg mb-6 shadow-md ${HOVER_CYAN} transition duration-200 font-semibold`}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <IoIosAddCircleOutline className="text-xl" />
+        Thêm khóa học mới
+      </motion.button>
 
-      {/* Bảng danh sách */}
-      <div className="overflow-x-auto bg-white rounded-xl shadow-md">
-        <table className="min-w-full text-sm text-gray-700">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-3 text-left font-semibold">Tên khóa học</th>
-              <th className="p-3 text-left font-semibold">Mức độ</th>
-              <th className="p-3 text-left font-semibold">Giá</th>
-              <th className="p-3 text-left font-semibold">Thời lượng</th>
-              <th className="p-3 text-center font-semibold">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {courses.map((c) => (
-              <motion.tr
-                key={c.id}
-                className="border-b hover:bg-gray-50"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <td className="p-3">{c.courseName}</td>
-                <td className="p-3">{c.level}</td>
-                <td className="p-3">{c.price}</td>
-                <td className="p-3">{c.duration}</td>
-                <td className="p-3 flex justify-center gap-3">
-                  <motion.button
-                    onClick={() => openModal(c)}
-                    className="bg-yellow-400 text-white px-3 py-1 rounded-lg hover:bg-yellow-500"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <AiOutlineEdit />
-                  </motion.button>
-                  <motion.button
-                    onClick={() => handleDelete(c.id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <AiOutlineDelete />
-                  </motion.button>
-                </td>
-              </motion.tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Modal Form */}
+      {/* Form thêm/sửa khóa học */}
       <AnimatePresence>
-        {showModal && (
-          <motion.div
-            className="fixed inset-0 bg-black/30 flex items-center justify-center z-50"
-            variants={modalVariants}
+        {form && (
+          <motion.form
+            onSubmit={handleSubmit}
+            className="bg-gray-50 p-6 mb-8 shadow-inner rounded-xl border border-gray-100 overflow-hidden"
             initial="hidden"
             animate="visible"
             exit="exit"
-            onClick={() => setShowModal(false)}
           >
-            <motion.div
-              className="bg-white rounded-2xl p-6 w-[500px] shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                {editingCourse ? "Chỉnh sửa khóa học" : "Thêm khóa học mới"}
-              </h3>
+            <h3 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">
+              {form.id ? "Chỉnh sửa khóa học" : "Thêm khóa học"}
+            </h3>
 
-              <div className="flex flex-col gap-3">
-                <input
-                  type="text"
-                  placeholder="Tên khóa học"
-                  value={formData.courseName}
-                  onChange={(e) => handleChange("courseName", e.target.value)}
-                  className="border p-2 rounded"
-                />
-                <input
-                  type="text"
-                  placeholder="Mức độ"
-                  value={formData.level}
-                  onChange={(e) => handleChange("level", e.target.value)}
-                  className="border p-2 rounded"
-                />
-                <input
-                  type="text"
-                  placeholder="Thời lượng"
-                  value={formData.duration}
-                  onChange={(e) => handleChange("duration", e.target.value)}
-                  className="border p-2 rounded"
-                />
-                <input
-                  type="text"
-                  placeholder="Giá"
-                  value={formData.price}
-                  onChange={(e) => handleChange("price", e.target.value)}
-                  className="border p-2 rounded"
-                />
-                <input
-                  type="text"
-                  placeholder="Ảnh URL"
-                  value={formData.imgUrl}
-                  onChange={(e) => handleChange("imgUrl", e.target.value)}
-                  className="border p-2 rounded"
-                />
-                <textarea
-                  placeholder="Mô tả khóa học"
-                  value={formData.description}
-                  onChange={(e) => handleChange("description", e.target.value)}
-                  className="border p-2 rounded min-h-[100px]"
-                />
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <input
+                type="text"
+                placeholder="Tên khóa học*"
+                className="border border-gray-200 p-3 rounded-lg w-full focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                value={form.courseName}
+                onChange={(e) => setForm({ ...form, courseName: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Mức độ (N5, N4, ...)*"
+                className="border border-gray-200 p-3 rounded-lg w-full focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                value={form.level}
+                onChange={(e) => setForm({ ...form, level: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Thời lượng"
+                className="border border-gray-200 p-3 rounded-lg w-full focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                value={form.duration}
+                onChange={(e) => setForm({ ...form, duration: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Giá (VNĐ)*"
+                className="border border-gray-200 p-3 rounded-lg w-full focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                value={form.price}
+                onChange={(e) => setForm({ ...form, price: e.target.value })}
+              />
+            </div>
 
-              <div className="flex justify-end gap-3 mt-6">
-                <motion.button
-                  onClick={() => setShowModal(false)}
-                  className="px-5 py-2 rounded-full bg-gray-200 hover:bg-gray-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Hủy
-                </motion.button>
-                <motion.button
-                  onClick={handleSave}
-                  className="px-5 py-2 rounded-full bg-cyan-600 text-white hover:bg-cyan-700 shadow-md"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Lưu
-                </motion.button>
-              </div>
-            </motion.div>
-          </motion.div>
+            <input
+              type="text"
+              placeholder="Ảnh URL"
+              className="border border-gray-200 p-3 rounded-lg w-full focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none mb-3"
+              value={form.imgUrl}
+              onChange={(e) => setForm({ ...form, imgUrl: e.target.value })}
+            />
+
+            <textarea
+              placeholder="Mô tả khóa học"
+              className="border border-gray-200 p-3 rounded-lg w-full focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none min-h-[100px]"
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+            />
+
+            <div className="mt-4 flex justify-end gap-3">
+              <motion.button
+                type="button"
+                onClick={() => setForm(null)}
+                className="flex items-center gap-1 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-100 transition duration-200 font-medium"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <IoIosCloseCircleOutline className="text-lg" />
+                Hủy
+              </motion.button>
+              <motion.button
+                type="submit"
+                className={`flex items-center gap-1 ${PRIMARY_CYAN} text-white px-4 py-2 rounded-lg shadow-md ${HOVER_CYAN} transition duration-200 font-medium`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <FaSave className="text-sm" />
+                {form.id ? "Cập nhật" : "Lưu"}
+              </motion.button>
+            </div>
+          </motion.form>
         )}
       </AnimatePresence>
+
+      {/* Bảng danh sách khóa học */}
+      <div className="overflow-x-auto shadow-lg rounded-xl border border-gray-100">
+        <table className="min-w-full bg-white text-sm">
+          <thead className={`${TABLE_HEADER_BG} text-left`}>
+            <tr>
+              <th className={`p-3 border-b ${BORDER_COLOR} font-bold text-gray-700`}>
+                Tên khóa học
+              </th>
+              <th className={`p-3 border-b ${BORDER_COLOR} font-bold text-gray-700`}>
+                Mức độ
+              </th>
+              <th className={`p-3 border-b ${BORDER_COLOR} font-bold text-gray-700`}>
+                Giá
+              </th>
+              <th className={`p-3 border-b ${BORDER_COLOR} font-bold text-gray-700`}>
+                Thời lượng
+              </th>
+              <th className={`p-3 border-b ${BORDER_COLOR} text-center font-bold text-gray-700`}>
+                Hành động
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {courses.length > 0 ? (
+              courses.map((c, index) => (
+                <motion.tr
+                  key={c.id}
+                  className={`border-b ${BORDER_COLOR} hover:bg-gray-50 transition duration-150`}
+                  variants={itemVariants}
+                  initial="hidden"
+                  animate="visible"
+                  custom={index}
+                >
+                  <td className="p-3 text-gray-700 font-medium">{c.courseName}</td>
+                  <td className="p-3 text-gray-700">{c.level}</td>
+                  <td className="p-3 text-gray-700">{c.price}</td>
+                  <td className="p-3 text-gray-700">{c.duration}</td>
+                  <td className="p-3 text-center">
+                    <div className="flex justify-center space-x-2">
+                      <motion.button
+                        onClick={() => setForm(c)}
+                        className="text-cyan-500 p-2 rounded-full hover:bg-cyan-100 transition duration-150"
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        <FaEdit className="text-lg" />
+                      </motion.button>
+                      <motion.button
+                        onClick={() => handleDelete(c.id)}
+                        className="text-red-500 p-2 rounded-full hover:bg-red-100 transition duration-150"
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        <FaTrashAlt className="text-base" />
+                      </motion.button>
+                    </div>
+                  </td>
+                </motion.tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="text-center p-6 text-gray-500">
+                  Không có khóa học nào trong hệ thống.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
-};
-
-export default CourseManagementPage;
+}

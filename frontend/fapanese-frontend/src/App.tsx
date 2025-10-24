@@ -28,6 +28,8 @@ import FlashcardPage from "./pages/lesson/flashcard/FlashcardPage";
 import AdminDashBoard from "./pages/dashboard/AdminDashBoard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import OverviewContentPage from './pages/overview/OverviewContentPage';
+import AdminPendingTeachersPage from "./pages/dashboard/AdminPendingTeachersPage";
+
 
 // 1. IMPORT FloatingActionButton TẠI ĐÂY
 import FloatingActionButton from "./components/FloatingActionButton";
@@ -163,6 +165,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/pending-teachers" element={<AdminPendingTeachersPage />} />
         <Route path="/flashcard/:lessonPartId" element={<FlashcardPage />} />
       </Routes>
 

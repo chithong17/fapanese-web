@@ -1,8 +1,8 @@
 package com.ktnl.fapanese.mapper;
 
-import com.ktnl.fapanese.dto.request.StudentRegisterRequest;
+import com.ktnl.fapanese.dto.request.CreateStudentRequest;
 import com.ktnl.fapanese.dto.request.UserRequest;
-import com.ktnl.fapanese.dto.response.StudentRegisterResponse;
+import com.ktnl.fapanese.dto.response.CreateStudentAccountResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.entity.Lecturer;
 import com.ktnl.fapanese.entity.Student;
@@ -14,10 +14,10 @@ import org.mapstruct.Mapping;
 public interface UserMapper {
     @Mapping(target = "password_hash", source = "password")
     User toUser(UserRequest request);
-    User toUser(StudentRegisterRequest request);
+    User toUser(CreateStudentRequest request);
 
     Student toStudent(UserRequest request);
-    Student toStudent(StudentRegisterRequest request);
+    Student toStudent(CreateStudentRequest request);
 
     Lecturer toLecturer(UserRequest request);
 
@@ -49,5 +49,5 @@ public interface UserMapper {
     UserResponse toUserResponse(User user);
 
 
-    StudentRegisterResponse toStudentRegisterRequest(StudentRegisterRequest studentRegisterRequest);
+    CreateStudentAccountResponse toStudentRegisterRequest(CreateStudentRequest createStudentRequest);
 }

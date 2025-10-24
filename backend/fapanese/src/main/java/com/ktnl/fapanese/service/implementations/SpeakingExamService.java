@@ -2,6 +2,7 @@ package com.ktnl.fapanese.service.implementations;
 
 import com.ktnl.fapanese.dto.request.SpeakingExamRequest;
 import com.ktnl.fapanese.dto.response.SpeakingExamResponse;
+import com.ktnl.fapanese.dto.response.SpeakingRespone;
 import com.ktnl.fapanese.entity.OverviewPart;
 import com.ktnl.fapanese.entity.SpeakingExam;
 import com.ktnl.fapanese.exception.AppException;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -90,6 +92,32 @@ public class SpeakingExamService implements ISpeakingExamService {
         // Do 'cascade = CascadeType.ALL, orphanRemoval = true'
         // Xóa 'SpeakingExam' sẽ tự động xóa tất cả 'Speaking' liên quan
         speakingExamRepository.delete(exam);
+    }
+
+    @Override
+    public List<SpeakingExamResponse> getAllSpeakingExamsByOverviewPartId(Long partId) {
+        if (!overviewPartRepository.existsById(partId)) {
+            throw new AppException(ErrorCode.OVERVIEW_PART_NOT_FOUND);
+        }
+
+        List<SpeakingExam> speakingExams = speakingExamRepository.findByOverviewPartId(partId);
+
+        // 1. Map sang List DTO như bình thường
+        List<SpeakingExamResponse> responseList = speakingExamMapper.toSpeakingExamResponseList(speakingExams);
+
+        // 2. Sắp xếp danh sách 'speakings' bên trong mỗi SpeakingExamResponse
+        responseList.forEach(examResponse -> {
+            // Kiểm tra xem danh sách speakings có tồn tại và không rỗng không
+            if (examResponse.getSpeakings() != null && !examResponse.getSpeakings().isEmpty()) {
+                // Sắp xếp trực tiếp danh sách speakings theo ID
+                examResponse.getSpeakings().stream().sorted(Comparator.comparing(SpeakingRespone::getId).reversed());
+                // Nếu muốn sắp xếp giảm dần, dùng:
+                // examResponse.getSpeakings().sort(Comparator.comparing(SpeakingResponse::getId).reversed());
+            }
+        });
+
+        return speakingExamMapper.toSpeakingExamResponseList(speakingExams);
+
     }
 
     // Hàm private helper

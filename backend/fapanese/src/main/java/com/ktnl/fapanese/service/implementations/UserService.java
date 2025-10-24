@@ -236,22 +236,40 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public UserResponse updateStatusById(String userId, int status) {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        user.setStatus(status);
-        User updated = userRepo.save(user);
         if (user.getTeacher() != null) {
             String fullName = user.getTeacher().getFirstName() + " " + user.getTeacher().getLastName();
 
             if (status == 3) {
+                user.setStatus(3);
+                userRepo.save(user);
                 emailService.sendEmail(user.getEmail(), teacherApprovalEmail, fullName);
+                log.info("✅ Approved teacher and sent mail to {}", user.getEmail());
             }
+
             else if (status == -1) {
                 emailService.sendEmail(user.getEmail(), rejectTeacherEmail, fullName);
+                log.info("📧 Sent rejection mail to {}", user.getEmail());
+
+                userRepo.delete(user); // Xóa cả user và lecturer (cascade)
+                log.info("🗑️ Deleted rejected teacher {}", user.getEmail());
+
+                return UserResponse.builder()
+                        .email(user.getEmail())
+                        .role("LECTURER")
+                        .build();
             }
         }
-        return mapper.toUserResponse(updated);
+        else {
+            user.setStatus(status);
+            userRepo.save(user);
+            log.info("Updated status {} for non-teacher user {}", status, user.getEmail());
+        }
+
+        return mapper.toUserResponse(user);
     }
 }

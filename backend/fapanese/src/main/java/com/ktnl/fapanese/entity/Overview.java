@@ -30,6 +30,7 @@ public class Overview {
     @Column(name = "description")
     String description;
 
+    @Builder.Default
     @OneToMany(mappedBy = "overview", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<OverviewPart> overviewParts = new HashSet<>();
 }

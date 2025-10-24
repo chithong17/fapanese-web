@@ -33,6 +33,7 @@ public class Lesson {
     @Column(name = "order_index")
     Integer orderIndex;
 
+    @Builder.Default
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<LessonPart> lessonParts = new HashSet<>();
 }

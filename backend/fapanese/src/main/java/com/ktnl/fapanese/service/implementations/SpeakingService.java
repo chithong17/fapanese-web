@@ -3,6 +3,7 @@ package com.ktnl.fapanese.service.implementations;
 import com.ktnl.fapanese.dto.request.SpeakingRequest;
 import com.ktnl.fapanese.dto.response.SpeakingRespone;
 import com.ktnl.fapanese.entity.Speaking;
+import com.ktnl.fapanese.entity.enums.SpeakingType;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mapper.SpeakingMapper;
@@ -59,6 +60,14 @@ public class SpeakingService implements ISpeakingService {
             throw new AppException(ErrorCode.SPEAKING_NOT_FOUND);
         }
         speakingRepository.deleteById(id);
+    }
+
+    @Override
+    public List<SpeakingRespone> getSpeakingsByType(SpeakingType speakingType) {
+        return speakingRepository.findByType(speakingType)
+                .stream()
+                .map(speakingMapper::toSpeakingResponse)
+                .collect(Collectors.toList());
     }
 
 

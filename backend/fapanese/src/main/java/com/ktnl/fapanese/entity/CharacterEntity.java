@@ -9,12 +9,13 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Character {
+@Table(name = "character_entity") // tránh tên reserved
+public class CharacterEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String character;
+    private String characterValue;
     private String romaji;
     private String type;
     private String category;

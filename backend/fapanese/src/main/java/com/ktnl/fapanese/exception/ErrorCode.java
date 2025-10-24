@@ -28,6 +28,9 @@ public enum ErrorCode {
     QUESTION_NOT_FOUND(1014, "Không tìm thấy câu hỏi", HttpStatus.NOT_FOUND),
     LESSON_PART_NOT_FOUND(1014, "Không tìm thấy lesson part", HttpStatus.NOT_FOUND),
     SPEAKING_NOT_FOUND(1014, "Không tìm thấy Speaking", HttpStatus.NOT_FOUND),
+    CLASS_NOT_FOUND(1014, "Không tìm thấy Class", HttpStatus.NOT_FOUND),
+    LECTURER_NOT_FOUND(1014, "Không tìm thấy Lecturer", HttpStatus.NOT_FOUND),
+    INVALID_CLASS_NAME(1015,"ClassName không hợp lệ", HttpStatus.NOT_FOUND),
     // 👉 Validation specific error codes
     FIRSTNAME_REQUIRED(2001, "First name is required", HttpStatus.BAD_REQUEST),
     LASTNAME_REQUIRED(2002, "Last name is required", HttpStatus.BAD_REQUEST),
@@ -37,9 +40,14 @@ public enum ErrorCode {
     DOB_INVALID(2006, "Date of birth must be in the past", HttpStatus.BAD_REQUEST),
     CAMPUS_REQUIRED(2007, "Campus is required", HttpStatus.BAD_REQUEST),
 
-    FILE_REQUIRED(3001, "File không được rỗng", HttpStatus.BAD_REQUEST);
+    FILE_REQUIRED(3001, "File không được rỗng", HttpStatus.BAD_REQUEST),
+
+    OVERVIEW_PART_NOT_FOUND(4001, "Không tìm thấy Overview Part", HttpStatus.NOT_FOUND),
+    EXAM_NOT_FOUND(4002, "Không tìm thấy bài kiểm tra", HttpStatus.NOT_FOUND),
+    OVERVIEW_NOT_FOUND(4003, "Không tìm thấy Overview", HttpStatus.NOT_FOUND)
 
 
+    ;
     private int code;
     private String message;
     private HttpStatusCode statusCode;

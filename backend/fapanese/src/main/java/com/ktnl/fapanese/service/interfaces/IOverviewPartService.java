@@ -1,6 +1,7 @@
 package com.ktnl.fapanese.service.interfaces;
 
 import com.ktnl.fapanese.dto.request.OverviewPartRequest;
+import com.ktnl.fapanese.dto.response.LessonPartSimpleResponse;
 import com.ktnl.fapanese.dto.response.OverviewPartResponse;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface IOverviewPartService {
     OverviewPartResponse updateOverviewPart(Long id, OverviewPartRequest request);
 
     void deleteOverviewPart(Long id);
+
+    List<OverviewPartResponse> getOverviewPartByOverview(Long overviewId);
 }

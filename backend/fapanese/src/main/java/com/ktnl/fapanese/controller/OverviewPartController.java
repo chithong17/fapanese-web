@@ -2,6 +2,7 @@ package com.ktnl.fapanese.controller;
 
 import com.ktnl.fapanese.dto.request.OverviewPartRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
+import com.ktnl.fapanese.dto.response.LessonPartSimpleResponse;
 import com.ktnl.fapanese.dto.response.OverviewPartResponse;
 import com.ktnl.fapanese.service.interfaces.IOverviewPartService;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,15 @@ public class OverviewPartController {
         overviewPartService.deleteOverviewPart(id);
         return ApiResponse.<String>builder()
                 .message("Delete overview part success")
+                .build();
+    }
+
+    @GetMapping("/by-overview/{overviewId}")
+    public ApiResponse<List<OverviewPartResponse>> getLessonPartsByLesson(@PathVariable Long overviewId) {
+        List<OverviewPartResponse> result = overviewPartService.getOverviewPartByOverview(overviewId);
+        return ApiResponse.<List<OverviewPartResponse>>builder()
+                .message("Overview parts fetched successfully for Overview " + overviewId)
+                .result(result)
                 .build();
     }
 }

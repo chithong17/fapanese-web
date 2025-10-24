@@ -15,4 +15,6 @@ public interface IOverviewService {
     OverviewResponse updateOverview(Long id, OverviewRequest request);
 
     void deleteOverview(Long id);
+
+    List<OverviewResponse> getAllOverviewsByCourseCode(String courseCode);
 }

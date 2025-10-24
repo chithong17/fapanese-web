@@ -314,9 +314,6 @@ const OverviewContentPage: React.FC = () => {
                 <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-6 pb-4 border-b-2 border-indigo-100">
                     {exam.examTitle}
                 </h2>
-                <p className="text-lg text-gray-600 mb-10 font-medium">
-                    Kỳ thi: **{exam.semester}** - Năm: **{exam.year}**
-                </p>
 
                 {isSubmitted && (
                     <div className="mb-10 p-6 bg-green-50 border-2 border-green-300 rounded-xl text-center shadow-md animate-fade-in">

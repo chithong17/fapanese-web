@@ -9,6 +9,8 @@ import com.ktnl.fapanese.entity.Student;
 import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
+import com.ktnl.fapanese.mail.RejectTeacherEmail;
+import com.ktnl.fapanese.mail.TeacherApprovalEmail;
 import com.ktnl.fapanese.mapper.UserMapper;
 import com.ktnl.fapanese.repository.LecturerRepository;
 import com.ktnl.fapanese.repository.RoleRepository;
@@ -24,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,6 +46,12 @@ public class UserService implements IUserService {
     private UserMapper mapper;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    private TeacherApprovalEmail teacherApprovalEmail;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private RejectTeacherEmail rejectTeacherEmail;
 
     public UserResponse registerUser(UserRequest userRequest) {
         log.info("Register request payload: {}", userRequest);
@@ -141,12 +150,10 @@ public class UserService implements IUserService {
         if ("STUDENT".equalsIgnoreCase(userRequest.getRole())) {
             Student student = user.getStudent(); // LẤY student hiện có (nếu có)
             if (student == null) {
-                // tạo mới và gắn hai chiều
                 student = mapper.toStudent(userRequest); // có thể dùng mapper
                 student.setUser(user);
                 user.setStudent(student);
             } else {
-                // update các field trên student hiện có
                 student.setFirstName(userRequest.getFirstName());
                 student.setLastName(userRequest.getLastName());
                 student.setCampus(userRequest.getCampus());
@@ -218,5 +225,33 @@ public class UserService implements IUserService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         user.setStatus(status);
+    }
+
+    @Override
+    public List<UserResponse> getPendingTeachers() {
+        return userRepo.findByRoles_RoleName("LECTURER").stream()
+                .filter(u -> u.getStatus() == 2)
+                .map(mapper::toUserResponse)   // ✅ map sang DTO trả về cho FE
+                .toList();
+    }
+
+    @Override
+    public UserResponse updateStatusById(String userId, int status) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        user.setStatus(status);
+        User updated = userRepo.save(user);
+        if (user.getTeacher() != null) {
+            String fullName = user.getTeacher().getFirstName() + " " + user.getTeacher().getLastName();
+
+            if (status == 1) {
+                emailService.sendEmail(user.getEmail(), teacherApprovalEmail, fullName);
+            }
+            else if (status == -1) {
+                emailService.sendEmail(user.getEmail(), rejectTeacherEmail, fullName);
+            }
+        }
+        return mapper.toUserResponse(updated);
     }
 }

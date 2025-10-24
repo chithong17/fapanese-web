@@ -28,6 +28,8 @@ import FlashcardPage from "./pages/lesson/flashcard/FlashcardPage";
 import AdminDashBoard from "./pages/dashboard/AdminDashBoard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import OverviewContentPage from './pages/overview/OverviewContentPage';
+import AdminPendingTeachersPage from "./pages/dashboard/AdminPendingTeachersPage";
+
 
 function AppWrapper() {
   return (
@@ -149,6 +151,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/pending-teachers" element={<AdminPendingTeachersPage />} />
         <Route path="/flashcard/:lessonPartId" element={<FlashcardPage />} />
       </Routes>
 

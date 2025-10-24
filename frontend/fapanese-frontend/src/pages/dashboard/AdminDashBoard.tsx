@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, type Variants, type ForwardRefComponent, type HTMLMotionProps } from "framer-motion"; 
 import StudentManagementPage from "./StudentManagementPage";
+import AdminPendingTeachersPage from "./AdminPendingTeachersPage";
+import CourseManagementPage from "./CourseManagementPage";
+
+import { AiOutlineUserAdd } from "react-icons/ai";
+
 
 // --- IMPORTS ICON MỚI (TỪ REACT ICONS) ---
 import { IoIosLogOut } from "react-icons/io"; // Biểu tượng đăng xuất
@@ -48,6 +53,7 @@ const LogoutIcon = ({ className = "" }) => <IoIosLogOut className={`text-xl ${cl
 const ADMIN_MENU = [
     { name: "Quản lý học sinh", path: "/admin/students", icon: UsersIcon },
     { name: "Quản lý khóa học", path: "/admin/courses", pathMatch: "courses", icon: BookOpenIcon },
+    { name: "Duyệt giáo viên", path: "/admin/pending-teachers", icon: AiOutlineUserAdd },
 ];
 
 const MotionLink = motion(Link);
@@ -143,7 +149,8 @@ export default function AdminDashBoard() {
                     <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 min-h-[calc(100vh-140px)]">
                         <Routes>
                             <Route path="students" element={<StudentManagementPage />} />
-                            {/* <Route path="courses" element={<CourseManagementPage />} /> */}
+                            <Route path="courses" element={<CourseManagementPage />} />
+                            <Route path="pending-teachers" element={<AdminPendingTeachersPage />} />
                             <Route 
                                 index 
                                 element={

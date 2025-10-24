@@ -123,7 +123,6 @@ function App() {
                 <AlphabetLearning activeTab={activeTab} />
               </div>
               <HeroQr />
-              <Footer />
             </main>
           }
         />

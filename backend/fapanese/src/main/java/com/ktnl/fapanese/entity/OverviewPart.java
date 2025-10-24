@@ -32,12 +32,15 @@ public class OverviewPart {
     @Column(name = "type")
     OverviewPartType type;
 
+    @Builder.Default
     @OneToMany(mappedBy = "overviewPart", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<SpeakingExam> speakingExams = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "overviewPart", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<FinalExam> finalExams = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "overviewPart", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<MiddleExam> middleExams = new HashSet<>();
 }

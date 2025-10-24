@@ -22,5 +22,7 @@ public class OtpToken {
     private String email;
     private String otpCode;
     private LocalDateTime expiryTime;
+
+    @Builder.Default
     private boolean used = false;
 }

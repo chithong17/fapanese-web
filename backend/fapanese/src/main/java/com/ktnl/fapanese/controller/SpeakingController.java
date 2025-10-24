@@ -1,9 +1,12 @@
 package com.ktnl.fapanese.controller;
 
 
+import com.cloudinary.Api;
 import com.ktnl.fapanese.dto.request.SpeakingRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
+import com.ktnl.fapanese.dto.response.SpeakingQuestionResponse;
 import com.ktnl.fapanese.dto.response.SpeakingRespone;
+import com.ktnl.fapanese.entity.enums.SpeakingType;
 import com.ktnl.fapanese.service.implementations.SpeakingService;
 import com.ktnl.fapanese.service.interfaces.ISpeakingService;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +52,15 @@ public class SpeakingController {
         return ApiResponse.<SpeakingRespone>builder()
                 .result(result)
                 .message("Create speaking success")
+                .build();
+    }
+
+    @GetMapping("/type/{speakingType}")
+    public ApiResponse<List<SpeakingRespone>> getSpeakingsByType(@PathVariable SpeakingType speakingType){
+        List<SpeakingRespone> result = speakingService.getSpeakingsByType(speakingType);
+        return ApiResponse.<List<SpeakingRespone>>builder()
+                .result(result)
+                .message("Get all speakings success by "+ speakingType.name())
                 .build();
     }
 

@@ -52,6 +52,6 @@ public class Question {
     String fillAnswer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lesson_part_id", nullable = false)
+    @JoinColumn(name = "lesson_part_id")
     LessonPart lessonPart;
 }

@@ -32,6 +32,7 @@ public class SpeakingExam {
     @Column(name = "type")
     SpeakingExamType type;
 
+    @Builder.Default
     @OneToMany(mappedBy = "speakingExam", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Speaking> speakings = new HashSet<>();
 }

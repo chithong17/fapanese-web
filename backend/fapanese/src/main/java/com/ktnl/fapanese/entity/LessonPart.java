@@ -32,16 +32,21 @@ public class LessonPart {
     @Column(name = "type")
     LessonPartType type;
 
+
+    @Builder.Default
     @OneToMany(mappedBy = "lessonPart", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<LessonSubPart> lessonSubParts = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "lessonPart", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Vocabulary> vocabularies = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "lessonPart", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Grammar> grammars = new HashSet<>();
 
 
+    @Builder.Default
     @OneToMany(mappedBy = "lessonPart", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Question> questions = new HashSet<>();
 }

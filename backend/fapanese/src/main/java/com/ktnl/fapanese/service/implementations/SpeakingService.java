@@ -3,6 +3,7 @@ package com.ktnl.fapanese.service.implementations;
 import com.ktnl.fapanese.dto.request.SpeakingRequest;
 import com.ktnl.fapanese.dto.response.SpeakingRespone;
 import com.ktnl.fapanese.entity.Speaking;
+import com.ktnl.fapanese.entity.enums.SpeakingType;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mapper.SpeakingMapper;
@@ -11,6 +12,7 @@ import com.ktnl.fapanese.service.interfaces.ISpeakingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,6 +61,15 @@ public class SpeakingService implements ISpeakingService {
             throw new AppException(ErrorCode.SPEAKING_NOT_FOUND);
         }
         speakingRepository.deleteById(id);
+    }
+
+    @Override
+    public List<SpeakingRespone> getSpeakingsByType(SpeakingType speakingType) {
+        return speakingRepository.findByType(speakingType)
+                .stream()
+                .map(speakingMapper::toSpeakingResponse)
+                .sorted(Comparator.comparing(SpeakingRespone::getId))
+                .collect(Collectors.toList());
     }
 
 

@@ -27,6 +27,7 @@ import CourseLessonsPage from "./pages/courses/CourseLessonsPage";
 import FlashcardPage from "./pages/lesson/flashcard/FlashcardPage";
 import AdminDashBoard from "./pages/dashboard/AdminDashBoard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import OverviewContentPage from './pages/overview/OverviewContentPage';
 
 function AppWrapper() {
   return (
@@ -123,7 +124,6 @@ function App() {
                 <AlphabetLearning activeTab={activeTab} />
               </div>
               <HeroQr />
-              <Footer />
             </main>
           }
         />
@@ -136,6 +136,10 @@ function App() {
         <Route
           path="/lesson/:courseCode/:lessonId/:lessonPartId"
           element={<Lesson />}
+        />
+        <Route 
+          path="/overview/:courseCode/:overviewId/:partId" 
+          element={<OverviewContentPage />} 
         />
         <Route
           path="/admin/*"

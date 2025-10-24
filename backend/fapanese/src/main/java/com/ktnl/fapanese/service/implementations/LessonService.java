@@ -4,6 +4,8 @@ package com.ktnl.fapanese.service.implementations;
 import com.ktnl.fapanese.dto.response.LessonRespone;
 import com.ktnl.fapanese.entity.Course;
 import com.ktnl.fapanese.entity.Lesson;
+import com.ktnl.fapanese.exception.AppException;
+import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mapper.LessonMapper;
 import com.ktnl.fapanese.repository.CourseRepository;
 import com.ktnl.fapanese.repository.LessonRepository;
@@ -53,7 +55,7 @@ public class LessonService implements ILessonService {
     @Override
     public List<LessonRespone> findByCourseCode(String courseCode) {
         Course course = courseRepository.findByCode(courseCode)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
 
         return course.getLessons().stream()
                 .sorted(Comparator.comparing(Lesson::getOrderIndex))

@@ -4,6 +4,7 @@ import com.ktnl.fapanese.dto.request.ChangePasswordRequest;
 import com.ktnl.fapanese.dto.request.UserRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
+import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.service.interfaces.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -17,6 +18,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -99,4 +102,36 @@ public class UserController {
                 .message("Vô hiệu hóa tài khoản " + email + " thành công")
                 .build();
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @GetMapping("/pending-teachers")
+    public ApiResponse<List<UserResponse>> getPendingTeachers() {
+        List<UserResponse> teachers = iUserService.getPendingTeachers();
+        return ApiResponse.<List<UserResponse>>builder()
+                .message("Danh sách giáo viên chờ duyệt")
+                .result(teachers)
+                .build();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PutMapping("/approve-teacher/{id}")
+    public ApiResponse<UserResponse> approveTeacher(@PathVariable String id) {
+        UserResponse updated = iUserService.updateStatusById(id, 3);
+        return ApiResponse.<UserResponse>builder()
+                .message("Phê duyệt giáo viên thành công")
+                .result(updated)
+                .build();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PutMapping("/reject-teacher/{id}")
+    public ApiResponse<UserResponse> rejectTeacher(@PathVariable String id) {
+        UserResponse updated = iUserService.updateStatusById(id, -1);
+        return ApiResponse.<UserResponse>builder()
+                .message("Từ chối giáo viên thành công")
+                .result(updated)
+                .build();
+    }
+
+
 }

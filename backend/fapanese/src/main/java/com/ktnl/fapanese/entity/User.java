@@ -22,6 +22,7 @@ public class User {
     String email;
     String password_hash;
 
+    //-1: bị từ chối
     //0: dki chua xac thuc email
     //1: da xac thuc email chua active
     //2: da xac thuc da active cho admin duyet (Lecturer)

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { type AxiosProgressEvent } from "axios";
 
 const API_URL = "http://localhost:8080/fapanese/api/students";
 
@@ -27,4 +27,27 @@ export const deleteStudent = async (email: string, token: string) => {
   await axios.delete(`${API_URL}/${email}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+};
+
+export const uploadStudentExcel = async (
+    formData: FormData,
+    token: string,
+    // Thêm tham số callback để cập nhật tiến trình
+    onProgress: (progress: number) => void
+) => {
+    const res = await axios.post(`${API_URL}/upload-excel`, formData, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        // --- Thêm onUploadProgress ---
+        onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+            if (progressEvent.total) {
+                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                onProgress(percentCompleted); // Gọi callback với % tiến trình
+            } else {
+                 onProgress(0); // Hoặc một giá trị khác nếu không tính được total
+            }
+        },
+    });
+    return res.data;
 };

@@ -39,6 +39,7 @@ public class MiddleExam {
     int year;
 
     // Bảng `MiddleExamQuestion` được xử lý bằng @ManyToMany
+    @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "MiddleExamQuestion",

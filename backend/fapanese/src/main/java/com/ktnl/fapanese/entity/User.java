@@ -26,6 +26,7 @@ public class User {
     //1: da xac thuc email chua active
     //2: da xac thuc da active cho admin duyet (Lecturer)
     //3: dc active, hoat dong binh thuong
+    @Builder.Default
     @Column(nullable = false)
     int status = 0;
 

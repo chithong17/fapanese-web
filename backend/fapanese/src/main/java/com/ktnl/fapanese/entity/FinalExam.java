@@ -40,6 +40,7 @@ public class FinalExam {
     int year;
 
     // Bảng `FinalExamQuestion` được xử lý bằng @ManyToMany
+    @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "FinalExamQuestion",

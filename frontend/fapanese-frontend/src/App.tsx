@@ -123,7 +123,6 @@ function App() {
                 <AlphabetLearning activeTab={activeTab} />
               </div>
               <HeroQr />
-              <Footer />
             </main>
           }
         />
@@ -148,6 +147,7 @@ function App() {
         <Route path="/flashcard/:lessonPartId" element={<FlashcardPage />} />
       </Routes>
 
+      {!isAdminPage && <Footer />}
     </>
   );
 }

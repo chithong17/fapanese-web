@@ -27,4 +27,5 @@ public class Student {
     @MapsId
     @JoinColumn(name = "id")
     User user;
+
 }

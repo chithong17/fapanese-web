@@ -28,6 +28,7 @@ import FlashcardPage from "./pages/lesson/flashcard/FlashcardPage";
 import AdminDashBoard from "./pages/dashboard/AdminDashBoard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+
 function AppWrapper() {
   return (
     <Router>

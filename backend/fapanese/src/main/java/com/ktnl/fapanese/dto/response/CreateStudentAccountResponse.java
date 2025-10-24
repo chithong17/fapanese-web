@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class StudentRegisterResponse {
+public class CreateStudentAccountResponse {
     private String firstName;
     private String lastName;
     private String email;

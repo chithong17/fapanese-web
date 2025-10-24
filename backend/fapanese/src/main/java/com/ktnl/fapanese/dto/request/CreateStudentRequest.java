@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @ToString
-public class StudentRegisterRequest {
+public class CreateStudentRequest {
     @NotBlank(message = "First name is required") // map -> ErrorCode.FIRSTNAME_REQUIRED
     private String firstName;
 

@@ -13,6 +13,7 @@ import { submitQuizAnswers } from "../../api/quiz";
 import NotificationModal from "../../components/NotificationModal"; 
 import PassageViewer from "../../components/PassageViewer";
 import QuestionViewer from "../../components/QuestionViewer";
+import OverviewBanner from "../../assets/spk.svg"
 
 
 // --- Định nghĩa Interfaces ---
@@ -485,9 +486,8 @@ const OverviewContentPage: React.FC = () => {
 
         return (
             <div className="space-y-8 animate-fade-in-up">
-                <h2 className="text-4xl sm:text-5xl font-extrabold text-gray-900 border-b-2 border-gray-200 pb-5 mb-6">
-                    {partTitle}
-                </h2>
+                <img src={OverviewBanner} className="rounded-2xl h-auto w-300" />
+                
                 <p className="text-xl text-gray-700 font-light leading-relaxed">
                     Chọn một mục dưới đây để bắt đầu ôn luyện. Mỗi phần được thiết kế để giúp bạn nắm vững kiến thức một cách hiệu quả.
                 </p>

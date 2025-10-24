@@ -1,22 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
-// Giả định các hàm API này đã được định nghĩa đúng đường dẫn
+import { FaBookOpen, FaMicrophoneAlt, FaFileAlt } from "react-icons/fa"; 
+
 import { getOverviewPartsByOverview } from "../../api/overviewPart";
 import { getSpeakingExamsByPartId } from "../../api/speakingExam";
 import { getMiddleExamsByPartId } from "../../api/middleExam";
 import { getFinalExamsByPartId } from "../../api/finalExam";
-// Giả định hàm submitExamAnswers nằm trong quiz api
 import { submitQuizAnswers } from "../../api/quiz"; 
 
-// Giả định các Component này đã được định nghĩa đúng đường dẫn
 import NotificationModal from "../../components/NotificationModal"; 
 import PassageViewer from "../../components/PassageViewer";
 import QuestionViewer from "../../components/QuestionViewer";
-import OverviewBanner from "../../assets/spk.svg"
+
+import spk from "../../assets/spk.svg"
+import mid from "../../assets/mid.svg"
+import final from "../../assets/final.svg"
 
 
-// --- Định nghĩa Interfaces ---
+const PART_BANNERS: Record<string, string> = {
+    SPEAKING: spk, // Link ảnh cho mục SPEAKING
+    MIDDLE_EXAM: mid, // Link ảnh cho mục MIDDLE_EXAM
+    FINAL_EXAM: final, // Link ảnh cho mục FINAL_EXAM
+};
+
+// --- Định nghĩa Interfaces (GIỮ NGUYÊN) ---
 interface OverviewPart {
     id: number;
     overviewId: number;
@@ -87,7 +95,8 @@ const OverviewContentPage: React.FC = () => {
     const [contentGroups, setContentGroups] = useState<any[]>([]); 
     const [currentPartType, setCurrentPartType] = useState<string | null>(null);
     const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loadingContent, setLoadingContent] = useState(true); // Đổi tên để rõ ràng hơn
+    const [loadingBanner, setLoadingBanner] = useState(true); // State mới cho banner
     const [error, setError] = useState<string | null>(null);
 
     const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
@@ -124,7 +133,8 @@ const OverviewContentPage: React.FC = () => {
                 return;
             }
 
-            setLoading(true);
+            setLoadingContent(true); // Bắt đầu ẩn nội dung cũ
+            setLoadingBanner(true); // Bắt đầu ẩn banner cũ
             setError(null);
             setCurrentPartType(currentPart.type);
             setSelectedGroupId(null);
@@ -152,14 +162,17 @@ const OverviewContentPage: React.FC = () => {
                 console.error("Failed to fetch content:", err);
                 setError(err.response?.data?.message || "Lỗi khi tải nội dung.");
             } finally {
-                setLoading(false);
+                // Đặt loadingContent về false sau một khoảng thời gian ngắn để kích hoạt transition
+                setTimeout(() => {
+                    setLoadingContent(false);
+                }, 100); 
             }
         };
 
         fetchContentGroups();
     }, [partId, sidebarParts, overviewId, courseCode, navigate]);
-
-    // Hàm nộp bài trắc nghiệm
+    
+    // Hàm nộp bài trắc nghiệm (GIỮ NGUYÊN)
     const handleSubmitQuiz = async (
         examId: number,
         questions: ExamQuestion[]
@@ -175,8 +188,7 @@ const OverviewContentPage: React.FC = () => {
         }
 
         try {
-            const { submitExamAnswers } = await import("../../api/quiz");
-            const data = await submitExamAnswers(answersArray);
+            const data = await submitQuizAnswers(answersArray); 
 
             setSubmitResult(data.result);
             setIsSubmitted(true);
@@ -187,36 +199,39 @@ const OverviewContentPage: React.FC = () => {
         }
     };
     
-    // --- HÀM XỬ LÝ CHỌN ĐÁP ÁN VÀ CUỘN TỰ ĐỘNG ---
+    // --- HÀM XỬ LÝ CHỌN ĐÁP ÁN VÀ CUỘN TỰ ĐỘNG (GIỮ NGUYÊN) ---
     const handleAnswerSelection = (
         questionId: number,
         selectedAnswer: string,
         currentIndex: number,
         totalQuestions: number
     ) => {
-        // 1. Cập nhật đáp án người dùng
         setUserAnswers((prev) => ({
             ...prev,
             [questionId]: selectedAnswer,
         }));
 
-        // 2. Cuộn xuống câu hỏi tiếp theo (nếu chưa phải câu cuối)
         if (currentIndex < totalQuestions - 1) {
             const nextQuestionIndex = currentIndex + 1;
             const nextQuestionElement = document.getElementById(`question-${nextQuestionIndex}`);
 
             if (nextQuestionElement) {
-                // Cuộn mượt mà
                 nextQuestionElement.scrollIntoView({ 
                     behavior: 'smooth', 
-                    block: 'center'      
+                    block: 'center'      
                 });
             }
         }
     };
 
+    
 
-    // --- A. Render CHI TIẾT 1 nhóm SPEAKING ---
+    // Hàm lấy URL Banner theo loại Part
+    const getBannerImage = () => {
+        return PART_BANNERS[currentPartType as string] || PART_BANNERS.DEFAULT;
+    };
+
+    // --- A. Render CHI TIẾT 1 nhóm SPEAKING (GIỮ NGUYÊN) ---
     const renderSpeakingDetail = (group: SpeakingGroup) => (
         <div className="p-6 sm:p-10 bg-white rounded-2xl shadow-xl transition-all duration-300 transform hover:shadow-2xl">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-8 pb-4 border-b-2 border-cyan-100">
@@ -237,7 +252,6 @@ const OverviewContentPage: React.FC = () => {
                             Bài tập {index + 1}: {item.topic || 'Nội dung luyện tập'}
                         </h3>
 
-                        {/* Nội dung Bài đọc / Hình ảnh */}
                         {(item.speakingType === "PASSAGE" && item.passage) || (item.speakingType === "PICTURE" && item.imgUrl) ? (
                             <div className="my-6">
                                 {item.speakingType === "PASSAGE" && item.passage && (
@@ -260,7 +274,6 @@ const OverviewContentPage: React.FC = () => {
                             </div>
                         ) : null}
 
-                        {/* Câu hỏi Speaking */}
                         {item.speakingQuestions && item.speakingQuestions.length > 0 && (
                             <div className="mt-6 pt-6 border-t border-dashed border-gray-200">
                                 <h4 className="font-semibold mb-4 text-gray-800 text-lg">
@@ -294,18 +307,17 @@ const OverviewContentPage: React.FC = () => {
         </div>
     );
 
-    // --- B. Render CHI TIẾT 1 Đề thi (Middle/Final) ---
+    // --- B. Render CHI TIẾT 1 Đề thi (Middle/Final) (GIỮ NGUYÊN) ---
     const renderExamDetail = (exam: Exam) => {
-        
         return (
             <div className="p-6 sm:p-10 bg-white rounded-2xl shadow-xl transition-all duration-300 transform hover:shadow-2xl">
-                {/* --- Tiêu đề đề thi --- */}
                 <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-6 pb-4 border-b-2 border-indigo-100">
                     {exam.examTitle}
                 </h2>
-                
+                <p className="text-lg text-gray-600 mb-10 font-medium">
+                    Kỳ thi: **{exam.semester}** - Năm: **{exam.year}**
+                </p>
 
-                {/* --- Hiển thị kết quả nếu đã nộp --- */}
                 {isSubmitted && (
                     <div className="mb-10 p-6 bg-green-50 border-2 border-green-300 rounded-xl text-center shadow-md animate-fade-in">
                         <h3 className="font-extrabold text-2xl text-green-700 mb-3">
@@ -321,7 +333,6 @@ const OverviewContentPage: React.FC = () => {
                     </div>
                 )}
 
-                {/* --- Danh sách câu hỏi --- */}
                 <div className="space-y-10">
                     {exam.questions.map((q: ExamQuestion, index: number) => {
                         const selected = userAnswers[q.id];
@@ -332,7 +343,6 @@ const OverviewContentPage: React.FC = () => {
                         const isAnswer = result && result.correctAnswer === selected;
                         const isWrong = isSubmitted && selected && !isAnswer;
                         
-                        // Màu sắc container câu hỏi
                         const containerClass = isSubmitted 
                             ? isAnswer ? "bg-green-50 border-green-300 shadow-sm" : isWrong ? "bg-red-50 border-red-300 shadow-sm" : "bg-white border-gray-200 shadow-sm"
                             : "bg-white border-gray-200 shadow-md hover:shadow-lg transition-shadow";
@@ -340,17 +350,14 @@ const OverviewContentPage: React.FC = () => {
                         return (
                             <div
                                 key={q.id}
-                                // Gán ID để làm mục tiêu cuộn
                                 id={`question-${index}`} 
                                 className={`p-6 rounded-xl border ${containerClass}`}
                             >
-                                {/* Số thứ tự câu hỏi */}
                                 <p className="font-bold text-gray-900 mb-4 text-xl flex items-start">
                                     <span className="text-cyan-600 mr-3 mt-1">{index + 1}.</span>
                                     {q.content}
                                 </p>
 
-                                {/* Các lựa chọn đáp án */}
                                 <div className="space-y-3 text-lg text-gray-700 ml-8">
                                     {["A", "B", "C", "D"].map((opt) => {
                                         const value = (q as any)[`option${opt}`];
@@ -359,12 +366,11 @@ const OverviewContentPage: React.FC = () => {
                                         const isUserSelected = selected === value;
                                         const isCorrectAnswer = result && result.correctAnswer === value;
                                         
-                                        // Màu sắc nền cho lựa chọn
                                         const labelBg = isSubmitted
                                             ? isCorrectAnswer
-                                                ? "bg-green-100/70" // Đáp án đúng
+                                                ? "bg-green-100/70" 
                                                 : isUserSelected
-                                                ? "bg-red-100/70" // Chọn sai
+                                                ? "bg-red-100/70" 
                                                 : "bg-white"
                                             : isUserSelected ? "bg-cyan-50" : "hover:bg-gray-100";
 
@@ -381,13 +387,12 @@ const OverviewContentPage: React.FC = () => {
                                                     value={value}
                                                     checked={isUserSelected}
                                                     disabled={isSubmitted} 
-                                                    // Gọi hàm cuộn tự động khi chọn
                                                     onChange={() =>
                                                         handleAnswerSelection(
                                                             q.id, 
                                                             value, 
-                                                            index, // index hiện tại
-                                                            exam.questions.length // tổng số câu hỏi
+                                                            index, 
+                                                            exam.questions.length 
                                                         )
                                                     }
                                                     className={`w-5 h-5 text-cyan-600 border-gray-300 focus:ring-cyan-500 rounded-full ${isSubmitted ? 'opacity-60' : ''}`}
@@ -396,7 +401,6 @@ const OverviewContentPage: React.FC = () => {
                                                     <span className="font-bold mr-1">{opt}.</span> {value}
                                                 </span>
                                                 
-                                                {/* Hiển thị kết quả */}
                                                 {isSubmitted && isCorrectAnswer && <span className="text-green-600 text-xl font-black ml-auto">✅</span>}
                                                 {isSubmitted && isUserSelected && !isCorrectAnswer && <span className="text-red-600 text-xl font-black ml-auto">❌</span>}
                                             </label>
@@ -408,7 +412,6 @@ const OverviewContentPage: React.FC = () => {
                     })}
                 </div>
 
-                {/* --- Nút nộp bài --- */}
                 {!isSubmitted && (
                     <button
                         onClick={() => {
@@ -425,13 +428,15 @@ const OverviewContentPage: React.FC = () => {
 
     // --- Render nội dung chính ---
     const renderMainContent = () => {
-        if (loading) {
+        // 💡 SỬA ĐỔI Ở ĐÂY: Thêm điều kiện !selectedGroupId
+        if (loadingContent && !selectedGroupId) {
             return (
                 <div className="flex justify-center items-center h-64">
                     <p className="text-cyan-600 font-semibold text-lg animate-pulse">Đang tải nội dung ôn tập...</p>
                 </div>
             );
         }
+        
         if (error && !selectedGroupId) {
              return (
                  <div className="text-center text-red-700 bg-red-100 p-8 rounded-lg shadow-md border-l-4 border-red-500 animate-fade-in">
@@ -439,16 +444,16 @@ const OverviewContentPage: React.FC = () => {
                      <p className="text-lg">{error}</p>
                  </div>
              );
-         }
+           }
 
         const selectedItem = selectedGroupId
             ? contentGroups.find((item) => item.id === selectedGroupId)
             : null;
 
-        // 1. Hiển thị chi tiết
+        // 1. Hiển thị chi tiết (giữ nguyên hiệu ứng cho chi tiết)
         if (selectedItem) {
             return (
-                <div className="space-y-8 animate-fade-in-up">
+                <div className="space-y-8 animate-fade-in-up"> {/* Giữ hiệu ứng này cho toàn bộ phần chi tiết */}
                     <button
                         onClick={() => setSelectedGroupId(null)}
                         className="flex items-center px-5 py-2.5 bg-white text-gray-700 text-lg rounded-xl shadow-md hover:bg-gray-100 transition-all duration-300 border border-gray-200 font-medium group"
@@ -465,7 +470,7 @@ const OverviewContentPage: React.FC = () => {
             );
         }
 
-        // 2. Hiển thị danh sách
+        // 2. Hiển thị danh sách (đã điều chỉnh hiệu ứng cho banner và danh sách riêng)
         if (contentGroups.length === 0) {
             return (
                 <div className="text-center p-10 bg-white rounded-2xl shadow-xl animate-fade-in">
@@ -478,55 +483,66 @@ const OverviewContentPage: React.FC = () => {
 
         const partTitle = sidebarParts.find((p) => p.id === Number(partId))?.title;
         
-        // Định nghĩa màu sắc cho thẻ bài tập
         const cardBg = currentPartType === "SPEAKING" ? "bg-cyan-50" : "bg-indigo-50";
         const titleColor = currentPartType === "SPEAKING" ? "text-cyan-800" : "text-indigo-800";
         const statTextColor = currentPartType === "SPEAKING" ? "text-cyan-600" : "text-indigo-600";
 
 
         return (
-            <div className="space-y-8 animate-fade-in-up">
-                <img src={OverviewBanner} className="rounded-2xl h-auto w-300" />
+            <div className="space-y-8"> {/* Loại bỏ animate-fade-in-up ở đây, thay bằng các phần tử con */}
+                {/* Banner với hiệu ứng fade-in */}
+                <img 
+                    src={getBannerImage()} 
+                    alt={`Banner ${partTitle}`} 
+                    className={`rounded-2xl w-full h-auto shadow-lg transition-all duration-700 ease-out 
+                                ${loadingBanner ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
+                    onLoad={() => setLoadingBanner(false)} // Khi ảnh tải xong, bỏ loading banner
+                />
                 
-                <p className="text-xl text-gray-700 font-light leading-relaxed">
-                    Chọn một mục dưới đây để bắt đầu ôn luyện. Mỗi phần được thiết kế để giúp bạn nắm vững kiến thức một cách hiệu quả.
-                </p>
+                {/* Phần mô tả và các card bài tập sẽ có hiệu ứng riêng */}
+                <div className={`transition-opacity duration-700 ease-in-out delay-200 ${ // Thêm delay cho phần này
+                                loadingContent ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {contentGroups.map((item) => (
-                        <div
-                            key={item.id}
-                            // Áp dụng màu nền, loại bỏ border, thêm hiệu ứng hover mượt
-                            className={`p-6 ${cardBg} rounded-2xl shadow-md cursor-pointer transition-all duration-300 hover:shadow-xl hover:bg-opacity-80 flex flex-col justify-between min-h-[160px] transform hover:scale-[1.02]`}
-                            onClick={() => {
-                                setSelectedGroupId(item.id);
-                                setIsSubmitted(false);
-                                setUserAnswers({});
-                                setSubmitResult(null);
-                            }}
-                        >
-                            <div>
-                                <h3
-                                    className={`text-xl font-bold ${titleColor} mb-3 line-clamp-2`}
-                                >
-                                    {item.title || item.examTitle}
-                                </h3>
-                                <p className="text-gray-600 text-base line-clamp-2">
-                                    {currentPartType === "SPEAKING"
-                                        ? item.description || `Các bài tập dạng ${item.type || item.speakingType}`
-                                        : `Kỳ thi ${item.semester} - Năm ${item.year}`}
-                                </p>
+                    <p className="text-xl text-gray-700 font-light leading-relaxed mb-6">
+                        Chọn một mục dưới đây để bắt đầu ôn luyện. Mỗi phần được thiết kế để giúp bạn nắm vững kiến thức một cách hiệu quả.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {contentGroups.map((item) => (
+                            <div
+                                key={item.id}
+                                className={`p-6 ${cardBg} rounded-2xl shadow-md cursor-pointer transition-all duration-300 hover:shadow-xl hover:bg-opacity-80 flex flex-col justify-between min-h-[160px] transform hover:scale-[1.02]`}
+                                onClick={() => {
+                                    // 💡 ĐÃ SỬA: BỎ DÒNG setLoadingContent(true);
+                                    setSelectedGroupId(item.id);
+                                    setIsSubmitted(false);
+                                    setUserAnswers({});
+                                    setSubmitResult(null);
+                                }}
+                            >
+                                <div>
+                                    <h3
+                                        className={`text-xl font-bold ${titleColor} mb-3 line-clamp-2`}
+                                    >
+                                        {item.title || item.examTitle}
+                                    </h3>
+                                    <p className="text-gray-600 text-base line-clamp-2">
+                                        {currentPartType === "SPEAKING"
+                                            ? item.description || `Các bài tập dạng ${item.type || item.speakingType}`
+                                            : `Kỳ thi ${item.semester} - Năm ${item.year}`}
+                                    </p>
+                                </div>
+                                <div className="mt-4 text-right">
+                                    <span className={`text-sm font-semibold ${statTextColor} bg-white px-3 py-1.5 rounded-full shadow-sm`}>
+                                        {currentPartType === "SPEAKING" && item.speakings ? 
+                                            `${item.speakings.length} Bài tập` :
+                                            (item.questions ? `${item.questions.length} Câu hỏi` : '')
+                                        }
+                                    </span>
+                                </div>
                             </div>
-                            <div className="mt-4 text-right">
-                                <span className={`text-sm font-semibold ${statTextColor} bg-white px-3 py-1.5 rounded-full shadow-sm`}>
-                                    {currentPartType === "SPEAKING" && item.speakings ? 
-                                        `${item.speakings.length} Bài tập` :
-                                        (item.questions ? `${item.questions.length} Câu hỏi` : '')
-                                    }
-                                </span>
-                            </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
         );
@@ -534,17 +550,17 @@ const OverviewContentPage: React.FC = () => {
 
     // --- JSX return (Layout chính) ---
     return (
-        // 1. Loại bỏ font-sans: Xóa class 'font-sans' khỏi div chính
         <div className="min-h-screen bg-gray-50 antialiased"> 
+            
             {/* Notification */}
-            {error && !loading && (
+            {error && !loadingContent && ( // Điều kiện hiển thị notification
                 <NotificationModal 
                     message={error} 
                     onClose={() => setError(null)} 
                 />
             )}
 
-            {/* Header */}
+            {/* Header (GIỮ NGUYÊN) */}
             <header className="bg-white shadow-lg sticky top-0 z-20 border-b-4 border-cyan-500"> 
                 <div className="max-w-8xl mx-auto px-6 lg:px-12 py-4 flex justify-between items-center">
                     <Link
@@ -567,7 +583,6 @@ const OverviewContentPage: React.FC = () => {
                     
                     {/* Sidebar */}
                     <aside className="w-full md:w-[320px] flex-shrink-0 mb-10 md:mb-0">
-                        {/* 2. Bỏ viền màu bên trái: Xóa class 'border-l-4 border-cyan-500' */}
                         <div className="bg-white rounded-2xl shadow-xl p-8 sticky top-[120px]"> 
                             <h3 className="text-2xl font-bold text-gray-900 mb-6 pb-3 border-b border-gray-200">
                                 Mục lục ôn tập
@@ -580,15 +595,16 @@ const OverviewContentPage: React.FC = () => {
                                             key={part.id}
                                             to={`/overview/${courseCode}/${overviewId}/${part.id}`}
                                             className={`
-                                                block w-full text-left px-5 py-2.5 rounded-xl transition-all duration-300 text-lg font-medium
+                                                flex items-center w-full text-left px-5 py-2.5 rounded-xl transition-all duration-300 text-lg font-medium
                                                 ${
                                                     isActive
-                                                        ? "bg-gradient-to-r from-[#00BCD4] to-[#4DD0E1] text-white shadow-lg transform scale-[1.03] hover:bg-cyan-600" // 3. Tạo hiệu ứng sáng/nổi khi active
+                                                        ? "bg-gradient-to-r from-[#00BCD4] to-[#4DD0E1] text-white shadow-lg transform scale-[1.03] hover:bg-cyan-600" 
                                                         : "text-gray-800 hover:bg-cyan-50 hover:text-cyan-700"
                                                 }
                                             `}
                                         >
-                                            {part.title}
+                                            
+                                            <span className="ml-3 truncate">{part.title}</span>
                                         </Link>
                                     );
                                 })}
@@ -598,7 +614,7 @@ const OverviewContentPage: React.FC = () => {
                     
                     {/* Content Area */}
                     <main className="w-full md:flex-1">
-                        {renderMainContent()}
+                        {renderMainContent()} {/* renderMainContent sẽ tự quản lý hiệu ứng */}
                     </main>
                 </div>
             </div>

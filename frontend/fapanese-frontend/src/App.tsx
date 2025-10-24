@@ -31,6 +31,10 @@ import OverviewContentPage from './pages/overview/OverviewContentPage';
 import AdminPendingTeachersPage from "./pages/dashboard/AdminPendingTeachersPage";
 
 
+// 1. IMPORT FloatingActionButton TẠI ĐÂY
+import FloatingActionButton from "./components/FloatingActionButton";
+
+
 function AppWrapper() {
   return (
     <Router>
@@ -50,6 +54,9 @@ function App() {
   const [authTab, setAuthTab] = useState<"login" | "signup">("login");
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [loadingPopup, setLoadingPopup] = useState(false);
+  
+  // Định nghĩa link "HỌC NGAY!"
+  const learnNowLink = "/courses"; 
 
   const scrollToSection = (id: string, tab?: "hiragana" | "katakana") => {
     if (id === "alphabet" && tab) {
@@ -106,6 +113,13 @@ function App() {
           element={
             <main className="relative z-0 overflow-visible">
               <BottomNav scrollToSection={scrollToSection} />
+              
+              {/* 2. TÍCH HỢP FloatingActionButton TẠI ĐÂY */}
+              <FloatingActionButton
+                  link={learnNowLink}
+                  // Giữ nguyên các props khác để component sử dụng hình ảnh SVG đã import
+              />
+
               <HeroBackground />
               <HeroBelow />
               <FeatureSection />

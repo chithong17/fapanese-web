@@ -42,7 +42,7 @@ public class LessonController {
     // }
 
     @GetMapping("/by-course/{courseCode}")
-    public ResponseEntity<?> getLessonsByCourse(@PathVariable String courseCode) {
+    public ResponseEntity<?> getLessonsByCourse(@PathVariable("courseCode") String courseCode) {
         List<LessonRespone> lessons = lessonService.findByCourseCode(courseCode);
         return ResponseEntity.ok(lessons);
     }

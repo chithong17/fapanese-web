@@ -25,7 +25,7 @@ public class LessonPartController {
 
 
     @GetMapping("/by-lesson/{lessonId}")
-    public ApiResponse<List<LessonPartSimpleResponse>> getLessonPartsByLesson(@PathVariable Long lessonId) {
+    public ApiResponse<List<LessonPartSimpleResponse>> getLessonPartsByLesson(@PathVariable("lessonId") Long lessonId) {
         List<LessonPartSimpleResponse> result = lessonPartService.getLessonPartsByLesson(lessonId);
         return ApiResponse.<List<LessonPartSimpleResponse>>builder()
                 .message("Lesson parts fetched successfully for lesson " + lessonId)

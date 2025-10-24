@@ -39,7 +39,7 @@ public class GrammarController {
     }
 
     @GetMapping("/by-lesson/{lessonId}")
-    public ApiResponse<List<GrammarResponse>> getGrammarsByLesson(@PathVariable Long lessonPartId) {
+    public ApiResponse<List<GrammarResponse>> getGrammarsByLesson(@PathVariable("lessonId") Long lessonPartId) {
         List<GrammarResponse> result = grammarService.getGrammarsByLessonPart(lessonPartId);
         return ApiResponse.<List<GrammarResponse>>builder()
                 .message("Grammars fetched successfully for lesson " + lessonPartId)
@@ -48,7 +48,7 @@ public class GrammarController {
     }
 
     @GetMapping("/{grammarId}")
-    public ApiResponse<GrammarResponse> getGrammarById(@PathVariable Long grammarId) {
+    public ApiResponse<GrammarResponse> getGrammarById(@PathVariable("grammarId") Long grammarId) {
         GrammarResponse result = grammarService.getGrammarById(grammarId);
         return ApiResponse.<GrammarResponse>builder()
                 .message("Grammar fetched successfully")
@@ -57,7 +57,7 @@ public class GrammarController {
     }
 
     @PutMapping("/{grammarId}")
-    public ApiResponse<GrammarResponse> updateGrammar(@PathVariable Long grammarId, @RequestBody GrammarRequest request) {
+    public ApiResponse<GrammarResponse> updateGrammar(@PathVariable("grammarId") Long grammarId, @RequestBody GrammarRequest request) {
         GrammarResponse result = grammarService.updateGrammar(grammarId, request);
         return ApiResponse.<GrammarResponse>builder()
                 .message("Grammar updated successfully")
@@ -66,7 +66,7 @@ public class GrammarController {
     }
 
     @DeleteMapping("/{grammarId}")
-    public ApiResponse<Void> deleteGrammar(@PathVariable Long grammarId) {
+    public ApiResponse<Void> deleteGrammar(@PathVariable("grammarId") Long grammarId) {
         grammarService.deleteGrammar(grammarId);
         return ApiResponse.<Void>builder()
                 .message("Grammar deleted successfully")
@@ -74,7 +74,7 @@ public class GrammarController {
     }
 
     @GetMapping("/by-lesson-part/{lessonPartId}")
-    public ApiResponse<List<GrammarResponse>> getGrammarsByLessonPart(@PathVariable Long lessonPartId) {
+    public ApiResponse<List<GrammarResponse>> getGrammarsByLessonPart(@PathVariable("lessonPartId") Long lessonPartId) {
         List<GrammarResponse> result = grammarService.getGrammarsByLessonPart(lessonPartId);
         return ApiResponse.<List<GrammarResponse>>builder()
                 .message("Grammars fetched successfully for LessonPart " + lessonPartId)

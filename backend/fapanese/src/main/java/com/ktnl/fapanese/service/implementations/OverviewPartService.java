@@ -1,7 +1,9 @@
 package com.ktnl.fapanese.service.implementations;
 
 import com.ktnl.fapanese.dto.request.OverviewPartRequest;
+import com.ktnl.fapanese.dto.response.LessonPartSimpleResponse;
 import com.ktnl.fapanese.dto.response.OverviewPartResponse;
+import com.ktnl.fapanese.entity.LessonPart;
 import com.ktnl.fapanese.entity.Overview;
 import com.ktnl.fapanese.entity.OverviewPart;
 import com.ktnl.fapanese.exception.AppException;
@@ -92,6 +94,17 @@ public class OverviewPartService implements IOverviewPartService {
         // Do 'cascade = CascadeType.ALL, orphanRemoval = true'
         // Xóa 'OverviewPart' sẽ tự động xóa tất cả các Exam liên quan
         overviewPartRepository.delete(overviewPart);
+    }
+
+    @Override
+    public List<OverviewPartResponse> getOverviewPartByOverview(Long overviewId) {
+        if (!overviewRepository.existsById(overviewId)) {
+            throw new AppException(ErrorCode.OVERVIEW_NOT_FOUND);
+        }
+
+        List<OverviewPart> overviewParts = overviewPartRepository.findByOverviewId(overviewId);
+
+        return overviewPartMapper.toOverviewPartResponseList(overviewParts);
     }
 
     // Hàm private helper

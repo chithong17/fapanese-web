@@ -1,11 +1,14 @@
 package com.ktnl.fapanese.service.implementations;
 
 import com.ktnl.fapanese.dto.request.OverviewRequest;
+import com.ktnl.fapanese.dto.response.LessonRespone;
 import com.ktnl.fapanese.dto.response.OverviewResponse;
 import com.ktnl.fapanese.entity.Course;
+import com.ktnl.fapanese.entity.Lesson;
 import com.ktnl.fapanese.entity.Overview;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
+import com.ktnl.fapanese.mapper.LessonMapper;
 import com.ktnl.fapanese.mapper.OverviewMapper;
 import com.ktnl.fapanese.repository.CourseRepository;
 import com.ktnl.fapanese.repository.OverviewRepository;
@@ -17,7 +20,10 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -87,6 +93,15 @@ public class OverviewService implements IOverviewService {
         // Xóa 'Overview' sẽ tự động xóa tất cả 'OverviewPart' liên quan
         overviewRepository.delete(overview);
     }
+
+    @Override
+    public List<OverviewResponse> getAllOverviewsByCourseCode(String courseCode) {
+        Course course = courseRepository.findByCode(courseCode)
+                .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
+
+        return overviewMapper.toOverviewResponseList(new ArrayList<>(course.getOverviews()));
+    }
+
 
     // Hàm private helper
     private Overview findOverviewById(Long id) {

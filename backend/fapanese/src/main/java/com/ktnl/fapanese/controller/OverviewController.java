@@ -1,10 +1,13 @@
 package com.ktnl.fapanese.controller;
 
+import com.cloudinary.Api;
 import com.ktnl.fapanese.dto.request.OverviewRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
+import com.ktnl.fapanese.dto.response.LessonRespone;
 import com.ktnl.fapanese.dto.response.OverviewResponse;
 import com.ktnl.fapanese.service.interfaces.IOverviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,4 +62,15 @@ public class OverviewController {
                 .message("Delete overview success")
                 .build();
     }
+
+    @GetMapping("/by-course/{courseCode}")
+    public ApiResponse<List<OverviewResponse>> getAllOverviews(@PathVariable String courseCode) {
+        List<OverviewResponse> result = overviewService.getAllOverviewsByCourseCode(courseCode);
+        return ApiResponse.<List<OverviewResponse>>builder()
+                .result(result)
+                .message("Get all overviews by CourseCode success")
+                .build();
+    }
+
+
 }

@@ -1,7 +1,7 @@
 package com.ktnl.fapanese.service.implementations;
 
-import com.ktnl.fapanese.dto.request.StudentRegisterRequest;
-import com.ktnl.fapanese.dto.response.StudentRegisterResponse;
+import com.ktnl.fapanese.dto.request.CreateStudentRequest;
+import com.ktnl.fapanese.dto.response.CreateStudentAccountResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.entity.Role;
 import com.ktnl.fapanese.entity.Student;
@@ -38,22 +38,22 @@ public class StudentService implements IStudentService {
     EmailService emailService;
 
     @Override
-    public StudentRegisterResponse registerStudent(StudentRegisterRequest studentRegisterRequest) {
-        Optional<User> existingUserOpt  = userRepo.findByEmail(studentRegisterRequest.getEmail());
+    public CreateStudentAccountResponse createStudentAccount(CreateStudentRequest createStudentRequest) {
+        Optional<User> existingUserOpt  = userRepo.findByEmail(createStudentRequest.getEmail());
 
         if(existingUserOpt.isPresent())
             throw new AppException(ErrorCode.EMAIL_EXISTED);
 
-        User user = mapper.toUser(studentRegisterRequest);
+        User user = mapper.toUser(createStudentRequest);
         String randomPassword = generateRandomPassword(8);
         user.setPassword_hash(passwordEncoder.encode(randomPassword));
         Role role = roleRepo.findByRoleName("STUDENT");
         user.setRoles(Set.of(role));
         user.setStatus(0);
 
-        Student student = mapper.toStudent(studentRegisterRequest);
+        Student student = mapper.toStudent(createStudentRequest);
         student.setUser(user);       // Quan hệ từ Student -> User
-        student.setAvtUrl("https://drive.google.com/file/d/1KZJdE58UiYN8UjoZ0y7wUw0Ptge8FZ0i/view?usp=drive_link");
+//        student.setAvtUrl("https://drive.google.com/file/d/1KZJdE58UiYN8UjoZ0y7wUw0Ptge8FZ0i/view?usp=drive_link");
         user.setStudent(student);    // Quan hệ ngược lại từ User -> Student
 
         // 3. Chỉ cần LƯU USER MỘT LẦN DUY NHẤT ở cuối cùng
@@ -63,8 +63,16 @@ public class StudentService implements IStudentService {
         emailService.sendEmail(savedUser.getEmail(), new AccountCreatedEmailTemplate(), savedUser.getEmail(), randomPassword);
 
         // 4. Map từ đối tượng đã được lưu (có đầy đủ thông tin) và trả về
-        return mapper.toStudentRegisterRequest(studentRegisterRequest);
+        return mapper.toStudentRegisterRequest(createStudentRequest);
 
+    }
+
+    @Override
+    public boolean createStudentAccountList(List<CreateStudentRequest> list){
+        for(CreateStudentRequest request : list){
+            createStudentAccount(request);
+        }
+        return true;
     }
 
     private String generateRandomPassword(int length) {
@@ -97,7 +105,7 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public UserResponse updateStudent(String email, StudentRegisterRequest studentUpdateRequest) {
+    public UserResponse updateStudent(String email, CreateStudentRequest studentUpdateRequest) {
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_ISACTIVED));
 
@@ -119,10 +127,6 @@ public class StudentService implements IStudentService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         validateStudentRole(user); // vẫn giữ để tránh lỡ xóa user khác role
-
-        // ❌ Xóa mềm (hiện tại)
-        // user.setStatus(99);
-        // userRepo.save(user);
 
         // ✅ Xóa cứng
         userRepo.delete(user);

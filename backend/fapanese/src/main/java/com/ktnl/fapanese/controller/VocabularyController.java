@@ -46,7 +46,7 @@ public class VocabularyController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<VocabularyResponse> getVocabularyById(@PathVariable Long id) {
+    public ApiResponse<VocabularyResponse> getVocabularyById(@PathVariable("id") Long id) {
         VocabularyResponse result =  vocabularyService.getVocabularyById(id);
         return ApiResponse.<VocabularyResponse>builder()
                 .result(result)
@@ -55,7 +55,7 @@ public class VocabularyController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<VocabularyResponse> updateVocabulary(@PathVariable Long id, @RequestBody VocabularyRequest request) {
+    public ApiResponse<VocabularyResponse> updateVocabulary(@PathVariable("id") Long id, @RequestBody VocabularyRequest request) {
         VocabularyResponse result =  vocabularyService.updateVocabulary(id, request);
         return ApiResponse.<VocabularyResponse>builder()
                 .result(result)
@@ -64,7 +64,7 @@ public class VocabularyController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deleteVocabulary(@PathVariable Long id) {
+    public ApiResponse<Void> deleteVocabulary(@PathVariable("id") Long id) {
         vocabularyService.deleteVocabulary(id);
         return ApiResponse.<Void>builder()
                 .message("Delete success")
@@ -72,7 +72,7 @@ public class VocabularyController {
     }
 
     @GetMapping("/by-lesson-part/{lessonPartId}")
-    public ResponseEntity<List<VocabularyResponse>> getVocabulariesByLesson(@PathVariable Long lessonPartId) {
+    public ResponseEntity<List<VocabularyResponse>> getVocabulariesByLesson(@PathVariable("lessonPartId") Long lessonPartId) {
         return ResponseEntity.ok(vocabularyService.getVocabulariesByLessonPartId(lessonPartId));
     }
 }

@@ -4,6 +4,7 @@ package com.ktnl.fapanese.controller;
 import com.ktnl.fapanese.dto.request.MiddleExamRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.MiddleExamResponse;
+import com.ktnl.fapanese.dto.response.SpeakingExamResponse;
 import com.ktnl.fapanese.service.interfaces.IMiddleExamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +59,15 @@ public class MiddleExamController {
         middleExamService.deleteMiddleExam(id);
         return ApiResponse.<String>builder()
                 .message("Delete middle exam success")
+                .build();
+    }
+
+    @GetMapping("/by-overview-part/{partId}")
+    public ApiResponse<List<MiddleExamResponse>> getAllMiddleExams(@PathVariable Long partId) {
+        List<MiddleExamResponse> result = middleExamService.getAllMiddleExamsByOverviewPartId(partId);
+        return ApiResponse.<List<MiddleExamResponse>>builder()
+                .result(result)
+                .message("Get all middle exams success")
                 .build();
     }
 }

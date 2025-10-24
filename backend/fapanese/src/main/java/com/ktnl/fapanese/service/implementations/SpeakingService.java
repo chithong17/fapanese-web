@@ -12,6 +12,7 @@ import com.ktnl.fapanese.service.interfaces.ISpeakingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,6 +68,7 @@ public class SpeakingService implements ISpeakingService {
         return speakingRepository.findByType(speakingType)
                 .stream()
                 .map(speakingMapper::toSpeakingResponse)
+                .sorted(Comparator.comparing(SpeakingRespone::getId))
                 .collect(Collectors.toList());
     }
 

@@ -1,7 +1,7 @@
 package com.ktnl.fapanese.controller;
 
 
-import com.ktnl.fapanese.dto.request.StudentRegisterResquest;
+import com.ktnl.fapanese.dto.request.StudentRegisterRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.StudentRegisterResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
@@ -27,7 +27,7 @@ public class StudentController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'LECTURER')")
     @PostMapping
-    public ApiResponse<StudentRegisterResponse> registerStudent(@RequestBody StudentRegisterResquest resquest){
+    public ApiResponse<StudentRegisterResponse> registerStudent(@RequestBody StudentRegisterRequest resquest){
         StudentRegisterResponse response = iStudentService.registerStudent(resquest);
 
         return ApiResponse.<StudentRegisterResponse>builder()
@@ -58,8 +58,8 @@ public class StudentController {
     @PreAuthorize("hasAnyRole('ADMIN', 'LECTURER')")
     @PutMapping("/{email}")
     public ApiResponse<UserResponse> updateStudent(
-            @PathVariable String email,
-            @RequestBody StudentRegisterResquest updateRequest) {
+            @PathVariable("email") String email,
+            @RequestBody StudentRegisterRequest updateRequest) {
 
         UserResponse response = iStudentService.updateStudent(email, updateRequest);
         return ApiResponse.<UserResponse>builder()
@@ -70,7 +70,7 @@ public class StudentController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{email}")
-    public ApiResponse<Void> deleteStudent(@PathVariable String email) {
+    public ApiResponse<Void> deleteStudent(@PathVariable("email") String email) {
         iStudentService.deleteStudent(email);
         return ApiResponse.<Void>builder()
                 .message("Student deleted successfully")

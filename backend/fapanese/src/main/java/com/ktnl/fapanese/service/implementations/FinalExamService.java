@@ -3,6 +3,7 @@ package com.ktnl.fapanese.service.implementations;
 import com.ktnl.fapanese.dto.request.FinalExamRequest;
 import com.ktnl.fapanese.dto.response.FinalExamResponse;
 import com.ktnl.fapanese.entity.FinalExam;
+import com.ktnl.fapanese.entity.MiddleExam;
 import com.ktnl.fapanese.entity.OverviewPart;
 import com.ktnl.fapanese.entity.Question;
 import com.ktnl.fapanese.exception.AppException;
@@ -101,6 +102,17 @@ public class FinalExamService implements IFinalExamService {
     public void deleteFinalExam(Long id) {
         FinalExam exam = findExamById(id);
         finalExamRepository.delete(exam);
+    }
+
+    @Override
+    public List<FinalExamResponse> getAllFinalExamsByOverviewPartId(Long partId) {
+        if (!overviewPartRepository.existsById(partId)) {
+            throw new AppException(ErrorCode.OVERVIEW_PART_NOT_FOUND);
+        }
+
+        List<FinalExam> finalExams = finalExamRepository.findByOverviewPartId(partId);
+
+        return finalExamMapper.toFinalExamResponseList(finalExams);
     }
 
     // Hàm private helper

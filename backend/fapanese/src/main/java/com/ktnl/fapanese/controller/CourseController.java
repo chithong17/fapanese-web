@@ -5,6 +5,7 @@ import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.CourseResponse;
 import com.ktnl.fapanese.service.interfaces.ICourseService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,8 +38,9 @@ public class CourseController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public ApiResponse<CourseResponse> updateCourse(@PathVariable Long id, @RequestBody CourseRequest request) {
+    public ApiResponse<CourseResponse> updateCourse(@PathVariable("id") Long id, @RequestBody CourseRequest request) {
         CourseResponse result = icourseService.updateCourse(id, request);
         return ApiResponse.<CourseResponse>builder()
                 .result(result)
@@ -46,6 +48,7 @@ public class CourseController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ApiResponse<CourseResponse> createCourse(@RequestBody CourseRequest request) {
         CourseResponse result = icourseService.createCourse(request);
@@ -55,8 +58,9 @@ public class CourseController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deleteCourse(@PathVariable Long id) {
+    public ApiResponse<Void> deleteCourse(@PathVariable("id") Long id) {
         icourseService.deleteCourse(id);
         return ApiResponse.<Void>builder()
                 .message("Delete course success")

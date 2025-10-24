@@ -2,9 +2,11 @@ package com.ktnl.fapanese.service.implementations;
 
 import com.ktnl.fapanese.dto.request.MiddleExamRequest;
 import com.ktnl.fapanese.dto.response.MiddleExamResponse;
+import com.ktnl.fapanese.dto.response.SpeakingExamResponse;
 import com.ktnl.fapanese.entity.MiddleExam;
 import com.ktnl.fapanese.entity.OverviewPart;
 import com.ktnl.fapanese.entity.Question;
+import com.ktnl.fapanese.entity.SpeakingExam;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mapper.MiddleExamMapper;
@@ -105,6 +107,18 @@ public class MiddleExamService implements IMiddleExamService {
         MiddleExam exam = middleExamRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.EXAM_NOT_FOUND));
         middleExamRepository.delete(exam);
+    }
+
+    @Override
+    public List<MiddleExamResponse> getAllMiddleExamsByOverviewPartId(Long partId) {
+        if (!overviewPartRepository.existsById(partId)) {
+            throw new AppException(ErrorCode.OVERVIEW_PART_NOT_FOUND);
+        }
+
+        List<MiddleExam> middleExams = middleExamRepository.findByOverviewPartId(partId);
+
+        return middleExamMapper.toMiddleExamResponseList(middleExams);
+
     }
 
 }

@@ -57,8 +57,8 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, mode }) => {
         { email, otp: code, mode }
       );
 
-      if (response.data?.code === 0) {
-        setSuccess("Xác thực thành công 🎉");
+      if (response.data?.code === 1000) {
+        setSuccess("Xác thực thành công");
         // Chờ 2 giây rồi chuyển về login
         setTimeout(() => {
           window.dispatchEvent(new CustomEvent("switchToLogin"));

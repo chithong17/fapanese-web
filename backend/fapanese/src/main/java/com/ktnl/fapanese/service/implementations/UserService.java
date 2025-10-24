@@ -245,7 +245,7 @@ public class UserService implements IUserService {
         if (user.getTeacher() != null) {
             String fullName = user.getTeacher().getFirstName() + " " + user.getTeacher().getLastName();
 
-            if (status == 1) {
+            if (status == 3) {
                 emailService.sendEmail(user.getEmail(), teacherApprovalEmail, fullName);
             }
             else if (status == -1) {

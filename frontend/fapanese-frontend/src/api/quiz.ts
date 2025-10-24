@@ -16,3 +16,19 @@ export const submitQuizAnswers = async (userAnswers: any[]) => {
 
   return res.data; // có code, message, result
 };
+
+export const submitExamAnswers = async (userAnswers: any[]) => {
+  const token = localStorage.getItem("token");
+  const res = await axios.post(
+    "http://localhost:8080/fapanese/api/exam/submit",
+    userAnswers,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    }
+  );
+  return res.data;
+};
+

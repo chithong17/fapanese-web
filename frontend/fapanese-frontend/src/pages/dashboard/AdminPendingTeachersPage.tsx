@@ -63,14 +63,8 @@ const AdminPendingTeachersPage: React.FC = () => {
     );
 
   return (
-    <div className="min-h-[calc(100vh-140px)] bg-white border border-gray-100 rounded-2xl shadow-xl p-8">
-      <motion.h1
-        className="text-2xl sm:text-3xl font-bold text-cyan-600 mb-6 border-b pb-3 flex items-center gap-2"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        🧑‍🏫 Duyệt giáo viên
-      </motion.h1>
+    <div className="min-h-[calc(100vh-140px)]">
+      
 
       {teachers.length === 0 ? (
         <motion.div
@@ -78,7 +72,7 @@ const AdminPendingTeachersPage: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          <p className="text-xl font-medium">🎉 Không có giáo viên nào chờ duyệt</p>
+          <p className="text-xl font-medium">Không có giáo viên nào chờ duyệt</p>
           <p className="text-sm text-gray-400 mt-1">Tất cả đã được xử lý.</p>
         </motion.div>
       ) : (

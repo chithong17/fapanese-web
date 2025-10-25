@@ -50,7 +50,6 @@ const ProgressCard = ({
 
   return (
     <motion.div
-      variants={fadeInUp}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       whileTap={{ scale: 0.97 }}
@@ -89,7 +88,6 @@ const ActivityItem = ({
 
   return (
     <motion.div
-      variants={fadeInUp}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       whileTap={{ scale: 0.97 }}
@@ -146,7 +144,6 @@ const StudentDashboard: React.FC = () => {
         <motion.div
           initial="hidden"
           animate="visible"
-          variants={fadeInUp}
           className="mb-10"
         >
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-wide text-gray-800 mb-2">
@@ -190,7 +187,6 @@ const StudentDashboard: React.FC = () => {
 
         {/* Hoạt động gần đây */}
         <motion.div
-          variants={fadeInUp}
           initial="hidden"
           animate="visible"
           className="bg-white rounded-2xl shadow-lg p-6 mb-10 border border-gray-100"
@@ -220,7 +216,6 @@ const StudentDashboard: React.FC = () => {
 
         {/* Tiếp tục học */}
         <motion.div
-          variants={fadeInUp}
           initial="hidden"
           animate="visible"
           className="flex flex-wrap gap-5"

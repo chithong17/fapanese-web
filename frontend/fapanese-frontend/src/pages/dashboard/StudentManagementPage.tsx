@@ -301,7 +301,6 @@ export default function StudentManagementPage() {
             <AnimatePresence>
                 {form && (
                     <motion.form
-                        variants={formVariants} initial="hidden" animate="visible" exit="exit"
                         onSubmit={handleSubmit}
                         className="bg-white p-5 sm:p-6 shadow-md rounded-xl border border-gray-200 overflow-hidden" // Nền trắng, shadow rõ hơn
                     >
@@ -389,7 +388,6 @@ export default function StudentManagementPage() {
                                 <motion.tr
                                     key={s.email} // Key rất quan trọng cho AnimatePresence và layout animation
                                     layout // Thêm layout prop
-                                    variants={itemVariants}
                                     initial="hidden"
                                     animate="visible"
                                     exit="hidden" // Sử dụng lại hidden variant cho exit

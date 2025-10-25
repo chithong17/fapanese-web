@@ -1,0 +1,20 @@
+package com.ktnl.fapanese.dto.request;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class CourseRequest {
+    String courseName;
+    String description;
+    String imgUrl;
+    String price;
+    String level;
+    String code;
+    String title;
+    String duration;
+}

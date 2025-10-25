@@ -5,6 +5,9 @@ import WelcomeLogo from "../assets/welcomeLog.jpg";
 import axios from "axios";
 import OtpVerification from "../pages/OtpVerification";
 import ForgotPasswordPopup from "../pages/ResetPassword";
+import CircularProgress from "@mui/material/CircularProgress";
+import NotificationModal from "./NotificationModal"; // <-- THÊM IMPORT NÀY
+import { useNavigate } from "react-router-dom";
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -12,48 +15,13 @@ interface AuthPopupProps {
   initialTab: "login" | "signup";
 }
 
-// Notification modal
-const NotificationModal: React.FC<{ message: string; onClose: () => void }> = ({
-  message,
-  onClose,
-}) => {
-  return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white text-black rounded-2xl shadow-2xl p-8 w-[90%] max-w-md transform transition-all duration-300 scale-100 animate-fadeIn">
-        <div className="flex items-center gap-3 mb-5">
-          <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-md">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
-              />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold text-gray-800">Thông báo</h2>
-        </div>
-        <p className="mb-8 text-gray-600 leading-relaxed text-base">{message}</p>
-        <div className="flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-6 py-2.5 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-full font-semibold shadow-md hover:opacity-90 active:scale-95 transition-all"
-          >
-            Xác nhận
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+// XÓA component NotificationModal đã ở đây
 
-const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) => {
+const AuthPopup: React.FC<AuthPopupProps> = ({
+  isOpen,
+  onClose,
+  initialTab,
+}) => {
   // --- State chung ---
   const [activeTab, setActiveTab] = useState<"login" | "signup">(initialTab);
   const [show, setShow] = useState(isOpen);
@@ -119,7 +87,8 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
     if (unverifiedEmail) {
       try {
         await axios.post(
-          "https://30b1e8b2feec.ngrok-free.app/fapanese/api/auth/send-otp",
+          // "https://5180368dcd09.ngrok-free.app/fapanese/api/auth/send-otp",
+          "http://localhost:8080/fapanese/api/auth/send-otp",
           { email: unverifiedEmail }
         );
         setStep("otp");
@@ -132,6 +101,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
     }
   };
 
+  const navigate = useNavigate();
   // --- Login ---
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,23 +109,48 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
 
     try {
       const response = await axios.post(
-        "https://30b1e8b2feec.ngrok-free.app/fapanese/api/auth/login",
+        "http://localhost:8080/fapanese/api/auth/login",
         { email: loginEmail, password: loginPassword }
       );
 
-      if (response.data?.result?.authenticated) {
-        localStorage.setItem("token", response.data.result.token);
+      const data = response.data?.result;
+
+      if (data?.authenticated && data?.token) {
+        const token = data.token;
+
+        // 🔍 Decode JWT để lấy scope
+        const base64Url = token.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const decodedPayload = JSON.parse(atob(base64));
+        const scope = decodedPayload.scope || "";
+        const role = scope.replace("ROLE_", "");
+
+        // Lưu lại
+        localStorage.setItem("token", token);
         localStorage.setItem("email", loginEmail);
-        window.dispatchEvent(new Event("loginSuccess"));
+        localStorage.setItem("role", role);
+
         setNotifMessage("Đăng nhập thành công!");
-        onClose();
+
+        // 🔁 Reload đúng role
+        if (role === "ADMIN") {
+          window.location.href = "/admin";
+        } else if (role === "STUDENT") {
+          window.location.href = "/";
+        } else {
+          window.location.href = "/";
+        }
       }
     } catch (err: any) {
       if (err.response?.data?.code === 1008) {
         setUnverifiedEmail(loginEmail);
-        setNotifMessage(err.response.data?.message || "Tài khoản chưa xác thực email");
+        setNotifMessage(
+          err.response.data?.message || "Tài khoản chưa xác thực email"
+        );
       } else {
-        setNotifMessage(err.response?.data?.message || "Email hoặc mật khẩu không chính xác.");
+        setNotifMessage(
+          err.response?.data?.message || "Kết nối thất bại tới hệ thống."
+        );
       }
     } finally {
       setLoading(false);
@@ -180,18 +175,23 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
 
     try {
       await axios.post(
-        "https://30b1e8b2feec.ngrok-free.app/fapanese/api/users/register",
+        // "https://5180368dcd09.ngrok-free.app/fapanese/api/users/register",
+
+        "http://localhost:8080/fapanese/api/users/register",
         userData
       );
 
       await axios.post(
-        "https://30b1e8b2feec.ngrok-free.app/fapanese/api/auth/send-otp",
+        // "https://5180368dcd09.ngrok-free.app/fapanese/api/auth/send-otp",
+        "http://localhost:8080/fapanese/api/auth/send-otp",
         { email: signupEmail }
       );
 
       setStep("otp");
       setOtpEmail(signupEmail);
-      setNotifMessage("Đăng ký thành công! Vui lòng kiểm tra email để xác thực.");
+      setNotifMessage(
+        "Đăng ký thành công! Vui lòng kiểm tra email để xác thực."
+      );
 
       // Reset form
       setFirstName("");
@@ -203,7 +203,10 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
       setExpertise("");
       setBio("");
     } catch (err: any) {
-      setNotifMessage(err.response?.data?.message || "Đăng ký thất bại. Kiểm tra lại thông tin.");
+      setNotifMessage(
+        err.response?.data?.message ||
+          "Đăng ký thất bại. Kiểm tra lại thông tin."
+      );
     } finally {
       setLoading(false);
     }
@@ -259,7 +262,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
                   Sign Up
                 </button>
                 <button
-                  className="text-black  py-2 px-4 rounded-md shadow hover:bg-gray-600 transition-all"
+                  className="text-black  py-2 px-4 rounded-md shadow hover:bg-gray-600 transition-all"
                   onClick={() => setForgotPasswordOpen(true)}
                 >
                   Quên mật khẩu
@@ -271,13 +274,18 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
             <div
               className="flex w-[200%] transition-transform duration-700 ease-in-out"
               style={{
-                transform: activeTab === "login" ? "translateX(0%)" : "translateX(-50%)",
+                transform:
+                  activeTab === "login" ? "translateX(0%)" : "translateX(-50%)",
               }}
             >
               {/* LOGIN SIDE */}
               <div className="w-1/2 flex flex-col items-center justify-center p-10 ml-10">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Đăng nhập</h2>
-                <p className="text-gray-500 mb-6">Chào mừng quay lại Fapanese</p>
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                  Đăng nhập
+                </h2>
+                <p className="text-gray-500 mb-6">
+                  Chào mừng quay lại Fapanese
+                </p>
 
                 <div className="flex flex-col gap-3 mb-6 w-full max-w-sm">
                   <button className="flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-2 hover:bg-gray-100 transition">
@@ -297,7 +305,10 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
                   <div className="flex-1 h-px bg-gray-300"></div>
                 </div>
 
-                <form onSubmit={handleLogin} className="flex flex-col gap-4 w-full max-w-sm">
+                <form
+                  onSubmit={handleLogin}
+                  className="flex flex-col gap-4 w-full max-w-sm"
+                >
                   <input
                     type="email"
                     placeholder="Email"
@@ -332,11 +343,18 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
               </div>
 
               {/* SIGNUP SIDE */}
-              <div className="w-1/2 flex flex-col items-center justify-center p-10 mr-5">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Đăng ký</h2>
-                <p className="text-gray-500 mb-6">Tạo tài khoản mới để bắt đầu học</p>
+              <div className="w-1/2 flex flex-col items-center justify-center p-9 mr-5 ">
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                  Đăng ký
+                </h2>
+                <p className="text-gray-500 mb-6">
+                  Tạo tài khoản mới để bắt đầu học
+                </p>
 
-                <form onSubmit={handleSignup} className="flex flex-col gap-4 w-full max-w-sm">
+                <form
+                  onSubmit={handleSignup}
+                  className="flex flex-col gap-4 w-full max-w-sm "
+                >
                   <div className="flex gap-3 w-full">
                     <input
                       type="text"
@@ -373,7 +391,9 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
                   <select
                     className="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-black outline-none transition"
                     value={role}
-                    onChange={(e) => setRole(e.target.value as "student" | "lecturer")}
+                    onChange={(e) =>
+                      setRole(e.target.value as "student" | "lecturer")
+                    }
                   >
                     <option value="student">Student</option>
                     <option value="lecturer">Lecturer</option>
@@ -426,9 +446,11 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ isOpen, onClose, initialTab }) =>
 
                   <button
                     type="submit"
-                    className="bg-black text-white py-2 rounded-xl font-semibold hover:opacity-90 transition"
+                    className="bg-black text-white py-2 rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center gap-2"
+                    disabled={loading}
                   >
-                    Sign Up
+                    {loading && <CircularProgress size={20} color="inherit" />}
+                    {loading ? "Đang tải..." : "Sign Up"}
                   </button>
                 </form>
               </div>

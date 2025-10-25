@@ -32,7 +32,13 @@ public class SecurityConfig {
             "/api/auth/send-otp",
             "/api/auth/verify-otp",
             "/api/auth/forgot-password",
-            "/api/auth/reset-password"};
+            "/api/auth/reset-password"
+    };
+
+    private final String[] PUBLIC_GET_ENDPOINT = {
+            "/api/courses",
+            "/api/courses/{id}",
+    };
 
     private final String[] SWAGGER_WHITELIST  = {
             "/swagger-ui/**",
@@ -52,7 +58,10 @@ public class SecurityConfig {
                         // THÊM DÒNG NÀY ĐỂ GIẢI QUYẾT LỖI CORS PREFLIGHT
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").permitAll()//để tạm thời sẽ xóa đi sau này
+                        .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll()
+
+
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .anyRequest().authenticated()
         );
@@ -75,6 +84,10 @@ public class SecurityConfig {
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+
+        // Mặc định Spring sẽ gắn prefix "SCOPE_" vào role
+        // Ví dụ "ADMIN" -> "SCOPE_ADMIN"
+        // Nhưng do token của mình đã lưu sẵn "ROLE_ADMIN" rồi, nên bỏ prefix đi
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);

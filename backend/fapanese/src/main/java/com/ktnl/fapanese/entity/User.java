@@ -5,13 +5,16 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import java.util.Set;
 
+
+
+@Entity
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -19,18 +22,20 @@ public class User {
     String email;
     String password_hash;
 
+    //-1: bị từ chối
     //0: dki chua xac thuc email
     //1: da xac thuc email chua active
-    //2: da xac thuc da active cho admin duyet
+    //2: da xac thuc da active cho admin duyet (Lecturer)
     //3: dc active, hoat dong binh thuong
+    @Builder.Default
     @Column(nullable = false)
-    private int status = 0;
+    int status = 0;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Lecturer teacher;
+    Lecturer teacher;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Student student;
+    Student student;
 
     @ManyToMany
     Set<Role> roles;

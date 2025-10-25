@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,10 +24,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handlingAppException(AppException exception){
         ErrorCode errorCode = exception.getErrorCode(); // lấy errorCode được ném từ exception
+        Object[] args = exception.getArgs();
 
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(errorCode.getMessage());
+        apiResponse.setMessage(mapErrorCodeMessage(errorCode.getMessage(), args));
 
 
         return ResponseEntity
@@ -34,8 +36,18 @@ public class GlobalExceptionHandler {
                 .body(apiResponse);
     }
 
+    private String mapErrorCodeMessage(String messageTemplate, Object... args){
+        // Nếu không có args, trả về template gốc
+        if (args == null || args.length == 0) {
+            return messageTemplate;
+        }
 
-    @ExceptionHandler(value = Exception.class)
+        // Dùng MessageFormat để chèn args vào template
+        return MessageFormat.format(messageTemplate, args);
+    }
+
+
+    @ExceptionHandler(value = RuntimeException.class)
     ResponseEntity<ApiResponse> handlerRuntimeException(RuntimeException re){
         ApiResponse apiResponse = new ApiResponse();
         log.info(re.getMessage());
@@ -80,7 +92,7 @@ public class GlobalExceptionHandler {
             case "password" -> ErrorCode.PASSWORD_INVALID;
             case "role" -> ErrorCode.ROLE_REQUIRED;
             case "dateOfBirth" -> ErrorCode.DOB_INVALID;
-            case "campus" -> ErrorCode.CAMPUS_REQUIRED;
+         //   case "campus" -> ErrorCode.CAMPUS_REQUIRED;
             default -> ErrorCode.INVALID_KEY; // fallback
         };
     }

@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap');
+@import "@fontsource/poppins/400.css";
+@import "@fontsource/poppins/700.css";
+@import "@fontsource/poppins/900.css";
 
 /* Reset mặc định & set font */
 html, body, #root {
@@ -34,4 +37,9 @@ body {
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
+ @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
 

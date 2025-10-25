@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mail } from "lucide-react";
 import axios from "axios";
-import ResetPassword from "./ResetPassword";
+
+
 
 
 interface OtpVerificationProps {
@@ -51,13 +52,13 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, mode }) => {
     try {
       setError(null);
       const response = await axios.post(
-        // "http://localhost:8080/fapanese/api/auth/verify-otp",
-       "https://30b1e8b2feec.ngrok-free.app/fapanese/api/auth/verify-otp",
+        "http://localhost:8080/fapanese/api/auth/verify-otp",
+      //  "https://5180368dcd09.ngrok-free.app/fapanese/api/auth/verify-otp",
         { email, otp: code, mode }
       );
 
-      if (response.data?.code === 0) {
-        setSuccess("Xác thực thành công 🎉");
+      if (response.data?.code === 1000) {
+        setSuccess("Xác thực thành công");
         // Chờ 2 giây rồi chuyển về login
         setTimeout(() => {
           window.dispatchEvent(new CustomEvent("switchToLogin"));
@@ -74,7 +75,7 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, mode }) => {
   const seconds = timeLeft % 60;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-6">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-6">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md text-center">
         {/* Icon */}
         <div className="flex justify-center mb-4">

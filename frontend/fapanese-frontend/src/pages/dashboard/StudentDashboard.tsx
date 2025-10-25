@@ -1,20 +1,38 @@
-// src/pages/StudentDashboard.tsx
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../../components/Navbar";
+import Confetti from "react-confetti";
 import {
   AiOutlineBook,
   AiOutlineDashboard,
-  // AiOutlineQuestionCircle,
   AiOutlineEdit,
   AiOutlinePlayCircle,
   AiOutlineSound,
   AiOutlineForm,
   AiOutlineGift,
 } from "react-icons/ai";
-// import { MdLogin, MdPersonAdd } from "react-icons/md";
-import Confetti from "react-confetti";
 
+// Theme màu chung Fapanese
+const Theme = {
+  primary: "#00BCD4",
+  primaryHover: "#00ACC1",
+  accent: "#4DD0E1",
+  text: "#1F2937",
+  bgLight: "#F9FAFB",
+  white: "#FFFFFF",
+};
+
+// Hiệu ứng thống nhất
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
+  },
+};
+
+// Component Card tiến độ
 const ProgressCard = ({
   title,
   value,
@@ -35,14 +53,14 @@ const ProgressCard = ({
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       whileTap={{ scale: 0.97 }}
-      className="bg-white rounded-xl p-6 w-full sm:w-60 transition-transform cursor-pointer shadow-lg"
+      onClick={onComplete}
+      className="rounded-2xl p-6 shadow-md w-full sm:w-60 cursor-pointer transition-all border border-gray-100"
       style={{
         background: hovered
-          ? "linear-gradient(135deg, #80D9E6, #A4EBF2)"
-          : "white",
-        color: hovered ? "#fff" : "#1F2937",
+          ? `linear-gradient(135deg, ${Theme.primary}, ${Theme.accent})`
+          : Theme.white,
+        color: hovered ? "white" : Theme.text,
       }}
-      onClick={onComplete}
     >
       <div className="text-2xl mb-2">{icon}</div>
       <h3 className="font-semibold">{title}</h3>
@@ -52,6 +70,7 @@ const ProgressCard = ({
   );
 };
 
+// Component hoạt động gần đây
 const ActivityItem = ({
   activity,
   status,
@@ -66,17 +85,20 @@ const ActivityItem = ({
   onComplete?: () => void;
 }) => {
   const [hovered, setHovered] = useState(false);
+
   return (
     <motion.div
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       whileTap={{ scale: 0.97 }}
-      className={`flex justify-between items-center p-4 border-b last:border-b-0 cursor-pointer rounded-lg transition-all`}
-      style={{
-        background: hovered ? "linear-gradient(135deg, #80D9E6, #A4EBF2)" : "white",
-        color: hovered ? "#fff" : "#1F2937",
-      }}
       onClick={onComplete}
+      className={`flex justify-between items-center p-4 rounded-xl transition-all shadow-sm border border-gray-100 mb-3`}
+      style={{
+        background: hovered
+          ? `linear-gradient(135deg, ${Theme.primary}, ${Theme.accent})`
+          : Theme.white,
+        color: hovered ? "white" : Theme.text,
+      }}
     >
       <div className="flex items-center gap-3">
         <div className="text-xl">{icon}</div>
@@ -90,20 +112,18 @@ const ActivityItem = ({
   );
 };
 
+// Trang Dashboard chính
 const StudentDashboard: React.FC = () => {
-  // Dummy function cho Navbar
-  const scrollToSection = (id: string, tab?: "hiragana" | "katakana") => {};
-  const handleAuthClick = (tab: "login" | "signup") => {};
-
-  // State dropdown user
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-
   const [showConfetti, setShowConfetti] = useState(false);
 
   const handleComplete = () => {
     setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 3000); // Confetti 3 giây
+    setTimeout(() => setShowConfetti(false), 2500);
   };
+
+  const scrollToSection = () => {};
+  const handleAuthClick = () => {};
 
   return (
     <div>
@@ -113,13 +133,29 @@ const StudentDashboard: React.FC = () => {
         userDropdownOpen={userDropdownOpen}
         setUserDropdownOpen={setUserDropdownOpen}
       />
-      <div className="pt-24 p-4 sm:p-6 min-h-screen bg-gray-50">
-        {showConfetti && <Confetti numberOfPieces={200} recycle={false} />}
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Dashboard</h1>
-        <p className="mb-6 text-sm sm:text-base">Theo dõi tiến độ học tập của bạn</p>
 
-        {/* Tổng quan */}
-        <div className="flex flex-wrap gap-4 sm:gap-6 mb-8">
+      <div
+        className="pt-24 px-6 sm:px-12 pb-10 min-h-screen"
+        style={{ backgroundColor: Theme.bgLight }}
+      >
+        {showConfetti && <Confetti numberOfPieces={200} recycle={false} />}
+
+        {/* Tiêu đề */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          className="mb-10"
+        >
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-wide text-gray-800 mb-2">
+            DASHBOARD HỌC VIÊN
+          </h1>
+          <p className="text-gray-500 text-sm sm:text-base">
+            Theo dõi tiến độ học tập và hoạt động của bạn trong hệ thống Fapanese.
+          </p>
+        </motion.div>
+
+        {/* Tổng quan tiến độ */}
+        <div className="flex flex-wrap gap-5 mb-10">
           <ProgressCard
             title="Tổng điểm"
             value="1,250"
@@ -137,27 +173,27 @@ const StudentDashboard: React.FC = () => {
             icon={<AiOutlineEdit />}
           />
           <ProgressCard
-            title="Hôm nay"
-            value="45m"
+            title="Thời gian hôm nay"
+            value="45 phút"
             icon={<AiOutlinePlayCircle />}
           />
           <ProgressCard
             title="Cấp độ hiện tại"
             value="Intermediate"
-            subtitle="Tiến độ lên cấp -17%"
+            subtitle="Tiến độ lên cấp 17%"
             icon={<AiOutlineDashboard />}
-          />
-          <ProgressCard
-            title="Cấp tiếp theo"
-            value="Advanced"
-            subtitle="1,500 / 3,000 điểm"
-            icon={<AiOutlineBook />}
           />
         </div>
 
         {/* Hoạt động gần đây */}
-        <div className="bg-white shadow-lg rounded-xl p-4 sm:p-6 mb-8">
-          <h2 className="text-lg sm:text-xl font-semibold mb-4">Hoạt động gần đây</h2>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          className="bg-white rounded-2xl shadow-lg p-6 mb-10 border border-gray-100"
+        >
+          <h2 className="text-xl font-bold mb-5 text-gray-800 border-b pb-2">
+            Hoạt động gần đây
+          </h2>
           <ActivityItem
             activity="Hiragana và Katakana"
             status="Hoàn thành"
@@ -176,10 +212,14 @@ const StudentDashboard: React.FC = () => {
             status="60% hoàn thành"
             icon={<AiOutlineBook />}
           />
-        </div>
+        </motion.div>
 
         {/* Tiếp tục học */}
-        <div className="flex flex-wrap gap-4 sm:gap-6">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          className="flex flex-wrap gap-5"
+        >
           {[
             { name: "Tiếp tục học", icon: <AiOutlineBook /> },
             { name: "Chơi game", icon: <AiOutlinePlayCircle /> },
@@ -190,13 +230,14 @@ const StudentDashboard: React.FC = () => {
             <motion.div
               key={item.name}
               whileHover={{ scale: 1.05 }}
-              className="bg-white shadow-md rounded-xl p-4 sm:p-6 w-full sm:w-60 text-center cursor-pointer transition-all flex flex-col items-center gap-2"
+              whileTap={{ scale: 0.97 }}
+              className="bg-white shadow-md rounded-2xl p-5 w-full sm:w-60 text-center border border-gray-100 cursor-pointer transition-all"
             >
-              <div className="text-2xl sm:text-3xl">{item.icon}</div>
-              <h3 className="font-semibold text-sm sm:text-base">{item.name}</h3>
+              <div className="text-3xl mb-2 text-cyan-600">{item.icon}</div>
+              <h3 className="font-semibold text-gray-800">{item.name}</h3>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

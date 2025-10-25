@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 interface ProtectedRouteProps {
   allowedRoles: string[];
@@ -6,18 +7,33 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ allowedRoles, children }: ProtectedRouteProps) {
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
+  const [ready, setReady] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
 
-  // ❌ Chưa đăng nhập
+  useEffect(() => {
+    // Đọc token/role ngay lập tức, không cần delay
+    const t = localStorage.getItem("token");
+    const r = localStorage.getItem("role");
+    setToken(t);
+    setRole(r);
+    setReady(true);
+  }, []);
+
+  if (!ready) {
+    return (
+      <div className="flex justify-center items-center h-screen text-gray-600">
+        Đang xác thực quyền truy cập...
+      </div>
+    );
+  }
+
   if (!token) return <Navigate to="/" replace />;
 
-  // ⚠️ Không có quyền
   if (!allowedRoles.includes(role || "")) {
-    alert("Bạn không có quyền truy cập trang này!");
+    console.warn("⛔ Không có quyền:", role);
     return <Navigate to="/" replace />;
   }
 
-  // ✅ Được phép truy cập
   return <>{children}</>;
 }

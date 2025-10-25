@@ -135,11 +135,12 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
         // 🔁 Reload đúng role
         if (role === "ADMIN") {
           window.location.href = "/admin";
-        } else if (role === "STUDENT") {
-          window.location.href = "/";
+        } else if (role === "LECTURER") {
+          window.location.href = "/teacher";
         } else {
           window.location.href = "/";
         }
+
       }
     } catch (err: any) {
       if (err.response?.data?.code === 1008) {

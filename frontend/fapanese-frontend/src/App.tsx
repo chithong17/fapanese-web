@@ -27,13 +27,15 @@ import CourseLessonsPage from "./pages/courses/CourseLessonsPage";
 import FlashcardPage from "./pages/lesson/flashcard/FlashcardPage";
 import AdminDashBoard from "./pages/dashboard/AdminDashBoard";
 import ProtectedRoute from "./components/ProtectedRoute";
-import OverviewContentPage from './pages/overview/OverviewContentPage';
+import OverviewContentPage from "./pages/overview/OverviewContentPage";
 import AdminPendingTeachersPage from "./pages/dashboard/AdminPendingTeachersPage";
-
+import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
+import TeacherCoursesPage from "./pages/dashboard/TeacherCoursesPage";
+import TeacherLessonsPage from "./pages/dashboard/TeacherLessonsPage";
+import TeacherLessonContentPage from "./pages/dashboard/TeacherLessonContentPage";
 
 // 1. IMPORT FloatingActionButton TẠI ĐÂY
 import FloatingActionButton from "./components/FloatingActionButton";
-
 
 function AppWrapper() {
   return (
@@ -49,14 +51,16 @@ function App() {
   const isAdminPage = location.pathname.startsWith("/admin");
 
   const alphabetRef = useRef<any>(null);
-  const [activeTab, setActiveTab] = useState<"hiragana" | "katakana">("hiragana");
+  const [activeTab, setActiveTab] = useState<"hiragana" | "katakana">(
+    "hiragana"
+  );
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState<"login" | "signup">("login");
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [loadingPopup, setLoadingPopup] = useState(false);
-  
+
   // Định nghĩa link "HỌC NGAY!"
-  const learnNowLink = "/courses"; 
+  const learnNowLink = "/courses";
 
   const scrollToSection = (id: string, tab?: "hiragana" | "katakana") => {
     if (id === "alphabet" && tab) {
@@ -80,8 +84,14 @@ function App() {
   const flashcardData = [
     { title: "Bảng chữ cái", description: "Học Hiragana và Katakana cơ bản." },
     { title: "Ngữ pháp", description: "Tìm hiểu các quy tắc ngữ pháp cơ bản." },
-    { title: "Từ vựng", description: "Mở rộng vốn từ qua các chủ đề hằng ngày." },
-    { title: "Speaking", description: "Luyện tập phản xạ và phát âm tự nhiên." },
+    {
+      title: "Từ vựng",
+      description: "Mở rộng vốn từ qua các chủ đề hằng ngày.",
+    },
+    {
+      title: "Speaking",
+      description: "Luyện tập phản xạ và phát âm tự nhiên.",
+    },
   ];
 
   return (
@@ -113,11 +123,11 @@ function App() {
           element={
             <main className="relative z-0 overflow-visible">
               <BottomNav scrollToSection={scrollToSection} />
-              
+
               {/* 2. TÍCH HỢP FloatingActionButton TẠI ĐÂY */}
               <FloatingActionButton
-                  link={learnNowLink}
-                  // Giữ nguyên các props khác để component sử dụng hình ảnh SVG đã import
+                link={learnNowLink}
+                // Giữ nguyên các props khác để component sử dụng hình ảnh SVG đã import
               />
 
               <HeroBackground />
@@ -144,6 +154,42 @@ function App() {
           }
         />
 
+        <Route
+          path="/teacher"
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              <TeacherDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/teacher/courses"
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              <TeacherCoursesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/teacher/courses/:courseCode"
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              <TeacherLessonsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/teacher/courses/:courseCode/lessons/:lessonId/parts/:lessonPartId/manage"
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              <TeacherLessonContentPage />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/dashboard/student" element={<StudentDashboard />} />
         <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/profile" element={<ProfilePage />} />
@@ -153,9 +199,9 @@ function App() {
           path="/lesson/:courseCode/:lessonId/:lessonPartId"
           element={<Lesson />}
         />
-        <Route 
-          path="/overview/:courseCode/:overviewId/:partId" 
-          element={<OverviewContentPage />} 
+        <Route
+          path="/overview/:courseCode/:overviewId/:partId"
+          element={<OverviewContentPage />}
         />
         <Route
           path="/admin/*"
@@ -165,7 +211,10 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/pending-teachers" element={<AdminPendingTeachersPage />} />
+        <Route
+          path="/pending-teachers"
+          element={<AdminPendingTeachersPage />}
+        />
         <Route path="/flashcard/:lessonPartId" element={<FlashcardPage />} />
       </Routes>
 

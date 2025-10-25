@@ -1,11 +1,14 @@
 package com.ktnl.fapanese.controller;
 
+import com.ktnl.fapanese.dto.request.LessonRequest;
+import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.LessonRespone;
 import com.ktnl.fapanese.entity.Course;
 import com.ktnl.fapanese.entity.Lesson;
 import com.ktnl.fapanese.service.interfaces.ICourseService;
 import com.ktnl.fapanese.service.interfaces.ILessonService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,4 +49,48 @@ public class LessonController {
         List<LessonRespone> lessons = lessonService.findByCourseCode(courseCode);
         return ResponseEntity.ok(lessons);
     }
+
+        @PostMapping("/by-course/{courseCode}")
+        @PreAuthorize("hasAnyRole('ADMIN', 'LECTURER')")
+        public ApiResponse<LessonRespone> createLessonByCourse(
+                @PathVariable String courseCode,
+                @RequestBody LessonRequest request) {
+
+            LessonRespone result = lessonService.createLessonByCourseCode(request, courseCode);
+            return ApiResponse.<LessonRespone>builder()
+                    .result(result)
+                    .message("Create lesson success")
+                    .build();
+        }
+
+    @PutMapping("/by-course/{courseCode}/{lessonId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LECTURER')")
+    public ApiResponse<LessonRespone> updateLessonByCourse(
+            @PathVariable String courseCode,
+            @PathVariable Long lessonId,
+            @RequestBody LessonRequest request) {
+
+        LessonRespone result = lessonService.updateLessonByCourseCode(request, courseCode, lessonId);
+
+        return ApiResponse.<LessonRespone>builder()
+                .result(result)
+                .message("Update lesson success")
+                .build();
+    }
+
+
+    @DeleteMapping("/by-course/{courseCode}/{lessonId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LECTURER')")
+    public ApiResponse<Void> deleteLessonByCourse(
+            @PathVariable String courseCode,
+            @PathVariable Long lessonId) {
+
+        lessonService.deleteLessonByCourseCode(courseCode, lessonId);
+
+        return ApiResponse.<Void>builder()
+                .message("Delete lesson success")
+                .build();
+    }
+
+
 }

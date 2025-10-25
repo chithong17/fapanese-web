@@ -38,7 +38,7 @@ public class CourseController {
                 .build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LECTURER')")
     @PutMapping("/{id}")
     public ApiResponse<CourseResponse> updateCourse(@PathVariable("id") Long id, @RequestBody CourseRequest request) {
         CourseResponse result = icourseService.updateCourse(id, request);
@@ -48,7 +48,7 @@ public class CourseController {
                 .build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LECTURER')")
     @PostMapping
     public ApiResponse<CourseResponse> createCourse(@RequestBody CourseRequest request) {
         CourseResponse result = icourseService.createCourse(request);
@@ -58,7 +58,7 @@ public class CourseController {
                 .build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LECTURER')")
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteCourse(@PathVariable("id") Long id) {
         icourseService.deleteCourse(id);

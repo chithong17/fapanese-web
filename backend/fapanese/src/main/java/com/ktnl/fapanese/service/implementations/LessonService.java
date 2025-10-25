@@ -1,6 +1,7 @@
 
 package com.ktnl.fapanese.service.implementations;
 
+import com.ktnl.fapanese.dto.request.LessonRequest;
 import com.ktnl.fapanese.dto.response.LessonRespone;
 import com.ktnl.fapanese.entity.Course;
 import com.ktnl.fapanese.entity.Lesson;
@@ -67,4 +68,59 @@ public class LessonService implements ILessonService {
                 ))
                 .toList();
     }
+
+    @Override
+    public LessonRespone createLessonByCourseCode(LessonRequest request, String courseCode) {
+        Course course = courseRepository.findByCode(courseCode)
+                .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
+
+        Lesson lesson = new Lesson();
+        lesson.setLessonTitle(request.getLessonTitle());
+        lesson.setDescription(request.getDescription());
+        lesson.setOrderIndex(request.getOrderIndex());
+        lesson.setCourse(course);
+
+        Lesson savedLesson = lessonRepository.save(lesson);
+
+        return LessonMapper.toLessonResponse(savedLesson);
+    }
+
+
+    @Override
+    public LessonRespone updateLessonByCourseCode(LessonRequest request, String courseCode, Long lessonId) {
+        Course course = courseRepository.findByCode(courseCode)
+                .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
+
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new AppException(ErrorCode.LESSON_NOT_FOUND));
+
+        if (!lesson.getCourse().getId().equals(course.getId())) {
+            throw new AppException(ErrorCode.LESSON_NOT_FOUND);
+        }
+
+        lesson.setLessonTitle(request.getLessonTitle());
+        lesson.setDescription(request.getDescription());
+        lesson.setOrderIndex(request.getOrderIndex());
+
+        Lesson updatedLesson = lessonRepository.save(lesson);
+
+        return LessonMapper.toLessonResponse(updatedLesson);
+    }
+
+
+    @Override
+    public void deleteLessonByCourseCode(String courseCode, Long lessonId) {
+        var course = courseRepository.findByCode(courseCode)
+                .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
+
+        var lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new AppException(ErrorCode.LESSON_NOT_FOUND));
+
+        if (!lesson.getCourse().getId().equals(course.getId())) {
+            throw new AppException(ErrorCode.LESSON_NOT_FOUND);
+        }
+
+        lessonRepository.delete(lesson);
+    }
+
 }

@@ -1,13 +1,10 @@
-package com.ktnl.fapanese.controller;
+package com.ktnl.fapanese.controllerTest;
 
 import com.ktnl.fapanese.mail.ForgotPasswordEmail;
 import com.ktnl.fapanese.service.EmailService;
-import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

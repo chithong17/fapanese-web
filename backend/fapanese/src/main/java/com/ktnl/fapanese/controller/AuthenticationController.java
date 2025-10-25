@@ -1,4 +1,4 @@
-package com.ktnl.fapanese.controller;
+package com.ktnl.fapanese.controllerTest;
 
 
 import com.ktnl.fapanese.dto.request.*;

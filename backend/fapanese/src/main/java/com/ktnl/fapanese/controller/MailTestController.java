@@ -1,10 +1,10 @@
 package com.ktnl.fapanese.controller;
 
 import com.ktnl.fapanese.mail.ForgotPasswordEmail;
-import com.ktnl.fapanese.service.interfaces.IEmailService;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import com.ktnl.fapanese.service.interfaces.IEmailService; // Giữ lại dòng này từ 'main'
+import lombok.AccessLevel; // Giữ lại dòng này từ 'main'
+import lombok.RequiredArgsConstructor; // Giữ lại dòng này (có cả ở 2 nhánh)
+import lombok.experimental.FieldDefaults; // Giữ lại dòng này từ 'main'
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,4 +26,3 @@ public class MailTestController {
     }
 
 }
-

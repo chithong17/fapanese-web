@@ -98,7 +98,6 @@ const Navbar: React.FC<NavbarProps> = ({
     localStorage.removeItem("token");
     window.dispatchEvent(new Event("logoutSuccess"));
     setLogoutOpen(false);
-    window.location.reload();
   };
 
   const userMenuItems = user

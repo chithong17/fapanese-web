@@ -26,5 +26,6 @@ public class SpeakingRespone {
     String passageRomaji;
     String passageMeaning;
     String description;
+    @Builder.Default
     Set<SpeakingQuestionResponse> speakingQuestions = new HashSet<>();
 }

@@ -14,13 +14,18 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface QuestionMapper {
 
+    // 1. Map từ Request DTO -> Entity (TẠO MỚI)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "lessonPart", ignore = true) // ✅ Sửa lỗi: Bỏ qua mối quan hệ LessonPart
     Question toQuestion(QuestionRequest request);
 
+    // 2. Map từ Entity -> Response DTO (TRẢ VỀ)
     QuestionResponse toQuestionResponse(Question question);
 
     List<QuestionResponse> toQuestionResponseList(List<Question> questions);
 
+    // 3. CẬP NHẬT Entity có sẵn từ Request DTO
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "lessonPart", ignore = true) // ✅ Sửa lỗi: Bỏ qua mối quan hệ LessonPart
     void updateQuestion(@MappingTarget Question question, QuestionRequest request);
 }

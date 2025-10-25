@@ -12,16 +12,44 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+
+    // 1️⃣ Map UserRequest -> User
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "teacher", ignore = true)
+    @Mapping(target = "student", ignore = true)
+    @Mapping(target = "roles", ignore = true)
     @Mapping(target = "password_hash", source = "password")
     User toUser(UserRequest request);
+
+    // 2️⃣ Map CreateStudentRequest -> User (nếu không có password)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "teacher", ignore = true)
+    @Mapping(target = "student", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "password_hash", ignore = true)
     User toUser(CreateStudentRequest request);
 
+    // 3️⃣ Map UserRequest -> Student
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "avtUrl", ignore = true)
+    @Mapping(target = "user", ignore = true)
     Student toStudent(UserRequest request);
+
+    // 4️⃣ Map CreateStudentRequest -> Student
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "avtUrl", ignore = true)
+    @Mapping(target = "user", ignore = true)
     Student toStudent(CreateStudentRequest request);
 
+    // 5️⃣ Map UserRequest -> Lecturer
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "avtUrl", ignore = true)
+    @Mapping(target = "user", ignore = true)
     Lecturer toLecturer(UserRequest request);
 
-
+    // 6️⃣ Map User -> UserResponse (vừa cho Lecturer vừa cho Student)
     @Mapping(
             expression = "java(user.getStudent() != null ? user.getStudent().getFirstName() : (user.getTeacher() != null ? user.getTeacher().getFirstName() : null))",
             target = "firstName"
@@ -48,6 +76,6 @@ public interface UserMapper {
     )
     UserResponse toUserResponse(User user);
 
-
+    // 7️⃣ Dành cho tạo tài khoản học viên
     CreateStudentAccountResponse toStudentRegisterRequest(CreateStudentRequest createStudentRequest);
 }

@@ -1,10 +1,12 @@
 package com.ktnl.fapanese.exception;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.text.MessageFormat;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class AppException extends RuntimeException{
     private ErrorCode errorCode;
     private final transient Object[] args;

@@ -33,7 +33,7 @@ public class ClassCourseService implements IClassCourseService {
         Course course = courseRepository.findById(request.getCourseId())
                 .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
 
-        Lecturer lecturer = lecturerRepository.findById(Long.valueOf(request.getLecturer().getId()))
+        Lecturer lecturer = lecturerRepository.findById(request.getLecturer().getId())
                 .orElseThrow(() -> new AppException(ErrorCode.LECTURER_NOT_FOUND));
 
         // 2. Map request -> entity
@@ -70,7 +70,7 @@ public class ClassCourseService implements IClassCourseService {
         }
 
         if (request.getLecturer() != null && request.getLecturer().getId() != null) {
-            Lecturer lecturer = lecturerRepository.findById(Long.valueOf(request.getLecturer().getId()))
+            Lecturer lecturer = lecturerRepository.findById(request.getLecturer().getId())
                     .orElseThrow(() -> new AppException(ErrorCode.LECTURER_NOT_FOUND));
             existing.setLecturer(lecturer);
         }

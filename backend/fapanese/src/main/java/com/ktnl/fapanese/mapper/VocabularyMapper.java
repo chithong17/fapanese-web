@@ -7,10 +7,11 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface VocabularyMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "lessonPart", ignore = true)
     Vocabulary toVocabulary(VocabularyRequest request);
 
     VocabularyResponse toVocabularyResponse(Vocabulary vocabulary);
@@ -18,5 +19,6 @@ public interface VocabularyMapper {
     List<VocabularyResponse> toVocabularyResponseList(List<Vocabulary> vocabularies);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "lessonPart", ignore = true)
     void updateVocabulary(@MappingTarget Vocabulary vocabulary, VocabularyRequest request);
 }

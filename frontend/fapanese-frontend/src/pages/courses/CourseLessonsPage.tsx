@@ -233,7 +233,7 @@ const CourseLessonsPage: React.FC = () => {
             variants={sectionFadeIn}
             className="space-y-12 mt-20" 
           >
-            <h2 className="text-4xl mb-5 font-light text-gray-700 text-center tracking-tight border-b-2 border-cyan-100 pb-3">
+            <h2 className="text-4xl mb-5 font-light text-gray-700 text-center tracking-tight border-b-2 border-gray-400 pb-3">
               Nội dung Tổng ôn
             </h2>
 

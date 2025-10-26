@@ -151,7 +151,7 @@ const TeacherManageExamQuestionsPage: React.FC = () => {
      const updatedQuestionIds = Array.from(selectedQuestionIds);
 
      const payload = {
-         overviewPartId: currentExam.overviewPartId,
+         overviewPartId: currentPart.id,
          examTitle: currentExam.examTitle,
          semester: currentExam.semester,
          type: currentExam.type,

@@ -11,6 +11,7 @@ import com.ktnl.fapanese.entity.enums.QuestionType;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mapper.QuestionMapper;
+import com.ktnl.fapanese.repository.LessonPartRepository;
 import com.ktnl.fapanese.repository.LessonRepository;
 import com.ktnl.fapanese.repository.QuestionRepository;
 import com.ktnl.fapanese.service.interfaces.IQuestionService;
@@ -27,14 +28,25 @@ public class QuestionService implements IQuestionService {
     private final QuestionRepository questionRepository;
     private final LessonRepository lessonRepository;
     private final QuestionMapper questionMapper;
+    private final LessonPartRepository lessonPartRepository;
+
 
     @Override
     public QuestionResponse createQuestion(QuestionRequest request) {
+        if (request.getLessonPartId() == null) {
+            throw new AppException(ErrorCode.INVALID_INPUT, "lessonPartId is required");
+        }
+
+        var lessonPart = lessonPartRepository.findById(request.getLessonPartId())
+                .orElseThrow(() -> new AppException(ErrorCode.LESSON_PART_NOT_FOUND));
 
         Question question = questionMapper.toQuestion(request);
+        question.setLessonPart(lessonPart);
+
         Question saved = questionRepository.save(question);
         return questionMapper.toQuestionResponse(saved);
     }
+
 
     @Override
     public List<QuestionResponse> getAllQuestions() {
@@ -56,11 +68,18 @@ public class QuestionService implements IQuestionService {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
 
-
         questionMapper.updateQuestion(question, request);
+
+        if (request.getLessonPartId() != null) {
+            var lessonPart = lessonPartRepository.findById(request.getLessonPartId())
+                    .orElseThrow(() -> new AppException(ErrorCode.LESSON_PART_NOT_FOUND));
+            question.setLessonPart(lessonPart);
+        }
+
         Question updated = questionRepository.save(question);
         return questionMapper.toQuestionResponse(updated);
     }
+
 
     @Override
     public void deleteQuestion(Long id) {

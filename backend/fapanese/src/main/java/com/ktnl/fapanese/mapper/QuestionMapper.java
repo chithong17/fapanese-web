@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public interface QuestionMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "lessonPart", ignore = true)
     Question toQuestion(QuestionRequest request);
 
     QuestionResponse toQuestionResponse(Question question);
@@ -22,5 +23,6 @@ public interface QuestionMapper {
     List<QuestionResponse> toQuestionResponseList(List<Question> questions);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "lessonPart", ignore = true)
     void updateQuestion(@MappingTarget Question question, QuestionRequest request);
 }

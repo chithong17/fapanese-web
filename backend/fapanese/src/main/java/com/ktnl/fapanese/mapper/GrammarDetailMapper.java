@@ -22,5 +22,7 @@ public interface GrammarDetailMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "grammar", ignore = true)
+    @Mapping(target = "exampleSentence", source = "exampleSentence")
+    @Mapping(target = "exampleMeaning", source = "exampleMeaning")
     void updateGrammarDetail(@MappingTarget GrammarDetail detail, GrammarDetailRequest request);
 }

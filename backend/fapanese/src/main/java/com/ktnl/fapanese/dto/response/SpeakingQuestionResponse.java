@@ -13,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SpeakingQuestionResponse {
     Long id;
+    Long speakingId;
     String question;
     String questionRomaji;
     String questionMeaning;

@@ -52,9 +52,12 @@ public enum ErrorCode {
     OVERVIEW_PART_NOT_FOUND(4001, "Không tìm thấy Overview Part", HttpStatus.NOT_FOUND),
     EXAM_NOT_FOUND(4002, "Không tìm thấy bài kiểm tra", HttpStatus.NOT_FOUND),
     OVERVIEW_NOT_FOUND(4003, "Không tìm thấy Overview", HttpStatus.NOT_FOUND),
+    SPEAKING_QUESTION_NOT_FOUND(4004, "Không tìm thấy Speaking Question", HttpStatus.NOT_FOUND)
 
 
     ;
+
+
     private int code;
     private String message;
     private HttpStatusCode statusCode;

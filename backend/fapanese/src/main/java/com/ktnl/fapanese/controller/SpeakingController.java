@@ -38,7 +38,7 @@ public class SpeakingController {
                 .build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteSpeakingById(@PathVariable Long id) {
         speakingService.deleteSpeakingById(id);
         return ApiResponse.<Void>builder()
@@ -64,4 +64,12 @@ public class SpeakingController {
                 .build();
     }
 
+    @PutMapping("/{id}")
+    public ApiResponse<SpeakingRespone> createSpeaking(@PathVariable("id") Long id, @RequestBody SpeakingRequest speakingRequest) {
+        SpeakingRespone result = speakingService.updateSpeaking(id, speakingRequest);
+        return ApiResponse.<SpeakingRespone>builder()
+                .result(result)
+                .message("Create speaking success")
+                .build();
+    }
 }

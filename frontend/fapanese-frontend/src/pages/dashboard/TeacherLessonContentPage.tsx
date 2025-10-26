@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { AiOutlinePlus, AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { IoMdArrowBack } from "react-icons/io";
 
 const TeacherLessonContentPage: React.FC = () => {
   const { courseCode, lessonId } = useParams();
@@ -197,188 +198,129 @@ const TeacherLessonContentPage: React.FC = () => {
 
   // ================= FORM =================
   const renderForm = () => {
+    // Helper function to create labeled input/textarea
+    const LabeledInput = ({ id, label, value, onChange, type = "text", required = false, rows = undefined, ...props }: any) => (
+      <div>
+        <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+          {label} {required && <span className="text-red-500">*</span>}
+        </label>
+        {type === 'textarea' ? (
+          <textarea
+            id={id}
+            value={value || ""}
+            onChange={onChange}
+            className="w-full border p-2 rounded-lg focus:ring-cyan-500 focus:border-cyan-500 min-h-[80px]" // Added focus styles & min-height
+            required={required}
+            rows={rows}
+            {...props}
+          />
+        ) : (
+          <input
+            id={id}
+            type={type}
+            value={value || ""}
+            onChange={onChange}
+            className="w-full border p-2 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" // Added focus styles
+            required={required}
+            {...props}
+          />
+        )}
+      </div>
+    );
+
     switch (activeTab) {
       case "vocab":
         return (
           <>
-            <input
-              placeholder="Kana"
-              value={form.wordKana || ""}
-              onChange={(e) => setForm({ ...form, wordKana: e.target.value })}
-              className="border p-2 w-full"
-            />
-            <input
-              placeholder="Kanji"
-              value={form.wordKanji || ""}
-              onChange={(e) => setForm({ ...form, wordKanji: e.target.value })}
-              className="border p-2 w-full"
-            />
-            <input
-              placeholder="Ý nghĩa"
-              value={form.meaning || ""}
-              onChange={(e) => setForm({ ...form, meaning: e.target.value })}
-              className="border p-2 w-full"
-            />
-            <input
-              placeholder="Romaji"
-              value={form.romaji || ""}
-              onChange={(e) => setForm({ ...form, romaji: e.target.value })}
-              className="border p-2 w-full"
-            />
+            <LabeledInput id="wordKana" label="Kana" value={form.wordKana} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, wordKana: e.target.value })} />
+            <LabeledInput id="wordKanji" label="Kanji" value={form.wordKanji} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, wordKanji: e.target.value })} />
+            <LabeledInput id="meaning" label="Ý nghĩa" value={form.meaning} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, meaning: e.target.value })} required />
+            <LabeledInput id="romaji" label="Romaji" value={form.romaji} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, romaji: e.target.value })} />
           </>
         );
       case "grammar":
         return (
           <>
-            <input
-              placeholder="Tiêu đề"
-              value={form.title || ""}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              className="border p-2 w-full"
-            />
-            <input
-              placeholder="Cấu trúc"
-              value={form.structure || ""}
-              onChange={(e) => setForm({ ...form, structure: e.target.value })}
-              className="border p-2 w-full"
-            />
-            <textarea
-              placeholder="Nghĩa"
-              value={form.meaning || ""}
-              onChange={(e) => setForm({ ...form, meaning: e.target.value })}
-              className="border p-2 w-full min-h-[80px]"
-            />
-            <textarea
-              placeholder="Giải thích"
-              value={form.explanation || ""}
-              onChange={(e) =>
-                setForm({ ...form, explanation: e.target.value })
-              }
-              className="border p-2 w-full min-h-[80px]"
-            />
-            <textarea
-              placeholder="Ví dụ"
-              value={form.exampleSentence || ""}
-              onChange={(e) =>
-                setForm({ ...form, exampleSentence: e.target.value })
-              }
-              className="border p-2 w-full min-h-[80px]"
-            />
-            <textarea
-              placeholder="Nghĩa ví dụ"
-              value={form.exampleMeaning || ""}
-              onChange={(e) =>
-                setForm({ ...form, exampleMeaning: e.target.value })
-              }
-              className="border p-2 w-full min-h-[80px]"
-            />
+            <LabeledInput id="title" label="Tiêu đề ngữ pháp" value={form.title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, title: e.target.value })} required />
+            <LabeledInput id="structure" label="Cấu trúc" value={form.structure} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, structure: e.target.value })} />
+            <LabeledInput id="meaning" label="Ý nghĩa cấu trúc" value={form.meaning} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, meaning: e.target.value })} type="textarea" />
+            <LabeledInput id="explanation" label="Giải thích thêm" value={form.explanation} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, explanation: e.target.value })} type="textarea" />
+            <LabeledInput id="exampleSentence" label="Câu ví dụ" value={form.exampleSentence} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, exampleSentence: e.target.value })} type="textarea" />
+            <LabeledInput id="exampleMeaning" label="Nghĩa câu ví dụ" value={form.exampleMeaning} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, exampleMeaning: e.target.value })} type="textarea" />
           </>
         );
       case "question_vocab":
       case "question_grammar":
         return (
           <>
-            <select
-              value={form.questionType || "MULTIPLE_CHOICE"}
-              onChange={(e) => {
-                const type = e.target.value;
-                if (type === "MULTIPLE_CHOICE") {
-                  setForm({
-                    ...form,
-                    questionType: type,
-                    fillAnswer: "",
-                    correctAnswer: "",
-                    optionA: "",
-                    optionB: "",
-                    optionC: "",
-                    optionD: "",
-                  });
-                } else if (type === "FILL") {
-                  setForm({
-                    ...form,
-                    questionType: type,
-                    correctAnswer: "",
-                    optionA: "",
-                    optionB: "",
-                    optionC: "",
-                    optionD: "",
-                  });
-                } else if (type === "TRUE_FALSE") {
-                  setForm({
-                    ...form,
-                    questionType: type,
-                    correctAnswer: "True",
-                    fillAnswer: "",
-                    optionA: "",
-                    optionB: "",
-                    optionC: "",
-                    optionD: "",
-                  });
-                }
-              }}
-              className="border p-2 w-full"
-            >
-              <option value="MULTIPLE_CHOICE">Trắc nghiệm 4 lựa chọn</option>
-              <option value="FILL">Điền từ / cụm</option>
-              <option value="TRUE_FALSE">Đúng / Sai</option>
-            </select>
+            {/* Question Type Select */}
+            <div>
+                 <label htmlFor="questionType" className="block text-sm font-medium text-gray-700 mb-1">Loại câu hỏi (*)</label>
+                 <select
+                     id="questionType"
+                     value={form.questionType || "MULTIPLE_CHOICE"}
+                     onChange={(e) => {
+                       const type = e.target.value;
+                       // Reset form based on type (Logic from original code)
+                       let updatedForm = { ...form, questionType: type };
+                       if (type === "MULTIPLE_CHOICE") {
+                           updatedForm = { ...updatedForm, fillAnswer: null, correctAnswer: "", optionA: "", optionB: "", optionC: "", optionD: "" };
+                       } else if (type === "FILL") {
+                           updatedForm = { ...updatedForm, correctAnswer: "", optionA: null, optionB: null, optionC: null, optionD: null };
+                       } else if (type === "TRUE_FALSE") {
+                           updatedForm = { ...updatedForm, correctAnswer: "True", fillAnswer: null, optionA: null, optionB: null, optionC: null, optionD: null };
+                       }
+                       setForm(updatedForm);
+                     }}
+                     className="w-full border p-2 rounded-lg bg-white focus:ring-cyan-500 focus:border-cyan-500"
+                 >
+                     <option value="MULTIPLE_CHOICE">Trắc nghiệm 4 lựa chọn</option>
+                     <option value="FILL">Điền từ / cụm</option>
+                     <option value="TRUE_FALSE">Đúng / Sai</option>
+                 </select>
+            </div>
 
-            <input
-              placeholder="Câu hỏi"
-              value={form.content || ""}
-              onChange={(e) => setForm({ ...form, content: e.target.value })}
-              className="border p-2 w-full"
-            />
+             {/* Content */}
+             <LabeledInput id="content" label="Nội dung câu hỏi" value={form.content} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, content: e.target.value })} type="textarea" required/>
 
+            {/* Fields for MULTIPLE_CHOICE */}
             {form.questionType === "MULTIPLE_CHOICE" && (
-              <>
-                <input
-                  placeholder="Đáp án đúng"
-                  value={form.correctAnswer || ""}
-                  onChange={(e) =>
-                    setForm({ ...form, correctAnswer: e.target.value })
-                  }
-                  className="border p-2 w-full"
-                />
-                {["A", "B", "C", "D"].map((opt) => (
-                  <input
-                    key={opt}
-                    placeholder={`Đáp án ${opt}`}
-                    value={form[`option${opt}`] || ""}
-                    onChange={(e) =>
-                      setForm({ ...form, [`option${opt}`]: e.target.value })
-                    }
-                    className="border p-2 w-full"
-                  />
-                ))}
-              </>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+                 <LabeledInput id="correctAnswerMC" label="Đáp án đúng (Nhập giống hệt 1 trong các lựa chọn)" value={form.correctAnswer} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, correctAnswer: e.target.value })} required/>
+                 {["A", "B", "C", "D"].map((opt) => (
+                    <LabeledInput key={opt} id={`option${opt}`} label={`Lựa chọn ${opt}`} value={form[`option${opt}`]} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, [`option${opt}`]: e.target.value })} />
+                 ))}
+              </motion.div>
             )}
 
+            {/* Fields for FILL */}
             {form.questionType === "FILL" && (
-              <input
-                placeholder="Đáp án điền (fillAnswer)"
-                value={form.fillAnswer || ""}
-                onChange={(e) =>
-                  setForm({ ...form, fillAnswer: e.target.value })
-                }
-                className="border p-2 w-full"
-              />
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+                     <LabeledInput id="correctAnswerFill" label="Đáp án đúng (Câu/từ hoàn chỉnh)" value={form.correctAnswer} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, correctAnswer: e.target.value })} required/>
+                    <LabeledInput id="fillAnswer" label="Từ/cụm cần điền (fillAnswer)" value={form.fillAnswer} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, fillAnswer: e.target.value })} />
+                    <p className="text-xs text-gray-500 -mt-2">Thường dùng khi 'Đáp án đúng' là câu hoàn chỉnh.</p>
+                </motion.div>
             )}
 
+            {/* Fields for TRUE_FALSE */}
             {form.questionType === "TRUE_FALSE" && (
-              <select
-                value={form.correctAnswer || "True"}
-                onChange={(e) =>
-                  setForm({ ...form, correctAnswer: e.target.value })
-                }
-                className="border p-2 w-full"
-              >
-                <option value="True">Đúng</option>
-                <option value="False">Sai</option>
-              </select>
+                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                     <label htmlFor="correctAnswerTF" className="block text-sm font-medium text-gray-700 mb-1">Đáp án đúng (*)</label>
+                     <select
+                        id="correctAnswerTF"
+                        value={form.correctAnswer || "True"}
+                        onChange={(e) => setForm({ ...form, correctAnswer: e.target.value })}
+                        className="w-full border p-2 rounded-lg bg-white focus:ring-cyan-500 focus:border-cyan-500"
+                     >
+                         <option value="True">Đúng (True)</option>
+                         <option value="False">Sai (False)</option>
+                     </select>
+                </motion.div>
             )}
           </>
         );
+        default:
+             return <p>Loại không xác định.</p> // Thêm default case
     }
   };
 
@@ -558,7 +500,26 @@ const TeacherLessonContentPage: React.FC = () => {
 
   // ================= UI =================
   return (
-    <div className="pt-24 p-10 min-h-screen bg-gray-50">
+    // <div className="pt-5 p-10 min-h-screen bg-gray-50">
+    <div className="">
+
+      {/* --- ✅ THAY THẾ HEADER CŨ BẰNG ĐOẠN NÀY --- */}
+      <div className="flex justify-between items-center mb-10">
+         {/* Nút Quay lại Khóa học (Teacher context) */}
+         <Link
+           to={`/teacher/courses/${courseCode}`} // Link back to the teacher's course lesson list
+           className="flex items-center gap-2 text-gray-600 hover:text-cyan-700 transition-colors"
+         >
+           <IoMdArrowBack className="h-6 w-6" />
+           <span className="text-lg font-medium">Quay lại Khóa học</span>
+         </Link>
+      </div>
+
+       <h1 className="text-3xl font-bold text-gray-800 mb-8"> {/* Moved Title Below Back Button */}
+           Quản lý Nội dung Bài học {lessonId}
+       </h1>
+       {/* --- KẾT THÚC THAY THẾ --- */}
+
       <div className="flex gap-3 mb-8 flex-wrap">
         {[
           { key: "vocab", label: "Từ vựng" },

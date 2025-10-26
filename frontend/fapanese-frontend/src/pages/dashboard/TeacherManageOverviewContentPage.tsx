@@ -139,8 +139,6 @@ const TeacherManageOverviewContentPage: React.FC = () => {
                     type: item?.type || "FE", // Loại của kỳ thi (FE, ME, RE...)
                     year: item?.year || new Date().getFullYear(),
                     // Chuyển mảng questions (nếu có) thành chuỗi ID "1, 2, 3"
-                    questionIds:
-                        item?.questions?.map((q: any) => q.id).join(", ") || "",
                 });
                 break;
         }
@@ -338,12 +336,6 @@ const TeacherManageOverviewContentPage: React.FC = () => {
                                 className="border p-3 rounded-lg"
                             />
                         </div>
-                        <textarea
-                            placeholder="Nhập ID các câu hỏi, cách nhau bằng dấu phẩy (VD: 1, 5, 12)"
-                            value={formData.questionIds || ""}
-                            onChange={(e) => handleChange("questionIds", e.target.value)}
-                            className="border p-3 rounded-lg min-h-[100px]"
-                        />
                     </>
                 );
             default:

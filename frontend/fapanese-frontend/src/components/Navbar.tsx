@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { AiOutlineBook, AiOutlineDashboard, AiOutlineEdit } from "react-icons/ai";
+import {
+  AiOutlineBook,
+  AiOutlineDashboard,
+  AiOutlineEdit,
+} from "react-icons/ai";
 import { MdLogout } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/logo.png";
@@ -26,7 +30,9 @@ const Navbar: React.FC<NavbarProps> = ({
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<string | null>(localStorage.getItem("email") || null);
+  const [user, setUser] = useState<string | null>(
+    localStorage.getItem("email") || null
+  );
   const [logoutOpen, setLogoutOpen] = useState(false);
 
   const [userProfile, setUserProfile] = useState<{
@@ -94,9 +100,21 @@ const Navbar: React.FC<NavbarProps> = ({
 
   const userMenuItems = user
     ? [
-        { name: "Khóa Học", icon: <AiOutlineBook />, action: () => console.log("Go to courses") },
-        { name: "Dashboard", icon: <AiOutlineDashboard />, action: () => console.log("Go to dashboard") },
-        { name: "Edit Profile", icon: <AiOutlineEdit />, action: () => navigate("/profile") },
+        {
+          name: "Khóa Học",
+          icon: <AiOutlineBook />,
+          action: () => console.log("Go to courses"),
+        },
+        {
+          name: "Dashboard",
+          icon: <AiOutlineDashboard />,
+          action: () => console.log("Go to dashboard"),
+        },
+        {
+          name: "Edit Profile",
+          icon: <AiOutlineEdit />,
+          action: () => navigate("/profile"),
+        },
         { name: "Đăng Xuất", icon: <MdLogout />, action: handleLogoutClick },
       ]
     : [];
@@ -106,9 +124,13 @@ const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between h-20 items-center relative">
           {/* Logo */}
-          <div className="flex-shrink-0 -ml-15">
-            <a href="/" className="flex items-center h-12">
-              <img src={logo} alt="Fapanese Logo" className="w-40 h-40 object-contain" />
+          <div className="flex-shrink-0 -ml-10 w-32 h-16 overflow-hidden flex items-center">
+            <a href="/" className="flex items-center">
+              <img
+                src={logo}
+                alt="Fapanese Logo"
+                className="w-full h-full object-cover"
+              />
             </a>
           </div>
 
@@ -187,7 +209,10 @@ const Navbar: React.FC<NavbarProps> = ({
                   className="p-1 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                 >
-                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
                     <img src={logouser} className="h-10" />
                   </motion.div>
                 </div>
@@ -257,7 +282,11 @@ const Navbar: React.FC<NavbarProps> = ({
         )}
 
       {/* Logout popup */}
-      <LogoutPopup isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} onConfirm={confirmLogout} />
+      <LogoutPopup
+        isOpen={logoutOpen}
+        onClose={() => setLogoutOpen(false)}
+        onConfirm={confirmLogout}
+      />
     </nav>
   );
 };

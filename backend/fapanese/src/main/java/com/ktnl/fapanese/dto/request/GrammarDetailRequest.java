@@ -13,6 +13,6 @@ public class GrammarDetailRequest {
     private Long id;
     private String structure;
     private String meaning;
-    private String example_sentence;
-    private String example_meaning;
+    private String exampleSentence;
+    private String exampleMeaning;
 }

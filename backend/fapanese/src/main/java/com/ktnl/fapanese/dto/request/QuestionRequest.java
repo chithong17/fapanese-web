@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class QuestionRequest {
+    private Long lessonPartId;
     private String content;
     private String category;
     private String questionType;

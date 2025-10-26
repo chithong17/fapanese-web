@@ -33,6 +33,8 @@ import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
 import TeacherCoursesPage from "./pages/dashboard/TeacherCoursesPage";
 import TeacherLessonsPage from "./pages/dashboard/TeacherLessonsPage";
 import TeacherLessonContentPage from "./pages/dashboard/TeacherLessonContentPage";
+import TeacherOverviewPartsPage from "./pages/dashboard/TeacherOverviewPartsPage";
+import TeacherManageOverviewContentPage from "./pages/dashboard/TeacherManageOverviewContentPage";
 
 // 1. IMPORT FloatingActionButton TẠI ĐÂY
 import FloatingActionButton from "./components/FloatingActionButton";
@@ -127,7 +129,7 @@ function App() {
               {/* 2. TÍCH HỢP FloatingActionButton TẠI ĐÂY */}
               <FloatingActionButton
                 link={learnNowLink}
-                // Giữ nguyên các props khác để component sử dụng hình ảnh SVG đã import
+              // Giữ nguyên các props khác để component sử dụng hình ảnh SVG đã import
               />
 
               <HeroBackground />
@@ -186,6 +188,24 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
               <TeacherLessonContentPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/teacher/courses/:courseCode/overviews/:overviewId/manage-parts"
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              <TeacherOverviewPartsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/teacher/courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content"
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              <TeacherManageOverviewContentPage />
             </ProtectedRoute>
           }
         />

@@ -3,23 +3,33 @@ package com.ktnl.fapanese.controller;
 import com.ktnl.fapanese.dto.request.QuestionRequest;
 import com.ktnl.fapanese.dto.request.UserAnswer;
 import com.ktnl.fapanese.dto.response.ApiResponse;
+import com.ktnl.fapanese.dto.response.ExcelUploadResponse;
 import com.ktnl.fapanese.dto.response.QuestionResponse;
 import com.ktnl.fapanese.dto.response.SubmitQuizResponse;
 import com.ktnl.fapanese.entity.enums.QuestionCategory;
 import com.ktnl.fapanese.entity.enums.QuestionType;
+import com.ktnl.fapanese.exception.AppException;
+import com.ktnl.fapanese.service.interfaces.IQuestionExcelUploadService;
 import com.ktnl.fapanese.service.interfaces.IQuestionService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/questions")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class QuestionController {
 
-    private final IQuestionService questionService;
+    IQuestionService questionService;
+    IQuestionExcelUploadService questionExcelUploadService;
 
     @PostMapping
     public ApiResponse<QuestionResponse> createQuestion(@RequestBody QuestionRequest request) {
@@ -112,5 +122,32 @@ public class QuestionController {
                 .build();
     }
 
+    @PostMapping("/upload-excel")
+    public ResponseEntity<ExcelUploadResponse> uploadQuestionsFromExcel(
+            @RequestParam("file") MultipartFile file) {
+
+        if (file.isEmpty()) {
+            ExcelUploadResponse response = new ExcelUploadResponse();
+            response.addErrorMessage(0, "File rỗng.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        try {
+            ExcelUploadResponse response = questionExcelUploadService.processQuestionExcel(file);
+            if (response.getFailureCount() > 0) {
+                // Vẫn trả về 200 OK nhưng body chứa thông tin lỗi
+                return ResponseEntity.ok(response);
+            }
+            return ResponseEntity.ok(response);
+        } catch (AppException e) {
+            ExcelUploadResponse response = new ExcelUploadResponse();
+            response.addErrorMessage(0, "Lỗi xử lý file: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        } catch (IOException e) {
+            ExcelUploadResponse response = new ExcelUploadResponse();
+            response.addErrorMessage(0, "Lỗi đọc file: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 
 }

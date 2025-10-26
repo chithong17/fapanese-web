@@ -35,6 +35,12 @@ import TeacherLessonsPage from "./pages/dashboard/TeacherLessonsPage";
 import TeacherLessonContentPage from "./pages/dashboard/TeacherLessonContentPage";
 import TeacherOverviewPartsPage from "./pages/dashboard/TeacherOverviewPartsPage";
 import TeacherManageOverviewContentPage from "./pages/dashboard/TeacherManageOverviewContentPage";
+import TeacherManageOverviewSpeakingQuestionsPage from "./pages/dashboard/TeacherManageOverviewSpeakingQuestionsPage";
+import TeacherManageSpeakingItemsPage from "./pages/dashboard/TeacherManageSpeakingItemsPage";
+import TeacherManageSpeakingQuestionsPage from "./pages/dashboard/TeacherManageSpeakingQuestionsPage";
+import TeacherManageExamQuestionsPage from "./pages/dashboard/TeacherManageExamQuestionsPage";
+import TeacherEditQuestionPage from "./pages/dashboard/TeacherEditQuestionPage";
+import TeacherQuestionBankPage from "./pages/dashboard/TeacherQuestionBankPage";
 
 
 // 1. IMPORT FloatingActionButton TẠI ĐÂY
@@ -207,6 +213,66 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
               <TeacherManageOverviewContentPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/teacher/courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content/speaking/:speakingExamId/item/:speakingId/questions"
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              {/* ✅ SỬA TÊN COMPONENT Ở ĐÂY */}
+              <TeacherManageOverviewSpeakingQuestionsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Route quản lý các Speaking Item con của một SpeakingExam */}
+        <Route
+          path="/teacher/courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content/speaking/:speakingExamId/items"
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              <TeacherManageSpeakingItemsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Route quản lý câu hỏi con của một Speaking Item */}
+        <Route
+          path="/teacher/courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content/speaking/:speakingExamId/item/:speakingId/questions"
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              <TeacherManageSpeakingQuestionsPage /> {/* <-- Đảm bảo đúng tên component */}
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Route quản lý (chọn) câu hỏi cho Middle/Final Exam */}
+        <Route
+          path="/teacher/courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content/exam/:examId/questions"
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              <TeacherManageExamQuestionsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Route chỉnh sửa nội dung một câu hỏi chung */}
+        <Route
+          path="/teacher/questions/:questionId/edit"
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              <TeacherEditQuestionPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Route quản lý Ngân hàng câu hỏi chung */}
+        <Route
+          path="/teacher/question-bank"
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              <TeacherQuestionBankPage />
             </ProtectedRoute>
           }
         />

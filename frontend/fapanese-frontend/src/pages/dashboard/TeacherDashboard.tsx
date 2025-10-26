@@ -1,5 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+// Import icons if you want to add them to the cards
+import { FaBook, FaClipboardList } from "react-icons/fa"; // Example icons
 
 const TeacherDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -10,21 +12,40 @@ const TeacherDashboard: React.FC = () => {
         Bảng điều khiển Giảng viên
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> {/* Adjusted grid for potentially more items */}
+
         {/* Card quản lý khóa học */}
         <div
           onClick={() => navigate("/teacher/courses")}
-          className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition cursor-pointer border border-gray-200"
+          className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition cursor-pointer border border-gray-200 flex flex-col items-start hover:bg-cyan-50"
         >
+          <FaBook className="text-3xl text-cyan-600 mb-3" /> {/* Example Icon */}
           <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            Quản lý khóa học
+            Quản lý Khóa học
           </h2>
           <p className="text-gray-500 text-sm">
-            Xem, thêm, chỉnh sửa và xóa các khóa học bạn phụ trách.
+            Xem, thêm, chỉnh sửa các khóa học, bài học và nội dung tổng ôn.
           </p>
         </div>
 
-        {/* Sau này sẽ thêm các card khác: Lesson, Grammar, Vocabulary... */}
+        {/* --- ✅ THÊM CARD NGÂN HÀNG CÂU HỎI --- */}
+        <div
+          onClick={() => navigate("/teacher/question-bank")} // Điều hướng đến trang ngân hàng câu hỏi
+          className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition cursor-pointer border border-gray-200 flex flex-col items-start hover:bg-green-50" // Added hover color
+        >
+           <FaClipboardList className="text-3xl text-green-600 mb-3" /> {/* Example Icon */}
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            Ngân hàng Câu hỏi
+          </h2>
+          <p className="text-gray-500 text-sm">
+            Xem, thêm, sửa và xóa các câu hỏi trắc nghiệm, điền từ dùng chung.
+          </p>
+        </div>
+        {/* --- HẾT PHẦN THÊM --- */}
+
+
+        {/* Bạn có thể thêm các card khác ở đây sau này */}
+
       </div>
     </div>
   );

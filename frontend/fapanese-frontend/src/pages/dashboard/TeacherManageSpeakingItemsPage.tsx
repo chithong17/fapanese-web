@@ -220,8 +220,22 @@ const TeacherManageSpeakingItemsPage: React.FC = () => {
                   <motion.tr key={item.id} variants={fadeIn} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.topic}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.speakingType}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate" title={item.passage || item.description || (item.imgUrl ? 'Hình ảnh' : '')}>
-                        {item.passage || item.description || (item.imgUrl ? 'Hình ảnh' : '-')}
+                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs align-top">
+                      {item.speakingType === 'PICTURE' && item.imgUrl ? (
+                        // Nếu là PICTURE và có imgUrl, hiển thị ảnh thumbnail
+                        <img
+                          src={item.imgUrl}
+                          alt={`Hình ảnh cho ${item.topic}`}
+                          className="h-16 w-auto object-contain rounded border border-gray-200 shadow-sm" // Style cho ảnh
+                          loading="lazy" // Lazy load ảnh
+                          onError={(e) => (e.currentTarget.src = 'https://placehold.co/100x64/eee/ccc?text=Error')} // Ảnh lỗi
+                        />
+                      ) : (
+                        // Nếu không phải ảnh, hiển thị text (passage/description)
+                        <div className="line-clamp-3" title={item.passage || item.description}> {/* Line clamp + tooltip */}
+                          {item.passage || item.description || '-'}
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">{item.speakingQuestions?.length || 0}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center space-x-3">

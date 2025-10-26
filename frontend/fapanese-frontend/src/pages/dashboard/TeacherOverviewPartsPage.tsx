@@ -179,7 +179,7 @@ const TeacherOverviewPartsPage: React.FC = () => {
         {/* --- Header và Nút Back --- */}
         <div className="flex justify-between items-center mb-10">
           <Link
-            to={`/teacher/courses/${courseCode}/lessons`}
+            to={`/teacher/courses/${courseCode}`}
             className="flex items-center gap-2 text-gray-600 hover:text-cyan-700 transition-colors"
           >
             <IoMdArrowBack className="h-6 w-6" />

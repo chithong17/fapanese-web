@@ -50,8 +50,8 @@ public enum ErrorCode {
     EXCEL_MISSING_HEADER(3002, "File Excel thiếu cột {0}", HttpStatus.BAD_REQUEST),
     INVALID_COLUMN(3003, "Cột {0} không được để trống.", HttpStatus.BAD_REQUEST),
     DOB_FORMAT_INVALID(3004, "Định dạng ngày {0} ở cột {1} không hợp lệ (cần dd/MM/yyyy hoặc yyyy-MM-dd).", HttpStatus.BAD_REQUEST),
-    EXCEL_INVALID_DATA_TYPE(3005, "Kiểu dữ liệu ở cột {0} không phải ngày tháng hợp lệ.", HttpStatus.BAD_REQUEST),
-    EXCEL_READ_ERROR(3006, "Lỗi khi đọc ngày tháng ở cột {0}", HttpStatus.BAD_REQUEST),
+    EXCEL_INVALID_DATA_TYPE(3005, "Kiểu dữ liệu ở cột {0} không hợp lệ.", HttpStatus.BAD_REQUEST),
+    EXCEL_READ_ERROR(3006, "Lỗi khi đọc ngày tháng ở cột {0}", HttpStatus.BAD_REQUEST), 
 
     OVERVIEW_PART_NOT_FOUND(4001, "Không tìm thấy Overview Part", HttpStatus.NOT_FOUND),
     EXAM_NOT_FOUND(4002, "Không tìm thấy bài kiểm tra", HttpStatus.NOT_FOUND),

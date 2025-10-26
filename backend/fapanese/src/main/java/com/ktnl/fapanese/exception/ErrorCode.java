@@ -32,7 +32,11 @@ public enum ErrorCode {
     SPEAKING_NOT_FOUND(1014, "Không tìm thấy Speaking", HttpStatus.NOT_FOUND),
     CLASS_NOT_FOUND(1014, "Không tìm thấy Class", HttpStatus.NOT_FOUND),
     LECTURER_NOT_FOUND(1014, "Không tìm thấy Lecturer", HttpStatus.NOT_FOUND),
+    MATERIAL_NOT_FOUND(1016, "Không tìm thấy Material", HttpStatus.NOT_FOUND),
     INVALID_CLASS_NAME(1015,"ClassName không hợp lệ", HttpStatus.NOT_FOUND),
+    STUDENT_NOT_FOUND(1017,"Student không hợp lệ", HttpStatus.NOT_FOUND),
+    SUBMISSION_NOT_FOUND(1018,"Bài nộp không hợp lệ", HttpStatus.NOT_FOUND),
+    CLASS_COURSE_NOT_FOUND(1018,"CLASS_COURSE không hợp lệ", HttpStatus.NOT_FOUND),
     // 👉 Validation specific error codes
     FIRSTNAME_REQUIRED(2001, "First name is required", HttpStatus.BAD_REQUEST),
     LASTNAME_REQUIRED(2002, "Last name is required", HttpStatus.BAD_REQUEST),

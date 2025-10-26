@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @Builder
@@ -37,4 +40,8 @@ public class ClassCourse {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecturer_id", nullable = false)
     private Lecturer lecturer;
+
+    @OneToMany(mappedBy = "classCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ClassMaterial> classMaterials = new HashSet<>();
+
 }

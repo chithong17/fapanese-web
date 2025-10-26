@@ -41,7 +41,7 @@ import TeacherManageSpeakingQuestionsPage from "./pages/dashboard/TeacherManageS
 import TeacherManageExamQuestionsPage from "./pages/dashboard/TeacherManageExamQuestionsPage";
 import TeacherEditQuestionPage from "./pages/dashboard/TeacherEditQuestionPage";
 import TeacherQuestionBankPage from "./pages/dashboard/TeacherQuestionBankPage";
-
+import TeacherPanelLayout from "./pages/dashboard/TeacherPanelLayout";
 
 // 1. IMPORT FloatingActionButton TẠI ĐÂY
 import FloatingActionButton from "./components/FloatingActionButton";
@@ -58,6 +58,8 @@ function AppWrapper() {
 function App() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
+  const isTeacherPage = location.pathname.startsWith("/teacher");
+  const hideNavbar = isAdminPage || isTeacherPage;
 
   const alphabetRef = useRef<any>(null);
   const [activeTab, setActiveTab] = useState<"hiragana" | "katakana">(
@@ -105,7 +107,7 @@ function App() {
 
   return (
     <>
-      {!isAdminPage && (
+      {!hideNavbar && (
         <>
           {loadingPopup && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80">
@@ -136,7 +138,7 @@ function App() {
               {/* 2. TÍCH HỢP FloatingActionButton TẠI ĐÂY */}
               <FloatingActionButton
                 link={learnNowLink}
-              // Giữ nguyên các props khác để component sử dụng hình ảnh SVG đã import
+                // Giữ nguyên các props khác để component sử dụng hình ảnh SVG đã import
               />
 
               <HeroBackground />
@@ -167,115 +169,43 @@ function App() {
           path="/teacher"
           element={
             <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
-              <TeacherDashboard />
+              <TeacherPanelLayout />
             </ProtectedRoute>
           }
-        />
-
-        <Route
-          path="/teacher/courses"
-          element={
-            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
-              <TeacherCoursesPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/teacher/courses/:courseCode"
-          element={
-            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
-              <TeacherLessonsPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/teacher/courses/:courseCode/lessons/:lessonId/parts/:lessonPartId/manage"
-          element={
-            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
-              <TeacherLessonContentPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/teacher/courses/:courseCode/overviews/:overviewId/manage-parts"
-          element={
-            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
-              <TeacherOverviewPartsPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/teacher/courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content"
-          element={
-            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
-              <TeacherManageOverviewContentPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/teacher/courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content/speaking/:speakingExamId/item/:speakingId/questions"
-          element={
-            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
-              {/* ✅ SỬA TÊN COMPONENT Ở ĐÂY */}
-              <TeacherManageOverviewSpeakingQuestionsPage />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Route quản lý các Speaking Item con của một SpeakingExam */}
-        <Route
-          path="/teacher/courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content/speaking/:speakingExamId/items"
-          element={
-            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
-              <TeacherManageSpeakingItemsPage />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Route quản lý câu hỏi con của một Speaking Item */}
-        <Route
-          path="/teacher/courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content/speaking/:speakingExamId/item/:speakingId/questions"
-          element={
-            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
-              <TeacherManageSpeakingQuestionsPage /> {/* <-- Đảm bảo đúng tên component */}
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Route quản lý (chọn) câu hỏi cho Middle/Final Exam */}
-        <Route
-          path="/teacher/courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content/exam/:examId/questions"
-          element={
-            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
-              <TeacherManageExamQuestionsPage />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Route chỉnh sửa nội dung một câu hỏi chung */}
-        <Route
-          path="/teacher/questions/:questionId/edit"
-          element={
-            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
-              <TeacherEditQuestionPage />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Route quản lý Ngân hàng câu hỏi chung */}
-        <Route
-          path="/teacher/question-bank"
-          element={
-            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
-              <TeacherQuestionBankPage />
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route index element={<TeacherDashboard />} />
+          <Route path="courses" element={<TeacherCoursesPage />} />
+          <Route path="courses/:courseCode" element={<TeacherLessonsPage />} />
+          <Route
+            path="courses/:courseCode/lessons/:lessonId/parts/:lessonPartId/manage"
+            element={<TeacherLessonContentPage />}
+          />
+          <Route path="question-bank" element={<TeacherQuestionBankPage />} />
+          <Route
+            path="questions/:questionId/edit"
+            element={<TeacherEditQuestionPage />}
+          />
+          <Route
+            path="courses/:courseCode/overviews/:overviewId/manage-parts"
+            element={<TeacherOverviewPartsPage />}
+          />
+          <Route
+            path="courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content"
+            element={<TeacherManageOverviewContentPage />}
+          />
+          <Route
+            path="courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content/speaking/:speakingExamId/items"
+            element={<TeacherManageSpeakingItemsPage />}
+          />
+          <Route
+            path="courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content/speaking/:speakingExamId/item/:speakingId/questions"
+            element={<TeacherManageSpeakingQuestionsPage />}
+          />
+          <Route
+            path="courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content/exam/:examId/questions"
+            element={<TeacherManageExamQuestionsPage />}
+          />
+        </Route>
 
         <Route path="/dashboard/student" element={<StudentDashboard />} />
         <Route path="/aboutus" element={<AboutUs />} />
@@ -305,7 +235,7 @@ function App() {
         <Route path="/flashcard/:lessonPartId" element={<FlashcardPage />} />
       </Routes>
 
-      {!isAdminPage && <Footer />}
+      {!hideNavbar && <Footer />}
     </>
   );
 }

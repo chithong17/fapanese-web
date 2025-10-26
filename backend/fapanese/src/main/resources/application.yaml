@@ -8,8 +8,8 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/fapanese_database
     driverClassName: "com.mysql.cj.jdbc.Driver"
-    username: root
-    password: 1234
+    username: ${DBMS_USERNAME}
+    password: ${DBMS_PASSWORD}
 
   jpa:
     hibernate:
@@ -18,8 +18,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: fapanese.edu@gmail.com
-    password: ggqttilytuikozmy
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -28,7 +28,6 @@ spring:
             enable: true
           debug: true
 
-JWT_SIGNER_KEY: "Av8kEwq3M2Yh5Rt9Xn1Zp7Lm4Jc6Fd0Sg2Uw8Bv5Nq3"
 jwt:
   signerKey: ${JWT_SIGNER_KEY}
   valid-duration:  3600 # in second
@@ -49,4 +48,3 @@ cloudinary:
 logging:
   level:
     org.springframework.security: DEBUG
-

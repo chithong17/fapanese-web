@@ -216,9 +216,13 @@ const Navbar: React.FC<NavbarProps> = ({
                     <img src={logouser} className="h-10" />
                   </motion.div>
                 </div>
-                <span className="text-gray-700 font-medium ">
-                  Xin chào, <br />
-                  <span>{user}</span>
+                <span className="text-gray-700 font-medium">
+                  Xin chào,
+                  <span className="font-semibold text-[#0b7a75]">
+                    {userProfile
+                      ? `${userProfile.firstName} ${userProfile.lastName}` 
+                      : "Đang tải..."}
+                  </span>
                 </span>
               </>
             ) : (

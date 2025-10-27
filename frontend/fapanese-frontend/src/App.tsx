@@ -42,6 +42,7 @@ import TeacherManageExamQuestionsPage from "./pages/dashboard/TeacherManageExamQ
 import TeacherEditQuestionPage from "./pages/dashboard/TeacherEditQuestionPage";
 import TeacherQuestionBankPage from "./pages/dashboard/TeacherQuestionBankPage";
 import TeacherPanelLayout from "./pages/dashboard/TeacherPanelLayout";
+import TeacherMaterialsPage from "./pages/dashboard/TeacherMaterialsPage";
 
 // 1. IMPORT FloatingActionButton TẠI ĐÂY
 import FloatingActionButton from "./components/FloatingActionButton";
@@ -138,7 +139,7 @@ function App() {
               {/* 2. TÍCH HỢP FloatingActionButton TẠI ĐÂY */}
               <FloatingActionButton
                 link={learnNowLink}
-                // Giữ nguyên các props khác để component sử dụng hình ảnh SVG đã import
+              // Giữ nguyên các props khác để component sử dụng hình ảnh SVG đã import
               />
 
               <HeroBackground />
@@ -206,6 +207,15 @@ function App() {
             element={<TeacherManageExamQuestionsPage />}
           />
         </Route>
+        <Route
+          path="/teacher/materials"
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              <TeacherMaterialsPage />
+            </ProtectedRoute>
+          }
+        />
+
 
         <Route path="/dashboard/student" element={<StudentDashboard />} />
         <Route path="/aboutus" element={<AboutUs />} />

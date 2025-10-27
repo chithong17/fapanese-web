@@ -31,7 +31,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<string | null>(
-    localStorage.getItem("email") || null
+    localStorage.getItem("firstName") || null
   );
   const [logoutOpen, setLogoutOpen] = useState(false);
 

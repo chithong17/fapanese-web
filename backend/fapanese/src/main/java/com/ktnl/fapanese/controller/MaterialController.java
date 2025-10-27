@@ -2,6 +2,8 @@ package com.ktnl.fapanese.controller;
 
 import com.ktnl.fapanese.dto.request.MaterialRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
+import com.ktnl.fapanese.dto.response.ClassCourseRespone;
+import com.ktnl.fapanese.dto.response.ClassMaterialResponse;
 import com.ktnl.fapanese.dto.response.MaterialResponse;
 import com.ktnl.fapanese.service.interfaces.IMaterialService;
 import lombok.RequiredArgsConstructor;
@@ -69,6 +71,26 @@ public class MaterialController {
         materialService.assignToClass(materialId, classCourseId, deadline);
         return ApiResponse.<String>builder()
                 .message("Assign material to class success")
+                .build();
+    }
+
+    @GetMapping("/{materialId}/assignments")
+    public ApiResponse<List<ClassMaterialResponse>> getAssignedClassByMaterialId(@PathVariable Long materialId){
+        List<ClassMaterialResponse> list = materialService.getAssignedClassByMaterialId(materialId);
+        return ApiResponse.<List<ClassMaterialResponse>>builder()
+                .message("Get Assigned Class success")
+                .result(list)
+                .build();
+    }
+
+    @DeleteMapping("/{materialId}/assign")
+    public ApiResponse<String> unAssignMaterialToClass(
+            @PathVariable Long materialId,
+            @RequestParam Long classCourseId) {
+
+        materialService.unAssignToClass(materialId, classCourseId);
+        return ApiResponse.<String>builder()
+                .message("Unassign material to class success")
                 .build();
     }
 

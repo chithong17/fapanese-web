@@ -14,5 +14,5 @@ public class ClassCourseRequest {
     private String className;
     private String semester;
     private Long courseId;
-    private Lecturer lecturer;
+    private String lecturerId;
 }

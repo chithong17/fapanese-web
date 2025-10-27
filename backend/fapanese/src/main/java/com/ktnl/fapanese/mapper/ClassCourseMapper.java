@@ -18,7 +18,6 @@ public interface ClassCourseMapper {
     ClassCourse toClassCourse(ClassCourseRequest request);
 
     @Mapping(target = "courseName", source = "course.courseName")
-    @Mapping(target = "lecturerName", source = "lecturer.lastName") // hoặc getFullName() tùy entity
     ClassCourseRespone toClassCourseResponse(ClassCourse entity);
 
     List<ClassCourseRespone> toClassCourseResponses(List<ClassCourse> classes);

@@ -14,5 +14,5 @@ public class ClassCourseRespone {
     private String className;
     private String semester;
     private String courseName;
-    private String lecturerName;
+    private UserResponse lecturer;
 }

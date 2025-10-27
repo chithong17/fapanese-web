@@ -1,10 +1,14 @@
 package com.ktnl.fapanese.service.implementations;
 
 import com.ktnl.fapanese.dto.request.MaterialRequest;
+import com.ktnl.fapanese.dto.response.ClassCourseRespone;
+import com.ktnl.fapanese.dto.response.ClassMaterialResponse;
 import com.ktnl.fapanese.dto.response.MaterialResponse;
 import com.ktnl.fapanese.entity.*;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
+import com.ktnl.fapanese.mapper.ClassCourseMapper;
+import com.ktnl.fapanese.mapper.ClassMaterialMapper;
 import com.ktnl.fapanese.mapper.MaterialMapper;
 import com.ktnl.fapanese.repository.ClassCourseRepository;
 import com.ktnl.fapanese.repository.ClassMaterialRepository;
@@ -19,7 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -32,6 +39,8 @@ public class MaterialService implements IMaterialService {
     MaterialMapper materialMapper;
     ClassCourseRepository classCourseRepository;
     ClassMaterialRepository classMaterialRepository;
+    ClassMaterialMapper classMaterialMapper;
+
 
     @Override
     public List<MaterialResponse> getAllMaterials() {
@@ -112,5 +121,22 @@ public class MaterialService implements IMaterialService {
                 .build();
 
         classMaterialRepository.save(classMaterial);
+    }
+
+    @Override
+    public void unAssignToClass(Long materialId, Long classCourseId) {
+        ClassMaterialId classMaterialId = new ClassMaterialId(classCourseId, materialId);
+        ClassMaterial classMaterial = classMaterialRepository.findById(classMaterialId)
+                .orElseThrow(() -> new AppException(ErrorCode.ClASS_MATERIALS_NOT_FOUND));
+        classMaterialRepository.delete(classMaterial);
+    }
+
+    @Override
+    public List<ClassMaterialResponse> getAssignedClassByMaterialId(Long materialId) {
+        Material material = materialRepository.findById(materialId)
+                .orElseThrow(() -> new AppException(ErrorCode.MATERIAL_NOT_FOUND));
+        Set<ClassMaterial> classMaterials = material.getClassMaterials();
+
+        return classMaterialMapper.toClassMaterialResponses(new ArrayList<>(classMaterials));
     }
 }

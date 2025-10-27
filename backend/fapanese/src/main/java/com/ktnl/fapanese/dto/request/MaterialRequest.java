@@ -15,5 +15,5 @@ public class MaterialRequest {
     private String fileType;
     private Long fileSize;
     private Material.MaterialType type; // RESOURCE / ASSIGNMENT / EXERCISE
-    private Long lecturerId;   // người tạo
+    private String lecturerId;   // người tạo
 }

@@ -1,6 +1,8 @@
 package com.ktnl.fapanese.service.interfaces;
 
 import com.ktnl.fapanese.dto.request.MaterialRequest;
+import com.ktnl.fapanese.dto.response.ClassCourseRespone;
+import com.ktnl.fapanese.dto.response.ClassMaterialResponse;
 import com.ktnl.fapanese.dto.response.MaterialResponse;
 
 import java.time.LocalDateTime;
@@ -13,4 +15,6 @@ public interface IMaterialService {
     MaterialResponse updateMaterial(Long id, MaterialRequest request);
     void deleteMaterial(Long id);
     void assignToClass(Long materialId, Long classCourseId, LocalDateTime deadline);
+    void unAssignToClass(Long materialId, Long classCourseId);
+    List<ClassMaterialResponse> getAssignedClassByMaterialId(Long materialId);
 }

@@ -36,7 +36,9 @@ public enum ErrorCode {
     INVALID_CLASS_NAME(1015,"ClassName không hợp lệ", HttpStatus.NOT_FOUND),
     STUDENT_NOT_FOUND(1017,"Student không hợp lệ", HttpStatus.NOT_FOUND),
     SUBMISSION_NOT_FOUND(1018,"Bài nộp không hợp lệ", HttpStatus.NOT_FOUND),
-    CLASS_COURSE_NOT_FOUND(1018,"CLASS_COURSE không hợp lệ", HttpStatus.NOT_FOUND),
+    CLASS_COURSE_NOT_FOUND(1019,"CLASS_COURSE không hợp lệ", HttpStatus.NOT_FOUND),
+    ClASS_MATERIALS_NOT_FOUND(1020, "Không tìm thấy Class Material", HttpStatus.NOT_FOUND),
+
     // 👉 Validation specific error codes
     FIRSTNAME_REQUIRED(2001, "First name is required", HttpStatus.BAD_REQUEST),
     LASTNAME_REQUIRED(2002, "Last name is required", HttpStatus.BAD_REQUEST),
@@ -56,7 +58,7 @@ public enum ErrorCode {
     OVERVIEW_PART_NOT_FOUND(4001, "Không tìm thấy Overview Part", HttpStatus.NOT_FOUND),
     EXAM_NOT_FOUND(4002, "Không tìm thấy bài kiểm tra", HttpStatus.NOT_FOUND),
     OVERVIEW_NOT_FOUND(4003, "Không tìm thấy Overview", HttpStatus.NOT_FOUND),
-    SPEAKING_QUESTION_NOT_FOUND(4004, "Không tìm thấy Speaking Question", HttpStatus.NOT_FOUND)
+    SPEAKING_QUESTION_NOT_FOUND(4004, "Không tìm thấy Speaking Question", HttpStatus.NOT_FOUND),
 
 
     ;

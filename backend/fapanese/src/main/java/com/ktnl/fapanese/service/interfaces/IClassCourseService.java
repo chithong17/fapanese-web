@@ -15,5 +15,5 @@ public interface IClassCourseService {
     ClassCourseRespone getClassById(Long id);
     ClassCourseRespone getClassByCourseId(Long courseId);
 
-    ClassCourseRespone getClassByLecturerId(String lecturerId);
+    List<ClassCourseRespone> getClassByLecturerId(String lecturerId);
 }

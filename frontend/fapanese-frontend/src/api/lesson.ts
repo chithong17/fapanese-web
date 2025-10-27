@@ -15,5 +15,5 @@ export const getLessonById = async (lessonId: number) => {
   const res = await axios.get(`${API_URL}/lessons/${lessonId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return res.data;
+  return res.data;  
 };

@@ -33,7 +33,7 @@ public class ClassCourseService implements IClassCourseService {
         Course course = courseRepository.findById(request.getCourseId())
                 .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
 
-        Lecturer lecturer = lecturerRepository.findById(Long.valueOf(request.getLecturer().getId()))
+        Lecturer lecturer = lecturerRepository.findById(request.getLecturerId())
                 .orElseThrow(() -> new AppException(ErrorCode.LECTURER_NOT_FOUND));
 
         // 2. Map request -> entity
@@ -69,8 +69,8 @@ public class ClassCourseService implements IClassCourseService {
             existing.setCourse(course);
         }
 
-        if (request.getLecturer() != null && request.getLecturer().getId() != null) {
-            Lecturer lecturer = lecturerRepository.findById(Long.valueOf(request.getLecturer().getId()))
+        if (request.getLecturerId() != null ) {
+            Lecturer lecturer = lecturerRepository.findById(request.getLecturerId())
                     .orElseThrow(() -> new AppException(ErrorCode.LECTURER_NOT_FOUND));
             existing.setLecturer(lecturer);
         }
@@ -113,9 +113,8 @@ public class ClassCourseService implements IClassCourseService {
 
 
     @Override
-    public ClassCourseRespone getClassByLecturerId(String lecturerId) {
-        ClassCourse entity = classCourseRepository.findByLecturerId(lecturerId)
-                .orElseThrow(() -> new AppException(ErrorCode.CLASS_NOT_FOUND));
-       return classCourseMapper.toClassCourseResponse(entity);
+    public List<ClassCourseRespone> getClassByLecturerId(String lecturerId) {
+        List<ClassCourse> entity = classCourseRepository.findByLecturerId(lecturerId);
+       return classCourseMapper.toClassCourseResponses(entity);
     }
 }

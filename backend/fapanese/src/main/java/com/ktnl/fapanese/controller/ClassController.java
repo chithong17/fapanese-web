@@ -48,9 +48,9 @@ public class ClassController {
     }
 
     @GetMapping("/by-lecturer/{lecturerId}")
-    public ApiResponse<ClassCourseRespone> getClassByLecturerId(@PathVariable String lecturerId) {
-        ClassCourseRespone result = classCourseService.getClassByLecturerId(lecturerId);
-        return ApiResponse.<ClassCourseRespone>builder()
+    public ApiResponse<List<ClassCourseRespone>> getClassByLecturerId(@PathVariable String lecturerId) {
+        List<ClassCourseRespone> result = classCourseService.getClassByLecturerId(lecturerId);
+        return ApiResponse.<List<ClassCourseRespone>>builder()
                 .message("Class fetched successfully for lecturer " + lecturerId)
                 .result(result)
                 .build();

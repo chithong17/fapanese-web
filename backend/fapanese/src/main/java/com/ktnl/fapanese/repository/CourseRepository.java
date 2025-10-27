@@ -11,6 +11,5 @@ import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    CourseResponse getCourseById(@PathVariable Long id);
     Optional<Course> findByCode(String code);
 }

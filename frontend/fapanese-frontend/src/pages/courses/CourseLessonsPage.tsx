@@ -100,7 +100,6 @@ const CourseLessonsPage: React.FC = () => {
     }
   };
 
-  // *** HÀM BẠN BỊ THIẾU NẰM Ở ĐÂY ***
   const handleStartOverview = async (overviewId: number) => {
     try {
       setIsAuthError(false);

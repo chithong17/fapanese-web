@@ -17,4 +17,6 @@ public interface IMaterialService {
     void assignToClass(Long materialId, Long classCourseId, LocalDateTime deadline);
     void unAssignToClass(Long materialId, Long classCourseId);
     List<ClassMaterialResponse> getAssignedClassByMaterialId(Long materialId);
+    List<MaterialResponse> getMaterialsByStudent(String studentId);
+
 }

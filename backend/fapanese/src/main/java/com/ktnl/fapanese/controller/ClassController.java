@@ -3,7 +3,12 @@ package com.ktnl.fapanese.controller;
 import com.ktnl.fapanese.dto.request.ClassCourseRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.ClassCourseRespone;
+import com.ktnl.fapanese.entity.ClassCourse;
+import com.ktnl.fapanese.entity.StudentClass;
+import com.ktnl.fapanese.mapper.ClassCourseMapper;
 import com.ktnl.fapanese.service.interfaces.IClassCourseService;
+import com.ktnl.fapanese.service.interfaces.IStudentClassService;
+import com.ktnl.fapanese.service.interfaces.IStudentService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,6 +24,10 @@ import java.util.List;
 @Slf4j
 public class ClassController {
     IClassCourseService classCourseService;
+    ClassCourseMapper classCourseMapper;
+    IStudentClassService studentClassService;
+
+
 
     @GetMapping
     public ApiResponse<List<ClassCourseRespone>> getAllClasses(){
@@ -30,7 +39,7 @@ public class ClassController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<ClassCourseRespone> getClassById(@RequestParam Long id){
+    public ApiResponse<ClassCourseRespone> getClassById(@PathVariable Long id){
         ClassCourseRespone result = classCourseService.getClassById(id);
         return ApiResponse.<ClassCourseRespone>builder()
                 .result(result)
@@ -84,5 +93,14 @@ public class ClassController {
                 .build();
     }
 
+
+    @GetMapping("/student/{studentId}")
+    public ApiResponse<List<ClassCourseRespone>> getClassesByStudent(@PathVariable String studentId) {
+        List<ClassCourseRespone> result = studentClassService.getClassesByStudent(studentId);
+        return ApiResponse.<List<ClassCourseRespone>>builder()
+                .result(result)
+                .message("Get classes by student success")
+                .build();
+    }
 
 }

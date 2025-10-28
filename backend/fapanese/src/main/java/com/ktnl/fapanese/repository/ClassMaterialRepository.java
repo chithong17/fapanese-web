@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface ClassMaterialRepository extends JpaRepository<ClassMaterial, ClassMaterialId> {
     List<ClassMaterial> findByClassCourseId(Long classId);
+    List<ClassMaterial> findByClassCourse_IdIn(List<Long> classCourseIds);
 }

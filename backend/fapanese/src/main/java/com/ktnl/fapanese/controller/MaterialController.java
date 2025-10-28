@@ -5,6 +5,7 @@ import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.ClassCourseRespone;
 import com.ktnl.fapanese.dto.response.ClassMaterialResponse;
 import com.ktnl.fapanese.dto.response.MaterialResponse;
+import com.ktnl.fapanese.entity.ClassCourse;
 import com.ktnl.fapanese.service.interfaces.IMaterialService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -93,5 +94,16 @@ public class MaterialController {
                 .message("Unassign material to class success")
                 .build();
     }
+
+
+    @GetMapping("/student/{studentId}")
+    public ApiResponse<List<MaterialResponse>> getMaterialsByStudent(@PathVariable String studentId) {
+        List<MaterialResponse> materials = materialService.getMaterialsByStudent(studentId);
+        return ApiResponse.<List<MaterialResponse>>builder()
+                .result(materials)
+                .message("Get materials for student's classes success")
+                .build();
+    }
+
 
 }

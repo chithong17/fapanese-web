@@ -10,10 +10,7 @@ import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mapper.ClassCourseMapper;
 import com.ktnl.fapanese.mapper.ClassMaterialMapper;
 import com.ktnl.fapanese.mapper.MaterialMapper;
-import com.ktnl.fapanese.repository.ClassCourseRepository;
-import com.ktnl.fapanese.repository.ClassMaterialRepository;
-import com.ktnl.fapanese.repository.LecturerRepository;
-import com.ktnl.fapanese.repository.MaterialRepository;
+import com.ktnl.fapanese.repository.*;
 import com.ktnl.fapanese.service.interfaces.IMaterialService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -40,6 +37,7 @@ public class MaterialService implements IMaterialService {
     ClassCourseRepository classCourseRepository;
     ClassMaterialRepository classMaterialRepository;
     ClassMaterialMapper classMaterialMapper;
+    StudentClassRepository studentClassRepository;
 
 
     @Override
@@ -138,5 +136,31 @@ public class MaterialService implements IMaterialService {
         Set<ClassMaterial> classMaterials = material.getClassMaterials();
 
         return classMaterialMapper.toClassMaterialResponses(new ArrayList<>(classMaterials));
+    }
+
+    @Override
+    @Transactional(Transactional.TxType.SUPPORTS)
+    public List<MaterialResponse> getMaterialsByStudent(String studentId) {
+        // 1️⃣ Lấy tất cả lớp mà học sinh tham gia
+        List<StudentClass> enrolledClasses = studentClassRepository.findByStudent_Id(studentId);
+        if (enrolledClasses.isEmpty()) {
+            throw new AppException(ErrorCode.ACTION_NOT_ALLOWED, "Student is not assigned to any class.");
+        }
+
+        // 2️⃣ Lấy tất cả ID lớp
+        List<Long> classIds = enrolledClasses.stream()
+                .map(sc -> sc.getAClass().getId())
+                .toList();
+
+        // 3️⃣ Lấy danh sách ClassMaterial trong các lớp đó
+        List<ClassMaterial> classMaterials = classMaterialRepository.findByClassCourse_IdIn(classIds);
+
+        // 4️⃣ Trích ra Material, loại trùng
+        List<Material> materials = classMaterials.stream()
+                .map(ClassMaterial::getMaterial)
+                .distinct()
+                .toList();
+
+        return materialMapper.toMaterialResponseList(materials);
     }
 }

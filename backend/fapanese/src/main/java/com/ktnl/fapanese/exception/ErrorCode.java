@@ -57,6 +57,7 @@ public enum ErrorCode {
     FILE_DELETE_FAIL(3007, "Đã có lỗi xảy ra khi xóa file ở Cloudinary", HttpStatus.INTERNAL_SERVER_ERROR),
     FILE_UPLOAD_FAILED(3008, "Lỗi khi upload file lên Cloudinary", HttpStatus.INTERNAL_SERVER_ERROR),
     FILE_SIZE_EXCEED(3009, "File đã vượt quá kích cỡ", HttpStatus.BAD_REQUEST),
+    ASSIGNMENT_NOT_FOUND(30010, "Không tìm thấy bài tập", HttpStatus.BAD_REQUEST),
 
     OVERVIEW_PART_NOT_FOUND(4001, "Không tìm thấy Overview Part", HttpStatus.NOT_FOUND),
     EXAM_NOT_FOUND(4002, "Không tìm thấy bài kiểm tra", HttpStatus.NOT_FOUND),

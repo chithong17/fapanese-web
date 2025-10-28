@@ -3,10 +3,7 @@ import bgImage from "../assets/bg.jpg";
 import heroImage from "../assets/hero.png";
 import heroblImage from "../assets/herobl.png";
 import ScrollReveal from "./ScrollReveal";
-import hero1 from "../assets/hero1.png";
-import hero3 from "../assets/hero3.jpg";
-import hero4 from "../assets/hero4.jpg";
-import hero5 from "../assets/hero5.png";
+
 
 // interface HeroBackgroundProps {
 //   className?: string;
@@ -50,28 +47,7 @@ const HeroBackground: React.FC = () => {
             />
 
             {/* 4 ô nhỏ chồng lên dưới hình */}
-            <div className="absolute h-38 left-1/2 transform -translate-x-1/2 -bottom-20 flex space-x-4 mb-50 -ml-41">
-              <img
-                src={hero1}
-                alt=""
-                className="object-contain drop-shadow-lg rounded-lg"
-              />
-              <img
-                src={hero5}
-                alt=""
-                className="object-contain drop-shadow-lg rounded-lg"
-              />
-              <img
-                src={hero3}
-                alt=""
-                className="object-contain drop-shadow-lg rounded-lg"
-              />
-              <img
-                src={hero4}
-                alt=""
-                className="object-contain drop-shadow-lg rounded-lg"
-              />
-            </div>
+  
           </div>
         </div>
 

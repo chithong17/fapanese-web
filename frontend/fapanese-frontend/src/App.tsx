@@ -43,6 +43,9 @@ import TeacherEditQuestionPage from "./pages/dashboard/TeacherEditQuestionPage";
 import TeacherQuestionBankPage from "./pages/dashboard/TeacherQuestionBankPage";
 import TeacherPanelLayout from "./pages/dashboard/TeacherPanelLayout";
 import TeacherMaterialsPage from "./pages/dashboard/TeacherMaterialsPage";
+import StudentPanelLayout from "./pages/student-page/StudentPanelLayout";
+import StudentMaterialsPage from "./pages/student-page/StudentMaterialsPage";
+import axios from "axios";
 
 // 1. IMPORT FloatingActionButton TẠI ĐÂY
 import FloatingActionButton from "./components/FloatingActionButton";
@@ -93,6 +96,44 @@ function App() {
     }, 600);
   };
 
+  useEffect(() => {
+    const fetchProfileAndClass = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        // 1️⃣ Lấy thông tin người dùng
+        const res = await axios.get(
+          "http://localhost:8080/fapanese/api/users/profile",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const user = res.data.result;
+        if (user && user.role === "STUDENT") {
+          localStorage.setItem("studentId", user.id);
+
+          // 2️⃣ Sau khi có studentId -> gọi API lấy lớp
+          const classRes = await axios.get(
+            `http://localhost:8080/fapanese/api/classes/student/${user.id}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+
+          const classes = classRes.data.result || [];
+          if (classes.length > 0) {
+            // ✅ Lưu class đầu tiên vào localStorage
+            localStorage.setItem("classCourseId", classes[0].id);
+          } else {
+            console.warn("Sinh viên chưa được phân vào lớp nào.");
+          }
+        }
+      } catch (err) {
+        console.error("Không thể lấy thông tin profile hoặc lớp học", err);
+      }
+    };
+
+    fetchProfileAndClass();
+  }, []);
+
   const flashcardData = [
     { title: "Bảng chữ cái", description: "Học Hiragana và Katakana cơ bản." },
     { title: "Ngữ pháp", description: "Tìm hiểu các quy tắc ngữ pháp cơ bản." },
@@ -139,7 +180,7 @@ function App() {
               {/* 2. TÍCH HỢP FloatingActionButton TẠI ĐÂY */}
               <FloatingActionButton
                 link={learnNowLink}
-              // Giữ nguyên các props khác để component sử dụng hình ảnh SVG đã import
+                // Giữ nguyên các props khác để component sử dụng hình ảnh SVG đã import
               />
 
               <HeroBackground />
@@ -216,6 +257,18 @@ function App() {
           }
         />
 
+        {/* Student routes */}
+        <Route
+          path="/student"
+          element={
+            <ProtectedRoute allowedRoles={["STUDENT"]}>
+              <StudentPanelLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<div>Trang chủ học sinh</div>} />
+          <Route path="materials" element={<StudentMaterialsPage />} />
+        </Route>
 
         <Route path="/dashboard/student" element={<StudentDashboard />} />
         <Route path="/aboutus" element={<AboutUs />} />

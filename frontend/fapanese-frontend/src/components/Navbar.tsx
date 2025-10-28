@@ -84,9 +84,25 @@ const Navbar: React.FC<NavbarProps> = ({
     { name: "VỀ CHÚNG TÔI", link: "/aboutus" },
     { name: "TRANG CHỦ", link: "/" },
     { name: "KHÓA HỌC", link: "/courses" },
-    { name: "THÀNH TÍCH", link: "/dashboard/student" },
+    // { name: "THÀNH TÍCH", link: "/dashboard/student" },
+    { name: "LỚP HỌC", link: "/student/materials" },
     { name: "GÓC CHIA SẺ", link: "/" },
   ];
+
+  const handleMenuClick = (item: { name: string; link: string }) => {
+  if (item.name === "LỚP HỌC") {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Vui lòng đăng nhập trước khi xem lớp học!");
+      return;
+    }
+    // 👉 Không gọi API ở Navbar. Điều hướng thẳng.
+    navigate("/student/materials");
+  } else {
+    navigate(item.link);
+  }
+};
+
 
   const handleLogoutClick = () => setLogoutOpen(true);
 
@@ -138,16 +154,16 @@ const Navbar: React.FC<NavbarProps> = ({
           <div className="hidden md:flex flex-grow justify-center">
             <div className="flex space-x-12 items-center">
               {menuItems.map((item, idx) => (
-                <a
+                <button
                   key={idx}
-                  href={item.link}
+                  onClick={() => handleMenuClick(item)}
                   className="text-gray-800 font-bold relative group transition-all"
                 >
                   <span className="group-hover:bg-gradient-to-r group-hover:from-[#80D9E6] group-hover:to-[#A4EBF2] group-hover:bg-clip-text group-hover:text-transparent transition-colors">
                     {item.name}
                   </span>
                   <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-[#80D9E6] to-[#A4EBF2] group-hover:w-full transition-all"></span>
-                </a>
+                </button>
               ))}
 
               {/* Dropdown bảng chữ cái */}
@@ -220,7 +236,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   Xin chào,
                   <span className="font-semibold text-[#0b7a75]">
                     {userProfile
-                      ? `${userProfile.firstName} ${userProfile.lastName}` 
+                      ? `${userProfile.firstName} ${userProfile.lastName}`
                       : "Đang tải..."}
                   </span>
                 </span>

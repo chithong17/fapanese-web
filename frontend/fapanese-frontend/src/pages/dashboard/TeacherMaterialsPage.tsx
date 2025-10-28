@@ -57,6 +57,12 @@ const neumorphicShadow = "8px 8px 15px #c6c9cc, -4px -4px 15px #ffffff";
 const insetShadow = "inset 4px 4px 8px #c6c9cc, inset -4px -4px 8px #ffffff";
 const fadeIn = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
 
+
+// --- ✅ DEFINE FILE SIZE LIMITS (in bytes) ---
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100 MB
+const MAX_RAW_SIZE = 10 * 1024 * 1024; // 10 MB (for PDF, DOCX, etc.)
+
 // --- Component ---
 const TeacherMaterialsPage: React.FC = () => {
     const navigate = useNavigate();
@@ -205,13 +211,44 @@ const TeacherMaterialsPage: React.FC = () => {
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
+
+        // Reset state first
+        setSelectedFile(null); // Clear previous selection
+        // Keep formData.fileUrl as is for now, it will be cleared if validation passes
+
         if (file) {
+            const fileSize = file.size;
+            const fileType = file.type;
+            let maxSize = MAX_RAW_SIZE; // Default limit for "raw" types (pdf, docx, etc.)
+            let typeCategory = "tài liệu";
+
+            if (fileType.startsWith("image/")) {
+                maxSize = MAX_IMAGE_SIZE;
+                typeCategory = "hình ảnh";
+            } else if (fileType.startsWith("video/")) {
+                maxSize = MAX_VIDEO_SIZE;
+                typeCategory = "video";
+            }
+
+            // Check file size
+            if (fileSize > maxSize) {
+                setNotifMessage(
+                    `Lỗi: Kích thước file ${typeCategory} (${formatFileSize(fileSize)}) vượt quá giới hạn cho phép (${formatFileSize(maxSize)}).`
+                );
+                // Clear the file input visually
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                }
+                return; // Stop processing this file
+            }
+
+            // If size is OK, set the file and clear URL in form
             setSelectedFile(file);
-            // Automatically clear existing fileUrl in form when a new file is selected
-            setFormData(prev => ({ ...prev, fileUrl: "" }));
-        } else {
-            setSelectedFile(null);
+            setFormData(prev => ({ ...prev, fileUrl: "" })); // Clear URL only if validation passes
+            setNotifMessage(null); // Clear any previous error message
+
         }
+        // If no file selected, selectedFile remains null
     };
 
     // --- Handle File Upload to Cloudinary via Backend ---

@@ -14,6 +14,7 @@ import com.ktnl.fapanese.repository.ClassCourseRepository;
 import com.ktnl.fapanese.repository.ClassMaterialRepository;
 import com.ktnl.fapanese.repository.LecturerRepository;
 import com.ktnl.fapanese.repository.MaterialRepository;
+import com.ktnl.fapanese.service.interfaces.IFileUploadService;
 import com.ktnl.fapanese.service.interfaces.IMaterialService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -22,11 +23,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -40,6 +39,7 @@ public class MaterialService implements IMaterialService {
     ClassCourseRepository classCourseRepository;
     ClassMaterialRepository classMaterialRepository;
     ClassMaterialMapper classMaterialMapper;
+    IFileUploadService iFileUploadService;
 
 
     @Override
@@ -95,6 +95,32 @@ public class MaterialService implements IMaterialService {
     @Transactional
     public void deleteMaterial(Long id) {
         Material material = findMaterialById(id);
+        String fileUrl = material.getFileUrl();
+
+        // 2. Xóa file trên Cloudinary (nếu có URL)
+        if (fileUrl != null && !fileUrl.isEmpty()) {
+
+                log.info("Deleting file from Cloudinary: {}", fileUrl);
+                Map deleteResult = iFileUploadService.deleteFile(fileUrl);
+                log.info("Cloudinary deletion result for material {}: {}", id, deleteResult);
+
+                if (!"ok".equals(deleteResult.get("result")) && !"not found".equals(deleteResult.get("result"))) {
+
+                    // Log lỗi nếu Cloudinary không trả về "ok" hoặc "not found"
+                    log.error("Cloudinary returned an unexpected result during deletion: {}", deleteResult);
+
+                    // Quyết định: Ném exception để rollback DB hay chỉ log lỗi?
+                    // Ném exception sẽ an toàn hơn nếu việc xóa file là bắt buộc.
+                    // throw new IOException("Cloudinary deletion failed with result: " + deleteResult.get("result"));
+                }
+
+
+
+        } else {
+            log.warn("Material with id {} has no file URL to delete from Cloudinary.", id);
+        }
+
+
         materialRepository.delete(material);
     }
 

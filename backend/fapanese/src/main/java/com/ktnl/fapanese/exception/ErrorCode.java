@@ -53,7 +53,10 @@ public enum ErrorCode {
     INVALID_COLUMN(3003, "Cột {0} không được để trống.", HttpStatus.BAD_REQUEST),
     DOB_FORMAT_INVALID(3004, "Định dạng ngày {0} ở cột {1} không hợp lệ (cần dd/MM/yyyy hoặc yyyy-MM-dd).", HttpStatus.BAD_REQUEST),
     EXCEL_INVALID_DATA_TYPE(3005, "Kiểu dữ liệu ở cột {0} không hợp lệ.", HttpStatus.BAD_REQUEST),
-    EXCEL_READ_ERROR(3006, "Lỗi khi đọc ngày tháng ở cột {0}", HttpStatus.BAD_REQUEST), 
+    EXCEL_READ_ERROR(3006, "Lỗi khi đọc ngày tháng ở cột {0}", HttpStatus.BAD_REQUEST),
+    FILE_DELETE_FAIL(3007, "Đã có lỗi xảy ra khi xóa file ở Cloudinary", HttpStatus.INTERNAL_SERVER_ERROR),
+    FILE_UPLOAD_FAILED(3008, "Lỗi khi upload file lên Cloudinary", HttpStatus.INTERNAL_SERVER_ERROR),
+    FILE_SIZE_EXCEED(3009, "File đã vượt quá kích cỡ", HttpStatus.BAD_REQUEST),
 
     OVERVIEW_PART_NOT_FOUND(4001, "Không tìm thấy Overview Part", HttpStatus.NOT_FOUND),
     EXAM_NOT_FOUND(4002, "Không tìm thấy bài kiểm tra", HttpStatus.NOT_FOUND),

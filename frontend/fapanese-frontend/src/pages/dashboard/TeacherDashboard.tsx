@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 // Import icons if you want to add them to the cards
-import { FaBook, FaClipboardList, FaFolderOpen } from "react-icons/fa";
+import { FaBook, FaClipboardList, FaFolderOpen, FaUsers } from "react-icons/fa";
 
 const TeacherDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -54,6 +54,22 @@ const TeacherDashboard: React.FC = () => {
           </h2>
           <p className="text-gray-500 text-sm">
             Tải lên và quản lý các tài liệu học tập, bài tập cho sinh viên.
+          </p>
+        </div>
+        {/* --- HẾT PHẦN THÊM --- */}
+
+
+        {/* --- ✅ THÊM CARD QUẢN LÝ LỚP HỌC --- */}
+        <div
+          onClick={() => navigate("/teacher/classes")} // Điều hướng đến trang lớp học
+          className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition cursor-pointer border border-gray-200 flex flex-col items-start hover:bg-purple-50" // Màu hover mới
+        >
+           <FaUsers className="text-3xl text-purple-600 mb-3" /> {/* Icon mới */}
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            Quản lý Lớp học
+          </h2>
+          <p className="text-gray-500 text-sm">
+            Xem, thêm, sửa, xóa lớp học; quản lý sinh viên và tài liệu theo lớp.
           </p>
         </div>
         {/* --- HẾT PHẦN THÊM --- */}

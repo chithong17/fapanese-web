@@ -258,7 +258,6 @@ const TeacherMaterialsPage: React.FC = () => {
             return;
         }
         setUploading(true);
-        setNotifMessage("Đang tải file lên...");
 
         const uploadFormData = new FormData();
         uploadFormData.append("file", selectedFile);

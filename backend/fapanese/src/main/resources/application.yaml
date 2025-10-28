@@ -15,6 +15,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -27,6 +28,11 @@ spring:
           starttls:
             enable: true
           debug: true
+
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
 
 jwt:
   signerKey: ${JWT_SIGNER_KEY}
@@ -43,6 +49,8 @@ cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME}
   api-key: ${CLOUDINARY_API_KEY}
   api-secret: ${CLOUDINARY_API_SECRET}
+
+
 
 
 logging:

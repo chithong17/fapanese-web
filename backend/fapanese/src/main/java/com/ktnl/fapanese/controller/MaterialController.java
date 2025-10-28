@@ -5,7 +5,9 @@ import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.ClassCourseRespone;
 import com.ktnl.fapanese.dto.response.ClassMaterialResponse;
 import com.ktnl.fapanese.dto.response.MaterialResponse;
+import com.ktnl.fapanese.service.interfaces.IFileUploadService;
 import com.ktnl.fapanese.service.interfaces.IMaterialService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MaterialController {
     private final IMaterialService materialService;
+    private final IFileUploadService fileUploadService;
 
     @GetMapping
     public ApiResponse<List<MaterialResponse>> getAllMaterials() {
@@ -55,6 +58,7 @@ public class MaterialController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     public ApiResponse<String> deleteMaterial(@PathVariable Long id) {
         materialService.deleteMaterial(id);
         return ApiResponse.<String>builder()
@@ -83,6 +87,8 @@ public class MaterialController {
                 .build();
     }
 
+
+    //unassign ra khỏi lớp
     @DeleteMapping("/{materialId}/assign")
     public ApiResponse<String> unAssignMaterialToClass(
             @PathVariable Long materialId,

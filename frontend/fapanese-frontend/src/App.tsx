@@ -43,6 +43,8 @@ import TeacherEditQuestionPage from "./pages/dashboard/TeacherEditQuestionPage";
 import TeacherQuestionBankPage from "./pages/dashboard/TeacherQuestionBankPage";
 import TeacherPanelLayout from "./pages/dashboard/TeacherPanelLayout";
 import TeacherMaterialsPage from "./pages/dashboard/TeacherMaterialsPage";
+import TeacherClassesPage from "./pages/dashboard/TeacherClassesPage";
+import TeacherClassDetailPage from "./pages/dashboard/TeacherClassDetailPage";
 
 // 1. IMPORT FloatingActionButton TẠI ĐÂY
 import FloatingActionButton from "./components/FloatingActionButton";
@@ -212,6 +214,22 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
               <TeacherMaterialsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacher/classes"
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              <TeacherClassesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacher/classes/:classId/details" // Hoặc chỉ /teacher/classes/:classId cũng được
+          element={
+            <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
+              <TeacherClassDetailPage />
             </ProtectedRoute>
           }
         />

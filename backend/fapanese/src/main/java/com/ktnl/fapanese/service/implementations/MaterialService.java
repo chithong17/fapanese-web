@@ -165,4 +165,23 @@ public class MaterialService implements IMaterialService {
 
         return classMaterialMapper.toClassMaterialResponses(new ArrayList<>(classMaterials));
     }
+
+    @Override
+    @Transactional
+    public void updateAssignmentDeadline(Long materialId, Long classCourseId, LocalDateTime newDeadline) {
+        log.info("Updating deadline for material {} in class {} to {}", materialId, classCourseId, newDeadline);
+
+        ClassMaterialId classMaterialId = new ClassMaterialId(classCourseId, materialId);
+
+        // 2. Tìm bản ghi ClassMaterial
+        ClassMaterial assignment = classMaterialRepository.findById(classMaterialId)
+                .orElseThrow(() -> new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND)); // Cần định nghĩa ErrorCode này
+
+        // 3. Cập nhật deadline
+        assignment.setDeadline(newDeadline); // newDeadline có thể null
+
+        // 4. Lưu thay đổi
+        classMaterialRepository.save(assignment);
+        log.info("Deadline updated successfully.");
+    }
 }

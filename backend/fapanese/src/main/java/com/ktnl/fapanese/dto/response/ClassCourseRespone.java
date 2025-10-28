@@ -13,6 +13,6 @@ public class ClassCourseRespone {
     private Long id;
     private String className;
     private String semester;
-    private String courseName;
+    private CourseResponse course;
     private UserResponse lecturer;
 }

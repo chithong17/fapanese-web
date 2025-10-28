@@ -1,8 +1,8 @@
 package com.ktnl.fapanese.controller;
 
+import com.cloudinary.Api;
 import com.ktnl.fapanese.dto.request.ClassCourseRequest;
-import com.ktnl.fapanese.dto.response.ApiResponse;
-import com.ktnl.fapanese.dto.response.ClassCourseRespone;
+import com.ktnl.fapanese.dto.response.*;
 import com.ktnl.fapanese.service.interfaces.IClassCourseService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class ClassController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<ClassCourseRespone> getClassById(@RequestParam Long id){
+    public ApiResponse<ClassCourseRespone> getClassById(@PathVariable Long id){
         ClassCourseRespone result = classCourseService.getClassById(id);
         return ApiResponse.<ClassCourseRespone>builder()
                 .result(result)
@@ -84,5 +84,38 @@ public class ClassController {
                 .build();
     }
 
+    @GetMapping("/{classId}/students")
+    public ApiResponse<List<StudentClassResponse>> getStudentsByClassId(@PathVariable Long classId){
+        List<StudentClassResponse> list = classCourseService.getStudentsByClassId(classId);
+        return ApiResponse.<List<StudentClassResponse>>builder()
+                .result(list)
+                .build();
+    }
+
+    @PostMapping("/{classId}/students")
+    public ApiResponse<Void> addStudentToClass(@PathVariable Long classId, @RequestParam String studentId){
+        classCourseService.addStudentToClass(classId, studentId);
+
+        return ApiResponse.<Void>builder()
+                .message("Add student to class successfully")
+                .build();
+    }
+
+    @DeleteMapping("/{classId}/students")
+    public ApiResponse<Void> removeStudentOutClass(@PathVariable Long classId, @RequestParam String studentId){
+        classCourseService.removeStudentOutClass(classId, studentId);
+
+        return ApiResponse.<Void>builder()
+                .message("Remove student out class successfully")
+                .build();
+    }
+
+    @GetMapping("/{classId}/materials")
+    public ApiResponse<List<ClassMaterialResponse>> getMaterialsByClassId(@PathVariable Long classId){
+        List<ClassMaterialResponse> list = classCourseService.getMaterialsByClassId(classId);
+        return ApiResponse.<List<ClassMaterialResponse>>builder()
+                .result(list)
+                .build();
+    }
 
 }

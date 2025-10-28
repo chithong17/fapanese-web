@@ -1,6 +1,7 @@
 package com.ktnl.fapanese.controller;
 
 import com.ktnl.fapanese.dto.request.MaterialRequest;
+import com.ktnl.fapanese.dto.request.UpdateDeadlineRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.ClassCourseRespone;
 import com.ktnl.fapanese.dto.response.ClassMaterialResponse;
@@ -100,4 +101,16 @@ public class MaterialController {
                 .build();
     }
 
+
+    @PutMapping("/{materialId}/assign")
+    public ApiResponse<Void> updateMaterialAssignmentDeadline(
+            @PathVariable Long materialId,
+            @RequestParam Long classCourseId, // Nhận classCourseId từ query param
+            @RequestBody UpdateDeadlineRequest request) { // Nhận deadline từ body
+
+        materialService.updateAssignmentDeadline(materialId, classCourseId, request.getDeadline());
+        return ApiResponse.<Void>builder()
+                .message("Update material assignment deadline success")
+                .build();
+    }
 }

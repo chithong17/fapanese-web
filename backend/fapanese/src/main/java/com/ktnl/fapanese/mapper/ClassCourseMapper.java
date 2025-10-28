@@ -17,7 +17,7 @@ public interface ClassCourseMapper {
     @Mapping(target = "lecturer", ignore = true)
     ClassCourse toClassCourse(ClassCourseRequest request);
 
-    @Mapping(target = "courseName", source = "course.courseName")
+
     ClassCourseRespone toClassCourseResponse(ClassCourse entity);
 
     List<ClassCourseRespone> toClassCourseResponses(List<ClassCourse> classes);

@@ -2,19 +2,23 @@ package com.ktnl.fapanese.service.implementations;
 
 import com.ktnl.fapanese.dto.request.ClassCourseRequest;
 import com.ktnl.fapanese.dto.response.ClassCourseRespone;
-import com.ktnl.fapanese.entity.ClassCourse;
-import com.ktnl.fapanese.entity.Course;
-import com.ktnl.fapanese.entity.Lecturer;
+import com.ktnl.fapanese.dto.response.ClassMaterialResponse;
+import com.ktnl.fapanese.dto.response.MaterialResponse;
+import com.ktnl.fapanese.dto.response.StudentClassResponse;
+import com.ktnl.fapanese.entity.*;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mapper.ClassCourseMapper;
-import com.ktnl.fapanese.repository.ClassCourseRepository;
-import com.ktnl.fapanese.repository.CourseRepository;
-import com.ktnl.fapanese.repository.LecturerRepository;
+import com.ktnl.fapanese.mapper.ClassMaterialMapper;
+import com.ktnl.fapanese.mapper.MaterialMapper;
+import com.ktnl.fapanese.mapper.StudentClassMapper;
+import com.ktnl.fapanese.repository.*;
 import com.ktnl.fapanese.service.interfaces.IClassCourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +30,11 @@ public class ClassCourseService implements IClassCourseService {
     private final CourseRepository courseRepository;
     private final LecturerRepository lecturerRepository;
     private final ClassCourseMapper classCourseMapper;
+    private final StudentClassRepository studentClassRepository;
+    private final StudentClassMapper studentClassMapper;
+    private final UserRepository userRepository;
+    private final ClassMaterialRepository classMaterialRepository;
+    private final ClassMaterialMapper classMaterialMapper;
 
     @Override
     public ClassCourseRespone createClass(ClassCourseRequest request) {
@@ -117,4 +126,53 @@ public class ClassCourseService implements IClassCourseService {
         List<ClassCourse> entity = classCourseRepository.findByLecturerId(lecturerId);
        return classCourseMapper.toClassCourseResponses(entity);
     }
+
+    @Override
+    public List<StudentClassResponse> getStudentsByClassId(Long classId) {
+        ClassCourse aClass = classCourseRepository.findById(classId)
+                .orElseThrow(() -> new AppException(ErrorCode.CLASS_NOT_FOUND));
+
+        List<StudentClass> list = studentClassRepository.findByIdClassCourseId(classId);
+        return studentClassMapper.toStudentClassResponses(list);
+    }
+
+    @Override
+    public void addStudentToClass(Long classId, String studentId) {
+        ClassCourse classCourse = classCourseRepository.findById(classId)
+                .orElseThrow(() -> new AppException(ErrorCode.CLASS_NOT_FOUND));
+
+        User student = userRepository.findById(studentId)
+                .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND));
+
+        StudentClass studentClass = StudentClass.builder()
+                .id(new StudentClassId(studentId, classId))
+                .student(student)
+                .classCourse(classCourse)
+                .enrollDate(LocalDateTime.now())
+                .build();
+
+        studentClassRepository.save(studentClass);
+
+    }
+
+    @Override
+    public void removeStudentOutClass(Long classId, String studentId) {
+        ClassCourse classCourse = classCourseRepository.findById(classId)
+                .orElseThrow(() -> new AppException(ErrorCode.CLASS_NOT_FOUND));
+
+        User student = userRepository.findById(studentId)
+                .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND));
+
+        StudentClassId studentClassId = new StudentClassId(studentId, classId);
+        studentClassRepository.deleteById(studentClassId);
+    }
+
+    @Override
+    public List<ClassMaterialResponse> getMaterialsByClassId(Long classId) {
+        List<ClassMaterial> list = classMaterialRepository.findByClassCourseId(classId);
+        return classMaterialMapper.toClassMaterialResponses(list);
+
+    }
+
+
 }

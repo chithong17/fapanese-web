@@ -17,6 +17,10 @@ public interface ClassCourseRepository extends JpaRepository<ClassCourse, Long> 
     Optional<ClassCourse> findByCourseId(Long courseId);
     List<ClassCourse> findByLecturerId(String lecturerId);
     Optional<ClassCourse> findByClassMaterials(Set<ClassMaterial> classMaterials);
-    @Query("SELECT sc.aClass FROM StudentClass sc WHERE sc.student.id = :studentId")
+    @Query("""
+        SELECT sc.classCourse
+        FROM StudentClass sc
+        WHERE sc.student.id = :studentId
+    """)
     List<ClassCourse> findByStudentId(@Param("studentId") String studentId);
 }

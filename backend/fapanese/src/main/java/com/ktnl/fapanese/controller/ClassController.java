@@ -3,6 +3,7 @@ package com.ktnl.fapanese.controller;
 import com.cloudinary.Api;
 import com.ktnl.fapanese.dto.request.ClassCourseRequest;
 import com.ktnl.fapanese.dto.response.*;
+import com.ktnl.fapanese.mapper.ClassCourseMapper;
 import com.ktnl.fapanese.service.interfaces.IClassCourseService;
 import com.ktnl.fapanese.service.interfaces.IStudentClassService;
 import com.ktnl.fapanese.service.interfaces.IStudentService;
@@ -36,7 +37,7 @@ public class ClassController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<ClassCourseRespone> getClassById(@RequestParam Long id){
+    public ApiResponse<ClassCourseRespone> getClassById(@PathVariable    Long id){
         ClassCourseRespone result = classCourseService.getClassById(id);
         return ApiResponse.<ClassCourseRespone>builder()
                 .result(result)

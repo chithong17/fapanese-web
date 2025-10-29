@@ -8,10 +8,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface StudentClassRepository extends JpaRepository<StudentClass, Long> {
-    List<StudentClass> findByStudent_Id(String studentId);
 @Repository
 public interface StudentClassRepository extends JpaRepository<StudentClass, StudentClassId> {
-    List<StudentClass> findByIdClassCourseId(Long classCourse);
 
+    // Lấy tất cả StudentClass theo student_id
+    List<StudentClass> findByStudent_Id(String studentId);
+
+    // (tuỳ chọn) Lấy tất cả StudentClass theo classCourseId
+    List<StudentClass> findByIdClassCourseId(Long classCourseId);
 }

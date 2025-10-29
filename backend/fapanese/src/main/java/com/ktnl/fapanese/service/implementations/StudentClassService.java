@@ -24,7 +24,7 @@ public class StudentClassService implements IStudentClassService {
         List<StudentClass> enrollments = studentClassRepository.findByStudent_Id(studentId);
 
         List<ClassCourse> classCourses = enrollments.stream()
-                .map(StudentClass::getAClass)
+                .map(StudentClass::getClassCourse)
                 .distinct()
                 .toList();
 

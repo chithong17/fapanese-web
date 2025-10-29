@@ -1,75 +1,128 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { Card, Button, Upload, Input, message, Spin, Tag } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import {
+  Tabs,
+  Card,
+  Button,
+  Upload,
+  Input,
+  message,
+  Spin,
+  Tag,
+  Typography,
+} from "antd";
+import {
+  UploadOutlined,
+  FileTextOutlined,
+  ClockCircleOutlined,
+  CheckCircleOutlined,
+} from "@ant-design/icons";
 import type { UploadFile } from "antd/es/upload/interface";
 import axios from "axios";
+import { motion } from "framer-motion";
 
-// ---- Interfaces ----
+const { TextArea } = Input;
+const { Title, Text } = Typography;
+
 interface Material {
   id: number;
   title: string;
   description: string;
   fileUrl: string;
   type: "RESOURCE" | "ASSIGNMENT" | "EXERCISE";
+  deadline?: string | null;
 }
 
-interface SubmissionPayload {
-  studentId: string;
+interface Submission {
+  id: number;
   materialId: number;
-  classCourseId: string;
-  fileUrl?: string | null;
-  fileType?: string | null;
+  fileUrl?: string;
   submissionText?: string;
   submissionLink?: string;
+  submittedAt?: string;
+  score?: number | null;
+  feedback?: string | null;
+  status: "PENDING" | "SUBMITTED" | "GRADED";
 }
 
 export default function StudentMaterialsPage() {
   const [materials, setMaterials] = useState<Material[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [selectedFiles, setSelectedFiles] = useState<{ [key: number]: UploadFile | null }>({});
-  const [submissionTexts, setSubmissionTexts] = useState<{ [key: number]: string }>({});
-  const [submissionLinks, setSubmissionLinks] = useState<{ [key: number]: string }>({});
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"resources" | "assignments">(
+    "resources"
+  );
+
+  const [selectedFiles, setSelectedFiles] = useState<{
+    [key: number]: UploadFile | null;
+  }>({});
+  const [submissionTexts, setSubmissionTexts] = useState<{
+    [key: number]: string;
+  }>({});
+  const [submissionLinks, setSubmissionLinks] = useState<{
+    [key: number]: string;
+  }>({});
 
   const token = localStorage.getItem("token");
   const studentId = localStorage.getItem("studentId") || "";
   const classCourseId = localStorage.getItem("classCourseId") || "";
+  const API_BASE =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/fapanese/api";
 
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/fapanese/api";
-
-  // ---- Fetch materials (theo lớp học) ----
   useEffect(() => {
-    const fetchMaterials = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${API_BASE}/materials/student/${studentId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setMaterials(res.data.result || []);
+        const [matRes, subRes] = await Promise.all([
+          axios.get(`${API_BASE}/materials/student/${studentId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get(`${API_BASE}/material-submissions/student/${studentId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+        setMaterials(matRes.data.result || []);
+        setSubmissions(subRes.data.result || []);
       } catch (err) {
         console.error(err);
-        message.error("Không thể tải danh sách tài liệu được phân cho lớp.");
+        message.error("Không thể tải dữ liệu. Vui lòng thử lại.");
       } finally {
         setLoading(false);
       }
     };
-    fetchMaterials();
+    fetchData();
   }, [studentId, token]);
 
-  // ---- Handle submission ----
   const handleSubmit = async (materialId: number) => {
     try {
-      if (!studentId || !classCourseId) {
-        message.error("Không tìm thấy thông tin sinh viên hoặc lớp học.");
-        return;
+      const file = selectedFiles[materialId];
+      let uploadedUrl = null;
+
+      // Nếu người dùng chọn file, upload lên Cloudinary
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file.originFileObj as Blob);
+        formData.append("folder", "fapanese/submissions"); // 👈 Folder tùy chọn trong Cloudinary
+
+        const uploadRes = await axios.post(
+          `${API_BASE}/files/upload`, // 👈 Gọi qua backend thay vì Cloudinary trực tiếp
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        uploadedUrl = uploadRes.data.result; // 👈 Lấy URL backend trả về
       }
 
-      const payload: SubmissionPayload = {
+      const payload = {
         studentId,
         materialId,
         classCourseId,
-        fileUrl: selectedFiles[materialId]?.response?.url || null,
-        fileType: selectedFiles[materialId]?.type || null,
+        fileUrl: uploadedUrl,
+        fileType: file?.type || null,
         submissionText: submissionTexts[materialId] || "",
         submissionLink: submissionLinks[materialId] || "",
       };
@@ -79,92 +132,187 @@ export default function StudentMaterialsPage() {
       });
 
       message.success("✅ Nộp bài thành công!");
-      setSelectedFiles((prev) => ({ ...prev, [materialId]: null }));
-      setSubmissionTexts((prev) => ({ ...prev, [materialId]: "" }));
-      setSubmissionLinks((prev) => ({ ...prev, [materialId]: "" }));
+      // reload lại submissions
+      const subRes = await axios.get(
+        `${API_BASE}/material-submissions/student/${studentId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setSubmissions(subRes.data.result || []);
     } catch (err) {
       console.error(err);
-      message.error("❌ Nộp bài thất bại, vui lòng thử lại.");
+      message.error("❌ Lỗi khi nộp bài. Thử lại sau.");
     }
   };
 
-  // ---- UI: Loading ----
+  const getSubmissionForMaterial = (
+    materialId: number
+  ): Submission | undefined =>
+    submissions.find((s) => s.materialId === materialId);
+
+  const formatDate = (date?: string) => {
+    if (!date) return "-";
+    return new Date(date).toLocaleString("vi-VN");
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Spin size="large" tip="Đang tải tài liệu..." />
+        <Spin size="large" tip="Đang tải dữ liệu..." />
       </div>
     );
   }
 
-  // ---- UI: Render ----
-  return (
-    <div className="p-8 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold text-cyan-700 mb-8">
-        🧾 Tài liệu & Bài tập của lớp học
-      </h1>
+  const renderResourcesTab = () => {
+    const resources = materials.filter((m) => m.type === "RESOURCE");
+    if (resources.length === 0)
+      return <Text type="secondary">Chưa có tài liệu học nào.</Text>;
 
-      {materials.length === 0 ? (
-        <div className="text-center text-gray-500 text-lg">
-          📚 Chưa có tài liệu nào được phân cho lớp của bạn.
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {materials.map((mat) => (
-            <motion.div
-              key={mat.id}
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+        {resources.map((mat) => (
+          <motion.div key={mat.id} whileHover={{ scale: 1.02 }}>
+            <Card
+              title={
+                <div className="flex justify-between items-center">
+                  <span>{mat.title}</span>
+                  <Tag color="green">Tài liệu</Tag>
+                </div>
+              }
+              className="shadow-md border border-gray-200"
             >
+              <p className="text-gray-700 mb-2">{mat.description}</p>
+              {mat.fileUrl && (
+                <a
+                  href={mat.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-cyan-700 font-medium hover:underline"
+                >
+                  <FileTextOutlined /> Xem tài liệu
+                </a>
+              )}
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderAssignmentsTab = () => {
+    const assignments = materials.filter((m) => m.type !== "RESOURCE");
+    if (assignments.length === 0)
+      return <Text type="secondary">Không có bài tập nào.</Text>;
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        {assignments.map((mat) => {
+          const submission = getSubmissionForMaterial(mat.id);
+
+          return (
+            <motion.div key={mat.id} whileHover={{ scale: 1.02 }}>
               <Card
                 title={
                   <div className="flex justify-between items-center">
                     <span>{mat.title}</span>
-                    <Tag color={
-                      mat.type === "ASSIGNMENT"
-                        ? "orange"
-                        : mat.type === "EXERCISE"
-                        ? "blue"
-                        : "green"
-                    }>
+                    <Tag color={mat.type === "ASSIGNMENT" ? "orange" : "blue"}>
                       {mat.type}
                     </Tag>
                   </div>
                 }
-                bordered={false}
-                className="shadow-md hover:shadow-lg transition"
+                className="shadow-md border border-gray-200"
               >
-                <p className="text-gray-700 mb-3">{mat.description}</p>
-
-                {mat.fileUrl && (
-                  <a
-                    href={mat.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-cyan-600 font-medium"
-                  >
-                    📄 Xem tài liệu
-                  </a>
+                <p className="text-gray-700 mb-2">{mat.description}</p>
+                {mat.deadline && (
+                  <p className="text-sm text-gray-500 mb-3">
+                    <ClockCircleOutlined /> Deadline: {formatDate(mat.deadline)}
+                  </p>
                 )}
 
-                {/* Nếu là bài tập hoặc bài nộp */}
-                {mat.type !== "RESOURCE" && (
-                  <>
-                    <div className="mt-4">
-                      <Upload
-                        beforeUpload={() => false}
-                        onChange={(info) =>
-                          setSelectedFiles((prev) => ({
-                            ...prev,
-                            [mat.id]: info.fileList[0] || null,
-                          }))
-                        }
-                      >
-                        <Button icon={<UploadOutlined />}>Chọn file nộp</Button>
-                      </Upload>
-                    </div>
+                {submission ? (
+                  <div className="bg-gray-50 border rounded-md p-3 mt-2">
+                    <Tag
+                      color={
+                        submission.status === "GRADED"
+                          ? "green"
+                          : submission.status === "SUBMITTED"
+                          ? "blue"
+                          : "default"
+                      }
+                    >
+                      {submission.status === "GRADED"
+                        ? "✅ Đã chấm"
+                        : submission.status === "SUBMITTED"
+                        ? "🕓 Đã nộp"
+                        : "⏳ Chưa nộp"}
+                    </Tag>
 
-                    <Input.TextArea
+                    <p className="text-sm text-gray-600 mt-2">
+                      Nộp lúc: {formatDate(submission.submittedAt)}
+                    </p>
+
+                    {submission.fileUrl && (
+                      <p className="mt-2">
+                        📎{" "}
+                        <a
+                          href={submission.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-cyan-600 hover:underline"
+                        >
+                          Xem file đã nộp
+                        </a>
+                      </p>
+                    )}
+
+                    {submission.submissionLink && (
+                      <p className="mt-1">
+                        🔗{" "}
+                        <a
+                          href={submission.submissionLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline"
+                        >
+                          {submission.submissionLink}
+                        </a>
+                      </p>
+                    )}
+
+                    {submission.submissionText && (
+                      <p className="mt-2 bg-white p-2 rounded-md border text-sm text-gray-700">
+                        ✏️ {submission.submissionText}
+                      </p>
+                    )}
+
+                    {submission.score != null && (
+                      <p className="mt-3 text-gray-800 font-semibold">
+                        Điểm: <Text strong>{submission.score}</Text>
+                      </p>
+                    )}
+
+                    {submission.feedback && (
+                      <p className="mt-1 text-gray-600 italic">
+                        💬 Nhận xét: {submission.feedback}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    <Upload
+                      beforeUpload={() => false}
+                      onChange={(info) =>
+                        setSelectedFiles((prev) => ({
+                          ...prev,
+                          [mat.id]: info.fileList[0] || null,
+                        }))
+                      }
+                    >
+                      <Button icon={<UploadOutlined />}>Chọn file nộp</Button>
+                    </Upload>
+
+                    <TextArea
                       placeholder="Nhập nội dung bài làm..."
                       className="mt-3"
                       rows={3}
@@ -176,7 +324,6 @@ export default function StudentMaterialsPage() {
                         }))
                       }
                     />
-
                     <Input
                       placeholder="Hoặc dán link Google Docs..."
                       className="mt-3"
@@ -200,9 +347,35 @@ export default function StudentMaterialsPage() {
                 )}
               </Card>
             </motion.div>
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
+    );
+  };
+
+  return (
+    <div className="p-8 bg-gray-50 min-h-screen">
+      <Title level={2} className="text-cyan-700 mb-6 text-center">
+        🎓 Học liệu & Bài tập của lớp
+      </Title>
+
+      <Tabs
+        activeKey={activeTab}
+        onChange={(key) => setActiveTab(key as "resources" | "assignments")}
+        centered
+        items={[
+          {
+            key: "resources",
+            label: "📘 Tài liệu học tập",
+            children: renderResourcesTab(),
+          },
+          {
+            key: "assignments",
+            label: "📝 Bài tập & Nộp bài",
+            children: renderAssignmentsTab(),
+          },
+        ]}
+      />
     </div>
   );
 }

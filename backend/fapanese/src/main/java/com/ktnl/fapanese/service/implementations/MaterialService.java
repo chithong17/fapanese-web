@@ -11,6 +11,7 @@ import com.ktnl.fapanese.mapper.ClassCourseMapper;
 import com.ktnl.fapanese.mapper.ClassMaterialMapper;
 import com.ktnl.fapanese.mapper.MaterialMapper;
 import com.ktnl.fapanese.repository.*;
+import com.ktnl.fapanese.service.interfaces.IFileUploadService;
 import com.ktnl.fapanese.service.interfaces.IMaterialService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -19,11 +20,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -37,6 +36,7 @@ public class MaterialService implements IMaterialService {
     ClassCourseRepository classCourseRepository;
     ClassMaterialRepository classMaterialRepository;
     ClassMaterialMapper classMaterialMapper;
+    IFileUploadService iFileUploadService;
     StudentClassRepository studentClassRepository;
 
 
@@ -93,6 +93,32 @@ public class MaterialService implements IMaterialService {
     @Transactional
     public void deleteMaterial(Long id) {
         Material material = findMaterialById(id);
+        String fileUrl = material.getFileUrl();
+
+        // 2. Xóa file trên Cloudinary (nếu có URL)
+        if (fileUrl != null && !fileUrl.isEmpty()) {
+
+                log.info("Deleting file from Cloudinary: {}", fileUrl);
+                Map deleteResult = iFileUploadService.deleteFile(fileUrl);
+                log.info("Cloudinary deletion result for material {}: {}", id, deleteResult);
+
+                if (!"ok".equals(deleteResult.get("result")) && !"not found".equals(deleteResult.get("result"))) {
+
+                    // Log lỗi nếu Cloudinary không trả về "ok" hoặc "not found"
+                    log.error("Cloudinary returned an unexpected result during deletion: {}", deleteResult);
+
+                    // Quyết định: Ném exception để rollback DB hay chỉ log lỗi?
+                    // Ném exception sẽ an toàn hơn nếu việc xóa file là bắt buộc.
+                    // throw new IOException("Cloudinary deletion failed with result: " + deleteResult.get("result"));
+                }
+
+
+
+        } else {
+            log.warn("Material with id {} has no file URL to delete from Cloudinary.", id);
+        }
+
+
         materialRepository.delete(material);
     }
 
@@ -136,6 +162,25 @@ public class MaterialService implements IMaterialService {
         Set<ClassMaterial> classMaterials = material.getClassMaterials();
 
         return classMaterialMapper.toClassMaterialResponses(new ArrayList<>(classMaterials));
+    }
+
+    @Override
+    @Transactional
+    public void updateAssignmentDeadline(Long materialId, Long classCourseId, LocalDateTime newDeadline) {
+        log.info("Updating deadline for material {} in class {} to {}", materialId, classCourseId, newDeadline);
+
+        ClassMaterialId classMaterialId = new ClassMaterialId(classCourseId, materialId);
+
+        // 2. Tìm bản ghi ClassMaterial
+        ClassMaterial assignment = classMaterialRepository.findById(classMaterialId)
+                .orElseThrow(() -> new AppException(ErrorCode.ASSIGNMENT_NOT_FOUND)); // Cần định nghĩa ErrorCode này
+
+        // 3. Cập nhật deadline
+        assignment.setDeadline(newDeadline); // newDeadline có thể null
+
+        // 4. Lưu thay đổi
+        classMaterialRepository.save(assignment);
+        log.info("Deadline updated successfully.");
     }
 
     @Override

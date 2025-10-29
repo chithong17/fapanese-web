@@ -194,7 +194,7 @@ public class MaterialService implements IMaterialService {
 
         // 2️⃣ Lấy tất cả ID lớp
         List<Long> classIds = enrolledClasses.stream()
-                .map(sc -> sc.getAClass().getId())
+                .map(sc -> sc.getClassCourse().getId())
                 .toList();
 
         // 3️⃣ Lấy danh sách ClassMaterial trong các lớp đó

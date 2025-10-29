@@ -44,7 +44,7 @@ public class ClassCourse {
     @OneToMany(mappedBy = "classCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ClassMaterial> classMaterials = new HashSet<>();
 
-    @OneToMany(mappedBy = "aClass", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "classCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<StudentClass> studentClasses = new HashSet<>();
 

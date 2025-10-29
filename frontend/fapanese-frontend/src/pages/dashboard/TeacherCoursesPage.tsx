@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { AiOutlinePlus, AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
+import { IoMdArrowBack } from "react-icons/io";
 import ScrollReveal from "../../components/ScrollReveal";
 import LogoJPD113 from "../../assets/jpd113.svg";
 import LogoJPD123 from "../../assets/jpd123.svg";
@@ -50,9 +51,12 @@ const TeacherCoursesPage: React.FC = () => {
 
   const fetchCourses = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/fapanese/api/courses", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        "http://localhost:8080/fapanese/api/courses",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setCourses(res.data.result || []);
     } catch (err) {
       console.error("❌ Lỗi tải khóa học:", err);
@@ -134,9 +138,21 @@ const TeacherCoursesPage: React.FC = () => {
     <ScrollReveal>
       <section className="w-full py-5 px-6">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">
-            Quản lý khóa học
-          </h1>
+          <div className="flex items-center gap-6">
+                                   {" "}
+            <Link
+              to={`/teacher`}
+              className="flex items-center gap-2 text-gray-500 hover:text-indigo-600 transition-colors duration-200"
+            >
+                                          <IoMdArrowBack className="h-6 w-6" /> 
+                                   {" "}
+            </Link>
+                                   {" "}
+            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+              Ngân hàng Câu hỏi
+            </h1>
+                               {" "}
+          </div>
           <button
             onClick={() => openModal()}
             className="flex items-center gap-2 bg-cyan-600 text-white px-4 py-2 rounded-full hover:bg-cyan-700 shadow"
@@ -234,9 +250,7 @@ const TeacherCoursesPage: React.FC = () => {
                   type="text"
                   placeholder="Tên khóa học"
                   value={formData.courseName}
-                  onChange={(e) =>
-                    handleChange("courseName", e.target.value)
-                  }
+                  onChange={(e) => handleChange("courseName", e.target.value)}
                   className="border p-2 rounded"
                 />
                 <input

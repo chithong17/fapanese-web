@@ -60,7 +60,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").permitAll()//để tạm thời sẽ xóa đi sau này
                         .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll()
-
+                        .requestMatchers("/api/interview/**").permitAll()
 
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .anyRequest().authenticated()

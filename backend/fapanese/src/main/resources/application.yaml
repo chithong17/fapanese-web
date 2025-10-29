@@ -50,7 +50,14 @@ cloudinary:
   api-key: ${CLOUDINARY_API_KEY}
   api-secret: ${CLOUDINARY_API_SECRET}
 
-
+azure:
+  speech:
+    key: ${AZURE_SPEECH_KEY}
+    region: ${AZURE_SPEECH_REGION}
+  openai:
+    endpoint: ${AZURE_OPENAI_ENDPOINT}
+    key: ${AZURE_OPENAI_KEY}
+    deployment-name: ${AZURE_OPENAI_DEPLOYMENT}
 
 
 logging:

@@ -132,7 +132,7 @@ const TeacherCoursesPage: React.FC = () => {
 
   return (
     <ScrollReveal>
-      <section className="w-full bg-gray-100 py-20 px-6">
+      <section className="w-full py-5 px-6">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
             Quản lý khóa học

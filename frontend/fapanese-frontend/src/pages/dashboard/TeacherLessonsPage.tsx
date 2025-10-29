@@ -331,6 +331,7 @@ const TeacherLessonsPage: React.FC = () => {
       <div className="max-w-6xl mx-auto px-6 pb-20">
         {/* --- 1. PHẦN QUẢN LÝ LESSONS --- */}
         <div className="flex justify-between items-center mb-10">
+          
           <h1 className="text-3xl font-bold text-gray-800">
             Quản lý Bài học – {courseCode?.toUpperCase()}
           </h1>

@@ -1,85 +1,101 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-// Import icons if you want to add them to the cards
-import { FaBook, FaClipboardList, FaFolderOpen, FaUsers } from "react-icons/fa";
+import { motion } from "framer-motion"; // Import motion
+import { 
+  FaBook, 
+  FaClipboardList, 
+  FaFolderOpen, 
+  FaUsers,
+ 
+} from "react-icons/fa";
+
+// --- CẤU HÌNH MÀU SẮC & ICON CHO PHONG CÁCH TỐI GIẢN ---
+const CARD_BG = "bg-white";
+const NEUTRAL_ICON_COLOR = "text-gray-500"; 
+const TITLE_COLOR = "text-gray-800"; 
+const DESCRIPTION_COLOR = "text-gray-500"; 
+const HOVER_BG_COLOR = "hover:bg-gray-50"; 
+const BORDER_COLOR = "border-gray-200"; 
+const SHADOW_CLASS = "shadow-lg"; 
+const HOVER_TRANSFORM = "hover:shadow-xl hover:-translate-y-0.5"; // Hiệu ứng nâng nhẹ khi hover
+
+// Danh sách các card (Cập nhật đường dẫn icon/path)
+const DASHBOARD_CARDS = [
+  {
+    title: "Quản lý Khóa học",
+    description: "Xem, thêm, chỉnh sửa các khóa học, bài học và nội dung tổng ôn.",
+    path: "/teacher/courses",
+    Icon: FaBook,
+  },
+  {
+    title: "Ngân hàng Câu hỏi",
+    description: "Xem, thêm, sửa và xóa các câu hỏi trắc nghiệm, điền từ dùng chung.",
+    path: "/teacher/question-bank",
+    Icon: FaClipboardList,
+  },
+  {
+    title: "Quản lý Tài liệu",
+    description: "Tải lên và quản lý các tài liệu học tập, bài tập cho sinh viên.",
+    path: "/teacher/materials",
+    Icon: FaFolderOpen,
+  },
+  {
+    title: "Quản lý Lớp học",
+    description: "Xem, thêm, sửa, xóa lớp học; quản lý sinh viên và tài liệu theo lớp.",
+    path: "/teacher/classes",
+    Icon: FaUsers,
+  },
+
+];
 
 const TeacherDashboard: React.FC = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  return (
-    <div className="min-h-screen bg-gray-50 p-10">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">
-        Bảng điều khiển Giảng viên
-      </h1>
+  return (
+    <div className={`min-h-screen  p-5`}>
+      {/* Tiêu đề trang */}
+      <h1 className={`text-3xl font-bold ${TITLE_COLOR} mb-10 flex items-center border-b ${BORDER_COLOR} pb-3`}>
+        Bảng điều khiển Giảng viên
+      </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> {/* Adjusted grid for potentially more items */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"> {/* Đảm bảo khoảng cách hợp lý */}
 
-        {/* Card quản lý khóa học */}
-        <div
-          onClick={() => navigate("/teacher/courses")}
-          className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition cursor-pointer border border-gray-200 flex flex-col items-start hover:bg-cyan-50"
-        >
-          <FaBook className="text-3xl text-cyan-600 mb-3" /> {/* Example Icon */}
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            Quản lý Khóa học
-          </h2>
-          <p className="text-gray-500 text-sm">
-            Xem, thêm, chỉnh sửa các khóa học, bài học và nội dung tổng ôn.
-          </p>
-        </div>
-
-        {/* --- ✅ THÊM CARD NGÂN HÀNG CÂU HỎI --- */}
-        <div
-          onClick={() => navigate("/teacher/question-bank")} // Điều hướng đến trang ngân hàng câu hỏi
-          className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition cursor-pointer border border-gray-200 flex flex-col items-start hover:bg-green-50" // Added hover color
-        >
-           <FaClipboardList className="text-3xl text-green-600 mb-3" /> {/* Example Icon */}
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            Ngân hàng Câu hỏi
-          </h2>
-          <p className="text-gray-500 text-sm">
-            Xem, thêm, sửa và xóa các câu hỏi trắc nghiệm, điền từ dùng chung.
-          </p>
-        </div>
-        {/* --- HẾT PHẦN THÊM --- */}
-
-        {/* --- ✅ THÊM CARD QUẢN LÝ TÀI LIỆU --- */}
-        <div
-          onClick={() => navigate("/teacher/materials")} // Điều hướng đến trang tài liệu
-          className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition cursor-pointer border border-gray-200 flex flex-col items-start hover:bg-blue-50"
-        >
-           <FaFolderOpen className="text-3xl text-blue-600 mb-3" /> {/* Icon mới */}
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            Quản lý Tài liệu
-          </h2>
-          <p className="text-gray-500 text-sm">
-            Tải lên và quản lý các tài liệu học tập, bài tập cho sinh viên.
-          </p>
-        </div>
-        {/* --- HẾT PHẦN THÊM --- */}
-
-
-        {/* --- ✅ THÊM CARD QUẢN LÝ LỚP HỌC --- */}
-        <div
-          onClick={() => navigate("/teacher/classes")} // Điều hướng đến trang lớp học
-          className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition cursor-pointer border border-gray-200 flex flex-col items-start hover:bg-purple-50" // Màu hover mới
-        >
-           <FaUsers className="text-3xl text-purple-600 mb-3" /> {/* Icon mới */}
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            Quản lý Lớp học
-          </h2>
-          <p className="text-gray-500 text-sm">
-            Xem, thêm, sửa, xóa lớp học; quản lý sinh viên và tài liệu theo lớp.
-          </p>
-        </div>
-        {/* --- HẾT PHẦN THÊM --- */}
-
-
-        {/* Bạn có thể thêm các card khác ở đây sau này */}
-
-      </div>
-    </div>
-  );
+        {DASHBOARD_CARDS.map((card, index) => (
+          <motion.div
+            key={card.path}
+            onClick={() => navigate(card.path)}
+            className={`
+              ${CARD_BG} p-6 rounded-xl ${SHADOW_CLASS} 
+              transition-all duration-300 ease-out 
+              cursor-pointer border ${BORDER_COLOR} 
+              flex flex-col items-start 
+              ${HOVER_BG_COLOR} 
+              ${HOVER_TRANSFORM} 
+            `}
+            // Animation từ Framer Motion
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: index * 0.07 }} 
+            whileHover={{ scale: 1.01 }} 
+            whileTap={{ scale: 0.99 }} 
+          >
+            {/* Icon - Kích thước lớn hơn một chút */}
+            <card.Icon className={`text-4xl ${NEUTRAL_ICON_COLOR} mb-3`} /> 
+            
+            {/* Tiêu đề */}
+            <h2 className={`text-xl font-semibold ${TITLE_COLOR} mb-2`}>
+              {card.title}
+            </h2>
+            
+            {/* Mô tả */}
+            <p className={`${DESCRIPTION_COLOR} text-sm`}>
+              {card.description}
+            </p>
+          </motion.div> 
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default TeacherDashboard;

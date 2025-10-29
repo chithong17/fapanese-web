@@ -20,12 +20,12 @@ public class StudentClass {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("studentId")
     @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    private User student;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("classCourseId")
-    @JoinColumn(name = "classCourse_id", nullable = false)
-    private ClassCourse aClass; // “aClass” vì “class” là từ khóa Java
+    @JoinColumn(name = "class_course_id", nullable = false)
+    private ClassCourse classCourse; // “aClass” vì “class” là từ khóa Java
 
     @Column(name = "enroll_date", nullable = false)
     private LocalDateTime enrollDate;

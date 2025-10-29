@@ -1,12 +1,15 @@
 package com.ktnl.fapanese.controller;
 
 import com.ktnl.fapanese.dto.request.MaterialRequest;
+import com.ktnl.fapanese.dto.request.UpdateDeadlineRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.ClassCourseRespone;
 import com.ktnl.fapanese.dto.response.ClassMaterialResponse;
 import com.ktnl.fapanese.dto.response.MaterialResponse;
+import com.ktnl.fapanese.service.interfaces.IFileUploadService;
 import com.ktnl.fapanese.entity.ClassCourse;
 import com.ktnl.fapanese.service.interfaces.IMaterialService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MaterialController {
     private final IMaterialService materialService;
+    private final IFileUploadService fileUploadService;
 
     @GetMapping
     public ApiResponse<List<MaterialResponse>> getAllMaterials() {
@@ -84,6 +88,8 @@ public class MaterialController {
                 .build();
     }
 
+
+    //unassign ra khỏi lớp
     @DeleteMapping("/{materialId}/assign")
     public ApiResponse<String> unAssignMaterialToClass(
             @PathVariable Long materialId,
@@ -95,6 +101,18 @@ public class MaterialController {
                 .build();
     }
 
+
+    @PutMapping("/{materialId}/assign")
+    public ApiResponse<Void> updateMaterialAssignmentDeadline(
+            @PathVariable Long materialId,
+            @RequestParam Long classCourseId, // Nhận classCourseId từ query param
+            @RequestBody UpdateDeadlineRequest request) { // Nhận deadline từ body
+
+        materialService.updateAssignmentDeadline(materialId, classCourseId, request.getDeadline());
+        return ApiResponse.<Void>builder()
+                .message("Update material assignment deadline success")
+                .build();
+    }
 
     @GetMapping("/student/{studentId}")
     public ApiResponse<List<MaterialResponse>> getMaterialsByStudent(@PathVariable String studentId) {

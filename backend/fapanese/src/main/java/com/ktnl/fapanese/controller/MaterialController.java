@@ -7,6 +7,7 @@ import com.ktnl.fapanese.dto.response.ClassCourseRespone;
 import com.ktnl.fapanese.dto.response.ClassMaterialResponse;
 import com.ktnl.fapanese.dto.response.MaterialResponse;
 import com.ktnl.fapanese.service.interfaces.IFileUploadService;
+import com.ktnl.fapanese.entity.ClassCourse;
 import com.ktnl.fapanese.service.interfaces.IMaterialService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +60,6 @@ public class MaterialController {
     }
 
     @DeleteMapping("/{id}")
-    @Transactional
     public ApiResponse<String> deleteMaterial(@PathVariable Long id) {
         materialService.deleteMaterial(id);
         return ApiResponse.<String>builder()
@@ -113,4 +113,15 @@ public class MaterialController {
                 .message("Update material assignment deadline success")
                 .build();
     }
+
+    @GetMapping("/student/{studentId}")
+    public ApiResponse<List<MaterialResponse>> getMaterialsByStudent(@PathVariable String studentId) {
+        List<MaterialResponse> materials = materialService.getMaterialsByStudent(studentId);
+        return ApiResponse.<List<MaterialResponse>>builder()
+                .result(materials)
+                .message("Get materials for student's classes success")
+                .build();
+    }
+
+
 }

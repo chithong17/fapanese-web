@@ -39,20 +39,37 @@ public class MaterialSubmissionService implements IMaterialSubmissionService {
         ClassCourse classCourse = classCourseRepository.findById(request.getClassCourseId())
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_CLASS_NAME));
 
-        MaterialSubmission submission = MaterialSubmission.builder()
-                .material(material)
-                .student(student)
-                .classCourse(classCourse)
-                .fileUrl(request.getFileUrl())
-                .fileType(request.getFileType())
-                .submissionText(request.getSubmissionText())
-                .submissionLink(request.getSubmissionLink())
-                .submittedAt(LocalDateTime.now())
-                .status(MaterialSubmission.Status.SUBMITTED)
-                .build();
+        // 1) Chỉ cho nộp bài với ASSIGNMENT/EXERCISE
+        if (material.getType() == Material.MaterialType.RESOURCE) {
+            throw new AppException(ErrorCode.ACTION_NOT_ALLOWED, "Material is not submittable (RESOURCE).");
+        }
 
-        submissionRepository.save(submission);
-        return mapper.toResponse(submission);
+        // 2) Material phải thuộc đúng classCourse (dựa trên quan hệ ClassMaterial của Material)
+        boolean materialInClass = material.getClassMaterials().stream()
+                .anyMatch(cm -> cm.getClassCourse().getId().equals(classCourse.getId()));
+        if (!materialInClass) {
+            throw new AppException(ErrorCode.ACTION_NOT_ALLOWED, "Material not assigned to this class.");
+        }
+
+        // 3) Idempotent submit: có rồi thì cập nhật (cho phép nộp lại)
+        MaterialSubmission submission = submissionRepository
+                .findByStudent_IdAndMaterial_Id(student.getId(), material.getId())
+                .orElseGet(() -> MaterialSubmission.builder()
+                        .material(material)
+                        .student(student)
+                        .classCourse(classCourse)
+                        .status(MaterialSubmission.Status.PENDING)
+                        .build());
+
+        submission.setFileUrl(request.getFileUrl());
+        submission.setFileType(request.getFileType());
+        submission.setSubmissionText(request.getSubmissionText());
+        submission.setSubmissionLink(request.getSubmissionLink());
+        submission.setSubmittedAt(LocalDateTime.now());
+        submission.setStatus(MaterialSubmission.Status.SUBMITTED);
+
+        MaterialSubmission saved = submissionRepository.save(submission);
+        return mapper.toResponse(saved);
     }
 
     @Override
@@ -65,22 +82,25 @@ public class MaterialSubmissionService implements IMaterialSubmissionService {
         submission.setFeedback(request.getFeedback());
         submission.setStatus(MaterialSubmission.Status.GRADED);
 
-        submissionRepository.save(submission);
-        return mapper.toResponse(submission);
+        MaterialSubmission saved = submissionRepository.save(submission);
+        return mapper.toResponse(saved);
     }
 
     @Override
+    @Transactional(Transactional.TxType.SUPPORTS)
     public List<MaterialSubmissionResponse> getByMaterial(Long materialId) {
-        return mapper.toResponseList(submissionRepository.findByMaterialId(materialId));
+        return mapper.toResponseList(submissionRepository.findByMaterial_Id(materialId));
     }
 
     @Override
+    @Transactional(Transactional.TxType.SUPPORTS)
     public List<MaterialSubmissionResponse> getByStudent(String studentId) {
-        return mapper.toResponseList(submissionRepository.findByStudentId(studentId));
+        return mapper.toResponseList(submissionRepository.findByStudent_IdOrderBySubmittedAtDesc(studentId));
     }
 
     @Override
+    @Transactional(Transactional.TxType.SUPPORTS)
     public List<MaterialSubmissionResponse> getByClassCourse(Long classCourseId) {
-        return mapper.toResponseList(submissionRepository.findByClassCourseId(classCourseId));
+        return mapper.toResponseList(submissionRepository.findByClassCourse_Id(classCourseId));
     }
 }

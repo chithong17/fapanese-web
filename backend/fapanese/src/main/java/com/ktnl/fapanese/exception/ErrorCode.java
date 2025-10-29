@@ -38,6 +38,10 @@ public enum ErrorCode {
     SUBMISSION_NOT_FOUND(1018,"Bài nộp không hợp lệ", HttpStatus.NOT_FOUND),
     CLASS_COURSE_NOT_FOUND(1019,"CLASS_COURSE không hợp lệ", HttpStatus.NOT_FOUND),
     ClASS_MATERIALS_NOT_FOUND(1020, "Không tìm thấy Class Material", HttpStatus.NOT_FOUND),
+    STUDENT_ALREADY_IN_CLASS(1020, "Student đã có trong lớp", HttpStatus.NOT_FOUND),
+
+    UNAUTHORIZED_ACTION(1021, "Tài khoản của bạn đang đợi duyệt", HttpStatus.FORBIDDEN),
+    ACTION_NOT_ALLOWED(1022, "Material is not submittable", HttpStatus.FORBIDDEN),
 
     // 👉 Validation specific error codes
     FIRSTNAME_REQUIRED(2001, "First name is required", HttpStatus.BAD_REQUEST),

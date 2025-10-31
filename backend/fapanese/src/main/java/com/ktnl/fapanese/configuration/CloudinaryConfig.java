@@ -11,7 +11,6 @@ import java.util.Map;
 @Configuration // Báo cho Spring biết đây là file cấu hình
 public class CloudinaryConfig {
 
-    // 1. Tự động đọc "chìa khóa" từ file application.properties
     @Value("${cloudinary.cloud-name}")
     private String cloudName;
 

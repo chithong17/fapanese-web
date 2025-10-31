@@ -1,19 +1,27 @@
 package com.ktnl.fapanese.configuration;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "azure")
-@lombok.Getter @lombok.Setter
+@Getter
+@Setter
 public class AzureProps {
     private Speech speech = new Speech();
     private OpenAI openai = new OpenAI();
 
-    @lombok.Getter @lombok.Setter
-    public static class Speech { private String key; private String region; }
+    @Getter
+    @Setter
+    public static class Speech {
+        private String key;
+        private String region;
+    }
 
-    @lombok.Getter @lombok.Setter
+    @Getter
+    @Setter
     public static class OpenAI {
         private String endpoint;
         private String key;

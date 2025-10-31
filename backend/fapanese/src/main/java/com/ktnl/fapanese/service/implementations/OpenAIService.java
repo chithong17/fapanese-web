@@ -7,6 +7,7 @@ import com.azure.ai.openai.models.ChatRequestSystemMessage;
 import com.azure.ai.openai.models.ChatRequestUserMessage;
 import com.azure.core.credential.AzureKeyCredential;
 import com.ktnl.fapanese.configuration.AzureProps;
+import com.ktnl.fapanese.dto.request.ExplainExamRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,38 @@ public class OpenAIService {
         var options = new ChatCompletionsOptions(messages).setTemperature(0.6);
 
         var resp = client().getChatCompletions(props.getOpenai().getDeploymentName(), options);
+        return resp.getChoices().get(0).getMessage().getContent();
+    }
+
+    public String explainExam(ExplainExamRequest explainExamRequest) {
+        var system = """
+            Bạn là một giảng viên tiếng Nhật người Việt, đang hỗ trợ sinh viên luyện đề thi môn tiếng nhật.
+            Nhiệm vụ của bạn:
+                - **Giải thích lý do chọn đáp án đúng** – phân tích cấu trúc ngữ pháp, từ vựng, và ý nghĩa câu.
+                - **Chỉ ra vì sao các đáp án sai** là không phù hợp (nếu có).
+                - **Dịch ngắn gọn** câu hoặc hội thoại sang tiếng Việt để sinh viên hiểu nghĩa.
+                - Nếu có cấu trúc ngữ pháp đặc biệt (ví dụ は, の, ですか, も, じゃありません, v.v.) thì hãy giải thích.
+                - Cho thêm 1 ví dụ tương tự để người học nhớ lâu.
+            Viết bằng **tiếng Việt**, ngắn gọn, thân thiện như giáo viên đang giải thích trên lớp.
+            """;
+
+        var userPrompt = String.format("""
+        Câu hỏi: %s
+        Đáp án:
+        %s
+        Đáp án đúng: %s
+        """, explainExamRequest.getQuestion(),
+                explainExamRequest.getOptions(),
+                explainExamRequest.getCorrectAnswer());
+
+        var messages = Arrays.asList(
+                new ChatRequestSystemMessage(system),
+                new ChatRequestUserMessage(userPrompt)
+        );
+
+        var opts  = new ChatCompletionsOptions(messages).setTemperature(0.6);
+
+        var resp = client().getChatCompletions(props.getOpenai().getDeploymentName(), opts);
         return resp.getChoices().get(0).getMessage().getContent();
     }
 }

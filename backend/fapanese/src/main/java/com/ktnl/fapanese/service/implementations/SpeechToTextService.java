@@ -22,7 +22,7 @@ public class SpeechToTextService {
         Files.write(tempWebm, inputBytes);
 
         // 2️⃣ Convert WebM -> WAV
-        String ffmpegPath = "C:\\Users\\ACER\\Downloads\\ffmpeg-2025-07-17-git-bc8d06d541-full_build\\ffmpeg-2025-07-17-git-bc8d06d541-full_build\\bin\\ffmpeg.exe";
+        String ffmpegPath = "C:\\ProgramData\\chocolatey\\bin\\ffmpeg.exe";
         Path tempWav = Files.createTempFile("converted-", ".wav");
 
         Process process = new ProcessBuilder(

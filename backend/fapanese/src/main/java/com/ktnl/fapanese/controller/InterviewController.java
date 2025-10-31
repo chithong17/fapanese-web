@@ -1,5 +1,8 @@
 package com.ktnl.fapanese.controller;
 
+import com.cloudinary.Api;
+import com.ktnl.fapanese.dto.request.ExplainExamRequest;
+import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.service.implementations.OpenAIService;
 import com.ktnl.fapanese.service.implementations.SpeechToTextService;
 import com.ktnl.fapanese.service.implementations.TextToSpeechService;
@@ -64,6 +67,14 @@ public class InterviewController {
         result.put("audioBase64", Base64.getEncoder().encodeToString(aiAudio));
 
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/explain-exam")
+    public ApiResponse<String> explainExam(@RequestBody ExplainExamRequest explainExamRequest){
+        String aiResponse = openai.explainExam(explainExamRequest);
+        return ApiResponse.<String>builder()
+                .result(aiResponse)
+                .build();
     }
 
 }

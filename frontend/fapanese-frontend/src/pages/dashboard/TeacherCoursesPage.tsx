@@ -149,7 +149,7 @@ const TeacherCoursesPage: React.FC = () => {
             </Link>
                                    {" "}
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-              Ngân hàng Câu hỏi
+              Quản lý Khóa học
             </h1>
                                {" "}
           </div>

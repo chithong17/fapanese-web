@@ -34,6 +34,19 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.microsoft.cognitiveservices.speech</groupId>
+            <artifactId>client-sdk</artifactId>
+            <version>1.46.0</version>
+            <!-- hoặc 1.46.x nếu muốn mới hơn -->
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-ai-openai</artifactId>
+            <version>1.0.0-beta.12</version>
+        </dependency>
         <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

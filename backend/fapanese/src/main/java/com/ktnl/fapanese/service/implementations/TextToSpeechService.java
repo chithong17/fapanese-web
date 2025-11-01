@@ -10,13 +10,17 @@ import org.springframework.stereotype.Service;
 public class TextToSpeechService {
     private final AzureProps props;
 
-    public byte[] synthJa(String text) throws Exception {
+    // Đổi tên hàm thành synthSsml để phản ánh đúng chức năng
+    public byte[] synthSsml(String ssmlText) throws Exception {
         var cfg = SpeechConfig.fromSubscription(props.getSpeech().getKey(), props.getSpeech().getRegion());
-        cfg.setSpeechSynthesisVoiceName("ja-JP-NanamiNeural");
+
+        // KHÔNG CẦN CẤU HÌNH VOICE NAME Ở ĐÂY. SSML sẽ lo việc đó.
         cfg.setSpeechSynthesisOutputFormat(SpeechSynthesisOutputFormat.Riff16Khz16BitMonoPcm);
 
         try (SpeechSynthesizer synth = new SpeechSynthesizer(cfg, null)) {
-            var res = synth.SpeakTextAsync(text).get();
+            // *** BƯỚC QUAN TRỌNG NHẤT: Dùng SpeakSsmlAsync ***
+            var res = synth.SpeakSsmlAsync(ssmlText).get();
+
             if (res.getReason() == ResultReason.SynthesizingAudioCompleted) return res.getAudioData();
             if (res.getReason() == ResultReason.Canceled) {
                 var d = SpeechSynthesisCancellationDetails.fromResult(res);

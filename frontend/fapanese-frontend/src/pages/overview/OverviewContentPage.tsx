@@ -664,6 +664,37 @@ const OverviewContentPage: React.FC = () => {
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {/* =============================================================== */}
+                        {/* ✅ BẮT ĐẦU THÊM MỚI: Card "Thi Mô Phỏng" (Chỉ cho Speaking) */}
+                        {/* =============================================================== */}
+                        {currentPartType === "SPEAKING" && (
+                            <Link
+                                to={`/speaking-test/${courseCode}/${overviewId}/${partId}`}
+                                className={`p-6 rounded-2xl shadow-lg cursor-pointer transition-all duration-300 hover:shadow-2xl flex flex-col justify-between min-h-[160px] transform hover:scale-[1.02] text-white md:col-span-2 lg:col-span-3`}
+
+                                style={{
+                                    backgroundImage: 'linear-gradient(to bottom right, #019ba5ff, #94f3eeff)'
+                                }}
+                            >
+                                <div>
+                                    <h3 className="text-xl font-bold mb-3 line-clamp-2">
+                                        Thi mô phỏng JPD113
+                                    </h3>
+                                    <p className="text-cyan-50 text-base line-clamp-2">
+                                        Bắt đầu bài thi ngẫu nhiên theo đúng thể lệ (Đọc, Tự do, Tranh).
+                                    </p>
+                                </div>
+                                <div className="mt-4 text-right">
+                                    <div className="inline-flex items-center gap-2 text-sm font-semibold bg-white text-cyan-700 px-3 py-1.5 rounded-full shadow-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                                            <path fillRule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25v-4.5a.75.75 0 0 1 .39-.658Z" clipRule="evenodd" />
+                                        </svg>
+                                        Bắt đầu thi
+                                    </div>
+                                </div>
+                            </Link>
+                        )}
+
                         {contentGroups.map((item) => (
                             <div
                                 key={item.id}

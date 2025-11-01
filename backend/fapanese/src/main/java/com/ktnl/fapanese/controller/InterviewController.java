@@ -43,9 +43,17 @@ public class InterviewController {
         return Map.of("userText", userText, "aiText", aiText);
     }
 
-    @PostMapping(value="/tts", produces = "audio/wav")
-    public ResponseEntity<byte[]> tts(@RequestBody Map<String,String> body) throws Exception {
-        var audio = tts.synthSsmlPolyglot(body.getOrDefault("text",""));
+    //mode 1: chỉ đọc tiếng nhật
+    //mode 2: vừa đọc tiếng việt vừa đọc tiếng nhật, tiếng nhật phải bọc trong tag [JA:...:JA]
+    @PostMapping(value="/tts/{mode}", produces = "audio/wav")
+    public ResponseEntity<byte[]> tts(@RequestBody Map<String,String> body, @PathVariable int mode) throws Exception {
+        byte[] audio = null;
+        if(mode == 1){
+            audio = tts.synthJa(body.getOrDefault("text",""));
+        }else if(mode == 2){
+            audio = tts.synthSsmlPolyglot(body.getOrDefault("text",""));
+        }
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=reply.wav")
                 .contentType(MediaType.valueOf("audio/wav"))

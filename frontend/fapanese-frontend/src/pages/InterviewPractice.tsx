@@ -213,7 +213,7 @@ const InterviewPractice: React.FC = () => {
                 className="w-full max-w-7xl bg-white/70 backdrop-blur-md border border-white/80 shadow-4xl shadow-cyan-300/30 rounded-[1.5rem] p-6 md:p-12 transition-al drop-shadow-md"
             >
                 {/* Header và Controls (Giữ nguyên) */}
-                <div className="flex flex-col lg:flex-row justify-between items-center mb-10 md:mb-12">
+                <div className="flex flex-col lg:flex-row justify-between items-center mb-10 md:mb-12 pt-15">
                     <div className="text-center lg:text-left mb-6 lg:mb-0">
                         <h1 className="text-4xl md:text-6xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-[#80D9E6] to-[#1abcca] drop-shadow-md ">
                             Fapanese AI Interview
@@ -292,7 +292,7 @@ const InterviewPractice: React.FC = () => {
                             {/* THẺ MẸO VỚI NỀN SẠCH */}
                             <p className="text-center text-gray-600 italic mt-8 p-4 bg-white/70 rounded-xl max-w-3xl mx-auto border border-blue-100 shadow-inner flex items-center justify-center gap-2 backdrop-blur-sm">
                                 <LightbulbIcon className="text-yellow-500" /> 
-                            Sẵn sàng? Nhấn nút màu xanh **BẮT ĐẦU PHẢN HỒI** để bắt đầu. Hãy thể hiện khả năng tốt nhất của bạn!
+                            Sẵn sàng? Nhấn nút trên để bắt đầu. Hãy thể hiện khả năng tốt nhất của bạn!
                             </p>
                         </motion.div>
                     )}

@@ -3,6 +3,7 @@ package com.ktnl.fapanese.controller;
 import com.ktnl.fapanese.dto.request.SpeakingExamRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.SpeakingExamResponse;
+import com.ktnl.fapanese.dto.response.SpeakingTestResponse;
 import com.ktnl.fapanese.service.interfaces.ISpeakingExamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -68,4 +69,14 @@ public class SpeakingExamController {
                 .message("Get all speaking exams success")
                 .build();
     }
+
+    @GetMapping("/generate-test/{overviewPartId}")
+    public ApiResponse<SpeakingTestResponse> generateRandomSpeakingTest(@PathVariable Long overviewPartId){
+        var result = speakingExamService.generateRandomSpeakingTest(overviewPartId);
+        return ApiResponse.<SpeakingTestResponse>builder()
+                .result(result)
+                .message("Generate random speaking test successfully")
+                .build();
+    }
+
 }

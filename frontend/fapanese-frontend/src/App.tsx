@@ -51,13 +51,13 @@ import axios from "axios";
 import TeacherClassesPage from "./pages/dashboard/TeacherClassesPage";
 import TeacherClassDetailPage from "./pages/dashboard/TeacherClassDetailPage";
 import InterviewPractice from "./pages/InterviewPractice";
-
+import SpeakingTestPage from './pages/overview/SpeakingTestPage';
 import FloatingActionButton from "./components/FloatingActionButton";
 
 function AppWrapper() {
   return (
     <Router>
-            <App />   {" "}
+      <App /> {" "}
     </Router>
   );
 }
@@ -150,193 +150,198 @@ function App() {
 
   return (
     <>
-           {" "}
+      {" "}
       {!hideNavbar && (
         <>
-                   {" "}
+          {" "}
           {loadingPopup && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80">
-                            <CircularProgress />           {" "}
+              <CircularProgress />     {" "}
             </div>
           )}
-                   {" "}
+          {" "}
           <Navbar
             scrollToSection={scrollToSection}
             onAuthClick={openAuth}
             userDropdownOpen={userDropdownOpen}
             setUserDropdownOpen={setUserDropdownOpen}
           />
-                   {" "}
+          {" "}
           <AuthPopup
             isOpen={isAuthOpen}
             onClose={() => setIsAuthOpen(false)}
             initialTab={authTab}
           />
-                 {" "}
+          {" "}
         </>
       )}
-           {" "}
+      {" "}
       <Routes>
-               {" "}
+        {" "}
         <Route
           path="/"
           element={
             <main className="relative z-0 overflow-visible">
-                            <BottomNav scrollToSection={scrollToSection} />     
-                      {/* 2. TÍCH HỢP FloatingActionButton TẠI ĐÂY */}
-                           {" "}
+              <BottomNav scrollToSection={scrollToSection} />
+              {/* 2. TÍCH HỢP FloatingActionButton TẠI ĐÂY */}
+              {" "}
               <FloatingActionButton
                 link={learnNowLink} // Giữ nguyên các props khác để component sử dụng hình ảnh SVG đã import
               />
-                            <HeroBackground />
-                            <HeroBelow />
-                            <FeatureSection />
-                            <WhyUs />
-                            <Quotes />             {" "}
+              <HeroBackground />
+              <HeroBelow />
+              <FeatureSection />
+              <WhyUs />
+              <Quotes />      {" "}
               <section className="py-16 bg-gray-100">
-                               {" "}
+                {" "}
                 <div className="max-w-6xl mx-auto px-6">
-                                   {" "}
+                  {" "}
                   <h2 className="text-3xl font-bold text-center mb-8">
-                                        GIỚI THIỆU CHỨC NĂNG FLASHCARDS        
-                               {" "}
+                    GIỚI THIỆU CHỨC NĂNG FLASHCARDS
+                    {" "}
                     <span className="text-[#80D9E6] font-extrabold">
-                                            GIÚP BẠN HỌC TẬP HIỆU QUẢ          
-                               {" "}
+                      GIÚP BẠN HỌC TẬP HIỆU QUẢ
+                      {" "}
                     </span>
-                                     {" "}
+                    {" "}
                   </h2>
-                                    <Flashcards cards={flashcardData} />       
-                         {" "}
+                  <Flashcards cards={flashcardData} />
+                  {" "}
                 </div>
-                             {" "}
+                {" "}
               </section>
-                           {" "}
+              {" "}
               <div ref={alphabetRef}>
-                                <AlphabetLearning activeTab={activeTab} />     
-                       {" "}
+                <AlphabetLearning activeTab={activeTab} />
+                {" "}
               </div>
-                            <HeroQr />           {" "}
+              <HeroQr />     {" "}
             </main>
           }
         />
-               {" "}
-        {/* --- 🌟 ROUTE GIẢNG VIÊN (SỬ DỤNG LAYOUT LỒNG NHAU) 🌟 --- */}       {" "}
+        {" "}
+        {/* --- 🌟 ROUTE GIẢNG VIÊN (SỬ DỤNG LAYOUT LỒNG NHAU) 🌟 --- */}   {" "}
         <Route
           path="/teacher"
           element={
             <ProtectedRoute allowedRoles={["LECTURER", "ADMIN"]}>
-                            <TeacherPanelLayout />{" "}
-              {/* <-- Component Layout cha */}           {" "}
+              <TeacherPanelLayout />{" "}
+              {/* <-- Component Layout cha */}     {" "}
             </ProtectedRoute>
           }
         >
-                   {" "}
+          {" "}
           {/* 1. Các trang con sẽ render vào <Outlet /> của TeacherPanelLayout */}
-                    <Route index element={<TeacherDashboard />} />
-                    <Route path="courses" element={<TeacherCoursesPage />} />
-                   {" "}
+          <Route index element={<TeacherDashboard />} />
+          <Route path="courses" element={<TeacherCoursesPage />} />
+          {" "}
           <Route path="courses/:courseCode" element={<TeacherLessonsPage />} />
-                   {" "}
+          {" "}
           <Route
             path="courses/:courseCode/lessons/:lessonId/parts/:lessonPartId/manage"
             element={<TeacherLessonContentPage />}
           />
-                   {" "}
+          {" "}
           <Route path="question-bank" element={<TeacherQuestionBankPage />} />
-                   {" "}
+          {" "}
           <Route
             path="questions/:questionId/edit"
             element={<TeacherEditQuestionPage />}
           />
-                   {" "}
+          {" "}
           <Route
             path="courses/:courseCode/overviews/:overviewId/manage-parts"
             element={<TeacherOverviewPartsPage />}
           />
-                   {" "}
+          {" "}
           <Route
             path="courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content"
             element={<TeacherManageOverviewContentPage />}
           />
-                   {" "}
+          {" "}
           <Route
             path="courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content/speaking/:speakingExamId/items"
             element={<TeacherManageSpeakingItemsPage />}
           />
-                   {" "}
+          {" "}
           <Route
             path="courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content/speaking/:speakingExamId/item/:speakingId/questions"
             element={<TeacherManageSpeakingQuestionsPage />}
           />
-                   {" "}
+          {" "}
           <Route
             path="courses/:courseCode/overviews/:overviewId/parts/:partId/manage-content/exam/:examId/questions"
             element={<TeacherManageExamQuestionsPage />}
           />
           {/* ✅ CÁC ROUTES ĐÃ ĐƯỢC DI CHUYỂN VÀO TRONG LAYOUT */}
-                   {" "}
+          {" "}
           <Route path="materials" element={<TeacherMaterialsPage />} />
-                    <Route path="classes" element={<TeacherClassesPage />} />
-                   {" "}
+          <Route path="classes" element={<TeacherClassesPage />} />
+          {" "}
           <Route
             path="classes/:classId/details"
             element={<TeacherClassDetailPage />}
           />
-                 {" "}
+          {" "}
         </Route>
-                {/* --- ROUTE HỌC SINH --- */}       {" "}
+        {/* --- ROUTE HỌC SINH --- */}   {" "}
         <Route
           path="/student"
           element={
             <ProtectedRoute allowedRoles={["STUDENT"]}>
-                            <StudentPanelLayout />           {" "}
+              <StudentPanelLayout />     {" "}
             </ProtectedRoute>
           }
         >
-                    <Route index element={<div>Trang chủ học sinh</div>} />
-                   {" "}
-          <Route path="materials" element={<StudentMaterialsPage />} />       {" "}
+          <Route index element={<div>Trang chủ học sinh</div>} />
+          {" "}
+          <Route path="materials" element={<StudentMaterialsPage />} />   {" "}
         </Route>
-                {/* --- ROUTE ADMIN --- */}
-               {" "}
+        {/* --- ROUTE ADMIN --- */}
+        {" "}
         <Route
           path="/admin/*"
           element={
             <ProtectedRoute allowedRoles={["ADMIN"]}>
-                            <AdminDashBoard />           {" "}
+              <AdminDashBoard />     {" "}
             </ProtectedRoute>
           }
         />
-                        {/* --- CÁC ROUTE KHÁC --- */}
-               {" "}
+        <Route
+          path="/speaking-test/:courseCode/:overviewId/:partId"
+          element={<SpeakingTestPage />}
+        />
+
+        {/* --- CÁC ROUTE KHÁC --- */}
+        {" "}
         <Route path="/dashboard/student" element={<StudentDashboard />} />
-                <Route path="/aboutus" element={<AboutUs />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/courses" element={<Course />} />
-               {" "}
+        <Route path="/aboutus" element={<AboutUs />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/courses" element={<Course />} />
+        {" "}
         <Route path="/courses/:courseCode" element={<CourseLessonsPage />} />
-               {" "}
+        {" "}
         <Route
           path="/lesson/:courseCode/:lessonId/:lessonPartId"
           element={<Lesson />}
         />
-               {" "}
+        {" "}
         <Route
           path="/overview/:courseCode/:overviewId/:partId"
           element={<OverviewContentPage />}
         />
-               {" "}
+        {" "}
         <Route
           path="/pending-teachers"
           element={<AdminPendingTeachersPage />}
         />
-               {" "}
+        {" "}
         <Route path="/flashcard/:lessonPartId" element={<FlashcardPage />} />
-        <Route path="/interview-practice" element={<InterviewPractice />} />   
-         {" "}
+        <Route path="/interview-practice" element={<InterviewPractice />} />
+        {" "}
       </Routes>
-            {!hideNavbar && <Footer />}   {" "}
+      {!hideNavbar && <Footer />} {" "}
     </>
   );
 }

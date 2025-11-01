@@ -186,7 +186,6 @@ function App() {
                       {/* 2. TÍCH HỢP FloatingActionButton TẠI ĐÂY */}
                            {" "}
               <FloatingActionButton
-                link={learnNowLink} // Giữ nguyên các props khác để component sử dụng hình ảnh SVG đã import
               />
                             <HeroBackground />
                             <HeroBelow />

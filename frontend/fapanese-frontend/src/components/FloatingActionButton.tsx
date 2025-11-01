@@ -1,76 +1,114 @@
-import React, { useState, useEffect } from 'react';
-// Đảm bảo đường dẫn này đúng:
-import ActionButtonImage from "../assets/hocngay.svg"; 
+import React, { useState, useEffect } from "react";
+import ActionButtonImage from "../assets/hocngay.svg";
+import ActionButtonImage2 from "../assets/ai-float.svg";
 
 interface FloatingActionButtonProps {
-  link: string; // Link URL mà nút sẽ dẫn đến
-  delay?: number; 
-  animationDuration?: number; 
+  delay?: number;
+  animationDuration?: number;
+  leftSize?: string;
+  rightSize?: string;
 }
 
 const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
-  link,
-  delay = 1000, 
-  animationDuration = 500, 
+  delay = 800,
+  animationDuration = 500,
+  leftSize = "350px",
+  rightSize = "200px",
 }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, delay);
+    const timer = setTimeout(() => setIsVisible(true), delay);
     return () => clearTimeout(timer);
   }, [delay]);
 
-  // --- THAY ĐỔI KÍCH THƯỚC VÀ CÁC THUỘC TÍNH CỐ ĐỊNH ---
-  const BUTTON_SIZE = '250px'; 
-  
-  const buttonStyle: React.CSSProperties = {
-    position: 'fixed',
-    bottom: '0.5rem',  
-    right: '0.5rem',   
+  const baseStyle: React.CSSProperties = {
+    position: "fixed",
     zIndex: 1000,
-    width: BUTTON_SIZE, 
-    height: BUTTON_SIZE,
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
     transition: `transform ${animationDuration}ms ease-out, opacity ${animationDuration}ms ease-out`,
-    transform: isVisible 
-        ? (isHovered ? 'scale(1.08) rotate(3deg)' : 'scale(1)') 
-        : 'scale(0)', 
     opacity: isVisible ? 1 : 0,
-    backgroundColor: 'transparent',
-    textDecoration: 'none',
-    overflow: 'hidden',
-    border: 'none', 
+    backgroundColor: "transparent",
+    overflow: "visible",
+    border: "none",
+    animation: isVisible ? "float 3s ease-in-out infinite" : "none",
+  };
+
+  const imageStyle: React.CSSProperties = {
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
+    transition: "filter 0.3s ease, transform 0.3s ease",
   };
 
   return (
-    <a
-      href={link}
-      // ĐÃ LOẠI BỎ: target="_blank"
-      // ĐÃ LOẠI BỎ: rel="noopener noreferrer"
-      style={buttonStyle}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      aria-label="Bấm vào để học ngay"
-    >
-      <img 
-        src={ActionButtonImage} 
-        alt="Học Ngay - Bấm vào đây"
+    <>
+      {/* --- HÌNH TRÁI (AI FLOAT - INTERVIEW PRACTICE) --- */}
+      <a
+        href="/interview-practice"
         style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          borderRadius: 'inherit',
+          ...baseStyle,
+          left: "-3rem",
+          bottom: "-3rem", // 👈 thấp hơn hình bên phải
+          width: leftSize,
+          height: leftSize,
+          transform: isVisible
+            ? hovered === "left"
+              ? "scale(1.12)"
+              : "scale(1)"
+            : "scale(0)",
+          filter:
+            hovered === "left"
+              ? "drop-shadow(0 0 20px rgba(6,182,212,0.6))"
+              : "drop-shadow(0 0 8px rgba(6,182,212,0.3))",
         }}
-      />
-    </a>
+        onMouseEnter={() => setHovered("left")}
+        onMouseLeave={() => setHovered(null)}
+        aria-label="AI hỗ trợ luyện phỏng vấn"
+      >
+        <img src={ActionButtonImage2} alt="AI hỗ trợ luyện phỏng vấn" style={imageStyle} />
+      </a>
+
+      {/* --- HÌNH PHẢI (HỌC NGAY - KHÓA HỌC) --- */}
+      <a
+        href="/courses"
+        style={{
+          ...baseStyle,
+          right: "0.5rem",
+          bottom: "1rem", // 👈 cao hơn chút để cân đối
+          width: rightSize,
+          height: rightSize,
+          transform: isVisible
+            ? hovered === "right"
+              ? "scale(1.12)"
+              : "scale(1)"
+            : "scale(0)",
+          filter:
+            hovered === "right"
+              ? "drop-shadow(0 0 20px rgba(37,99,235,0.6))"
+              : "drop-shadow(0 0 8px rgba(37,99,235,0.3))",
+        }}
+        onMouseEnter={() => setHovered("right")}
+        onMouseLeave={() => setHovered(null)}
+        aria-label="Xem khóa học ngay"
+      >
+        <img src={ActionButtonImage} alt="Học ngay" style={imageStyle} />
+      </a>
+
+      {/* --- Hiệu ứng nổi --- */}
+      <style>
+        {`
+          @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+          }
+        `}
+      </style>
+    </>
   );
 };
 

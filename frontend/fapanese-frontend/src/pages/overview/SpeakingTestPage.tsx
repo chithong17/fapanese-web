@@ -177,7 +177,7 @@ async function gradeSpeakingTest(
 }
 
 async function textToSpeech(text: string): Promise<Blob> {
-  const response = await fetch(`${API_BASE_URL}/interview/tts`, {
+  const response = await fetch(`${API_BASE_URL}/interview/tts/1`, {
     method: "POST",
     headers: getAuthHeaders(), 
     body: JSON.stringify({ text }),
@@ -685,7 +685,7 @@ export default function SpeakingTestPage() {
       return (
         <div className="flex items-center text-blue-600">
           <LoaderIcon />
-          <span className="ml-2">Đang gỡ băng...</span>
+          <span className="ml-2">Đang phân tích giọng nói...</span>
         </div>
       );
     }

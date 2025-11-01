@@ -205,7 +205,7 @@ export async function gradeSpeakingTest(
  * POST /api/interview/tts
  */
 export async function textToSpeech(text: string): Promise<Blob> {
-  const response = await fetch(`${API_BASE_URL}/interview/tts`, {
+  const response = await fetch(`${API_BASE_URL}/interview/tts/1`, {
     method: "POST",
     headers: getAuthHeaders(), // <-- Đã thêm xác thực
     body: JSON.stringify({ text }),

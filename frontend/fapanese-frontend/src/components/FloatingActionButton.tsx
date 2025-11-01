@@ -53,7 +53,7 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
         style={{
           ...baseStyle,
           left: "-3rem",
-          bottom: "-3rem", // 👈 thấp hơn hình bên phải
+          bottom: "-4rem", // 👈 thấp hơn hình bên phải
           width: leftSize,
           height: leftSize,
           transform: isVisible

@@ -3,13 +3,20 @@ package com.ktnl.fapanese.service.implementations;
 import com.ktnl.fapanese.dto.request.SpeakingExamRequest;
 import com.ktnl.fapanese.dto.response.SpeakingExamResponse;
 import com.ktnl.fapanese.dto.response.SpeakingRespone;
+import com.ktnl.fapanese.dto.response.SpeakingTestItemResponse;
+import com.ktnl.fapanese.dto.response.SpeakingTestResponse;
 import com.ktnl.fapanese.entity.OverviewPart;
+import com.ktnl.fapanese.entity.Speaking;
 import com.ktnl.fapanese.entity.SpeakingExam;
+import com.ktnl.fapanese.entity.SpeakingQuestion;
+import com.ktnl.fapanese.entity.enums.SpeakingType;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
-import com.ktnl.fapanese.mapper.SpeakingExamMapper;
+import com.ktnl.fapanese.mapper.*;
 import com.ktnl.fapanese.repository.OverviewPartRepository;
 import com.ktnl.fapanese.repository.SpeakingExamRepository;
+import com.ktnl.fapanese.repository.SpeakingQuestionRepository;
+import com.ktnl.fapanese.repository.SpeakingRepository;
 import com.ktnl.fapanese.service.interfaces.ISpeakingExamService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
@@ -20,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 @Slf4j
@@ -27,10 +35,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SpeakingExamService implements ISpeakingExamService {
-
     SpeakingExamRepository speakingExamRepository;
     OverviewPartRepository overviewPartRepository; // Dependency cha
     SpeakingExamMapper speakingExamMapper;
+    SpeakingRepository speakingRepository;
+    SpeakingMapper speakingMapper;
+    SpeakingQuestionRepository speakingQuestionRepository;
+    SpeakingQuestionMapper speakingQuestionMapper;
+    SpeakingTestItemMapper speakingTestItemMapper;
+    SpeakingTestQuestionMapper speakingTestQuestionMapper;
 
     // READ (All)
     @Override
@@ -120,9 +133,41 @@ public class SpeakingExamService implements ISpeakingExamService {
 
     }
 
+    @Override
+    public SpeakingTestResponse generateRandomSpeakingTest(Long overviewPartId) {
+        Speaking passageSpeaking = speakingRepository.findRandomSpeakingByPartIdAndType(overviewPartId, SpeakingType.PASSAGE.name())
+                .orElseThrow(() -> new AppException(ErrorCode.OVERVIEW_PART_NOT_FOUND));
+
+        Speaking pictureSpeaking = speakingRepository.findRandomSpeakingByPartIdAndType(overviewPartId, SpeakingType.PICTURE.name())
+                .orElseThrow(() -> new AppException(ErrorCode.OVERVIEW_PART_NOT_FOUND));
+
+        Speaking questionSpeaking = speakingRepository.findRandomSpeakingByPartIdAndType(overviewPartId, SpeakingType.QUESTION.name())
+                .orElseThrow(() -> new AppException(ErrorCode.OVERVIEW_PART_NOT_FOUND));
+
+        List<SpeakingQuestion> pictureQuestion = speakingQuestionRepository.findRandomQuestionsForSpeaking(pictureSpeaking.getId(), 1);
+        List<SpeakingQuestion> noPictureQuestion = speakingQuestionRepository.findRandomQuestionsForSpeaking(questionSpeaking.getId(), 2);
+
+        SpeakingTestItemResponse passageSpeakingRes = speakingTestItemMapper.toSpeakingTestItemResponse(passageSpeaking);
+
+        SpeakingTestItemResponse pictureSpeakingRes = speakingTestItemMapper.toSpeakingTestItemResponse(pictureSpeaking);
+        pictureSpeakingRes.setQuestions(
+               speakingTestQuestionMapper.toSpeakingQuestionResponseList(pictureQuestion)
+        );
+
+        SpeakingTestItemResponse questionSpeakingRes = speakingTestItemMapper.toSpeakingTestItemResponse(questionSpeaking);
+        questionSpeakingRes.setQuestions(
+                speakingTestQuestionMapper.toSpeakingQuestionResponseList(noPictureQuestion)
+        );
+
+        SpeakingTestResponse speakingTest = new SpeakingTestResponse(passageSpeakingRes, pictureSpeakingRes, questionSpeakingRes);
+        return speakingTest;
+    }
+
     // Hàm private helper
     private SpeakingExam findExamById(Long id) {
         return speakingExamRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.EXAM_NOT_FOUND));
     }
+
+
 }

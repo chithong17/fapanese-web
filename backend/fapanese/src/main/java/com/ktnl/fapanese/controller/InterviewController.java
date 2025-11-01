@@ -2,11 +2,14 @@ package com.ktnl.fapanese.controller;
 
 import com.cloudinary.Api;
 import com.ktnl.fapanese.dto.request.ExplainExamRequest;
+import com.ktnl.fapanese.dto.request.GradingSpeakingTestRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
+import com.ktnl.fapanese.dto.response.GradingSpeakingTestResponse;
 import com.ktnl.fapanese.service.implementations.OpenAIService;
 import com.ktnl.fapanese.service.implementations.SpeechToTextService;
 import com.ktnl.fapanese.service.implementations.TextToSpeechService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,7 @@ import java.util.Map;
 @RequestMapping("/api/interview")
 @CrossOrigin(origins = {"http://localhost:5173"}) // chỉnh theo FE
 @RequiredArgsConstructor
+@Slf4j
 public class InterviewController {
     private final SpeechToTextService stt;
     private final OpenAIService openai;
@@ -75,6 +79,25 @@ public class InterviewController {
         return ApiResponse.<String>builder()
                 .result(aiResponse)
                 .build();
+    }
+
+    @PostMapping("/grade-speaking-test")
+    public ApiResponse<GradingSpeakingTestResponse> gradeTest(@RequestBody GradingSpeakingTestRequest request) {
+        log.info("Receiving speaking test for grading...");
+        try {
+            GradingSpeakingTestResponse feedback = openai.gradeSpeakingTest(request);
+            return ApiResponse.<GradingSpeakingTestResponse>builder()
+                    .result(feedback)
+                    .message("Grading completed successfully")
+                    .build();
+        } catch (Exception e) {
+            log.error("Error during grading: {}", e.getMessage(), e);
+            // Bạn nên có một cấu trúc trả về lỗi chuẩn
+            return ApiResponse.<GradingSpeakingTestResponse>builder()
+                    .code(5000) // Mã lỗi
+                    .message("Error during grading: " + e.getMessage())
+                    .build();
+        }
     }
 
 }

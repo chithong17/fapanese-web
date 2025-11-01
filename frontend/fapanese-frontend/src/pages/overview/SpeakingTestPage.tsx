@@ -198,8 +198,14 @@ const LoaderIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" he
 const PlayIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" > <polygon points="5 3 19 12 5 21 5 3"></polygon> </svg> );
 const ChevronRightIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" > <polyline points="9 18 15 12 9 6"></polyline> </svg> );
 const AlertTriangleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500"> <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path> <line x1="12" x2="12" y1="9" y2="13"></line> <line x1="12" x2="12.01" y1="17" y2="17"></line> </svg> );
+const CheckCircleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" > <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path> <polyline points="22 4 12 14.01 9 11.01"></polyline> </svg> );
+const BookOpenIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" > <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path> <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path> </svg> );
+const ImageIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" > <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect> <circle cx="8.5" cy="8.5" r="1.5"></circle> <polyline points="21 15 16 10 5 21"></polyline> </svg> );
+const HelpCircleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" > <circle cx="12" cy="12" r="10"></circle> <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path> <line x1="12" x2="12.01" y1="17" y2="17"></line> </svg> );
+const AwardIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" > <circle cx="12" cy="8" r="7"></circle> <polyline points="8.21 13.89 7 23 12 17 17 23 15.79 13.88"></polyline> </svg> );
 
-// Trạng thái của bài thi
+
+// Trạng thái của bài thi (Đã cập nhật)
 type ExamPart =
   | "idle"
   | "loadingTest"
@@ -208,13 +214,22 @@ type ExamPart =
   | "question1"
   | "question2"
   | "grading"
-  | "done";
+  | "REVIEW_ALL"; // <-- Chỉ còn 1 trạng thái xem lại
 
 // Trạng thái của các chức năng
 type Status = "idle" | "recording" | "transcribing" | "speaking" | "error";
 
+// Lưu transcript
 interface Transcripts {
   passage: string;
+  picture: string;
+  q1: string;
+  q2: string;
+}
+
+// Lưu URL của file ghi âm
+interface Recordings {
+  passage: string; // Sẽ lưu URL (từ URL.createObjectURL)
   picture: string;
   q1: string;
   q2: string;
@@ -226,22 +241,37 @@ export default function SpeakingTestPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [testData, setTestData] = useState<GeneratedTestResponse | null>(null);
+  
   const [transcripts, setTranscripts] = useState<Transcripts>({
-    passage: "",
-    picture: "",
-    q1: "",
-    q2: "",
+    passage: "", picture: "", q1: "", q2: "",
   });
+  
+  const [recordings, setRecordings] = useState<Recordings>({
+      passage: "", picture: "", q1: "", q2: "",
+  });
+
   const [feedback, setFeedback] = useState<GradingFeedback | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
+
+  // --- LOGIC KHỞI ĐỘNG VÀ DỌN DẸP ---
+
+  const cleanupRecordings = () => {
+      Object.values(recordings).forEach(url => {
+          if (url) URL.revokeObjectURL(url);
+      });
+      setRecordings({ passage: "", picture: "", q1: "", q2: "" });
+  };
 
   const startTest = async (overviewPartId: number = 1) => {
     setCurrentPart("loadingTest");
     setError(null);
+    setTranscripts({ passage: "", picture: "", q1: "", q2: "" });
+    setFeedback(null); 
+    cleanupRecordings(); 
+
     try {
       const data = await generateTest(overviewPartId);
       setTestData(data);
@@ -252,10 +282,18 @@ export default function SpeakingTestPage() {
     }
   };
 
+  useEffect(() => {
+    return () => {
+        cleanupRecordings();
+    };
+  }, []); 
+
+  // --- LOGIC ÂM THANH (PHÁT VÀ THU) ---
+
   const speakQuestion = async (text: string) => {
     if (!text) return;
     setStatus("speaking");
-    setError(null); // <-- SỬA LỖI: Xóa lỗi cũ khi phát lại
+    setError(null); 
     try {
       const audioBlob = await textToSpeech(text);
       if (audioContextRef.current?.state === "suspended") {
@@ -289,9 +327,8 @@ export default function SpeakingTestPage() {
   }, [currentPart, testData]);
 
   const startRecording = async () => {
-    // Cho phép bắt đầu nếu đang 'idle' hoặc 'error'
     if (status === "recording" || status === "speaking" || status === "transcribing") return;
-    setError(null); // <-- SỬA LỖI: Xóa lỗi cũ khi bắt đầu ghi âm
+    setError(null); 
     try {
       if (!audioContextRef.current) {
         audioContextRef.current = new AudioContext();
@@ -313,24 +350,32 @@ export default function SpeakingTestPage() {
         const audioBlob = new Blob(audioChunksRef.current, {
           type: "audio/wav",
         });
+        
+        const audioUrl = URL.createObjectURL(audioBlob);
 
         try {
           const transcript = await transcribeAudio(audioBlob);
           if (currentPart === "passage") {
             setTranscripts((prev) => ({ ...prev, passage: transcript }));
+            setRecordings((prev) => ({ ...prev, passage: audioUrl })); 
           } else if (currentPart === "picture") {
             setTranscripts((prev) => ({ ...prev, picture: transcript }));
+            setRecordings((prev) => ({ ...prev, picture: audioUrl })); 
           } else if (currentPart === "question1") {
             setTranscripts((prev) => ({ ...prev, q1: transcript }));
+            setRecordings((prev) => ({ ...prev, q1: audioUrl })); 
           } else if (currentPart === "question2") {
             setTranscripts((prev) => ({ ...prev, q2: transcript }));
+            setRecordings((prev) => ({ ...prev, q2: audioUrl })); 
           }
           setStatus("idle");
         } catch (err: any) {
-          // *** SỬA LỖI LOGIC CHÍNH ***
-          // Báo lỗi, nhưng set status về 'error' để cho phép thử lại
           setError("Lỗi gỡ băng: " + err.message + ". Vui lòng thử ghi âm lại.");
-          setStatus("error"); // <-- Giữ 'error' để hiển thị lỗi
+          setStatus("error"); 
+           if (currentPart === "passage") setRecordings((prev) => ({ ...prev, passage: audioUrl }));
+           else if (currentPart === "picture") setRecordings((prev) => ({ ...prev, picture: audioUrl }));
+           else if (currentPart === "question1") setRecordings((prev) => ({ ...prev, q1: audioUrl }));
+           else if (currentPart === "question2") setRecordings((prev) => ({ ...prev, q2: audioUrl }));
         }
         stream.getTracks().forEach((track) => track.stop());
       };
@@ -349,8 +394,11 @@ export default function SpeakingTestPage() {
     }
   };
 
+  // --- LOGIC LUỒNG THI (FLOW) ---
+
   const nextPart = () => {
     if (status !== "idle") return; 
+    
     if (currentPart === "passage") setCurrentPart("picture");
     else if (currentPart === "picture") setCurrentPart("question1");
     else if (currentPart === "question1") setCurrentPart("question2");
@@ -380,11 +428,12 @@ export default function SpeakingTestPage() {
     try {
       const result = await gradeSpeakingTest(payload);
       setFeedback(result);
-      setCurrentPart("done");
+      // ** THAY ĐỔI: Chuyển đến màn hình xem lại TẤT CẢ **
+      setCurrentPart("REVIEW_ALL"); 
     } catch (err: any) {
       setError("Lỗi chấm điểm: " + err.message);
-      setCurrentPart("grading"); // Ở lại màn hình chấm điểm
-      setStatus("error"); // Đặt trạng thái lỗi
+      setCurrentPart("grading"); 
+      setStatus("error"); 
     }
   };
 
@@ -418,7 +467,6 @@ export default function SpeakingTestPage() {
 
   const renderGradingScreen = () => (
     <div className="flex flex-col items-center justify-center">
-      {/* Sửa lại: Hiển thị lỗi NẾU status là 'error' */}
       {status === 'error' ? (
          <>
           <div className="text-6xl mb-4">
@@ -465,7 +513,6 @@ export default function SpeakingTestPage() {
       </div>
     </div>
   );
-
   const renderPicturePart = () => (
     <div className="w-full">
       <h2 className="text-2xl font-bold mb-4">Phần 2: Trả lời câu hỏi tranh</h2>
@@ -481,7 +528,6 @@ export default function SpeakingTestPage() {
       </div>
     </div>
   );
-
   const renderQuestionPart = (part: "question1" | "question2") => (
     <div className="w-full text-center">
       <h2 className="text-2xl font-bold mb-4">
@@ -501,47 +547,94 @@ export default function SpeakingTestPage() {
     </div>
   );
 
+  
+  /**
+   * COMPONENT MỚI: Card xem lại chi tiết
+   */
+  const ReviewCard = ({ title, icon, audioUrl, transcript, feedbackText }: {
+      title: string;
+      icon: React.ReactNode;
+      audioUrl: string;
+      transcript: string;
+      feedbackText: string | undefined;
+  }) => (
+      <div className="p-4 bg-white rounded-lg shadow border mb-4">
+          <h4 className="text-xl font-bold text-blue-700 mb-3 flex items-center">
+              {icon} <span className="ml-2">{title}</span>
+          </h4>
+          
+          {/* 1. Audio */}
+          <h5 className="text-md font-semibold text-gray-700 mb-2">Ghi âm của bạn:</h5>
+          <audio controls src={audioUrl} className="w-full mb-3">
+              Trình duyệt không hỗ trợ phát audio.
+          </audio>
+          
+          {/* 2. Transcript */}
+          <h5 className="text-md font-semibold text-gray-700 mb-2">Nội dung gỡ băng (STT):</h5>
+          <p className="text-gray-600 italic p-3 bg-gray-50 rounded mb-3 whitespace-pre-wrap">
+              {transcript || "(Không gỡ băng được nội dung)"}
+          </p>
+          
+          {/* 3. Feedback */}
+          <h5 className="text-md font-semibold text-blue-800 mb-2">Nhận xét của AI:</h5>
+          <p className="text-gray-800 whitespace-pre-wrap">
+              {feedbackText || "Không có nhận xét."}
+          </p>
+      </div>
+  );
 
-  const renderDoneScreen = () => (
+  /**
+   * COMPONENT MỚI: Màn hình xem lại TOÀN BỘ
+   */
+  const renderAllReviews = () => (
     <div className="w-full">
-      <h2 className="text-3xl font-bold mb-6 text-center text-green-600">
+      <h2 className="text-3xl font-bold mb-6 text-center text-green-600 flex items-center justify-center">
+        <CheckCircleIcon className="mr-3" />
         Hoàn thành bài thi!
       </h2>
-      <h3 className="text-2xl font-semibold mb-4 border-b pb-2">
-        Nhận xét của Giảng viên AI
-      </h3>
-
-      <div className="space-y-6">
-        <div className="p-4 bg-white rounded-lg shadow">
-          <h4 className="text-xl font-bold text-blue-700 mb-2">
-            1. Phần Đọc đoạn văn
+      
+      {/* 1. Nhận xét tổng kết */}
+      <div className="p-6 bg-blue-50 rounded-lg border border-blue-200 mb-6">
+          <h4 className="text-2xl font-bold text-blue-800 mb-3 flex items-center">
+            <AwardIcon className="mr-2" />
+            Nhận xét tổng kết
           </h4>
-          <p className="text-gray-700 whitespace-pre-wrap">{feedback?.passage}</p>
-        </div>
-        <div className="p-4 bg-white rounded-lg shadow">
-          <h4 className="text-xl font-bold text-blue-700 mb-2">
-            2. Phần Trả lời câu hỏi tranh
-          </h4>
-          <p className="text-gray-700 whitespace-pre-wrap">{feedback?.picture}</p>
-        </div>
-        <div className="p-4 bg-white rounded-lg shadow">
-          <h4 className="text-xl font-bold text-blue-700 mb-2">
-            3. Phần Câu hỏi tự do
-          </h4>
-          <p className="font-semibold">Câu 1:</p>
-          <p className="text-gray-700 mb-2 whitespace-pre-wrap">{feedback?.question1}</p>
-          <p className="font-semibold">Câu 2:</p>
-          <p className="text-gray-700 whitespace-pre-wrap">{feedback?.question2}</p>
-        </div>
-        <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <h4 className="text-xl font-bold text-blue-800 mb-2">
-            Tổng kết
-          </h4>
-          <p className="text-gray-800 font-medium whitespace-pre-wrap">{feedback?.overall}</p>
-        </div>
+          <p className="text-gray-800 font-medium text-lg whitespace-pre-wrap">
+              {feedback?.overall || "Không có nhận xét tổng kết."}
+          </p>
       </div>
 
-      <div className="text-center mt-8">
+      {/* 2. Các card chi tiết */}
+      <ReviewCard
+          title="Phần 1: Đọc đoạn văn"
+          icon={<BookOpenIcon />}
+          audioUrl={recordings.passage}
+          transcript={transcripts.passage}
+          feedbackText={feedback?.passage}
+      />
+      <ReviewCard
+          title="Phần 2: Trả lời tranh"
+          icon={<ImageIcon />}
+          audioUrl={recordings.picture}
+          transcript={transcripts.picture}
+          feedbackText={feedback?.picture}
+      />
+      <ReviewCard
+          title="Phần 3: Câu hỏi 1"
+          icon={<HelpCircleIcon />}
+          audioUrl={recordings.q1}
+          transcript={transcripts.q1}
+          feedbackText={feedback?.question1}
+      />
+      <ReviewCard
+          title="Phần 3: Câu hỏi 2"
+          icon={<HelpCircleIcon />}
+          audioUrl={recordings.q2}
+          transcript={transcripts.q2}
+          feedbackText={feedback?.question2}
+      />
+
+       <div className="text-center mt-8">
         <button
           onClick={() => setCurrentPart("idle")}
           className="px-8 py-3 bg-gray-600 text-white font-semibold rounded-lg shadow-lg hover:bg-gray-700 transition-colors"
@@ -552,8 +645,11 @@ export default function SpeakingTestPage() {
     </div>
   );
 
+  // --- RENDER CHÍNH ---
+
   const renderMainContent = () => {
     switch (currentPart) {
+      // Luồng thi
       case "idle":
         return renderStartScreen();
       case "loadingTest":
@@ -568,8 +664,11 @@ export default function SpeakingTestPage() {
         return renderQuestionPart("question2");
       case "grading":
         return renderGradingScreen();
-      case "done":
-        return renderDoneScreen();
+      
+      // Luồng xem lại (MỚI)
+      case "REVIEW_ALL":
+          return renderAllReviews();
+
       default:
         return <div>Lỗi không xác định</div>;
     }
@@ -596,20 +695,20 @@ export default function SpeakingTestPage() {
     return null;
   };
 
-  // Vô hiệu hóa nút tiếp theo nếu chưa có transcript
+  // Vô hiệu hóa nút tiếp theo nếu chưa có transcript (hoặc đang lỗi)
   const isNextDisabled = () => {
-    // Sửa lại: Nút tiếp theo chỉ bị vô hiệu hóa nếu status không phải 'idle'
-    // (Nếu status là 'error', transcript rỗng, nó cũng sẽ bị chặn bởi logic bên dưới)
-    if (status !== 'idle') return true; 
-    
+    if (status === 'recording' || status === 'transcribing' || status === 'speaking') return true;
+    if (status === 'error') return true; 
+
     if (currentPart === 'passage' && !transcripts.passage) return true;
     if (currentPart === 'picture' && !transcripts.picture) return true;
     if (currentPart === 'question1' && !transcripts.q1) return true;
     if (currentPart === 'question2' && !transcripts.q2) return true;
+    
     return false;
   }
 
-  // SỬA LẠI: Logic vô hiệu hóa nút (Disabled when busy)
+  // Logic vô hiệu hóa nút (Disabled when busy)
   const isBusy = status === 'recording' || status === 'transcribing' || status === 'speaking';
 
   return (
@@ -631,7 +730,6 @@ export default function SpeakingTestPage() {
             </div>
 
             {/* Hiển thị lỗi */}
-            {/* SỬA LẠI: Hiển thị nếu có lỗi VÀ không bận */}
             {error && !isBusy && (
               <div className="text-center text-red-600 mb-4 p-3 bg-red-50 rounded-lg">{error}</div>
             )}
@@ -644,7 +742,7 @@ export default function SpeakingTestPage() {
                 currentPart === "question2") && (
                 <button
                   onClick={() => {
-                    if (!isBusy && testData) { // Sửa: check !isBusy
+                    if (!isBusy && testData) { 
                       if (currentPart === "picture")
                         speakQuestion(testData.picturePart.questions[0].question);
                       else if (currentPart === "question1")
@@ -653,7 +751,7 @@ export default function SpeakingTestPage() {
                         speakQuestion(testData.questionPart.questions[1].question);
                     }
                   }}
-                  disabled={isBusy} // Sửa: Dùng isBusy
+                  disabled={isBusy} 
                   className="p-4 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50"
                   title="Phát lại câu hỏi"
                 >
@@ -673,7 +771,7 @@ export default function SpeakingTestPage() {
               ) : (
                 <button
                   onClick={startRecording}
-                  disabled={isBusy} // Sửa: Dùng isBusy
+                  disabled={isBusy} 
                   className="p-5 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 disabled:bg-gray-400"
                   title="Bắt đầu ghi âm"
                 >
@@ -684,7 +782,7 @@ export default function SpeakingTestPage() {
               {/* Nút Tiếp theo */}
               <button
                 onClick={nextPart}
-                disabled={isNextDisabled()} // Hàm này đã đúng
+                disabled={isNextDisabled()} 
                 className="p-4 rounded-full bg-green-500 text-white hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Phần tiếp theo"
               >

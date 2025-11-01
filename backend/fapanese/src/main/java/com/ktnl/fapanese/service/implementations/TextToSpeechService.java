@@ -16,12 +16,32 @@ import java.util.regex.Pattern;
 public class TextToSpeechService {
     private final AzureProps props;
 
+
     // Giọng nói Mặc định cho Tiếng Việt
     private static final String VI_VOICE = "vi-VN-HoaiMyNeural";
     // Giọng nói Mặc định cho Tiếng Nhật
     private static final String JA_VOICE = "ja-JP-NanamiNeural";
     // Mẫu regex để tìm kiếm nội dung được bọc: [JA:Nội dung tiếng Nhật:JA]
     private static final Pattern JA_PATTERN = Pattern.compile("\\[JA:(.*?):JA\\]");
+
+
+
+    public byte[] synthJa(String text) throws Exception {
+        var cfg = SpeechConfig.fromSubscription(props.getSpeech().getKey(), props.getSpeech().getRegion());
+        cfg.setSpeechSynthesisVoiceName("ja-JP-NanamiNeural");
+        cfg.setSpeechSynthesisOutputFormat(SpeechSynthesisOutputFormat.Riff16Khz16BitMonoPcm);
+
+        try (SpeechSynthesizer synth = new SpeechSynthesizer(cfg, null)) {
+            var res = synth.SpeakTextAsync(text).get();
+            if (res.getReason() == ResultReason.SynthesizingAudioCompleted) return res.getAudioData();
+            if (res.getReason() == ResultReason.Canceled) {
+                var d = SpeechSynthesisCancellationDetails.fromResult(res);
+                throw new RuntimeException("TTS canceled: " + d.getErrorDetails());
+            }
+            throw new RuntimeException("TTS failed");
+        }
+    }
+
 
     /**
      * Tổng hợp giọng nói đa ngôn ngữ (Tiếng Việt và Tiếng Nhật)

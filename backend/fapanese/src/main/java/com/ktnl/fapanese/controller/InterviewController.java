@@ -45,7 +45,7 @@ public class InterviewController {
 
     @PostMapping(value="/tts", produces = "audio/wav")
     public ResponseEntity<byte[]> tts(@RequestBody Map<String,String> body) throws Exception {
-        var audio = tts.synthJa(body.getOrDefault("text",""));
+        var audio = tts.synthSsmlPolyglot(body.getOrDefault("text",""));
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=reply.wav")
                 .contentType(MediaType.valueOf("audio/wav"))
@@ -62,7 +62,7 @@ public class InterviewController {
         String aiText = openai.chatInterview(userText);
 
         // 3️⃣ Chuyển phản hồi thành âm thanh tiếng Việt
-        byte[] aiAudio = tts.synthJa(aiText); // ⚠️ nếu muốn giọng Việt, đổi voice sang vi-VN-HoaiMyNeural trong TextToSpeechService
+        byte[] aiAudio = tts.synthSsmlPolyglot(aiText); // ⚠️ nếu muốn giọng Việt, đổi voice sang vi-VN-HoaiMyNeural trong TextToSpeechService
 
         // 4️⃣ Trả về JSON (text + audio base64)
         Map<String, Object> result = new HashMap<>();

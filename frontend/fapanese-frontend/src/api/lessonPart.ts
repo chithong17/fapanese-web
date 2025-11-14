@@ -1,5 +1,3 @@
-import axios from "axios";
-
 const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
 
 export const getLessonPartsByLesson = async (lessonId: number) => {

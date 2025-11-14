@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import LogoJPD113 from "../../assets/jpd113.svg";
 import LogoJPD123 from "../../assets/jpd123.svg";
 import LogoJPD133 from "../../assets/jpd133.svg";
-import Footer from "../../components/Footer";
 
 // Map các chuỗi tên logo từ API sang các biến đã import
 const logoMap: { [key: string]: string } = {

@@ -7,7 +7,7 @@ import OtpVerification from "../pages/OtpVerification";
 import ForgotPasswordPopup from "../pages/ResetPassword";
 import CircularProgress from "@mui/material/CircularProgress";
 import NotificationModal from "./NotificationModal"; // <-- THÊM IMPORT NÀY
-import { useNavigate } from "react-router-dom";
+
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -101,7 +101,6 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
     }
   };
 
-  const navigate = useNavigate();
   // --- Login ---
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

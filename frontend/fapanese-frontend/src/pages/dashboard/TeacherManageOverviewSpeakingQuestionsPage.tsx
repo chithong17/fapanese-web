@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import {
   AiOutlinePlus,
   AiOutlineEdit,
@@ -37,7 +37,6 @@ const fadeIn = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transi
 // --- Component ---
 const TeacherManageOverviewSpeakingQuestionsPage: React.FC = () => {
   const { courseCode, overviewId, partId, speakingId } = useParams(); // Lấy speakingId từ URL
-  const navigate = useNavigate();
 
   const [speakingItem, setSpeakingItem] = useState<SpeakingItem | null>(null); // Thông tin Speaking Item cha
   const [questions, setQuestions] = useState<SpeakingQuestion[]>([]);
@@ -140,7 +139,7 @@ const TeacherManageOverviewSpeakingQuestionsPage: React.FC = () => {
       setNotifMessage("Lưu câu hỏi thành công!");
       setShowQuestionModal(false);
       fetchQuestions(); // Tải lại danh sách
-    } catch (err) {
+    } catch (err: any) {
       console.error("❌ Lỗi khi lưu speaking question:", err);
       setNotifMessage(`❌ Không thể lưu câu hỏi: ${err.response?.data?.message || err.message}`);
     }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import { AiOutlineSave } from "react-icons/ai";
 import axios from "axios";

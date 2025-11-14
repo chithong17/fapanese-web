@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { FlashCardArray } from "react-flashcards";
-import { FaRandom } from "react-icons/fa"; 
+// import { FaGraduationCap } from "react-icons/fa"; 
 
 import { getVocabulariesByLessonPartId } from "../../../api/vocabulary";
 import type { VocabularyResponse } from "../../../types/api";
 
 // --- Hàm Tiện Ích ---
-const shuffleArray = <T extends any>(array: T[]): T[] => {
-  const newArray = [...array];
-  for (let i = newArray.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-  }
-  return newArray;
-};
+// const shuffleArray = <T extends any>(array: T[]): T[] => {
+//   const newArray = [...array];
+//   for (let i = newArray.length - 1; i > 0; i--) {
+//     const j = Math.floor(Math.random() * (i + 1));
+//     [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+//   }
+//   return newArray;
+// };
 
 // --- Định nghĩa Types ---
 interface VocabularyItem {
@@ -38,13 +38,12 @@ const FlashcardPage: React.FC = () => {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [initialCards, setInitialCards] = useState<Flashcard[]>([]);
 
-  const handleShuffle = () => {
-    if (flashcards.length > 0) {
-      setFlashcards(shuffleArray(flashcards));
-    }
-  };
+  // const handleReset = () => {
+  //   if (flashcards.length > 0) {
+  //     setFlashcards(shuffleArray(flashcards));
+  //   }
+  // };
 
   useEffect(() => {
     const fetchVocabularies = async () => {
@@ -55,7 +54,7 @@ const FlashcardPage: React.FC = () => {
       try {
         const apiResponse: VocabularyResponse = await getVocabulariesByLessonPartId(idAsNumber);
         const vocabularies = apiResponse as unknown as VocabularyItem[];
-        const totalCards = vocabularies.length;
+        // const cardCount = vocabularies.length;
         
         const convertedCards: Flashcard[] = vocabularies.map(
           (item: VocabularyItem, index) => ({
@@ -66,7 +65,6 @@ const FlashcardPage: React.FC = () => {
           })
         );
         
-        setInitialCards(convertedCards);
         setFlashcards(convertedCards); 
       } catch (err) {
         setError("Lỗi tải dữ liệu từ API. Vui lòng kiểm tra kết nối hoặc đường dẫn API.");

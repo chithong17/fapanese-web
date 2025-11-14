@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { AiOutlineUpload, AiOutlinePaperClip, AiOutlineSave } from 'react-icons/ai';
 import CircularProgress from '@mui/material/CircularProgress';
-import NotificationModal from './NotificationModal'; // Assuming path
 
 // --- Interfaces (Copy from TeacherMaterialsPage) ---
 interface Material { /* ... */

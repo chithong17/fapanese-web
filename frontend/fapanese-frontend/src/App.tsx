@@ -37,7 +37,6 @@ import TeacherLessonsPage from "./pages/dashboard/TeacherLessonsPage";
 import TeacherLessonContentPage from "./pages/dashboard/TeacherLessonContentPage";
 import TeacherOverviewPartsPage from "./pages/dashboard/TeacherOverviewPartsPage";
 import TeacherManageOverviewContentPage from "./pages/dashboard/TeacherManageOverviewContentPage";
-import TeacherManageOverviewSpeakingQuestionsPage from "./pages/dashboard/TeacherManageOverviewSpeakingQuestionsPage";
 import TeacherManageSpeakingItemsPage from "./pages/dashboard/TeacherManageSpeakingItemsPage";
 import TeacherManageSpeakingQuestionsPage from "./pages/dashboard/TeacherManageSpeakingQuestionsPage";
 import TeacherManageExamQuestionsPage from "./pages/dashboard/TeacherManageExamQuestionsPage";
@@ -76,9 +75,7 @@ function App() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState<"login" | "signup">("login");
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [loadingPopup, setLoadingPopup] = useState(false); // Định nghĩa link "HỌC NGAY!"
-
-  const learnNowLink = "/courses";
+  const [loadingPopup, setLoadingPopup] = useState(false);
 
   const scrollToSection = (id: string, tab?: "hiragana" | "katakana") => {
     if (id === "alphabet" && tab) {

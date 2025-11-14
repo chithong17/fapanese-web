@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
-import { AiOutlinePlus, AiOutlineEdit, AiOutlineDelete, AiOutlineUsergroupAdd, AiOutlineBook } from "react-icons/ai"; // Added icons
+import { AiOutlinePlus, AiOutlineEdit, AiOutlineDelete } from "react-icons/ai"; // Added icons
 import axios from "axios";
 import NotificationModal from "../../components/NotificationModal";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -322,8 +322,8 @@ const TeacherClassesPage: React.FC = () => {
                                                 </div>
                                             </div>
                                             <p className="text-sm text-gray-500 mb-1">Học kỳ: {cls.semester}</p>
-                                            <p className="text-sm text-gray-600 font-medium truncate" title={cls.course?.courseName || `Course ID: ${cls.courseId}`}>
-                                                Khóa học: {cls.course?.courseName || `ID ${cls.courseId}`} {cls.course?.code ? `(${cls.course.code})` : ''}
+                                            <p className="text-sm text-gray-600 font-medium truncate" title={cls.course?.courseName || "Course"}>
+                                                Khóa học: {cls.course?.courseName || "Course"} {cls.course?.code ? `(${cls.course.code})` : ''}
                                             </p>
                                             {/* Placeholder for student count if API provides it */}
                                             {/* <p className="text-xs text-gray-400 mt-1">Số sinh viên: {cls.studentCount || 'N/A'}</p> */}

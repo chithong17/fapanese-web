@@ -225,18 +225,18 @@ const TeacherLessonsPage: React.FC = () => {
     setShowOverviewModal(true);
   };
 
-  const getOverviewParts = async (overviewId: number) => {
-    try {
-      const res = await axios.get(
-        `https://85e7dd680e50.ngrok-free.app/fapanese/api/overview-parts/by-overview/${overviewId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      return res.data.result || res.data || [];
-    } catch (err) {
-      console.error("❌ Không thể tải overview parts:", err);
-      return [];
-    }
-  };
+  // const getOverviewParts = async (overviewId: number) => {
+  //   try {
+  //     const res = await axios.get(
+  //       `https://85e7dd680e50.ngrok-free.app/fapanese/api/overview-parts/by-overview/${overviewId}`,
+  //       { headers: { Authorization: `Bearer ${token}` } }
+  //     );
+  //     return res.data.result || res.data || [];
+  //   } catch (err) {
+  //     console.error("❌ Không thể tải overview parts:", err);
+  //     return [];
+  //   }
+  // };
 
   const handleOverviewChange = (key: string, value: string | number) => {
     setOverviewFormData((prev) => ({ ...prev, [key]: value }));

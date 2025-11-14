@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { IoIosLogOut } from "react-icons/io";
 import { motion, AnimatePresence, type Variants } from "framer-motion"; // Thêm AnimatePresence và Variants

@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 // Thêm useNavigate để chuyển hướng
 import { Link, useNavigate } from "react-router-dom";
-import { FiSearch, FiCheckCircle } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 // Thêm icon cho Flashcard
 import {
   FaLanguage,
   FaBookOpen,
-  FaComments,
   FaClipboardList,
   FaVolumeUp,
 } from "react-icons/fa";

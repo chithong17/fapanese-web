@@ -14,7 +14,6 @@ import {
   UploadOutlined,
   FileTextOutlined,
   ClockCircleOutlined,
-  CheckCircleOutlined,
 } from "@ant-design/icons";
 import type { UploadFile } from "antd/es/upload/interface";
 import axios from "axios";

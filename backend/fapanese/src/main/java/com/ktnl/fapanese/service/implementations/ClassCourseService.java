@@ -124,7 +124,7 @@ public class ClassCourseService implements IClassCourseService {
     @Override
     public List<ClassCourseRespone> getClassByLecturerId(String lecturerId) {
         List<ClassCourse> entity = classCourseRepository.findByLecturerId(lecturerId);
-       return classCourseMapper.toClassCourseResponses(entity);
+        return classCourseMapper.toClassCourseResponses(entity);
     }
 
     @Override

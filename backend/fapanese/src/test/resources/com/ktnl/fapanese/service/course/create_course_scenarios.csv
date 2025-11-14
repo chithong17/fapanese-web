@@ -1,0 +1,5 @@
+testName,courseName,expectException,expectedErrorCode
+SUCCESS,Japanese N5,false,
+FAIL_INVALID_NAME_NULL,,true,INVALID_COURSE_NAME
+FAIL_INVALID_NAME_EMPTY,"",true,INVALID_COURSE_NAME
+FAIL_INVALID_NAME_BLANK,"   ",true,INVALID_COURSE_NAME

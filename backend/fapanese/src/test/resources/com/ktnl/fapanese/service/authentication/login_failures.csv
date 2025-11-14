@@ -1,0 +1,6 @@
+testName,email,password,mockUserFound,userStatus,expectedErrorCode
+USER_NOT_FOUND,notfound@example.com,password123,false,-1,USER_NOT_EXISTED
+WRONG_PASSWORD,test@example.com,wrongpassword,true,3,AUTHENTICATED
+USER_NOT_VERIFIED,test@example.com,password123,true,0,USER_NOT_VERIFY_EMAIL
+USER_NOT_ACTIVATED,test@example.com,password123,true,1,USER_NOT_ISACTIVED
+USER_NEED_APPROVAL,test@example.com,password123,true,2,USER_NEED_ADMIN_APPROVAL

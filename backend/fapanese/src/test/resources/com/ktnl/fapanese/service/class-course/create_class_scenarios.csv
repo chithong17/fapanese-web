@@ -1,0 +1,6 @@
+testName,courseId,lecturerId,className,semester,mockCourseFound,mockLecturerFound,expectException,expectedErrorCode
+SUCCESS,1,LEC001,Class N5-A1,FA25,true,true,false,
+FAIL_COURSE_NOT_FOUND,1,LEC001,Class N5-A1,FA25,false,true,true,COURSE_NOT_FOUND
+FAIL_LECTURER_NOT_FOUND,1,LEC001,Class N5-A1,FA25,true,false,true,LECTURER_NOT_FOUND
+FAIL_INVALID_NAME_NULL,1,LEC001,,FA25,true,true,true,INVALID_CLASS_NAME
+FAIL_INVALID_NAME_BLANK,1,LEC001,"   ",FA25,true,true,true,INVALID_CLASS_NAME

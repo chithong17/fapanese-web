@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/fapanese/api/courses";
+const API_URL = "https://fapanese-backend-production.up.railway.app/fapanese/api/courses";
 
 export const getAllCourses = async (token: string) => {
   console.log("Token gửi đi:", token);

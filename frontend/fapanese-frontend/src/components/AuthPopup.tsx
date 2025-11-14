@@ -88,7 +88,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
       try {
         await axios.post(
           // "https://5180368dcd09.ngrok-free.app/fapanese/api/auth/send-otp",
-          "http://localhost:8080/fapanese/api/auth/send-otp",
+          "https://fapanese-backend-production.up.railway.app/fapanese/api/auth/send-otp",
           { email: unverifiedEmail }
         );
         setStep("otp");
@@ -109,7 +109,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/fapanese/api/auth/login",
+        "https://fapanese-backend-production.up.railway.app/fapanese/api/auth/login",
         { email: loginEmail, password: loginPassword }
       );
 
@@ -178,13 +178,13 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
       await axios.post(
         // "https://5180368dcd09.ngrok-free.app/fapanese/api/users/register",
 
-        "http://localhost:8080/fapanese/api/users/register",
+        "https://fapanese-backend-production.up.railway.app/fapanese/api/users/register",
         userData
       );
 
       await axios.post(
         // "https://5180368dcd09.ngrok-free.app/fapanese/api/auth/send-otp",
-        "http://localhost:8080/fapanese/api/auth/send-otp",
+        "https://fapanese-backend-production.up.railway.app/fapanese/api/auth/send-otp",
         { email: signupEmail }
       );
 

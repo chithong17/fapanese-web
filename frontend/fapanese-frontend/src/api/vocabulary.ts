@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { ApiResponse, VocabularyResponse } from "../types/api";
 
-const API_URL = "http://localhost:8080/fapanese/api";
+const API_URL = "https://fapanese-backend-production.up.railway.app/fapanese/api";
 
 export const getVocabulariesByLessonPartId = async (lessonPartId: number) => {
   try {

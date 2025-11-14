@@ -39,7 +39,7 @@ const TeacherEditQuestionPage: React.FC = () => {
   const [originalQuestionData, setOriginalQuestionData] = useState<Partial<ExamQuestion>>({}); // Lưu trữ dữ liệu gốc để so sánh
 
   const token = localStorage.getItem("token") || "";
-  const API_URL = "http://localhost:8080/fapanese/api";
+  const API_URL = "https://fapanese-backend-production.up.railway.app/fapanese/api";
 
   // --- Fetch Question Data ---
   const fetchQuestion = useCallback(async () => {

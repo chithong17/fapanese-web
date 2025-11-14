@@ -1,7 +1,7 @@
 // src/api/speakingExam.ts
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/fapanese/api";
+const API_URL = "https://fapanese-backend-production.up.railway.app/fapanese/api";
 
 // Lấy nội dung Speaking theo Part ID
 export const getSpeakingExamsByPartId = async (partId: number) => {

@@ -106,7 +106,7 @@ function App() {
         if (!token) return; // 1️⃣ Lấy thông tin người dùng
 
         const res = await axios.get(
-          "http://localhost:8080/fapanese/api/users/profile",
+          "https://fapanese-backend-production.up.railway.app/fapanese/api/users/profile",
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -115,7 +115,7 @@ function App() {
           localStorage.setItem("studentId", user.id); // 2️⃣ Sau khi có studentId -> gọi API lấy lớp
 
           const classRes = await axios.get(
-            `http://localhost:8080/fapanese/api/classes/student/${user.id}`,
+            `https://fapanese-backend-production.up.railway.app/fapanese/api/classes/student/${user.id}`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
 

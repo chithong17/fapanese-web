@@ -95,7 +95,7 @@ const TeacherMaterialsPage: React.FC = () => {
 
 
     const token = localStorage.getItem("token") || ""; // Assuming token is stored
-    const API_URL = "http://localhost:8080/fapanese/api"; // Adjust if your base URL is different
+    const API_URL = "https://fapanese-backend-production.up.railway.app/fapanese/api"; // Adjust if your base URL is different
 
     useEffect(() => {
         const fetchLecturerInfo = async () => {

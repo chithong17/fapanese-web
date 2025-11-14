@@ -1,6 +1,7 @@
 import axios from "axios";
+import type { ApiResponse, VocabularyResponse } from "../types/api";
 
-const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
+const API_URL = "http://localhost:8080/fapanese/api";
 
 export const getVocabulariesByLessonPartId = async (lessonPartId: number) => {
   try {

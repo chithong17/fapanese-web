@@ -1,7 +1,7 @@
 // src/api/middleExam.ts
 import axios from "axios";
 
-const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
+const API_URL = "http://localhost:8080/fapanese/api";
 
 // Lấy nội dung Middle Exam theo Part ID
 export const getMiddleExamsByPartId = async (partId: number) => {

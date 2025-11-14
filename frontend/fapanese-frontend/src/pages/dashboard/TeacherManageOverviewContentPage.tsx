@@ -5,6 +5,7 @@ import {
     AiOutlinePlus,
     AiOutlineEdit,
     AiOutlineDelete,
+    AiOutlineArrowLeft,
 } from "react-icons/ai";
 import { IoMdArrowBack } from "react-icons/io";
 import { BiBookContent } from "react-icons/bi";
@@ -17,6 +18,24 @@ interface OverviewPart {
     title: string;
     type: "SPEAKING" | "MIDDLE_EXAM" | "FINAL_EXAM" | string;
     overviewId: number;
+}
+
+interface SpeakingExam {
+    id: number;
+    overviewPartId: number;
+    title: string;
+    type: "PASSAGE" | "PICTURE" | "QUESTION" | string;
+    speakings: any[]; // Mảng các bài tập speaking con
+}
+
+interface Exam {
+    id: number;
+    overviewPartId: number;
+    examTitle: string;
+    semester: string;
+    type: string; // "FE", "ME", "B3_FE"...
+    year: number;
+    questions: any[]; // Mảng các câu hỏi
 }
 
 // --- Cấu hình style ---
@@ -44,7 +63,7 @@ const TeacherManageOverviewContentPage: React.FC = () => {
     const [formData, setFormData] = useState<any>({}); // Form data động
 
     const token = localStorage.getItem("token") || "";
-    const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
+    const API_URL = "http://localhost:8080/fapanese/api";
 
     // --- Step 1: Lấy thông tin của Part (để biết type) ---
     const fetchPartInfo = async () => {

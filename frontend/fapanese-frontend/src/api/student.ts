@@ -1,6 +1,6 @@
 import axios, { type AxiosProgressEvent } from "axios";
 
-const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api/students";
+const API_URL = "http://localhost:8080/fapanese/api/students";
 
 export const getAllStudents = async (token: string) => {
   const res = await axios.get(API_URL, {

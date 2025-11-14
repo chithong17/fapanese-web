@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
+const API_URL = "http://localhost:8080/fapanese/api";
 
 export const submitQuizAnswers = async (userAnswers: any[]) => {
   const token = localStorage.getItem("token");
@@ -20,7 +20,7 @@ export const submitQuizAnswers = async (userAnswers: any[]) => {
 export const submitExamAnswers = async (userAnswers: any[]) => {
   const token = localStorage.getItem("token");
   const res = await axios.post(
-    "https://85e7dd680e50.ngrok-free.app/fapanese/api/exam/submit",
+    "http://localhost:8080/fapanese/api/exam/submit",
     userAnswers,
     {
       headers: {

@@ -7,7 +7,7 @@ import OtpVerification from "../pages/OtpVerification";
 import ForgotPasswordPopup from "../pages/ResetPassword";
 import CircularProgress from "@mui/material/CircularProgress";
 import NotificationModal from "./NotificationModal"; // <-- THÊM IMPORT NÀY
-
+import { useNavigate } from "react-router-dom";
 
 interface AuthPopupProps {
   isOpen: boolean;
@@ -88,7 +88,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
       try {
         await axios.post(
           // "https://5180368dcd09.ngrok-free.app/fapanese/api/auth/send-otp",
-          "https://85e7dd680e50.ngrok-free.app/fapanese/api/auth/send-otp",
+          "http://localhost:8080/fapanese/api/auth/send-otp",
           { email: unverifiedEmail }
         );
         setStep("otp");
@@ -101,6 +101,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
     }
   };
 
+  const navigate = useNavigate();
   // --- Login ---
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,7 +109,7 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
 
     try {
       const response = await axios.post(
-        "https://85e7dd680e50.ngrok-free.app/fapanese/api/auth/login",
+        "http://localhost:8080/fapanese/api/auth/login",
         { email: loginEmail, password: loginPassword }
       );
 
@@ -177,13 +178,13 @@ const AuthPopup: React.FC<AuthPopupProps> = ({
       await axios.post(
         // "https://5180368dcd09.ngrok-free.app/fapanese/api/users/register",
 
-        "https://85e7dd680e50.ngrok-free.app/fapanese/api/users/register",
+        "http://localhost:8080/fapanese/api/users/register",
         userData
       );
 
       await axios.post(
         // "https://5180368dcd09.ngrok-free.app/fapanese/api/auth/send-otp",
-        "https://85e7dd680e50.ngrok-free.app/fapanese/api/auth/send-otp",
+        "http://localhost:8080/fapanese/api/auth/send-otp",
         { email: signupEmail }
       );
 

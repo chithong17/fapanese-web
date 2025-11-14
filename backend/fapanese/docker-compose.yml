@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  # Đặt tên cho service của bạn
+  fapanese-app:
+    # Sử dụng image bạn vừa build
+    image: fapanese-backend:0.0.1
+
+    # Đặt tên container cho dễ quản lý
+    container_name: fapanese-backend
+
+    # Ánh xạ cổng 8080 của máy thật vào 8080 của container
+    ports:
+      - "8080:8080"
+
+    # --- ĐÂY LÀ PHẦN QUAN TRỌNG NHẤT ---
+    # Tự động nạp tất cả các biến từ file .env (ở Bước 2)
+    env_file:
+      - ./.env
+
+    # Cần thiết để `host.docker.internal` (ở Bước 3) hoạt động
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

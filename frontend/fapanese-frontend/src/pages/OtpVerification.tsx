@@ -52,7 +52,7 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, mode }) => {
     try {
       setError(null);
       const response = await axios.post(
-        "https://85e7dd680e50.ngrok-free.app/fapanese/api/auth/verify-otp",
+        "http://localhost:8080/fapanese/api/auth/verify-otp",
       //  "https://5180368dcd09.ngrok-free.app/fapanese/api/auth/verify-otp",
         { email, otp: code, mode }
       );

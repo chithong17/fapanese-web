@@ -58,7 +58,7 @@ const TeacherLessonsPage: React.FC = () => {
   const fetchLessons = async () => {
     try {
       const res = await axios.get(
-        `https://85e7dd680e50.ngrok-free.app/fapanese/api/lessons/by-course/${courseCode}`,
+        `http://localhost:8080/fapanese/api/lessons/by-course/${courseCode}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       // --- SỬA LẠI ---
@@ -76,7 +76,7 @@ const TeacherLessonsPage: React.FC = () => {
   const fetchOverviews = async () => {
     try {
       const res = await axios.get(
-        `https://85e7dd680e50.ngrok-free.app/fapanese/api/overviews/by-course/${courseCode}`,
+        `http://localhost:8080/fapanese/api/overviews/by-course/${courseCode}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       // --- SỬA LẠI ---
@@ -151,7 +151,7 @@ const TeacherLessonsPage: React.FC = () => {
   const getLessonParts = async (lessonId: number) => {
     try {
       const res = await axios.get(
-        `https://85e7dd680e50.ngrok-free.app/fapanese/api/lesson-parts/by-lesson/${lessonId}`,
+        `http://localhost:8080/fapanese/api/lesson-parts/by-lesson/${lessonId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       return res.data.result || res.data || [];
@@ -169,14 +169,14 @@ const TeacherLessonsPage: React.FC = () => {
     try {
       if (editingLesson) {
         await axios.put(
-          `https://85e7dd680e50.ngrok-free.app/fapanese/api/lessons/by-course/${courseCode}/${formData.id}`,
+          `http://localhost:8080/fapanese/api/lessons/by-course/${courseCode}/${formData.id}`,
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setNotifMessage("Cập nhật bài học thành công!");
       } else {
         await axios.post(
-          `https://85e7dd680e50.ngrok-free.app/fapanese/api/lessons/by-course/${courseCode}`,
+          `http://localhost:8080/fapanese/api/lessons/by-course/${courseCode}`,
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -194,7 +194,7 @@ const TeacherLessonsPage: React.FC = () => {
     if (!window.confirm("Bạn chắc chắn muốn xóa BÀI HỌC này?")) return;
     try {
       await axios.delete(
-        `https://85e7dd680e50.ngrok-free.app/fapanese/api/lessons/by-course/${courseCode}/${id}`,
+        `http://localhost:8080/fapanese/api/lessons/by-course/${courseCode}/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setNotifMessage("Xóa bài học thành công!");
@@ -225,18 +225,18 @@ const TeacherLessonsPage: React.FC = () => {
     setShowOverviewModal(true);
   };
 
-  // const getOverviewParts = async (overviewId: number) => {
-  //   try {
-  //     const res = await axios.get(
-  //       `https://85e7dd680e50.ngrok-free.app/fapanese/api/overview-parts/by-overview/${overviewId}`,
-  //       { headers: { Authorization: `Bearer ${token}` } }
-  //     );
-  //     return res.data.result || res.data || [];
-  //   } catch (err) {
-  //     console.error("❌ Không thể tải overview parts:", err);
-  //     return [];
-  //   }
-  // };
+  const getOverviewParts = async (overviewId: number) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8080/fapanese/api/overview-parts/by-overview/${overviewId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return res.data.result || res.data || [];
+    } catch (err) {
+      console.error("❌ Không thể tải overview parts:", err);
+      return [];
+    }
+  };
 
   const handleOverviewChange = (key: string, value: string | number) => {
     setOverviewFormData((prev) => ({ ...prev, [key]: value }));
@@ -263,7 +263,7 @@ const TeacherLessonsPage: React.FC = () => {
         // --- Chế độ Sửa (PUT) ---
         await axios.put(
           // URL mới: /api/overviews/{id}
-          `https://85e7dd680e50.ngrok-free.app/fapanese/api/overviews/${overviewFormData.id}`,
+          `http://localhost:8080/fapanese/api/overviews/${overviewFormData.id}`,
           payload, // Gửi payload sạch
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -272,7 +272,7 @@ const TeacherLessonsPage: React.FC = () => {
         // --- Chế độ Thêm mới (POST) ---
         await axios.post(
           // URL mới: /api/overviews
-          `https://85e7dd680e50.ngrok-free.app/fapanese/api/overviews`,
+          `http://localhost:8080/fapanese/api/overviews`,
           payload, // Gửi payload sạch
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -294,7 +294,7 @@ const TeacherLessonsPage: React.FC = () => {
       // --- SỬA LẠI URL ---
       await axios.delete(
         // URL mới: /api/overviews/{id}
-        `https://85e7dd680e50.ngrok-free.app/fapanese/api/overviews/${id}`,
+        `http://localhost:8080/fapanese/api/overviews/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setNotifMessage("Xóa tổng ôn thành công!");

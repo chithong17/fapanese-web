@@ -14,6 +14,7 @@ import {
   UploadOutlined,
   FileTextOutlined,
   ClockCircleOutlined,
+  CheckCircleOutlined,
 } from "@ant-design/icons";
 import type { UploadFile } from "antd/es/upload/interface";
 import axios from "axios";
@@ -65,7 +66,7 @@ export default function StudentMaterialsPage() {
   const studentId = localStorage.getItem("studentId") || "";
   const classCourseId = localStorage.getItem("classCourseId") || "";
   const API_BASE =
-    import.meta.env.VITE_API_BASE_URL || "https://85e7dd680e50.ngrok-free.app/fapanese/api";
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/fapanese/api";
 
   useEffect(() => {
     const fetchData = async () => {

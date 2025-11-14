@@ -10,7 +10,9 @@ import {
     SiTypescript,
     SiJavascript,
     SiNodedotjs,
+    SiFigma,
 } from "react-icons/si";
+import Footer from "../components/Footer";
 import AboutUsBanner from "../assets/abusbanner.svg"
 import AboutUsSide from "../assets/abusside.svg"
 import Avatar1 from "../assets/vinh.jpg"
@@ -21,6 +23,7 @@ import Avatar2 from "../assets/tin.jpg"
 
 // CẤU HÌNH MÀU SẮC ULTRA-ELITE 
 const PRIMARY_HEX = "#007B8A"; 
+const PRIMARY_LIGHT = "#00B8D9"; 
 const ACCENT_COLOR_TEXT = "text-[#007B8A]";
 const BACKGROUND_LIGHT = "#F5F7FA"; 
 const BACKGROUND_DARK = "#FFFFFF"; 

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { AiOutlineUpload, AiOutlinePaperClip, AiOutlineSave } from 'react-icons/ai';
 import CircularProgress from '@mui/material/CircularProgress';
+import NotificationModal from './NotificationModal'; // Assuming path
 
 // --- Interfaces (Copy from TeacherMaterialsPage) ---
 interface Material { /* ... */
@@ -55,7 +56,7 @@ const MaterialEditModal: React.FC<MaterialEditModalProps> = ({
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const token = localStorage.getItem("token") || "";
-    const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
+    const API_URL = "http://localhost:8080/fapanese/api";
 
     // --- Initialize form data when modal opens or initialData changes ---
     useEffect(() => {

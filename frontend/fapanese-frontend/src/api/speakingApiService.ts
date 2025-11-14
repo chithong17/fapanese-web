@@ -1,5 +1,5 @@
 // Cấu hình URL gốc của API (thay đổi nếu cần)
-const API_BASE_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
+const API_BASE_URL = "http://localhost:8080/fapanese/api";
 
 // ---- 1. HÀM TIỆN ÍCH XÁC THỰC ----
 

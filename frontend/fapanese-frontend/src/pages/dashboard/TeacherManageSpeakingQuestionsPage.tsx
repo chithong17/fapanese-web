@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import {
     AiOutlinePlus,
     AiOutlineEdit,
@@ -36,7 +36,8 @@ const fadeIn = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transi
 // --- Component ---
 const TeacherManageSpeakingQuestionsPage: React.FC = () => {
     // speakingId is the ID of the parent SpeakingItem
-        const { courseCode, overviewId, partId, speakingExamId, speakingId } = useParams();
+    const { courseCode, overviewId, partId, speakingExamId, speakingId } = useParams();
+    const navigate = useNavigate();
 
     const [speakingItem, setSpeakingItem] = useState<SpeakingItem | null>(null); // Parent Speaking Item info
     const [questions, setQuestions] = useState<SpeakingQuestion[]>([]);
@@ -49,7 +50,7 @@ const TeacherManageSpeakingQuestionsPage: React.FC = () => {
     const [questionFormData, setQuestionFormData] = useState<Partial<SpeakingQuestion>>({});
 
     const token = localStorage.getItem("token") || "";
-    const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
+    const API_URL = "http://localhost:8080/fapanese/api";
 
     // --- Fetch Speaking Item Info (for context) ---
     const fetchSpeakingItemInfo = async () => {

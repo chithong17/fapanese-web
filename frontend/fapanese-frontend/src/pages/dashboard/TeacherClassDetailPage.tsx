@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import {
   AiOutlineUsergroupAdd,
@@ -70,7 +70,8 @@ const fadeIn = {
 
 // --- Component ---
 const TeacherClassDetailPage: React.FC = () => {
-  const { classId } = useParams(); // Get classId from URL
+  const { courseCode, classId } = useParams(); // Get classId from URL
+  const navigate = useNavigate();
 
   const [currentClass, setCurrentClass] = useState<ClassCourse | null>(null);
   const [studentsInClass, setStudentsInClass] = useState<Student[]>([]);
@@ -120,7 +121,7 @@ const TeacherClassDetailPage: React.FC = () => {
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [loadingSubmissions, setLoadingSubmissions] = useState(false);
   const token = localStorage.getItem("token") || "";
-  const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
+  const API_URL = "http://localhost:8080/fapanese/api";
 
   const [showGradeModal, setShowGradeModal] = useState(false);
   const [gradingSubmission, setGradingSubmission] = useState<any>(null);

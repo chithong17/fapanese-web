@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import LogoJPD113 from "../../assets/jpd113.svg";
 import LogoJPD123 from "../../assets/jpd123.svg";
 import LogoJPD133 from "../../assets/jpd133.svg";
+import Footer from "../../components/Footer";
 
 // Map các chuỗi tên logo từ API sang các biến đã import
 const logoMap: { [key: string]: string } = {
@@ -48,7 +49,7 @@ const Course: React.FC = () => {
     const fetchCourses = async () => {
       try {
         const response = await fetch(
-          "https://85e7dd680e50.ngrok-free.app/fapanese/api/courses"
+          "http://localhost:8080/fapanese/api/courses"
         );
         if (!response.ok) {
           throw new Error("Không thể tải dữ liệu khóa học");

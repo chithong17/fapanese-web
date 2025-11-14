@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import { AiOutlineSave } from "react-icons/ai";
 import axios from "axios";
@@ -39,7 +39,7 @@ const TeacherEditQuestionPage: React.FC = () => {
   const [originalQuestionData, setOriginalQuestionData] = useState<Partial<ExamQuestion>>({}); // Lưu trữ dữ liệu gốc để so sánh
 
   const token = localStorage.getItem("token") || "";
-  const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
+  const API_URL = "http://localhost:8080/fapanese/api";
 
   // --- Fetch Question Data ---
   const fetchQuestion = useCallback(async () => {

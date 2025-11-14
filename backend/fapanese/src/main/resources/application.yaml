@@ -1,14 +1,15 @@
 server:
-  port: ${PORT:8080}
+  port: 8080
   address: 0.0.0.0
   servlet:
     context-path: /fapanese
 
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
-    username: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
+    url: ${DBMS_CONNECTION}
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+    username: ${DBMS_USERNAME}
+    password: ${DBMS_PASSWORD}
 
   jpa:
     hibernate:

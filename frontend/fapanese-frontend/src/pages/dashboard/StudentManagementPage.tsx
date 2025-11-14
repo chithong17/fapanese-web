@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoIosAddCircleOutline, IoIosCloseCircleOutline } from "react-icons/io";
 import { FaEdit, FaTrashAlt, FaSave, FaUpload } from "react-icons/fa";
@@ -16,41 +16,41 @@ import {
 const PRIMARY_CYAN = "bg-cyan-600";
 const HOVER_CYAN = "hover:bg-cyan-700";
 const TABLE_HEADER_BG = "bg-gray-100";
+const TEXT_CYAN = "text-cyan-600";
 const BORDER_COLOR = "border-gray-200";
-// const TEXT_CYAN = "text-cyan-600";  // Unused but kept for reference
 
-// Biến thể Form (Slide down) (unused but kept for reference)
-// const formVariants = {
-//     hidden: { opacity: 0, height: 0, y: -20, marginBottom: 0 }, // Thêm marginBottom
-//     visible: {
-//         opacity: 1,
-//         height: "auto",
-//         y: 0,
-//         marginBottom: "2rem", // Thêm marginBottom khi hiện
-//         transition: { duration: 0.4, ease: "easeInOut" }
-//     },
-//     exit: {
-//         opacity: 0,
-//         height: 0,
-//         y: -20,
-//         marginBottom: 0, // Bỏ marginBottom khi ẩn
-//         transition: { duration: 0.3, ease: "easeOut" }
-//     }
-// };
+// Biến thể Form (Slide down)
+const formVariants = {
+    hidden: { opacity: 0, height: 0, y: -20, marginBottom: 0 }, // Thêm marginBottom
+    visible: {
+        opacity: 1,
+        height: "auto",
+        y: 0,
+        marginBottom: "2rem", // Thêm marginBottom khi hiện
+        transition: { duration: 0.4, ease: "easeInOut" }
+    },
+    exit: {
+        opacity: 0,
+        height: 0,
+        y: -20,
+        marginBottom: 0, // Bỏ marginBottom khi ẩn
+        transition: { duration: 0.3, ease: "easeOut" }
+    }
+};
 
-// Biến thể cho từng dòng trong bảng (Staggered list) (unused but kept for reference)
-// const itemVariants = {
-//     hidden: { opacity: 0, y: 15 },
-//     visible: (i: number) => ({
-//         opacity: 1,
-//         y: 0,
-//         transition: {
-//             delay: i * 0.04, // Giảm delay
-//             duration: 0.4,
-//             ease: "easeOut" // Thay đổi ease
-//         },
-//     }),
-// };
+// Biến thể cho từng dòng trong bảng (Staggered list)
+const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: (i: number) => ({
+        opacity: 1,
+        y: 0,
+        transition: {
+            delay: i * 0.04, // Giảm delay
+            duration: 0.4,
+            ease: "easeOut" // Thay đổi ease
+        },
+    }),
+};
 
 // --- Kiểu dữ liệu Form ---
 interface StudentForm {

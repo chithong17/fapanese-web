@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { AiOutlinePlus, AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import axios from "axios";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 
 const TeacherLessonContentPage: React.FC = () => {
   const { courseCode, lessonId } = useParams();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<
     "vocab" | "grammar" | "question_vocab" | "question_grammar"
   >("vocab");
@@ -17,7 +18,7 @@ const TeacherLessonContentPage: React.FC = () => {
   const [editing, setEditing] = useState<any | null>(null);
   const [form, setForm] = useState<any>({});
   const token = localStorage.getItem("token") || "";
-  const API_BASE = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
+  const API_BASE = "http://localhost:8080/fapanese/api";
 
   // ================= FETCH LESSON PARTS =================
   useEffect(() => {

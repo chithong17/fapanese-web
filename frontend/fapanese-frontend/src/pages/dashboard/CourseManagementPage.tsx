@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoIosAddCircleOutline, IoIosCloseCircleOutline } from "react-icons/io";
 import { FaEdit, FaTrashAlt, FaSave } from "react-icons/fa";
@@ -10,22 +10,22 @@ const HOVER_CYAN = "hover:bg-cyan-700";
 const TABLE_HEADER_BG = "bg-gray-100";
 const BORDER_COLOR = "border-gray-200";
 
-// Biến thể cho form (unused but kept for reference)
-// const formVariants = {
-//   hidden: { opacity: 0, height: 0, y: -20 },
-//   visible: {
-//     opacity: 1,
-//     height: "auto",
-//     y: 0,
-//     transition: { duration: 0.3, ease: "easeInOut" },
-//   },
-//   exit: {
-//     opacity: 0,
-//     height: 0,
-//     y: -20,
-//     transition: { duration: 0.2, ease: "easeOut" },
-//   },
-// };
+// Biến thể cho form
+const formVariants = {
+  hidden: { opacity: 0, height: 0, y: -20 },
+  visible: {
+    opacity: 1,
+    height: "auto",
+    y: 0,
+    transition: { duration: 0.3, ease: "easeInOut" },
+  },
+  exit: {
+    opacity: 0,
+    height: 0,
+    y: -20,
+    transition: { duration: 0.2, ease: "easeOut" },
+  },
+};
 
 // Biến thể cho từng dòng bảng
 const itemVariants = {

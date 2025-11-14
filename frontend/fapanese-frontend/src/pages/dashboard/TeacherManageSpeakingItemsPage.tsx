@@ -40,7 +40,7 @@ const TeacherManageSpeakingItemsPage: React.FC = () => {
   const [itemFormData, setItemFormData] = useState<Partial<SpeakingItem>>({});
 
   const token = localStorage.getItem("token") || "";
-  const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
+  const API_URL = "http://localhost:8080/fapanese/api";
 
   // --- Fetch Speaking Exam and its Speaking Items ---
   const fetchSpeakingExamDetails = async () => {
@@ -119,7 +119,7 @@ const TeacherManageSpeakingItemsPage: React.FC = () => {
       setNotifMessage("Lưu bài tập Speaking thành công!");
       setShowItemModal(false);
       fetchSpeakingExamDetails(); // Refresh list
-    } catch (err: any) {
+    } catch (err) {
       console.error("❌ Lỗi khi lưu speaking item:", err);
       setNotifMessage(`❌ Không thể lưu bài tập Speaking: ${err.response?.data?.message || err.message}`);
     }

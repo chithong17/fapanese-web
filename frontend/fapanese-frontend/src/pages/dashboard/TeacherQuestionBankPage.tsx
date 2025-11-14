@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import { AiOutlinePlus, AiOutlineEdit, AiOutlineDelete, AiOutlineSearch, AiOutlineUpload } from "react-icons/ai";
 import axios from "axios";
@@ -57,11 +57,11 @@ const TeacherQuestionBankPage: React.FC = () => {
     const [newQuestionData, setNewQuestionData] = useState<Partial<ExamQuestion>>(initialNewQuestionState);
     const [saving, setSaving] = useState(false); // Saving state for Add modal
 
-    const [isUploadingExcel] = useState(false);
+    const [isUploadingExcel, setIsUploadingExcel] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const token = localStorage.getItem("token") || "";
-    const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
+    const API_URL = "http://localhost:8080/fapanese/api";
 
     // --- Fetch All Questions ---
     const fetchQuestions = async () => {

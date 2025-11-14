@@ -1,6 +1,6 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence, type Variants } from "framer-motion"; 
+import { motion, AnimatePresence, type Variants, type ForwardRefComponent, type HTMLMotionProps } from "framer-motion"; 
 import StudentManagementPage from "./StudentManagementPage";
 import AdminPendingTeachersPage from "./AdminPendingTeachersPage";
 import CourseManagementPage from "./CourseManagementPage";
@@ -15,7 +15,7 @@ import { AiOutlineTeam, AiOutlineBook } from "react-icons/ai"; // Biểu tượn
 
 
 // --- CẤU HÌNH TONE MÀU TRẮNG-XÁM CHỦ ĐẠO ---
-// CẤU HÌNH MÀU SẮC 
+const PRIMARY_BLUE = "#00BCD4"; 
 const PRIMARY_TEXT = "text-cyan-600"; 
 const DASHBOARD_BG = "bg-white"; 
 const TOPBAR_BG = "bg-white"; 

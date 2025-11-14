@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
-import { AiOutlineCheckCircle, AiOutlineSearch, AiOutlineEdit } from "react-icons/ai";
+import { AiOutlineCheckCircle, AiOutlinePlusCircle, AiOutlineSearch, AiOutlineEdit } from "react-icons/ai";
 import axios from "axios";
 import NotificationModal from "../../components/NotificationModal";
 import CircularProgress from "@mui/material/CircularProgress"; // For loading indicator
@@ -61,7 +61,7 @@ const TeacherManageExamQuestionsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState(""); // Search filter for available questions
 
   const token = localStorage.getItem("token") || "";
-  const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
+  const API_URL = "http://localhost:8080/fapanese/api";
 
   // --- Determine Exam Type ---
   // We need to know the part type to call the correct API endpoint
@@ -110,7 +110,7 @@ const TeacherManageExamQuestionsPage: React.FC = () => {
       setAllQuestions(allQuestionsData);
 
       // Initialize selected IDs based on current exam questions
-      const initialSelectedIds = new Set<number>(examData.questions?.map((q: ExamQuestion) => q.id) || []);
+      const initialSelectedIds = new Set(examData.questions?.map((q: ExamQuestion) => q.id) || []);
       setSelectedQuestionIds(initialSelectedIds);
 
     } catch (err) {

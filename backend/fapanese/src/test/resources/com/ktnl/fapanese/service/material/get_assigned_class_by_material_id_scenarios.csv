@@ -1,0 +1,4 @@
+testName,materialId,mockMaterialFound,numAssignedClasses,expectException,expectedErrorCodeString
+"Success: Get 2 assigned classes",1,true,2,false,""
+"Success: Get 0 assigned classes",1,true,0,false,""
+"Fail: Material not found",99,false,0,true,MATERIAL_NOT_FOUND

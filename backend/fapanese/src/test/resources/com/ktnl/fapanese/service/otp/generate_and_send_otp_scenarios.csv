@@ -1,0 +1,3 @@
+testName,email,hasArgs
+"Success: Send with args (e.g., username)","user@example.com",true
+"Success: Send without args (e.g., basic OTP)","basic@example.com",false

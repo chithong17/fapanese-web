@@ -1,0 +1,5 @@
+testName,overviewPartId,mockPartFound,questionIdsType,expectException,expectedErrorCodeString
+"Success: Create with valid part and questions","10",true,"VALID",false,""
+"Success: Create with valid part and NULL questions","10",true,"NULL",false,""
+"Success: Create with valid part and EMPTY questions","10",true,"EMPTY",false,""
+"Fail: OverviewPart not found","99",false,"VALID",true,OVERVIEW_PART_NOT_FOUND

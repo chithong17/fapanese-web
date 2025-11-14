@@ -1,0 +1,8 @@
+testName,materialId,studentId,classId,mockMaterialFound,mockStudentFound,mockClassFound,materialType,materialInClass,isResubmit,expectException,expectedErrorCodeString
+"Success: First time submit (new)",1,std123,10,true,true,true,ASSIGNMENT,true,false,false,""
+"Success: Resubmit (update existing)",1,std123,10,true,true,true,ASSIGNMENT,true,true,false,""
+"Fail: Material not found",99,std123,10,false,true,true,ASSIGNMENT,true,false,true,MATERIAL_NOT_FOUND
+"Fail: Student not found",1,std999,10,true,false,true,ASSIGNMENT,true,false,true,STUDENT_NOT_FOUND
+"Fail: Class not found",1,std123,99,true,true,false,ASSIGNMENT,true,false,true,INVALID_CLASS_NAME
+"Fail: Material is RESOURCE (not submittable)",1,std123,10,true,true,true,RESOURCE,true,false,true,ACTION_NOT_ALLOWED
+"Fail: Material not assigned to class",1,std123,10,true,true,true,ASSIGNMENT,false,false,true,ACTION_NOT_ALLOWED

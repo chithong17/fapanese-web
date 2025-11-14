@@ -1,0 +1,5 @@
+testName,overviewId,mockOverviewFound,currentCourseId,newCourseId,mockNewCourseFound,expectException,expectedErrorCodeString
+"Success: Update, course unchanged",1,true,10,10,true,false,""
+"Success: Update, course changed",1,true,10,20,true,false,""
+"Fail: Overview not found",99,false,10,20,true,true,OVERVIEW_NOT_FOUND
+"Fail: New course not found",1,true,10,99,false,true,COURSE_NOT_FOUND

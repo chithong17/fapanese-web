@@ -1,0 +1,3 @@
+testName,examId,mockExamFound,expectException,expectedErrorCodeString
+"Success: Exam found",1,true,false,""
+"Fail: Exam not found",99,false,true,EXAM_NOT_FOUND

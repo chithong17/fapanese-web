@@ -1,0 +1,5 @@
+testName,lessonPartId,lessonPartFound,detailsType,expectException,expectedErrorCodeString
+"Success: Create with valid lesson part and details","10",true,"VALID",false,""
+"Success: Create with valid lesson part and NULL details","10",true,"NULL",false,""
+"Success: Create with valid lesson part and EMPTY details","10",true,"EMPTY",false,""
+"Fail: Lesson part not found","99",false,"VALID",true,"LESSON_PART_NOT_FOUND"

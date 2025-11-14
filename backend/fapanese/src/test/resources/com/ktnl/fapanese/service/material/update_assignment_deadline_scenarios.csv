@@ -1,0 +1,3 @@
+testName,materialId,classId,mockAssignmentFound,expectException,expectedErrorCodeString
+"Success: Update deadline",1,10,true,false,""
+"Fail: Assignment not found",99,99,false,true,ASSIGNMENT_NOT_FOUND

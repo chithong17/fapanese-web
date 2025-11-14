@@ -1,4 +1,8 @@
 {
+  "rootDirectory": "frontend/fapanese-frontend",
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
   ]

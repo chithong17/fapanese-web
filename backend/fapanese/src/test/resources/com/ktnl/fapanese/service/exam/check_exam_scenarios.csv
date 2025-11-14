@@ -1,0 +1,8 @@
+testName,expectedTotal,expectedCorrect,expectedScore,expectException,expectedErrorCode
+SUCCESS_ALL_CORRECT,2,2,100.0,false,
+SUCCESS_PARTIAL_CORRECT,2,1,50.0,false,
+SUCCESS_ALL_WRONG,2,0,0.0,false,
+SUCCESS_EMPTY_LIST,0,0,0.0,false,
+SUCCESS_CASE_INSENSITIVE,1,1,100.0,false,
+SUCCESS_CORRECT_ANSWER_IS_NULL,1,0,0.0,false,
+FAIL_QUESTION_NOT_FOUND,2,0,0.0,true,QUESTION_NOT_FOUND

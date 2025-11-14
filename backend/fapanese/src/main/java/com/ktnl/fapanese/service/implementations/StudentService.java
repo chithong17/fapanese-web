@@ -6,6 +6,7 @@ import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.entity.Role;
 import com.ktnl.fapanese.entity.Student;
 import com.ktnl.fapanese.entity.User;
+import com.ktnl.fapanese.entity.enums.UserRole;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mail.AccountCreatedEmailTemplate;
@@ -47,7 +48,7 @@ public class StudentService implements IStudentService {
         User user = mapper.toUser(createStudentRequest);
         String randomPassword = generateRandomPassword(8);
         user.setPassword_hash(passwordEncoder.encode(randomPassword));
-        Role role = roleRepo.findByRoleName("STUDENT");
+        Role role = roleRepo.findByRoleName(UserRole.STUDENT.name());
         user.setRoles(Set.of(role));
         user.setStatus(0);
 

@@ -43,7 +43,7 @@ public class ApplicationInitConfig {
         return args -> {
             if(userRepository.findByEmail(adminEmail).isEmpty()){
                 HashSet<Role> roles = new HashSet<>();
-                roles.add(Role.builder().id(3).roleName(UserRole.ADMIN.name()).build());
+                roles.add(Role.builder().id(3).roleName("ADMIN").build());
                 User user = User.builder()
                         .email(adminEmail)
                         .password_hash(passwordEncoder.encode(adminPassword))

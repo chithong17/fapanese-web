@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import {
   AiOutlineUsergroupAdd,
@@ -70,8 +70,7 @@ const fadeIn = {
 
 // --- Component ---
 const TeacherClassDetailPage: React.FC = () => {
-  const { courseCode, classId } = useParams(); // Get classId from URL
-  const navigate = useNavigate();
+  const { classId } = useParams(); // Get classId from URL
 
   const [currentClass, setCurrentClass] = useState<ClassCourse | null>(null);
   const [studentsInClass, setStudentsInClass] = useState<Student[]>([]);

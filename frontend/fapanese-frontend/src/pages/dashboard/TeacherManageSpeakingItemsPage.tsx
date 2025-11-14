@@ -119,7 +119,7 @@ const TeacherManageSpeakingItemsPage: React.FC = () => {
       setNotifMessage("Lưu bài tập Speaking thành công!");
       setShowItemModal(false);
       fetchSpeakingExamDetails(); // Refresh list
-    } catch (err) {
+    } catch (err: any) {
       console.error("❌ Lỗi khi lưu speaking item:", err);
       setNotifMessage(`❌ Không thể lưu bài tập Speaking: ${err.response?.data?.message || err.message}`);
     }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import {
     AiOutlinePlus,
     AiOutlineEdit,
@@ -36,8 +36,7 @@ const fadeIn = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transi
 // --- Component ---
 const TeacherManageSpeakingQuestionsPage: React.FC = () => {
     // speakingId is the ID of the parent SpeakingItem
-    const { courseCode, overviewId, partId, speakingExamId, speakingId } = useParams();
-    const navigate = useNavigate();
+        const { courseCode, overviewId, partId, speakingExamId, speakingId } = useParams();
 
     const [speakingItem, setSpeakingItem] = useState<SpeakingItem | null>(null); // Parent Speaking Item info
     const [questions, setQuestions] = useState<SpeakingQuestion[]>([]);

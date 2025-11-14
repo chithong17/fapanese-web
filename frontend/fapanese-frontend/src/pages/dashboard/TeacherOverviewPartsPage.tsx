@@ -5,9 +5,8 @@ import {
   AiOutlinePlus,
   AiOutlineEdit,
   AiOutlineDelete,
-  AiOutlineArrowLeft,
 } from "react-icons/ai";
-import { IoMdArrowBack, IoIosApps } from "react-icons/io";
+import { IoMdArrowBack } from "react-icons/io";
 import axios from "axios";
 import NotificationModal from "../../components/NotificationModal";
 

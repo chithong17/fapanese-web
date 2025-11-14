@@ -92,8 +92,8 @@ const ActivityItem = ({
 
 const StudentDashboard: React.FC = () => {
   // Dummy function cho Navbar
-  const scrollToSection = (id: string, tab?: "hiragana" | "katakana") => {};
-  const handleAuthClick = (tab: "login" | "signup") => {};
+  const scrollToSection = (_id: string, _tab?: "hiragana" | "katakana") => {};
+  const handleAuthClick = (_tab: "login" | "signup") => {};
 
   // State dropdown user
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);

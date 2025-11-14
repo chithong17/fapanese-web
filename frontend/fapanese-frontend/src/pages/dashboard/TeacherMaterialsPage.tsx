@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import { AiOutlinePlus, AiOutlineEdit, AiOutlineDelete, AiOutlineUpload, AiOutlinePaperClip, AiOutlineUsergroupAdd } from "react-icons/ai";
-import axios, { AxiosError } from "axios"; // Import AxiosError
+import axios from "axios"; // Import AxiosError
 import NotificationModal from "../../components/NotificationModal";
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -65,8 +65,6 @@ const MAX_RAW_SIZE = 10 * 1024 * 1024; // 10 MB (for PDF, DOCX, etc.)
 
 // --- Component ---
 const TeacherMaterialsPage: React.FC = () => {
-    const navigate = useNavigate();
-
     const [materials, setMaterials] = useState<Material[]>([]);
     const [loading, setLoading] = useState(true);
     const [notifMessage, setNotifMessage] = useState<string | null>(null);
@@ -627,7 +625,7 @@ const TeacherMaterialsPage: React.FC = () => {
                         <p className="text-sm text-gray-500 italic">Chưa gán cho lớp nào.</p>
                     ) : (
                         <ul className="space-y-2">
-                            {currentAssignments.map((assign, index) => {
+                            {currentAssignments.map((assign) => {
                                 // ✅ SỬA CÁCH LẤY DỮ LIỆU
                                 const currentClassCourseId = assign.id?.classCourseId;
                                 const currentClassName = assign.classCourse?.className;

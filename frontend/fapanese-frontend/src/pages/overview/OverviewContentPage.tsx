@@ -247,7 +247,7 @@ const OverviewContentPage: React.FC = () => {
 
     // --- HÀM NỘP BÀI ĐÃ SỬA LỖI 400 VÀ LỖI UNDEFINED ---
     const handleSubmitQuiz = async (
-        examId: number,
+        _examId: number,
         questions: ExamQuestion[]
     ) => {
         // Định dạng payload chính xác

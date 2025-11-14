@@ -1,0 +1,4 @@
+testName,toEmail,templateName,csvArgs,mockSendThrowsException,expectException,expectedErrorCode
+SUCCESS_REGISTER,user@example.com,CONFIRM_REGISTER,"User A;http://link",false,false,
+SUCCESS_RESET,other@example.com,RESET_PASSWORD,"http://reset",false,false,
+FAIL_SEND_ERROR,fail@example.com,CONFIRM_REGISTER,"User A;http://link",true,true,EMAIL_SENDER

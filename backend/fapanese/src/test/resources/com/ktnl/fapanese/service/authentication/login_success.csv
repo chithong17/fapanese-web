@@ -1,0 +1,2 @@
+testName,email,password,expectedScope
+LOGIN_SUCCESS,test@example.com,password123,ROLE_USER VIEW_DATA

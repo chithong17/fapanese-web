@@ -1,0 +1,4 @@
+testName,classId,studentId,mockClassFound,mockStudentFound,expectException,expectedErrorCode
+SUCCESS,10,STU001,true,true,false,
+FAIL_CLASS_NOT_FOUND,10,STU001,false,true,true,CLASS_NOT_FOUND
+FAIL_STUDENT_NOT_FOUND,10,STU001,true,false,true,STUDENT_NOT_FOUND

@@ -1,0 +1,5 @@
+testName,examId,examFound,requestParentId,newParentFound,expectException,expectedError
+"Fail - Exam Not Found",99,false,10,true,true,EXAM_NOT_FOUND
+"Success - Parent Unchanged",1,true,10,true,false,
+"Success - Parent Changed",1,true,20,true,false,
+"Fail - Parent Changed, New Parent Not Found",1,true,99,false,true,OVERVIEW_PART_NOT_FOUND

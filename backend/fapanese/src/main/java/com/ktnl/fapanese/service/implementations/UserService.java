@@ -69,13 +69,13 @@ public class UserService implements IUserService {
         user.setStatus(0);
 
         // 2. Chuẩn bị đối tượng Lecturer hoặc Student và thiết lập quan hệ 2 chiều
-        if("LECTURER".equalsIgnoreCase(userRequest.getRole())){
+        if(UserRole.LECTURER.name().equalsIgnoreCase(userRequest.getRole())){
             Lecturer lecturer = mapper.toLecturer(userRequest);
             lecturer.setUser(user);      // Quan hệ từ Lecturer -> User
             lecturer.setAvtUrl("https://drive.google.com/file/d/1KZJdE58UiYN8UjoZ0y7wUw0Ptge8FZ0i/view?usp=drive_link");
             user.setTeacher(lecturer);   // Quan hệ ngược lại từ User -> Lecturer
         }
-        else if("STUDENT".equalsIgnoreCase(userRequest.getRole())){
+        else if(UserRole.STUDENT.name().equalsIgnoreCase(userRequest.getRole())){
             Student student = mapper.toStudent(userRequest);
             student.setUser(user);       // Quan hệ từ Student -> User
             student.setAvtUrl("https://drive.google.com/file/d/1KZJdE58UiYN8UjoZ0y7wUw0Ptge8FZ0i/view?usp=drive_link");

@@ -1,0 +1,4 @@
+testName,id,foundLessonPart,lessonPartId,foundQuestion,expectException,errorCode
+"Update success",1,true,10,true,false,""
+"Question not found",1,true,10,false,true,"QUESTION_NOT_FOUND"
+"LessonPart not found",1,false,10,true,true,"LESSON_PART_NOT_FOUND"

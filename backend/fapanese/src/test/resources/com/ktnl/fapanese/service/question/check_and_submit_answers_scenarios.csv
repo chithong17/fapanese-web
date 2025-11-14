@@ -1,0 +1,7 @@
+testName,userAnswersJson,questionsJson,expectedCorrect,expectedTotal,expectException,expectedErrorCode
+Single correct MCQ,"[{""id"":1,""ans"":""A""}]", "[{""id"":1,""type"":""MULTIPLE_CHOICE"",""correct"":""A"",""lessonPartId"":10}]",1,1,false,
+Single wrong MCQ,"[{""id"":1,""ans"":""B""}]", "[{""id"":1,""type"":""MULTIPLE_CHOICE"",""correct"":""A"",""lessonPartId"":10}]",0,1,false,
+Fill correct,"[{""id"":1,""ans"":""Tokyo""}]", "[{""id"":1,""type"":""FILL"",""correct"":""Tokyo"",""lessonPartId"":10}]",1,1,false,
+Fill wrong,"[{""id"":1,""ans"":""Osaka""}]", "[{""id"":1,""type"":""FILL"",""correct"":""Tokyo"",""lessonPartId"":10}]",0,1,false,
+Empty answers,"[]","[{""id"":1,""type"":""FILL"",""correct"":""Tokyo"",""lessonPartId"":10}]",0,1,true,INVALID_INPUT
+Question missing,"[{""id"":999,""ans"":""A""}]", "[{""id"":1,""type"":""MULTIPLE_CHOICE"",""correct"":""A"",""lessonPartId"":10}]",0,1,true,QUESTION_NOT_FOUND

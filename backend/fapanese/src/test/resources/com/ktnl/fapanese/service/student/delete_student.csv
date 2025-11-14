@@ -1,0 +1,4 @@
+testName,email,userToFind,expectException,expectedError
+"Success - Student Found and Deleted","student@test.com","STUDENT_USER",false,
+"Fail - User Not Found","notfound@test.com","NOT_FOUND",true,USER_NOT_EXISTED
+"Fail - User is not a Student (is Teacher)","teacher@test.com","TEACHER_USER",true,ROLE_NOT_FOUND

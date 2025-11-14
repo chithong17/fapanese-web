@@ -31,7 +31,7 @@ const ProfilePage: React.FC = () => {
         if (!token) throw new Error("Bạn chưa đăng nhập.");
 
         const res = await axios.get(
-          "http://localhost:8080/fapanese/api/users/profile",
+          "https://85e7dd680e50.ngrok-free.app/fapanese/api/users/profile",
           // "https://5180368dcd09.ngrok-free.app/fapanese/api/users/profile",
           {
             headers: {
@@ -73,7 +73,7 @@ const ProfilePage: React.FC = () => {
       const token = localStorage.getItem("token");
       await axios.post(
       
-        "http://localhost:8080/fapanese/api/users/profile/update",
+        "https://85e7dd680e50.ngrok-free.app/fapanese/api/users/profile/update",
         // "https://5180368dcd09.ngrok-free.app/fapanese/api/users/profile/update",
         profile,
         { headers: { Authorization: `Bearer ${token}` } }

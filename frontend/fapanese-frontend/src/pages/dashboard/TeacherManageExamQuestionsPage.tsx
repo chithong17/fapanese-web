@@ -61,7 +61,7 @@ const TeacherManageExamQuestionsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState(""); // Search filter for available questions
 
   const token = localStorage.getItem("token") || "";
-  const API_URL = "http://localhost:8080/fapanese/api";
+  const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
 
   // --- Determine Exam Type ---
   // We need to know the part type to call the correct API endpoint

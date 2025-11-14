@@ -65,7 +65,7 @@ const TeacherClassesPage: React.FC = () => {
     const [loadingLecturer, setLoadingLecturer] = useState(true);
 
     const token = localStorage.getItem("token") || "";
-    const API_URL = "http://localhost:8080/fapanese/api";
+    const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
 
     // --- Get Lecturer ID (Reuse from Materials page) ---
     useEffect(() => {

@@ -1,0 +1,5 @@
+testName,examId,mockExamFound,currentPartId,newPartId,newPartFound,expectException,expectedErrorCodeString
+"Success: Update exam and change part",1,true,10,20,true,false,""
+"Success: Update exam, part not changed",1,true,10,10,true,false,""
+"Fail: Exam to update not found",99,false,10,20,true,true,"EXAM_NOT_FOUND"
+"Fail: New OverviewPart not found",1,true,10,99,false,true,"OVERVIEW_PART_NOT_FOUND"

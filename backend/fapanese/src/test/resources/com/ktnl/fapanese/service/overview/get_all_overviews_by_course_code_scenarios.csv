@@ -1,0 +1,4 @@
+testName,courseCode,mockCourseFound,numOverviewsInSet,expectException,expectedErrorCodeString
+"Success: Course found, returns 2 overviews",N5,true,2,false,""
+"Success: Course found, returns 0 overviews",N4,true,0,false,""
+"Fail: Course not found",N3,false,0,true,COURSE_NOT_FOUND

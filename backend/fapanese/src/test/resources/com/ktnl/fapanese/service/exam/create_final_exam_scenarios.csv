@@ -1,0 +1,5 @@
+testName,examTitle,overviewPartId,overviewPartFound,questionIds,expectException,expectedErrorCodeString
+"Success: Create valid exam with questions","Test Exam",10,true,"1;2",false,""
+"Success: Create valid exam with null questions","Test Exam",10,true,"",false,""
+"Success: Create valid exam with empty questions","Test Exam",10,true,"EMPTY",false,""
+"Fail: OverviewPart not found","Test Exam",99,false,"1;2",true,"OVERVIEW_PART_NOT_FOUND"

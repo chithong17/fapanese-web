@@ -1,0 +1,4 @@
+testName,lessonId,mockLessonExists,repoReturnsSize,expectException,expectedErrorCodeString
+"Success: Lesson found, parts returned",10,true,2,false,""
+"Success: Lesson found, no parts returned",11,true,0,false,""
+"Fail: Lesson not found",99,false,0,true,"LESSON_NOT_FOUND"

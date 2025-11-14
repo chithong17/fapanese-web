@@ -1,0 +1,3 @@
+testName,lecturerId,mockLecturerFound,expectException,expectedErrorCodeString
+"Success: Create material",10,true,false,""
+"Fail: Lecturer not found",99,false,true,LECTURER_NOT_FOUND

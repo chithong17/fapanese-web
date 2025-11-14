@@ -1,0 +1,7 @@
+testName,grammarId,mockGrammarFound,currentPartId,newPartId,newPartFound,detailsType,expectException,expectedErrorCodeString
+"Success: Update fields, part changed, details changed",1,true,10,20,true,"UPDATE",false,""
+"Success: Update fields, part NOT changed",1,true,10,10,true,"UNCHANGED",false,""
+"Success: Update fields, details set to NULL (clear details)",1,true,10,10,true,"NULL",false,""
+"Success: Update fields, details set to EMPTY (clear details)",1,true,10,10,true,"EMPTY",false,""
+"Fail: Grammar to update not found",99,false,10,20,true,"UPDATE",true,"GRAMMAR_NOT_FOUND"
+"Fail: New LessonPart not found",1,true,10,99,false,"UPDATE",true,"LESSON_PART_NOT_FOUND"

@@ -1,0 +1,5 @@
+testName,studentId,numEnrolledClasses,numClassMaterials,numExpectedDistinctMaterials,expectException,expectedErrorCodeString
+"Success: 2 classes, 3 distinct materials",std123,2,3,3,false,""
+"Success: 1 class, 0 materials",std456,1,0,0,false,""
+"Fail: Student not in any class",std789,0,0,0,true,ACTION_NOT_ALLOWED
+"Success: 2 classes, 2 assignments for 1 material (test distinct)",std111,2,2,1,false,""

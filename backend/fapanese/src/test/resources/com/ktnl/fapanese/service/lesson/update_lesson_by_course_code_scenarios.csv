@@ -1,0 +1,5 @@
+testName,courseCode,lessonId,mockCourseFound,mockLessonFound,isLessonInCourse,expectException,expectedErrorCodeString
+"Success: All valid",N5,1,true,true,true,false,""
+"Fail: Course not found",N4,1,false,true,true,true,COURSE_NOT_FOUND
+"Fail: Lesson not found",N5,99,true,false,true,true,LESSON_NOT_FOUND
+"Fail: Lesson not in course (mismatch)",N5,1,true,true,false,true,LESSON_NOT_FOUND

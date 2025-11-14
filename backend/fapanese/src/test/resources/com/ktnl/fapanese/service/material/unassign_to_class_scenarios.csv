@@ -1,0 +1,3 @@
+testName,materialId,classId,mockAssignmentFound,expectException,expectedErrorCodeString
+"Success: Unassign",1,10,true,false,""
+"Fail: Assignment not found",99,99,false,true,ClASS_MATERIALS_NOT_FOUND

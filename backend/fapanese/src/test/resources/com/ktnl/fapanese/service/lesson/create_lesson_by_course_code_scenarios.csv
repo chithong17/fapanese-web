@@ -1,0 +1,3 @@
+testName,courseCode,mockCourseFound,expectException,expectedErrorCodeString
+"Success: Course found, lesson created",N5,true,false,""
+"Fail: Course not found",N4,false,true,COURSE_NOT_FOUND

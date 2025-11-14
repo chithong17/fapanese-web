@@ -1,0 +1,5 @@
+testName,userIdToFind,newStatus,action
+"Approve Teacher","pending1",3,"SAVE_APPROVE"
+"Reject Teacher","pending1",-1,"DELETE_REJECT"
+"Update Student Status","student1",5,"SAVE_STUDENT"
+"User Not Found","non_existing_id",3,"FAIL"

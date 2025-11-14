@@ -1,0 +1,4 @@
+testName,materialId,classId,mockMaterialFound,mockClassFound,expectException,expectedErrorCodeString
+"Success: Assign",1,10,true,true,false,""
+"Fail: Material not found",99,10,false,true,true,MATERIAL_NOT_FOUND
+"Fail: Class not found",1,99,true,false,true,CLASS_COURSE_NOT_FOUND

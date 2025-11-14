@@ -10,6 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Data
 @Embeddable
 public class ClassMaterialId implements Serializable {
     private Long classCourseId;

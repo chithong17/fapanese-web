@@ -1,0 +1,3 @@
+testName,courseId,mockCourseFound,expectException,expectedErrorCodeString
+"Success: Create with valid course",10,true,false,""
+"Fail: Course (parent) not found",99,false,true,COURSE_NOT_FOUND

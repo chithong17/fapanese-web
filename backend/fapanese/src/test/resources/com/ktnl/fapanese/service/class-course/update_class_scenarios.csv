@@ -1,0 +1,6 @@
+testName,classId,newCourseId,newLecturerId,mockClassFound,mockNewCourseFound,mockNewLecturerFound,expectException,expectedErrorCode
+SUCCESS_FULL_UPDATE,10,2,LEC002,true,true,true,false,
+SUCCESS_PARTIAL_UPDATE,10,,,true,false,false,false,
+FAIL_CLASS_NOT_FOUND,10,2,LEC002,false,false,false,true,CLASS_NOT_FOUND
+FAIL_NEW_COURSE_NOT_FOUND,10,2,LEC002,true,false,true,true,COURSE_NOT_FOUND
+FAIL_NEW_LECTURER_NOT_FOUND,10,2,LEC002,true,true,false,true,LECTURER_NOT_FOUND

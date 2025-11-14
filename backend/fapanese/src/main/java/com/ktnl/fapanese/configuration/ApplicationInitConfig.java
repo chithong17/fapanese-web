@@ -2,11 +2,14 @@ package com.ktnl.fapanese.configuration;
 
 import com.ktnl.fapanese.entity.Role;
 import com.ktnl.fapanese.entity.User;
+import com.ktnl.fapanese.entity.enums.UserRole;
 import com.ktnl.fapanese.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +25,13 @@ import java.util.HashSet;
 public class ApplicationInitConfig {
     PasswordEncoder passwordEncoder;
 
+    @NonFinal
+    @Value("${admin-account.email}")
+    String adminEmail;
+
+    @NonFinal
+    @Value("${admin-account.password}")
+    String adminPassword;
 
     //sẽ đc chạy mỗi khi application start
     @Bean
@@ -31,12 +41,12 @@ public class ApplicationInitConfig {
             havingValue = "com.mysql.cj.jdbc.Driver")
     ApplicationRunner applicationRunner(UserRepository userRepository){
         return args -> {
-            if(userRepository.findByEmail("fapanese.edu@gmail.com").isEmpty()){
+            if(userRepository.findByEmail(adminEmail).isEmpty()){
                 HashSet<Role> roles = new HashSet<>();
-                roles.add(Role.builder().id(3).roleName("ADMIN").build());
+                roles.add(Role.builder().id(3).roleName(UserRole.ADMIN.name()).build());
                 User user = User.builder()
-                        .email("fapanese.edu@gmail.com")
-                        .password_hash(passwordEncoder.encode("Fapanese@2025!"))
+                        .email(adminEmail)
+                        .password_hash(passwordEncoder.encode(adminPassword))
                         .roles(roles)
                         .status(3)
                         .build();

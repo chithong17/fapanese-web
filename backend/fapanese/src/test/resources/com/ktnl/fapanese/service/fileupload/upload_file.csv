@@ -1,0 +1,6 @@
+testName,scenario,folderName,expectedFolder,expectException,expectedError
+"Success - Valid file and folder","VALID","fapanese/avatars","fapanese/avatars",false,
+"Success - Valid file and null folder","VALID_DEFAULT_FOLDER",null,"fapanese/others",false,
+"Success - Valid file and blank folder","VALID","   ","fapanese/others",false,
+"Fail - File is null","FILE_NULL","fapanese/avatars",,true,FILE_REQUIRED
+"Fail - File is empty","FILE_EMPTY","fapanese/avatars",,true,FILE_REQUIRED

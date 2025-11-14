@@ -27,4 +27,6 @@ public class AzureProps {
         private String key;
         private String deploymentName; // map từ deployment-name trong YAML
     }
+
+
 }

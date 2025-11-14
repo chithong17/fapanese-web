@@ -1,0 +1,4 @@
+testName,classId,mockClassFound,repoReturnsSize,expectException,expectedErrorCode
+SUCCESS_WITH_DATA,10,true,1,false,
+SUCCESS_EMPTY_LIST,10,true,0,false,
+FAIL_CLASS_NOT_FOUND,10,false,0,true,CLASS_NOT_FOUND

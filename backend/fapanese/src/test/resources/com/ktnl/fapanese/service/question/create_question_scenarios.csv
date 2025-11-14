@@ -1,0 +1,4 @@
+testName,lessonPartExists,lessonPartId,isNullLessonPartId,expectException,errorCode
+"Valid create",true,10,false,false,""
+"Missing lessonPartId",false,,true,true,"INVALID_INPUT"
+"LessonPart not found",false,10,false,true,"LESSON_PART_NOT_FOUND"

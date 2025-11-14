@@ -13,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,7 @@ public class EmailService implements IEmailService {
             mailSender.send(message);
             log.info("Mail sent to " + to);
 
-        } catch (MessagingException e) {
+        } catch (MessagingException | MailException e) {
             // Trường hợp có lỗi khi tạo / gửi email
             e.printStackTrace();
             log.info("Failed to send mail");

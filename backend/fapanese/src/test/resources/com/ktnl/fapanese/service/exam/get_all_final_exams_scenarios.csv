@@ -1,0 +1,4 @@
+testName,repoReturnsSize
+"Success: Get multiple exams",3
+"Success: Get single exam",1
+"Success: Get empty list",0

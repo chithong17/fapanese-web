@@ -1,0 +1,3 @@
+testName,courseCode,mockCourseFound
+SUCCESS_FOUND,N5,true
+SUCCESS_NOT_FOUND,N1,false

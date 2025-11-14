@@ -1,0 +1,4 @@
+testName,partId,mockPartExists,repoReturnsSize,expectException,expectedErrorCodeString
+"Success: Part exists, returns list",10,true,2,false,""
+"Success: Part exists, returns empty list",11,true,0,false,""
+"Fail: Part not found",99,false,0,true,"OVERVIEW_PART_NOT_FOUND"mvn

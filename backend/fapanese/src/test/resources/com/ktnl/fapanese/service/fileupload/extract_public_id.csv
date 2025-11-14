@@ -1,0 +1,9 @@
+testName,url,expectedPublicId
+"Image with version","https://res.cloudinary.com/demo/image/upload/v1617084537/folder/subfolder/sample.jpg","folder/subfolder/sample"
+"Image no version","https://res.cloudinary.com/demo/image/upload/folder/subfolder/sample.jpg","folder/subfolder/sample"
+"Image no extension","https://res.cloudinary.com/demo/image/upload/v123/folder/file","folder/file"
+"Video with version","https://res.cloudinary.com/demo/video/upload/v1617084537/folder/file.mp4","folder/file"
+"Raw no version","https://res.cloudinary.com/demo/raw/upload/folder/file.pdf","folder/file"
+"Invalid URL (no /upload/)","https://res.cloudinary.com/demo/image/v123/folder/file.jpg",null
+"Invalid URL (general)","https://google.com/image.jpg",null
+"Null URL",null,null

@@ -1,0 +1,4 @@
+testName,email,role,emailExists,expectException,expectedError
+"Success - Create Student","new_student@test.com","STUDENT",false,false,
+"Success - Create Lecturer","new_lecturer@test.com","LECTURER",false,false,
+"Fail - Email Exists","student@test.com","STUDENT",true,true,EMAIL_EXISTED

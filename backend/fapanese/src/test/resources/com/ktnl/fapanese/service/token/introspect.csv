@@ -1,0 +1,3 @@
+testName,token,expectedValid
+"Success - Valid token","valid-token",true
+"Fail - Invalid token (throws exception)","invalid-token",false

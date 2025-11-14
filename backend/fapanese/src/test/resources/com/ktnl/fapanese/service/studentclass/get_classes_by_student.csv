@@ -1,0 +1,4 @@
+testName,studentId,repoListSize,hasDuplicates,expectedMapperInputSize,expectedFinalListSize
+"Success - Student has 2 unique classes",student1,2,false,2,2
+"Success - Student has 0 classes",student2,0,false,0,0
+"Success - Student has duplicates (3 enrollments -> 2 classes)",student3,3,true,2,2

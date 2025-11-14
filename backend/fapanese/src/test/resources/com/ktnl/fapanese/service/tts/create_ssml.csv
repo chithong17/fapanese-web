@@ -1,0 +1,10 @@
+testName,input,expected
+"Only Vietnamese","Xin chào","<voice name='vi-VN-HoaiMyNeural'>Xin chào</voice>"
+"Only Japanese","[JA:こんにちは:JA]","<voice name='ja-JP-NanamiNeural'>こんにちは</voice>"
+"VI then JA","Xin chào [JA:こんにちは:JA]","<voice name='vi-VN-HoaiMyNeural'>Xin chào </voice><voice name='ja-JP-NanamiNeural'>こんにちは</voice>"
+"JA then VI","[JA:こんにちは:JA] Tạm biệt","<voice name='ja-JP-NanamiNeural'>こんにちは</voice><voice name='vi-VN-HoaiMyNeural'> Tạm biệt</voice>"
+"Mixed VI-JA-VI","Chào [JA:こんにちは:JA] Bye","<voice name='vi-VN-HoaiMyNeural'>Chào </voice><voice name='ja-JP-NanamiNeural'>こんにちは</voice><voice name='vi-VN-HoaiMyNeural'> Bye</voice>"
+"Multiple JA","[JA:1:JA] [JA:2:JA]","<voice name='ja-JP-NanamiNeural'>1</voice><voice name='ja-JP-NanamiNeural'>2</voice>"
+"Empty input","",""
+"Only whitespace","   ",""
+"Text with special chars","Hỏi: [JA:1 < 5:JA]","<voice name='vi-VN-HoaiMyNeural'>Hỏi: </voice><voice name='ja-JP-NanamiNeural'>1 &lt; 5</voice>"

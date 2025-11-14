@@ -1,0 +1,7 @@
+testName,vocabId,vocabFound,requestLessonPartId,originalLessonPartIsNull,newLessonPartFound,expectException,expectedError
+"Fail - Vocab not found",99,false,10,false,true,true,VOCABULARY_NOT_FOUND
+"Success - Update fields only (LessonPartId is null)",1,true,null,false,true,false,
+"Success - Update fields only (LessonPartId is same)",1,true,10,false,true,false,
+"Success - Change parent (10L -> 20L)",1,true,20,false,true,false,
+"Success - Set parent (null -> 20L)",1,true,20,true,true,false,
+"Fail - Change parent, new parent not found (10L -> 99L)",1,true,99,false,false,true,LESSON_PART_NOT_FOUND

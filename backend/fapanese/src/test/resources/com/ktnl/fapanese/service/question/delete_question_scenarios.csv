@@ -1,0 +1,3 @@
+testName,id,exists,expectException,errorCode
+"Delete success",1,true,false,""
+"Delete fail - not exists",1,false,true,"QUESTION_NOT_FOUND"

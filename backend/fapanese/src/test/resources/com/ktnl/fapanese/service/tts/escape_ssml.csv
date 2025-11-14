@@ -1,0 +1,10 @@
+testName,input,expected
+"Plain text",Hello World,Hello World
+"Null text",null,""
+"Empty text","",""
+"Ampersand","John & Jane","John &amp; Jane"
+"Less than","1 < 5","1 &lt; 5"
+"Greater than","5 > 1","5 &gt; 1"
+"Double quote",Hello "World",Hello &quot;World&quot;
+"Single quote",Hello 'World',Hello &apos;World&apos;
+"All chars","< & > "" '","&lt; &amp; &gt; &quot; &apos;"

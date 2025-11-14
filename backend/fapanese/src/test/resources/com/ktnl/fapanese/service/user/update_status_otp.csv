@@ -1,0 +1,3 @@
+testName,emailToFind,expectedStatus
+"Set status for Student","student@test.com",3
+"Set status for Lecturer","lecturer@test.com",2

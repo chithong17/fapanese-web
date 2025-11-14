@@ -1,0 +1,3 @@
+testName,id,speakingExists,expectException,expectedError
+"Success - Speaking Exists",1,true,false,
+"Fail - Speaking Not Found",99,false,true,SPEAKING_NOT_FOUND

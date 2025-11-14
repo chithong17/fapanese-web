@@ -1,0 +1,6 @@
+testName,examId,mockExamFound,currentPartId,newPartId,mockNewPartFound,questionIdsType,expectException,expectedErrorCodeString
+"Success: Update all, part changed, questions changed",1,true,10,20,true,"VALID",false,""
+"Success: Update, part NOT changed",1,true,10,10,true,"VALID",false,""
+"Success: Update, part changed, questionIds is NULL",1,true,10,20,true,"NULL",false,""
+"Fail: Exam not found",99,false,10,20,true,"VALID",true,EXAM_NOT_FOUND
+"Fail: New OverviewPart not found",1,true,10,99,false,"VALID",true,OVERVIEW_PART_NOT_FOUND

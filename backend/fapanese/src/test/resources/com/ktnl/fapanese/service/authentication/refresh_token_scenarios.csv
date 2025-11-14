@@ -1,0 +1,4 @@
+testName,token,mockVerifyTokenSuccess,mockUserFound,expectException,expectedErrorCode,expectSaveToBlacklist
+REFRESH_SUCCESS,valid-token,true,true,false,,1
+INVALID_TOKEN,invalid-token,false,false,true,AUTHENTICATED,0
+USER_NOT_FOUND,valid-token,true,false,true,USER_NOT_EXISTED,1

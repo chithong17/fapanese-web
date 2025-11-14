@@ -1,0 +1,3 @@
+testName,listSize,expectException,errorCode
+"Have data",1,false,""
+"No data",0,true,"QUESTION_NOT_FOUND"

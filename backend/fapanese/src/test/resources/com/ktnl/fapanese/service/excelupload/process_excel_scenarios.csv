@@ -1,0 +1,10 @@
+testName,scenario,expectedTotal,expectedSuccess,expectedFailure,expectException,expectedErrorCode
+"Success - 3 rows valid (1 empty row, 1 default category)",SUCCESS,4,3,0,false,
+"Success - Alias headers (noidung, a, b...)",ALIAS_HEADER,1,1,0,false,
+"Fail - Missing required header (content)",BAD_HEADER,0,0,0,true,EXCEL_MISSING_HEADER
+"Fail - Empty file (no header)",EMPTY_FILE,0,0,0,true,FILE_REQUIRED
+"Success - Header only (no data rows)",HEADER_ONLY,0,0,1,false,
+"Partial Fail - Invalid data types (Type, Category)",BAD_DATA_TYPE,2,0,2,false,
+"Partial Fail - Missing required cells (content, type)",MISSING_REQUIRED_CELL,2,0,2,false,
+"System Fail - Database error on save",DB_FAIL,1,0,2,false,
+"Success - All rows are empty (skipped)",ALL_ROWS_EMPTY,2,0,0,false,

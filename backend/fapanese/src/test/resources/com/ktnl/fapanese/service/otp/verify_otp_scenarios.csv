@@ -1,0 +1,6 @@
+testName,email,otpInput,mockTokenFound,mockIsUsed,mockOtpCode,mockExpiryMinutesOffset,expectException,expectedErrorCode
+"Success: Valid OTP",test@example.com,123456,true,false,123456,5,false,""
+"Fail: OTP not found",test@example.com,123456,false,false,123456,5,true,OTP_NOT_EXISTED
+"Fail: OTP already used",test@example.com,123456,true,true,123456,5,true,OTP_INVALID
+"Fail: Wrong OTP code",test@example.com,123456,true,false,999999,5,true,OTP_INVALID
+"Fail: OTP expired",test@example.com,123456,true,false,123456,-5,true,OTP_INVALID

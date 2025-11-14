@@ -59,6 +59,10 @@ azure:
     key: ${AZURE_OPENAI_KEY}
     deployment-name: ${AZURE_OPENAI_DEPLOYMENT}
 
+admin-account:
+  email: ${FAPANESE_ADMIN_EMAIL}
+  password: ${FAPANESE_ADMIN_PASSWORD}
+
 
 logging:
   level:

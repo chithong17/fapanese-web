@@ -1,0 +1,7 @@
+testName,materialId,mockMaterialFound,fileUrl,cloudinaryResult,expectException,expectedErrorCodeString
+"Success: Delete with file (ok)",1,true,"http://file.url","ok",false,""
+"Success: Delete with file (not found)",1,true,"http://file.url","not found",false,""
+"Success: Delete with no file (null)",1,true,NULL,N/A,false,""
+"Success: Delete with no file (empty)",1,true,"",N/A,false,""
+"Fail: Material not found",99,false,"",N/A,true,MATERIAL_NOT_FOUND
+"Warn: Cloudinary fails (non-critical)",1,true,"http://file.url","error",false,""

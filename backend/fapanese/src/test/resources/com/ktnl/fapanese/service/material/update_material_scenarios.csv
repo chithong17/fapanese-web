@@ -1,0 +1,5 @@
+testName,materialId,mockMaterialFound,currentLecturerId,newLecturerId,mockNewLecturerFound,expectException,expectedErrorCodeString
+"Success: Update, lecturer unchanged",1,true,10,10,true,false,""
+"Success: Update, lecturer changed",1,true,10,20,true,false,""
+"Fail: Material not found",99,false,10,20,true,true,MATERIAL_NOT_FOUND
+"Fail: New lecturer not found",1,true,10,99,false,true,LECTURER_NOT_FOUND

@@ -1,0 +1,3 @@
+testName,courseId,mockCourseExists,expectException,expectedErrorCode
+SUCCESS,1,true,false,
+FAIL_NOT_FOUND,1,false,true,COURSE_NOT_FOUND

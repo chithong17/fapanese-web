@@ -1,0 +1,3 @@
+testName,email,emailExists,expectException,expectedError
+"Success - Create new student","new@test.com",false,false,
+"Fail - Email already exists","existing@test.com",true,true,EMAIL_EXISTED

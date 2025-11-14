@@ -1,0 +1,11 @@
+testName,fileUrl,expectedPublicId,expectedResourceType,cloudinaryResult,throwIOException,expectException,expectedResult,expectedError
+"Success - Image URL",".../image/upload/v123/folder/file.jpg","folder/file","image","ok",false,false,"ok",
+"Success - Video URL",".../video/upload/folder/file.mp4","folder/file","video","ok",false,false,"ok",
+"Success - Raw URL (PDF)",".../raw/upload/folder/file.pdf","folder/file","raw","ok",false,false,"ok",
+"Success - Unknown type URL (defaults to auto)",".../unknown/upload/v1N4/folder/file.dat",null,"auto","ok",false,false,"error_parsing_id",
+"Success - Cloudinary returns 'not found'",".../image/upload/v123/folder/file.jpg","folder/file","image","not found",false,false,"not found",
+"Skip - URL is null",null,null,null,"ok",false,false,"ok_skipped",
+"Skip - URL is empty","",null,null,"ok",false,false,"ok_skipped",
+"Skip - URL is invalid (cannot parse)","http://google.com/image.jpg",null,null,"ok",false,false,"error_parsing_id",
+"Fail - Cloudinary throws IOException",".../image/upload/v123/folder/file.jpg","folder/file","image","ok",true,true,,FILE_DELETE_FAIL
+"Fail - Cloudinary returns 'error'",".../image/upload/v123/folder/file.jpg","folder/file","image","error",false,true,,FILE_DELETE_FAIL

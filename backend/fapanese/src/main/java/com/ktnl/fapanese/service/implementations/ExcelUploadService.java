@@ -108,10 +108,12 @@ public class ExcelUploadService implements IExcelUploadService {
                     // Add to save list if valid so far
                     studentsToSave.add(student);
 
+                } catch (AppException e) {
+                    log.warn("Validation error processing row {}: {}", rowNum, e.getMessage());
+                    result.addErrorMessage(rowNum, e.getErrorCode().getMessage(e.getArgs()));
                 } catch (Exception e) {
-                    // Catch unexpected errors during row processing
-                    log.error("Unexpected error processing row {}", rowNum, e);
-                    result.addErrorMessage(rowNum, "Lỗi không xác định khi xử lý dòng này.");
+                    log.error("Unexpected system error processing row {}", rowNum, e);
+                    result.addErrorMessage(rowNum, "Lỗi hệ thống không xác định tại dòng này.");
                 }
             } // End row iteration
 
@@ -127,7 +129,7 @@ public class ExcelUploadService implements IExcelUploadService {
                     // Handle unique constraint violations (e.g., email already exists in DB)
                     log.warn("Data integrity violation during batch student save: {}", e.getMessage());
                     result.setErrorMessages(new ArrayList<>()); // Clear previous row errors
-                    result.setFailureCount(result.getTotalRowsProcessed()); // All rows in this batch failed
+                   // result.setFailureCount(result.getTotalRowsProcessed()); // All rows in this batch failed
                     result.setSuccessCount(0);
 
                     // Provide a more specific error message if possible
@@ -141,7 +143,7 @@ public class ExcelUploadService implements IExcelUploadService {
                 } catch (Exception e) {
                     log.error("Error during batch saving students", e);
                     result.setErrorMessages(new ArrayList<>()); // Clear previous errors
-                    result.setFailureCount(result.getTotalRowsProcessed());
+                    //result.setFailureCount(result.getTotalRowsProcessed());
                     result.setSuccessCount(0);
                     result.addErrorMessage(0, "Lỗi hệ thống khi lưu dữ liệu.");
                     // No need to throw here

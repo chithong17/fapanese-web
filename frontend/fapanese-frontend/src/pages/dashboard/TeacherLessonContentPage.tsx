@@ -18,7 +18,7 @@ const TeacherLessonContentPage: React.FC = () => {
   const [editing, setEditing] = useState<any | null>(null);
   const [form, setForm] = useState<any>({});
   const token = localStorage.getItem("token") || "";
-  const API_BASE = "http://localhost:8080/fapanese/api";
+  const API_BASE = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
 
   // ================= FETCH LESSON PARTS =================
   useEffect(() => {

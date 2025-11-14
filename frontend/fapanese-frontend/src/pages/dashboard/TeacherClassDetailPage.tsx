@@ -121,7 +121,7 @@ const TeacherClassDetailPage: React.FC = () => {
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [loadingSubmissions, setLoadingSubmissions] = useState(false);
   const token = localStorage.getItem("token") || "";
-  const API_URL = "http://localhost:8080/fapanese/api";
+  const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
 
   const [showGradeModal, setShowGradeModal] = useState(false);
   const [gradingSubmission, setGradingSubmission] = useState<any>(null);

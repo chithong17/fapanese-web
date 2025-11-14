@@ -1,7 +1,7 @@
 // src/api/finalExam.ts
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/fapanese/api";
+const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
 
 // Lấy nội dung Final Exam theo Part ID
 export const getFinalExamsByPartId = async (partId: number) => {

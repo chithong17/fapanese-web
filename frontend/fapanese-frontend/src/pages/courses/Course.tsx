@@ -49,7 +49,7 @@ const Course: React.FC = () => {
     const fetchCourses = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/fapanese/api/courses"
+          "https://85e7dd680e50.ngrok-free.app/fapanese/api/courses"
         );
         if (!response.ok) {
           throw new Error("Không thể tải dữ liệu khóa học");

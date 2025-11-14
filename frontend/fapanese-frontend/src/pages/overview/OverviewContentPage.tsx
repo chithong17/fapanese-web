@@ -323,7 +323,7 @@ const OverviewContentPage: React.FC = () => {
             // 3. Gọi API
             const res = await axios.post(
                 // Thay thế URL nếu API_BASE của bạn khác
-                `http://localhost:8080/fapanese/api/interview/explain-exam`,
+                `https://85e7dd680e50.ngrok-free.app/fapanese/api/interview/explain-exam`,
                 payload,
                 { headers: { Authorization: `Bearer ${token}` } }
             );

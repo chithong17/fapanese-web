@@ -63,7 +63,7 @@ const TeacherManageOverviewContentPage: React.FC = () => {
     const [formData, setFormData] = useState<any>({}); // Form data động
 
     const token = localStorage.getItem("token") || "";
-    const API_URL = "http://localhost:8080/fapanese/api";
+    const API_URL = "https://85e7dd680e50.ngrok-free.app/fapanese/api";
 
     // --- Step 1: Lấy thông tin của Part (để biết type) ---
     const fetchPartInfo = async () => {

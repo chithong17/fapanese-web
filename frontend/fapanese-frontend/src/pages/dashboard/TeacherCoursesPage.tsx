@@ -52,7 +52,7 @@ const TeacherCoursesPage: React.FC = () => {
   const fetchCourses = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:8080/fapanese/api/courses",
+        "https://85e7dd680e50.ngrok-free.app/fapanese/api/courses",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -91,13 +91,13 @@ const TeacherCoursesPage: React.FC = () => {
     try {
       if (editingCourse) {
         await axios.put(
-          `http://localhost:8080/fapanese/api/courses/${formData.id}`,
+          `https://85e7dd680e50.ngrok-free.app/fapanese/api/courses/${formData.id}`,
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } else {
         await axios.post(
-          "http://localhost:8080/fapanese/api/courses",
+          "https://85e7dd680e50.ngrok-free.app/fapanese/api/courses",
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -113,7 +113,7 @@ const TeacherCoursesPage: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (!window.confirm("Bạn có chắc muốn xóa khóa học này không?")) return;
     try {
-      await axios.delete(`http://localhost:8080/fapanese/api/courses/${id}`, {
+      await axios.delete(`https://85e7dd680e50.ngrok-free.app/fapanese/api/courses/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchCourses();

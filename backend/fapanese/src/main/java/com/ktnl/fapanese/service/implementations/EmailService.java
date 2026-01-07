@@ -5,72 +5,93 @@ import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.mail.EmailTemplate;
 import com.ktnl.fapanese.service.interfaces.IEmailService;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailException;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+// Import thư viện SendGrid
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.Content;
+import com.sendgrid.helpers.mail.objects.Email;
+import java.io.IOException;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class EmailService implements IEmailService {
-    JavaMailSender mailSender; // Spring cung cấp để gửi mail
+
+    // Không cần JavaMailSender nữa
 
     @NonFinal
     @Value("${spring.mail.username}")
-    private String from;               // Email gửi đi
+    private String fromEmail; // Email gửi đi (phải được xác thực trên SendGrid)
+
+    @NonFinal
+    @Value("${sendgrid.api.key}") // Đọc API Key từ biến môi trường Railway
+    private String sendGridApiKey;
 
 
     /**
-     * Gửi email tới người nhận
-     *
-     * @param to:              Địa chỉ email của người nhận
-     * @param emailTemplate:   Template email (enum EmailTemplate định nghĩa subject + content)
-     * @param args:            Tham số truyền vào template để format nội dung động
-     *
-     * VD:
-     * sendEmail("user@gmail.com", EmailTemplate.CONFIRM_REGISTER, "Nguyễn Văn A", "http://link-active")
-     *  -> "args[0] = Nguyễn Văn A", "args[1] = link-active"
-     *  -> emailTemplate sẽ dùng args để replace placeholder trong nội dung
+     * Gửi email tới người nhận (Đã được viết lại để dùng SendGrid API)
      */
-    public EmailResponse sendEmail(String to, EmailTemplate emailTemplate, String... args){
+    @Override
+    public EmailResponse sendEmail(String to, EmailTemplate emailTemplate, String... args) {
+
+        // 1. Chuẩn bị các đối tượng SendGrid
+        Email from = new Email(fromEmail);
+        Email toEmail = new Email(to);
+        String subject = emailTemplate.getSubject();
+        // Lấy nội dung HTML từ template của bạn
+        String htmlContent = emailTemplate.getContent(args);
+        Content content = new Content("text/html", htmlContent);
+
+        // Tạo đối tượng Mail
+        Mail mail = new Mail(from, subject, toEmail, content);
+
+        // 2. Tạo client SendGrid
+        SendGrid sg = new SendGrid(sendGridApiKey);
+        Request request = new Request();
+
         try {
-            // 1. Tạo MimeMessage (email phức tạp, hỗ trợ HTML, file đính kèm...)
-            MimeMessage message = mailSender.createMimeMessage();
-            // 2. Dùng MimeMessageHelper để set thông tin mail
-            //    - true = cho phép gửi mail có nội dung HTML hoặc multipart
-            //    - UTF-8 = mã hóa ký tự để hiển thị đúng tiếng Việt
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            // 3. Cấu hình và gửi request API
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
 
-            // 3. Gán thông tin cơ bản
-            helper.setFrom(from);
-            helper.setTo(to);
-            helper.setSubject(emailTemplate.getSubject());
-            helper.setText(emailTemplate.getContent(args), true); // true = HTML
+            // Gửi
+            Response response = sg.api(request);
 
-            // 4. Gửi mail
-            mailSender.send(message);
-            log.info("Mail sent to " + to);
+            // 4. Kiểm tra kết quả
+            // Mã 2xx (ví dụ 202 Accepted) có nghĩa là SendGrid đã nhận email thành công
+            if (response.getStatusCode() >= 200 && response.getStatusCode() < 300) {
+                log.info("SendGrid mail sent to " + to + ". Status code: " + response.getStatusCode());
+            } else {
+                // Nếu SendGrid báo lỗi (ví dụ 4xx, 5xx)
+                log.error("Failed to send mail via SendGrid. Status: " + response.getStatusCode());
+                log.error("SendGrid response body: " + response.getBody());
+                throw new AppException(ErrorCode.EMAIL_SENDER);
+            }
 
-        } catch (MessagingException | MailException e) {
-            // Trường hợp có lỗi khi tạo / gửi email
+        } catch (IOException e) {
+            // Trường hợp có lỗi mạng (không kết nối được tới API của SendGrid)
             e.printStackTrace();
-            log.info("Failed to send mail");
+            log.error("IOException when sending mail: " + e.getMessage());
             throw new AppException(ErrorCode.EMAIL_SENDER);
         }
 
+        // Trả về response thành công
         return EmailResponse.builder()
                 .to(to)
-                .subject(emailTemplate.getSubject())
+                .subject(subject)
                 .isSuccess(true)
                 .build();
     }

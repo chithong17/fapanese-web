@@ -34,7 +34,7 @@ public class QuestionService implements IQuestionService {
     @Override
     public QuestionResponse createQuestion(QuestionRequest request) {
         if (request.getLessonPartId() == null) {
-            throw new AppException(ErrorCode.INVALID_INPUT, "lessonPartId is required");
+            throw new AppException(ErrorCode.LESSON_PART_INVALID);
         }
 
         var lessonPart = lessonPartRepository.findById(request.getLessonPartId())
@@ -107,7 +107,7 @@ public class QuestionService implements IQuestionService {
     @Override
     public SubmitQuizResponse checkAndSubmitAnswers(List<UserAnswer> userAnswers) {
         if (userAnswers == null || userAnswers.isEmpty()) {
-            throw new AppException(ErrorCode.INVALID_INPUT);
+            throw new AppException(ErrorCode.INVALID_ANSWER);
         }
 
         List<QuestionCheckResponse> detailedResults = new ArrayList<>();

@@ -13,14 +13,17 @@ import com.ktnl.fapanese.service.interfaces.IAuthenticationService;
 import com.ktnl.fapanese.service.interfaces.IOtpTokenService;
 import com.ktnl.fapanese.service.interfaces.IUserService;
 import com.nimbusds.jose.JOSEException;
+import jakarta.servlet.http.Cookie;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
@@ -34,27 +37,78 @@ public class AuthenticationController {
     IOtpTokenService iOtpTokenService;
     IUserService iUserService;
 
+    @NonFinal
+    @Value("${auth.cookie.secure}")
+    boolean IS_COOKIE_SECURE;
+    @NonFinal
+    @Value("${auth.cookie.same-site}")
+    String SAME_SITE;
+    @NonFinal
+    @Value("${jwt.refreshable-duration}")
+    int REFRESHABLE_DURATION;
+
     @PostMapping("/login")
-    public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest request){
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> login(@RequestBody AuthenticationRequest request){
+        //login
         var result = iAuthenticationService.login(request);
-        return ApiResponse.<AuthenticationResponse>builder()
-                .result(result)
+
+        //Tạo Cookie chứa Refresh Token
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", result.getRefreshToken())
+                .httpOnly(true)
+                .secure(IS_COOKIE_SECURE) // Đọc từ config
+                .path("/")
+                .maxAge(REFRESHABLE_DURATION) // 30 ngày (tương ứng với logic service)
+                .sameSite(SAME_SITE)
                 .build();
+
+        //Xóa Refresh Token trong Body trả về (để client không thấy)
+        result.setRefreshToken(null);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .body(ApiResponse.<AuthenticationResponse>builder()
+                        .result(result)
+                        .build());
     }
 
     @PostMapping("/refresh")
-    public ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
-        var result = iAuthenticationService.refreshToken(request);
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> refreshToken(@CookieValue(name = "refreshToken", defaultValue = "") String requestRefreshToken) throws ParseException, JOSEException {
+        var result = iAuthenticationService.refreshToken(requestRefreshToken);
 
-        return ApiResponse.<AuthenticationResponse>builder()
-                .result(result)
+        // Tạo Cookie mới (Rotation)
+        ResponseCookie newRefreshTokenCookie = ResponseCookie.from("refreshToken", result.getRefreshToken())
+                .httpOnly(true)
+                .secure(IS_COOKIE_SECURE)
+                .path("/")
+                .maxAge(REFRESHABLE_DURATION)
+                .sameSite(SAME_SITE)
                 .build();
+
+        result.setRefreshToken(null);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, newRefreshTokenCookie.toString())
+                .body(ApiResponse.<AuthenticationResponse>builder()
+                        .result(result)
+                        .build());
     }
 
     @PostMapping("/logout")
-    public ApiResponse<Void>logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
-        iAuthenticationService.logout(request);
-        return ApiResponse.<Void>builder().build();
+    public ResponseEntity<ApiResponse<Void>>logout(@CookieValue(name = "refreshToken", defaultValue = "") String refreshToken) throws ParseException, JOSEException {
+        iAuthenticationService.logout(refreshToken);
+
+        // Xóa Cookie phía Client (Set maxAge = 0)
+        ResponseCookie cleanCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(IS_COOKIE_SECURE)
+                .path("/")
+                .maxAge(0) // Hết hạn ngay
+                .sameSite(SAME_SITE)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cleanCookie.toString())
+                .body(ApiResponse.<Void>builder().message("Đăng xuất thành công").build());
     }
 
     @PostMapping("/send-otp")

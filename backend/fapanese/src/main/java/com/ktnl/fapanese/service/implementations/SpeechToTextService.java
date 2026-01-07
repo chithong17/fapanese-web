@@ -22,15 +22,26 @@ public class SpeechToTextService {
         Path tempInput = Files.createTempFile("audio-", ".webm");
         Files.write(tempInput, inputBytes);
 
-        // 2️⃣ Convert WebM -> WAV (Giữ nguyên logic FFmpeg của bạn)
-        String ffmpegPath = "C:\\ProgramData\\chocolatey\\bin\\ffmpeg.exe"; // Hoặc đường dẫn động
+        // 2️⃣ Convert WebM -> WAV
         Path tempWav = Files.createTempFile("converted-", ".wav");
 
+        // Tự động xác định OS
+        String os = System.getProperty("os.name").toLowerCase();
+        String ffmpegPath;
+        if (os.contains("win")) {
+            // Windows path (Chocolatey)
+            ffmpegPath = "C:\\ProgramData\\chocolatey\\bin\\ffmpeg.exe";
+        } else {
+            // Linux/Mac: ffmpeg đã có trong PATH
+            ffmpegPath = "ffmpeg";
+        }
+
+        // Chạy FFmpeg convert
         Process process = new ProcessBuilder(
                 ffmpegPath, "-y",
                 "-i", tempInput.toString(),
-                "-ar", "16000", // Tần số 16kHz
-                "-ac", "1", // 1 kênh (mono)
+                "-ar", "16000", // 16kHz
+                "-ac", "1",     // Mono
                 "-f", "wav",
                 tempWav.toString()
         ).redirectErrorStream(true).start();
@@ -44,39 +55,34 @@ public class SpeechToTextService {
             throw new RuntimeException("⚠️ FFmpeg failed to convert file");
         }
 
-        // 3️⃣ Nhận diện giọng nói qua Azure (ĐÃ THAY ĐỔI)
+        // 3️⃣ Nhận diện giọng nói qua Azure
         SpeechConfig cfg = SpeechConfig.fromSubscription(
                 props.getSpeech().getKey(),
                 props.getSpeech().getRegion()
         );
         cfg.setSpeechRecognitionLanguage("ja-JP");
 
-        // Dùng để lưu trữ toàn bộ văn bản được ghép lại
         StringBuilder fullTranscript = new StringBuilder();
-
-        // Dùng để báo hiệu khi file đã được xử lý XONG
         CompletableFuture<Void> fileProcessingDone = new CompletableFuture<>();
 
         try (AudioConfig audio = AudioConfig.fromWavFileInput(tempWav.toString());
              SpeechRecognizer recognizer = new SpeechRecognizer(cfg, audio)) {
 
-            // SỰ KIỆN 1: Kích hoạt mỗi khi nhận diện được 1 cụm từ
+            // Nhận diện mỗi cụm từ
             recognizer.recognized.addEventListener((s, e) -> {
                 if (e.getResult().getReason() == ResultReason.RecognizedSpeech) {
                     log.debug("Recognized: {}", e.getResult().getText());
-                    // Ghép cụm từ vào kết quả cuối cùng
                     fullTranscript.append(e.getResult().getText()).append(" ");
                 }
-                // (Chúng ta bỏ qua NoMatch vì file vẫn đang chạy)
             });
 
-            // SỰ KIỆN 2: Kích hoạt khi hết file (session dừng lại)
+            // Khi hết file
             recognizer.sessionStopped.addEventListener((s, e) -> {
                 log.info("✅ End of audio file reached. Session stopped.");
-                fileProcessingDone.complete(null); // Báo hiệu: Đã xong
+                fileProcessingDone.complete(null);
             });
 
-            // SỰ KIỆN 3: Kích hoạt nếu có lỗi
+            // Khi có lỗi
             recognizer.canceled.addEventListener((s, e) -> {
                 log.error("STT Canceled: Reason={}", e.getReason());
                 if (e.getReason() == CancellationReason.Error) {
@@ -85,20 +91,20 @@ public class SpeechToTextService {
                             new RuntimeException("STT Error: " + e.getErrorDetails())
                     );
                 } else {
-                    fileProcessingDone.complete(null); // Vẫn hoàn thành nếu chỉ là cancel
+                    fileProcessingDone.complete(null);
                 }
             });
 
-            // 4. BẮT ĐẦU nhận diện LIÊN TỤC
+            // Bắt đầu nhận diện liên tục
             recognizer.startContinuousRecognitionAsync().get();
 
-            // 5. CHỜ cho đến khi sự kiện sessionStopped được kích hoạt
-            fileProcessingDone.get(); // Chặn luồng (block) cho đến khi fileProcessingDone.complete() được gọi
+            // Chờ cho đến khi sessionStopped
+            fileProcessingDone.get();
 
-            // 6. Dừng recognizer (dọn dẹp)
+            // Dừng recognizer
             recognizer.stopContinuousRecognitionAsync().get();
 
-            // 7. Trả về kết quả đã ghép
+            // Trả về transcript
             String result = fullTranscript.toString().trim();
             if (result.isEmpty()) {
                 throw new RuntimeException("No speech recognized (empty transcript)");

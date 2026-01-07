@@ -5,6 +5,7 @@ import com.ktnl.fapanese.dto.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -46,11 +47,26 @@ public class GlobalExceptionHandler {
         return MessageFormat.format(messageTemplate, args);
     }
 
+    @ExceptionHandler(value = AuthorizationDeniedException.class)
+    ResponseEntity<ApiResponse> handlerAuthorizationDeniedException(AuthorizationDeniedException ade){
+        ApiResponse apiResponse = new ApiResponse();
+        log.info(ade.getMessage());
+
+        // In thêm full stacktrace
+        log.error("Unhandled exception", ade);
+        apiResponse.setCode(ErrorCode.AUTHORIZATION_DENY.getCode());
+        apiResponse.setMessage(ErrorCode.AUTHORIZATION_DENY.getMessage());
+
+        return ResponseEntity
+                .status(ErrorCode.AUTHORIZATION_DENY.getStatusCode()) // trả về đúng HTTP status tương ứng
+                .body(apiResponse);
+    }
+
 
     @ExceptionHandler(value = RuntimeException.class)
     ResponseEntity<ApiResponse> handlerRuntimeException(RuntimeException re){
         ApiResponse apiResponse = new ApiResponse();
-        log.info(re.getMessage());
+        log.error(re.getMessage());
 
         // In thêm full stacktrace
         log.error("Unhandled exception", re);
@@ -59,29 +75,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
+
+
     /**
      * Handler cho lỗi validate (javax/jakarta validation)
      * Ví dụ: @Size(min=6) -> nếu vi phạm thì exception này sẽ được ném
      */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
-        Map<String, Object> errors = new HashMap<>();
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception){
+        String message = exception.getFieldError().getDefaultMessage();
 
-        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
-            ErrorCode code = mapFieldToErrorCode(fieldError.getField());
-            errors.put(fieldError.getField(), Map.of(
-                    "code", code.getCode(),
-                    "message", fieldError.getDefaultMessage()
-            ));
-        }
 
-        ErrorResponse response = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Validation failed",
-                errors
-        );
+            ApiResponse apiResponse = new ApiResponse();
+            apiResponse.setCode(ErrorCode.INVALID_INPUT.getCode()); // Tạo 1 error code chung cho lỗi input
+            apiResponse.setMessage(message); // Lấy message từ annotation @NotBlank
 
-        return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.badRequest().body(apiResponse);
+
+
     }
 
     private ErrorCode mapFieldToErrorCode(String field) {

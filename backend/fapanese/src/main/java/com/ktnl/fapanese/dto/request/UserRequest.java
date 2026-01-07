@@ -16,30 +16,30 @@ import java.time.LocalDate;
 @Builder
 @ToString
 public class UserRequest {
-    @NotBlank(message = "First name is required") // map -> ErrorCode.FIRSTNAME_REQUIRED
+    @NotBlank(message = "Tên không được để trống") // map -> ErrorCode.FIRSTNAME_REQUIRED
     private String firstName;
 
-    @NotBlank(message = "Last name is required") // map -> ErrorCode.LASTNAME_REQUIRED
+    @NotBlank(message = "Họ không được để trống") // map -> ErrorCode.LASTNAME_REQUIRED
     private String lastName;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format") // map -> ErrorCode.EMAIL_INVALID
+    @NotBlank(message = "Email không được để trống")
+    @Email(message = "Email không hợp lệ") // map -> ErrorCode.EMAIL_INVALID
     private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, max = 100, message = "Password must be at least 8 characters") // map -> ErrorCode.PASSWORD_INVALID
+    @NotBlank(message = "Mật khẩu không được để trống")
+    @Size(min = 8, max = 100, message = "Mật khẩu phải có ít nhất kí tự") // map -> ErrorCode.PASSWORD_INVALID
     private String password;
 
-    @NotBlank(message = "Role is required") // map -> ErrorCode.ROLE_REQUIRED
+    @NotBlank(message = "Role không được để trống") // map -> ErrorCode.ROLE_REQUIRED
     private String  role;
 
     private String expertise;
 
     private String bio;
 
-    @Past(message = "Date of birth must be in the past") // map -> ErrorCode.DOB_INVALID
+    @Past(message = "Ngày sinh không hợp lệ") // map -> ErrorCode.DOB_INVALID
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dateOfBirth;
+            private LocalDate dateOfBirth;
 
     private String campus;
 }

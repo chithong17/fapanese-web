@@ -134,7 +134,7 @@ public class MaterialService implements IMaterialService {
         Material material = materialRepository.findById(materialId)
                 .orElseThrow(() -> new AppException(ErrorCode.MATERIAL_NOT_FOUND));
         ClassCourse classCourse = classCourseRepository.findById(classCourseId)
-                .orElseThrow(() -> new AppException(ErrorCode.CLASS_COURSE_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.CLASS_NOT_FOUND));
 
         ClassMaterial classMaterial = ClassMaterial.builder()
                 .id(new ClassMaterialId(classCourseId, materialId))

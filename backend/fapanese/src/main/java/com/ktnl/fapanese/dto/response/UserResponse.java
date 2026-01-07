@@ -20,6 +20,7 @@ public class UserResponse {
     private LocalDate dateOfBirth;
     private String firstName;
     private String lastName;
+    private String avtUrl;
     // student specific
     private String campus;
     // lecturer specific

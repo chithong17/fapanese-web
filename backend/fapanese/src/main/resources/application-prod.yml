@@ -1,0 +1,84 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+  servlet:
+    context-path: /fapanese
+
+spring:
+  datasource:
+    url: ${DBMS_CONNECTION}
+    username: ${DBMS_USERNAME}
+    password: ${DBMS_PASSWORD}
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: false
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          debug: true
+
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+
+jwt:
+  signerKey: ${JWT_SIGNER_KEY}
+  valid-duration: 900 # in second (15 minutes)
+  refreshable-duration: 2592000 # in seconds (30 days)
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME}
+  api-key: ${CLOUDINARY_API_KEY}
+  api-secret: ${CLOUDINARY_API_SECRET}
+
+azure:
+  speech:
+    key: ${AZURE_SPEECH_KEY}
+    region: ${AZURE_SPEECH_REGION}
+  openai:
+    endpoint: ${AZURE_OPENAI_ENDPOINT}
+    key: ${AZURE_OPENAI_KEY}
+    deployment-name: ${AZURE_OPENAI_DEPLOYMENT}
+
+admin-account:
+  email: ${FAPANESE_ADMIN_EMAIL}
+  password: ${FAPANESE_ADMIN_PASSWORD}
+
+sendgrid:
+  api:
+    key: ${SENDGRID_API_KEY} # Sẽ đọc biến môi trường tên SENDGRID_API_KEY
+
+
+logging:
+  level:
+    org.springframework.security: INFO
+
+app:
+  cors:
+    allowed-origins: ${FRONTEND_URL} # Ví dụ: https://my-website.vercel.app
+
+auth:
+  cookie:
+    secure: true        # BẮT BUỘC TRUE (Vì Prod chạy HTTPS)
+    same-site: None     # BẮT BUỘC NONE (Nếu FE và BE khác domain)

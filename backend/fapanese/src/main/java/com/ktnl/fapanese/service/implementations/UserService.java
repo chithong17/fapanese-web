@@ -72,13 +72,13 @@ public class UserService implements IUserService {
         if("LECTURER".equalsIgnoreCase(userRequest.getRole())){
             Lecturer lecturer = mapper.toLecturer(userRequest);
             lecturer.setUser(user);      // Quan hệ từ Lecturer -> User
-            lecturer.setAvtUrl("https://drive.google.com/file/d/1KZJdE58UiYN8UjoZ0y7wUw0Ptge8FZ0i/view?usp=drive_link");
+            lecturer.setAvtUrl("https://res.cloudinary.com/dsfpeioth/image/upload/v1767266200/lecturer_avatar_w41c9l.png");
             user.setTeacher(lecturer);   // Quan hệ ngược lại từ User -> Lecturer
         }
         else if(UserRole.STUDENT.name().equalsIgnoreCase(userRequest.getRole())){
             Student student = mapper.toStudent(userRequest);
             student.setUser(user);       // Quan hệ từ Student -> User
-            student.setAvtUrl("https://drive.google.com/file/d/1KZJdE58UiYN8UjoZ0y7wUw0Ptge8FZ0i/view?usp=drive_link");
+            student.setAvtUrl("https://res.cloudinary.com/dsfpeioth/image/upload/v1767265678/student_avatar_xncvkx.png");
             user.setStudent(student);    // Quan hệ ngược lại từ User -> Student
         }
 
@@ -113,7 +113,8 @@ public class UserService implements IUserService {
             builder.dateOfBirth(user.getStudent().getDateOfBirth())
                     .campus(user.getStudent().getCampus())
                     .firstName(user.getStudent().getFirstName())
-                    .lastName(user.getStudent().getLastName());
+                    .lastName(user.getStudent().getLastName())
+                    .avtUrl(user.getStudent().getAvtUrl());
         }
 
         // Nếu là lecturer
@@ -122,7 +123,8 @@ public class UserService implements IUserService {
                     .expertise(user.getTeacher().getExpertise())
                     .bio(user.getTeacher().getBio())
                     .firstName(user.getTeacher().getFirstName())
-                    .lastName(user.getTeacher().getLastName());
+                    .lastName(user.getTeacher().getLastName())
+                    .avtUrl(user.getTeacher().getAvtUrl());
         }
 
         return builder.build();

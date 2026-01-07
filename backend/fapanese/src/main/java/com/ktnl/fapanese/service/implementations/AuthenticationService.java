@@ -2,19 +2,18 @@ package com.ktnl.fapanese.service.implementations;
 
 
 import com.ktnl.fapanese.dto.request.AuthenticationRequest;
-import com.ktnl.fapanese.dto.request.LogoutRequest;
-import com.ktnl.fapanese.dto.request.RefreshRequest;
 import com.ktnl.fapanese.dto.response.AuthenticationResponse;
-import com.ktnl.fapanese.entity.InvalidatedToken;
+import com.ktnl.fapanese.entity.RefreshToken;
 import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
-import com.ktnl.fapanese.repository.InvalidatedTokenRepository;
+import com.ktnl.fapanese.repository.RefreshTokenRepository;
 import com.ktnl.fapanese.repository.UserRepository;
 import com.ktnl.fapanese.service.interfaces.IAuthenticationService;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -40,31 +39,34 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService implements IAuthenticationService {
     UserRepository userRepository;
-    InvalidatedTokenRepository invalidatedTokenRepository;
     TokenValidationService tokenValidationService;
+    RefreshTokenRepository refreshTokenRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}") // Lấy khóa bí mật từ application.properties (dùng để ký và verify JWT)
     protected String SIGNER_KEY;
 
     @NonFinal
-    @Value("${jwt.valid-duration}") // Lấy khóa bí mật từ application.properties (dùng để ký và verify JWT)
+    @Value("${jwt.valid-duration}")
     protected long VALID_DURATION;
+
+    @NonFinal
+    @Value("${jwt.refreshable-duration}")
+    protected long REFRESHABLE_DURATION;
 
 
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Transactional
     public AuthenticationResponse login(AuthenticationRequest request){
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if(user.getStatus() == 0)
             throw new AppException(ErrorCode.USER_NOT_VERIFY_EMAIL);
-
         if(user.getStatus() == 1)
             throw new AppException(ErrorCode.USER_NOT_ISACTIVED);
-
         if(user.getStatus() == 2)
             throw new AppException(ErrorCode.USER_NEED_ADMIN_APPROVAL);
 
@@ -74,54 +76,80 @@ public class AuthenticationService implements IAuthenticationService {
         var authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword_hash());
 
         //neu sai nem ra exception
-        if(!authenticated){
-            log.info("AAAAAAAAAAAAAAAAAAAAA");
-            throw new AppException(ErrorCode.AUTHENTICATED);
-
-        }
+        if(!authenticated)
+            throw new AppException(ErrorCode.LOGIN_FAIL);
 
         //neu dung generate token
-        var token = generateToken(user);
+        var accessToken = generateAccessToken(user);
+        var refreshToken = generateRefreshToken(user);
 
         return AuthenticationResponse.builder()
-                .token(token)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken.getToken())
                 .authenticated(true)
                 .build();
     }
 
-    public AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException {
-        //kiểm tra xem token còn hiệu lực ko (kiểm tra trong tg refreshDuration)
-        //nếu ko còn thì verifyToken ném ra Exception Unthenticated nên sẽ stop hàm refreshToken()
-        //còn nếu hàm vẫn đc tiếp tục chạy thì token vẫn trong tg refresh
-        var signedToken = tokenValidationService.verifyToken(request.getToken(), true);
+    @Transactional
+    public AuthenticationResponse refreshToken(String requestRefreshToken) throws ParseException, JOSEException {
+        if (requestRefreshToken.isEmpty())
+            throw new AppException(ErrorCode.AUTHENTICATED);
 
-        //vô hiệu hóa token cũ
-        var ijt = signedToken.getJWTClaimsSet().getJWTID();
-        var expiryTime = signedToken.getJWTClaimsSet().getExpirationTime();
 
-        //đưa vào blacklist (xóa token cũ)
-        invalidatedTokenRepository.save(InvalidatedToken.builder()
-                        .id(ijt)
-                        .expiryTime(expiryTime)
-                .build());
+        // B1: Tìm token trong DB
+        var storedToken = refreshTokenRepository.findByToken(requestRefreshToken)
+                .orElseThrow(() -> new AppException(ErrorCode.AUTHENTICATED)); // Token không tồn tại
 
-        //tạo token mới
-        var email = signedToken.getJWTClaimsSet().getSubject();
-        var user = userRepository.findByEmail(email).orElseThrow(() ->
-                new AppException(ErrorCode.USER_NOT_EXISTED));
+        // B2: Check Hack (Token đã dùng rồi mà đem ra xài lại?)
+        if (storedToken.isUsed()) {
+            // Xóa tất cả token của user này để bắt đăng nhập lại
+            refreshTokenRepository.deleteAllByUser(storedToken.getUser());
+            log.warn("BÁO ĐỘNG: REFRESH TOKEN ĐƯỢC SỬ DỤNG LẠI");
+            throw new AppException(ErrorCode.TOKEN_REUSED); // Hoặc tạo ErrorCode.TOKEN_REUSED
+        }
 
-        var newToken = generateToken(user);
+        // B3: Check Hết hạn hoặc đã Logout
+        if (storedToken.getExpiryDate().isBefore(Instant.now()) || storedToken.isRevoked()) {
+            throw new AppException(ErrorCode.EXPIRED_SESSION);
+        }
 
+        // B4: Đánh dấu token cũ là ĐÃ DÙNG (Rotation)
+        storedToken.setUsed(true);
+        refreshTokenRepository.save(storedToken);
+
+        // B5: Tạo cặp token mới
+        var user = storedToken.getUser();
+        var newAccessToken = generateAccessToken(user);
+        var newRefreshToken = generateRefreshToken(user);
+
+        // B6: Trả về cặp mới
         return AuthenticationResponse.builder()
-                .token(newToken)
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken.getToken())
                 .authenticated(true)
                 .build();
+    }
+
+
+
+
+    @Transactional
+    public void logout(String refreshToken) throws ParseException, JOSEException {
+        if (refreshToken != null) {
+            var storedToken = refreshTokenRepository.findByToken(refreshToken)
+                    .orElse(null);
+
+            if (storedToken != null) {
+                storedToken.setRevoked(true);
+                refreshTokenRepository.save(storedToken);
+            }
+        }
     }
 
     /**
      * Sinh JWT token cho user
      */
-    private String generateToken(User user){
+    private String generateAccessToken(User user){
         // Header của JWT: sử dụng thuật toán HS512
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
@@ -130,7 +158,7 @@ public class AuthenticationService implements IAuthenticationService {
                 .subject(user.getEmail()) // định danh của token
                 .issuer("ktnl.com") // nơi phát hành token
                 .issueTime(new Date()) // thời gian phát hành
-                .expirationTime(new Date(Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli())) // hết hạn sau 1h
+                .expirationTime(new Date(Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli())) // hết hạn sau 15p
                 .jwtID(UUID.randomUUID().toString()) // id ngẫu nhiên cho token
                 .claim("scope", buildScope(user)) // thêm claim "scope" (chứa role và permission)
                 .build();
@@ -150,23 +178,15 @@ public class AuthenticationService implements IAuthenticationService {
 
     }
 
-
-    public void logout(LogoutRequest request) throws ParseException, JOSEException {
-        try {
-            var signedJWT = tokenValidationService.verifyToken(request.getToken(), true);
-
-            var jit = signedJWT.getJWTClaimsSet().getJWTID();
-            Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-
-            InvalidatedToken invalidatedToken = InvalidatedToken
-                    .builder()
-                    .id(jit)
-                    .expiryTime(expiryTime)
-                    .build();
-            invalidatedTokenRepository.save(invalidatedToken);
-        } catch (AppException e) {
-            log.info("Token already expired");
-        }
+    private RefreshToken generateRefreshToken(User user) {
+        RefreshToken refreshToken = RefreshToken.builder()
+                .user(user)
+                .token(UUID.randomUUID().toString())
+                .expiryDate(Instant.now().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS))
+                .isRevoked(false)
+                .isUsed(false)
+                .build();
+        return refreshTokenRepository.save(refreshToken);
     }
 
 

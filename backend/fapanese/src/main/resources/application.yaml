@@ -7,9 +7,10 @@ server:
 spring:
   datasource:
     url: ${DBMS_CONNECTION}
-    driverClassName: "com.mysql.cj.jdbc.Driver"
     username: ${DBMS_USERNAME}
     password: ${DBMS_PASSWORD}
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+
 
   jpa:
     hibernate:
@@ -36,8 +37,8 @@ spring:
 
 jwt:
   signerKey: ${JWT_SIGNER_KEY}
-  valid-duration:  3600 # in second
-  refreshable-duration: 36000 # in seconds
+  valid-duration:  900 # in second (15 minutes)
+  refreshable-duration: 2592000 # in seconds (30 days)
 
 springdoc:
   swagger-ui:
@@ -63,7 +64,20 @@ admin-account:
   email: ${FAPANESE_ADMIN_EMAIL}
   password: ${FAPANESE_ADMIN_PASSWORD}
 
+sendgrid:
+  api:
+    key: ${SENDGRID_API_KEY} # Sẽ đọc biến môi trường tên SENDGRID_API_KEY
+
 
 logging:
   level:
     org.springframework.security: DEBUG
+
+app:
+  cors:
+    allowed-origins: "http://localhost:5173"
+
+auth:
+  cookie:
+    secure: true
+    same-site: none

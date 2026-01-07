@@ -26,9 +26,6 @@ public class CourseService implements ICourseService {
 
         Course newCourse = courseMapper.toCourse(request);
 
-         if (newCourse.getCourseName() == null || newCourse.getCourseName().trim().isEmpty()) {
-             throw new AppException(ErrorCode.INVALID_COURSE_NAME);
-         }
 
         Course savedCourse = courseRepository.save(newCourse);
 

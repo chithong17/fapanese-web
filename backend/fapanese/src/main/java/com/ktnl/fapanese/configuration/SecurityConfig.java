@@ -1,6 +1,7 @@
 package com.ktnl.fapanese.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,14 +26,18 @@ import java.util.Collections;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    // Đảm bảo endpoint này chính xác
+    @Value("${app.cors.allowed-origins}")
+    private String allowedOrigins;
+
     private final String[] PUBLIC_POST_ENDPOINT = {
             "/api/auth/login",
             "/api/users/register",
             "/api/auth/send-otp",
             "/api/auth/verify-otp",
             "/api/auth/forgot-password",
-            "/api/auth/reset-password"
+            "/api/auth/reset-password",
+            "/api/auth/logout",
+            "/api/auth/refresh"
     };
 
     private final String[] PUBLIC_GET_ENDPOINT = {
@@ -103,7 +108,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Cho phép tất cả origin
-        configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
+        configuration.setAllowedOriginPatterns(Collections.singletonList(allowedOrigins));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));

@@ -31,6 +31,10 @@ public interface UserMapper {
             target = "lastName"
     )
     @Mapping(
+            expression = "java(user.getStudent() != null ? user.getStudent().getAvtUrl() : (user.getTeacher() != null ? user.getTeacher().getAvtUrl() : null))",
+            target = "avtUrl"
+    )
+    @Mapping(
             expression = "java(user.getStudent() != null ? user.getStudent().getDateOfBirth() : (user.getTeacher() != null ? user.getTeacher().getDateOfBirth() : null))",
             target = "dateOfBirth"
     )

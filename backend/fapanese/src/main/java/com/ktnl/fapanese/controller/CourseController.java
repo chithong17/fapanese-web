@@ -4,6 +4,7 @@ import com.ktnl.fapanese.dto.request.CourseRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.CourseResponse;
 import com.ktnl.fapanese.service.interfaces.ICourseService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,7 @@ public class CourseController {
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('LECTURER')")
     @PutMapping("/{id}")
-    public ApiResponse<CourseResponse> updateCourse(@PathVariable("id") Long id, @RequestBody CourseRequest request) {
+    public ApiResponse<CourseResponse> updateCourse(@PathVariable("id") Long id, @RequestBody @Valid CourseRequest request) {
         CourseResponse result = icourseService.updateCourse(id, request);
         return ApiResponse.<CourseResponse>builder()
                 .result(result)
@@ -50,7 +51,7 @@ public class CourseController {
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('LECTURER')")
     @PostMapping
-    public ApiResponse<CourseResponse> createCourse(@RequestBody CourseRequest request) {
+    public ApiResponse<CourseResponse> createCourse(@RequestBody @Valid CourseRequest request) {
         CourseResponse result = icourseService.createCourse(request);
         return ApiResponse.<CourseResponse>builder()
                 .result(result)

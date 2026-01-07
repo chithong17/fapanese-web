@@ -103,6 +103,7 @@ public class TokenValidationService {
         if(!(verified && expiryTime.after(new Date())))
             throw new AppException(ErrorCode.AUTHENTICATED);
 
+
         //từ từ update sau phần logout refresh
         //...
         ///

@@ -518,7 +518,7 @@ class QuestionServiceTest {
                 AppException.class,
                 () -> questionService.checkAndSubmitAnswers(null)
         );
-        assertEquals(ErrorCode.INVALID_INPUT, ex.getErrorCode());
+        assertEquals(ErrorCode.INVALID_ANSWER, ex.getErrorCode());
     }
 
     @Test

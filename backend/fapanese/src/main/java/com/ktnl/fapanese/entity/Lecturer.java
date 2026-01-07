@@ -20,7 +20,7 @@ public class Lecturer {
     String firstName;
     String lastName;
     String expertise;
-    String avtUrl;
+    String avtUrl;  
     @Column(columnDefinition = "TEXT")
     private String bio;
     @JsonFormat(pattern = "yyyy-MM-dd")

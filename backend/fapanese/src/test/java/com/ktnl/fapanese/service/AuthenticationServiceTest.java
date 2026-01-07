@@ -1,16 +1,13 @@
 package com.ktnl.fapanese.service;
 
 import com.ktnl.fapanese.dto.request.AuthenticationRequest;
-import com.ktnl.fapanese.dto.request.LogoutRequest;
 import com.ktnl.fapanese.dto.request.RefreshRequest;
 import com.ktnl.fapanese.dto.response.AuthenticationResponse;
-import com.ktnl.fapanese.entity.InvalidatedToken;
 import com.ktnl.fapanese.entity.Permission;
 import com.ktnl.fapanese.entity.Role;
 import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
-import com.ktnl.fapanese.repository.InvalidatedTokenRepository;
 import com.ktnl.fapanese.repository.UserRepository;
 import com.ktnl.fapanese.service.implementations.AuthenticationService;
 import com.ktnl.fapanese.service.implementations.TokenValidationService;

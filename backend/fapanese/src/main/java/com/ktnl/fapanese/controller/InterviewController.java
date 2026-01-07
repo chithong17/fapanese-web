@@ -22,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/interview")
-@CrossOrigin(origins = {"http://localhost:5173"}) // chỉnh theo FE
+@CrossOrigin(origins = {"http://localhost:5173", "https://fapanese-edu.netlify.app"}) // chỉnh theo FE
 @RequiredArgsConstructor
 @Slf4j
 public class InterviewController {

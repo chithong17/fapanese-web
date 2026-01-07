@@ -94,7 +94,7 @@ public class StudentController {
         }
         String contentType = file.getContentType();
         if (contentType == null || (!contentType.equals("application/vnd.ms-excel") && !contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))) {
-            throw new AppException(ErrorCode.INVALID_INPUT, "Định dạng file không hợp lệ (.xls, .xlsx)."); // Message cụ thể hơn
+            throw new AppException(ErrorCode.FILE_FORMAT_INVALID, "Định dạng file không hợp lệ (.xls, .xlsx)."); // Message cụ thể hơn
         }
 
         // --- Gọi ExcelUploadService ---

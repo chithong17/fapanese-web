@@ -29,5 +29,6 @@ public class CreateStudentRequest {
     private LocalDate dateOfBirth;
 
     private String campus;
+    private int status;
 
 }

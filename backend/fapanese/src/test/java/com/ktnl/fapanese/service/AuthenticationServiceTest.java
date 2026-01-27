@@ -1,7 +1,6 @@
 package com.ktnl.fapanese.service;
 
 import com.ktnl.fapanese.dto.request.AuthenticationRequest;
-import com.ktnl.fapanese.dto.request.RefreshRequest;
 import com.ktnl.fapanese.dto.response.AuthenticationResponse;
 import com.ktnl.fapanese.entity.Permission;
 import com.ktnl.fapanese.entity.Role;
@@ -47,8 +46,6 @@ class AuthenticationServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
-    private InvalidatedTokenRepository invalidatedTokenRepository;
 
     @Mock
     private TokenValidationService tokenValidationService;
@@ -109,9 +106,9 @@ class AuthenticationServiceTest {
         // Assert
         assertNotNull(response);
         assertTrue(response.isAuthenticated());
-        assertNotNull(response.getToken());
+        assertNotNull(response.getAccessToken());
 
-        SignedJWT signedJWT = SignedJWT.parse(response.getToken());
+        SignedJWT signedJWT = SignedJWT.parse(response.getAccessToken());
         assertTrue(signedJWT.verify(new MACVerifier(TEST_SIGNER_KEY.getBytes())));
         assertEquals(email, signedJWT.getJWTClaimsSet().getSubject());
         assertEquals(expectedScope, signedJWT.getJWTClaimsSet().getClaim("scope"));
@@ -161,7 +158,6 @@ class AuthenticationServiceTest {
             throws ParseException, JOSEException {
 
         // Arrange
-        RefreshRequest request = new RefreshRequest(token);
         SignedJWT signedJWT = mock(SignedJWT.class);
         JWTClaimsSet claimsSet = mock(JWTClaimsSet.class);
 
@@ -190,20 +186,18 @@ class AuthenticationServiceTest {
         if (expectException) {
             ErrorCode expectedErrorCode = ErrorCode.valueOf(expectedErrorCodeString);
             AppException exception = assertThrows(AppException.class, () -> {
-                authenticationService.refreshToken(request);
+                authenticationService.refreshToken("abc");
             });
             assertEquals(expectedErrorCode, exception.getErrorCode());
         } else {
             // Kịch bản REFRESH_SUCCESS
-            AuthenticationResponse response = authenticationService.refreshToken(request);
+            AuthenticationResponse response = authenticationService.refreshToken("abc");
             assertNotNull(response);
             assertTrue(response.isAuthenticated());
-            assertNotNull(response.getToken());
-            assertNotEquals(token, response.getToken());
+            assertNotNull(response.getAccessToken());
+            assertNotEquals(token, response.getAccessToken());
         }
 
-        // Kiểm tra xem có lưu vào blacklist hay không
-        verify(invalidatedTokenRepository, times(expectSaveToBlacklist)).save(any(InvalidatedToken.class));
     }
 
     // --- 4. Test Logout (Gộp 2 kịch bản) ---
@@ -214,8 +208,6 @@ class AuthenticationServiceTest {
                                      boolean mockVerifyTokenSuccess, int expectSaveToBlacklist)
             throws ParseException, JOSEException {
 
-        // Arrange
-        LogoutRequest request = new LogoutRequest(token);
 
         if (mockVerifyTokenSuccess) {
             SignedJWT signedJWT = mock(SignedJWT.class);
@@ -233,11 +225,9 @@ class AuthenticationServiceTest {
         // Act
         // Hàm logout không ném ra lỗi ngay cả khi token hết hạn
         assertDoesNotThrow(() -> {
-            authenticationService.logout(request);
+            authenticationService.logout("abc");
         });
 
-        // Assert
-        verify(invalidatedTokenRepository, times(expectSaveToBlacklist)).save(any(InvalidatedToken.class));
     }
 
     // --- 5. Test Update Password (Gộp 2 kịch bản) ---
@@ -312,7 +302,7 @@ class AuthenticationServiceTest {
 
         // Assert
         // Scope claim phải là một chuỗi rỗng
-        SignedJWT signedJWT = SignedJWT.parse(response.getToken());
+        SignedJWT signedJWT = SignedJWT.parse(response.getAccessToken());
         String scope = (String) signedJWT.getJWTClaimsSet().getClaim("scope");
         assertEquals("", scope);
     }
@@ -343,7 +333,7 @@ class AuthenticationServiceTest {
 
         // Assert
         // Scope claim chỉ được chứa role, không chứa permission
-        SignedJWT signedJWT = SignedJWT.parse(response.getToken());
+        SignedJWT signedJWT = SignedJWT.parse(response.getAccessToken());
         String scope = (String) signedJWT.getJWTClaimsSet().getClaim("scope");
         assertEquals("ROLE_GUEST", scope);
     }

@@ -2,6 +2,7 @@ package com.ktnl.fapanese.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.Column;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -26,4 +27,5 @@ public class UserResponse {
     // lecturer specific
     private String expertise;
     private String bio;
+    private int status; 
 }

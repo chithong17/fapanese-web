@@ -108,7 +108,7 @@ public class StudentService implements IStudentService {
     @Override
     public UserResponse updateStudent(String email, CreateStudentRequest studentUpdateRequest) {
         User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_ISACTIVED));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         validateStudentRole(user);
 
@@ -117,6 +117,7 @@ public class StudentService implements IStudentService {
         user.getStudent().setLastName(studentUpdateRequest.getLastName());
         user.getStudent().setCampus(studentUpdateRequest.getCampus());
         user.getStudent().setDateOfBirth(studentUpdateRequest.getDateOfBirth());
+        user.setStatus(studentUpdateRequest.getStatus());
 
         userRepo.save(user);
         return mapper.toUserResponse(user);

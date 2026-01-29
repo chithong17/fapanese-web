@@ -3,6 +3,7 @@ package com.ktnl.fapanese.service.interfaces;
 import com.ktnl.fapanese.dto.request.CreateStudentRequest;
 import com.ktnl.fapanese.dto.response.CreateStudentAccountResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
+import org.springframework.data.domain.Page;
 // import org.springframework.security.access.prepost.PreAuthorize; // Có thể xóa import này
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface IStudentService {
 
     CreateStudentAccountResponse createStudentAccount(CreateStudentRequest student);
 
-    List<UserResponse> getAllStudent();
+    Page<UserResponse> getAllStudent(String campus, Integer status, String keyword, int pageNo, int pageSize, String sortBy, String sortDir);
 
     UserResponse getStudentByEmail(String email);
 

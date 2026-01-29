@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,11 +43,19 @@ public class StudentController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'LECTURER')")
     @GetMapping
-    public ApiResponse<List<UserResponse>> getAllStudent(){
-        List<UserResponse> list = iStudentService.getAllStudent();
+    public ApiResponse<Page<UserResponse>> getAllStudent(
+            @RequestParam(required = false) String campus,
+            @RequestParam(required = false) Integer status,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            @RequestParam(defaultValue = "id") String sortBy, // Mặc định sort theo ID
+            @RequestParam(defaultValue = "asc") String sortDir
+    ){
+        var result = iStudentService.getAllStudent(campus, status, keyword, page, size, sortBy, sortDir);
 
-        return ApiResponse.<List<UserResponse>>builder()
-                .result(list)
+        return ApiResponse.<Page<UserResponse>>builder()
+                .result(result)
                 .build();
     }
 

@@ -13,11 +13,16 @@ import com.ktnl.fapanese.mail.AccountCreatedEmailTemplate;
 import com.ktnl.fapanese.mapper.UserMapper;
 import com.ktnl.fapanese.repository.RoleRepository;
 import com.ktnl.fapanese.repository.UserRepository;
+import com.ktnl.fapanese.service.interfaces.IEmailService;
 import com.ktnl.fapanese.service.interfaces.IStudentService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +41,7 @@ public class StudentService implements IStudentService {
     RoleRepository roleRepo;
     UserMapper mapper;
     PasswordEncoder passwordEncoder;
-    EmailService emailService;
+    IEmailService emailService;
 
     @Override
     public CreateStudentAccountResponse createStudentAccount(CreateStudentRequest createStudentRequest) {
@@ -59,9 +64,10 @@ public class StudentService implements IStudentService {
 
         // 3. Chỉ cần LƯU USER MỘT LẦN DUY NHẤT ở cuối cùng
         // Do có CascadeType.ALL, JPA sẽ tự động lưu cả Lecturer/Student liên quan
+        emailService.sendEmail(createStudentRequest.getEmail(), new AccountCreatedEmailTemplate(), createStudentRequest.getEmail(), randomPassword);
+
         User savedUser = userRepo.save(user);
 
-        emailService.sendEmail(savedUser.getEmail(), new AccountCreatedEmailTemplate(), savedUser.getEmail(), randomPassword);
 
         // 4. Map từ đối tượng đã được lưu (có đầy đủ thông tin) và trả về
         return mapper.toStudentRegisterRequest(createStudentRequest);
@@ -87,14 +93,15 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public List<UserResponse> getAllStudent() {
-        List<User> userList = userRepo.findByRoles_RoleName("STUDENT");
-        List<UserResponse> userResponseList = new ArrayList<>();
-        for(User x : userList){
-            userResponseList.add(mapper.toUserResponse(x));
-        }
-        return userResponseList;
-    }
+    public Page<UserResponse> getAllStudent(String campus, Integer status, String keyword, int pageNo, int pageSize, String sortBy, String sortDir) {
+        // 1. Tạo đối tượng Sort
+        // Kiểm tra xem chiều là ASC hay DESC để tạo Sort tương ứng
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<User> userPage = userRepo.getStudents("STUDENT", campus, status, keyword, pageable);
+        return userPage.map(mapper::toUserResponse);    }
 
     @Override
     public UserResponse getStudentByEmail(String email) {

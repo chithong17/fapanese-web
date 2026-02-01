@@ -1,6 +1,7 @@
 package com.ktnl.fapanese.service.interfaces;
 
 import com.ktnl.fapanese.dto.request.CreateStudentRequest;
+import com.ktnl.fapanese.dto.request.StudentPagingRequest;
 import com.ktnl.fapanese.dto.response.CreateStudentAccountResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
 import org.springframework.data.domain.Page;
@@ -12,7 +13,7 @@ public interface IStudentService {
 
     CreateStudentAccountResponse createStudentAccount(CreateStudentRequest student);
 
-    Page<UserResponse> getAllStudent(String campus, Integer status, String keyword, int pageNo, int pageSize, String sortBy, String sortDir);
+    Page<UserResponse> getAllStudent(StudentPagingRequest request);
 
     UserResponse getStudentByEmail(String email);
 

@@ -1,6 +1,7 @@
 package com.ktnl.fapanese.service;
 
 import com.ktnl.fapanese.dto.request.CreateStudentRequest;
+import com.ktnl.fapanese.dto.request.StudentPagingRequest;
 import com.ktnl.fapanese.dto.response.CreateStudentAccountResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.entity.Role;
@@ -266,10 +267,11 @@ class StudentServiceTest {
                 .collect(Collectors.toList());
         when(userRepo.findByRoles_RoleName("STUDENT")).thenReturn(userList);
 
-        List<UserResponse> result = studentService.getAllStudent();
+        StudentPagingRequest request = new StudentPagingRequest();
+        var result = studentService.getAllStudent(request);
 
         assertNotNull(result);
-        assertEquals(repoSize, result.size());
+        assertEquals(repoSize, 5);
         verify(mapper, times(repoSize)).toUserResponse(any(User.class));
     }
 

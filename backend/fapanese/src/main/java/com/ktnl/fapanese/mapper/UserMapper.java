@@ -1,7 +1,9 @@
 package com.ktnl.fapanese.mapper;
 
+import com.ktnl.fapanese.dto.request.CreateLecturerRequest;
 import com.ktnl.fapanese.dto.request.CreateStudentRequest;
 import com.ktnl.fapanese.dto.request.UserRequest;
+import com.ktnl.fapanese.dto.response.CreateLecturerAccountResponse;
 import com.ktnl.fapanese.dto.response.CreateStudentAccountResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.entity.Lecturer;
@@ -20,6 +22,7 @@ public interface UserMapper {
     Student toStudent(CreateStudentRequest request);
 
     Lecturer toLecturer(UserRequest request);
+    Lecturer toLecturer(CreateLecturerRequest request);
 
 
     @Mapping(
@@ -54,4 +57,9 @@ public interface UserMapper {
 
 
     CreateStudentAccountResponse toStudentRegisterRequest(CreateStudentRequest createStudentRequest);
+
+    User toUser(CreateLecturerRequest createLecturerRequest);
+
+    CreateLecturerAccountResponse toLecturerRegisterRequest(CreateLecturerRequest createLecturerRequest);
+
 }

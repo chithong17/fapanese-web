@@ -35,4 +35,22 @@ public interface UserRepository extends JpaRepository<User,String> {
             @Param("keyword") String keyword,
             Pageable pageable
     );
+
+    @Query("SELECT u FROM User u " +
+            "JOIN u.roles r " +
+            "LEFT JOIN u.teacher s " + // <--- 1. JOIN với bảng Student, đặt alias là 's'
+            "WHERE r.roleName = :roleName " +
+            "AND (:expertise IS NULL OR s.expertise = :expertise) " + // <--- 2. Dùng 's.campus'
+            "AND (:status IS NULL OR u.status = :status) " + // <--- status vẫn nằm trong User (u)
+            "AND (:keyword IS NULL OR :keyword = '' OR " +
+            "     (LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " + // email nằm trong User
+            "      LOWER(s.firstName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " + // <--- 3. Dùng 's.firstName'
+            "      LOWER(s.lastName) LIKE LOWER(CONCAT('%', :keyword, '%'))))")
+    Page<User> getLecturers(
+            @Param("roleName") String roleName,
+            @Param("expertise") String expertise,
+            @Param("status") Integer status,
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
 }

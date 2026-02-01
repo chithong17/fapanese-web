@@ -1,6 +1,7 @@
 package com.ktnl.fapanese.service.implementations;
 
 import com.ktnl.fapanese.dto.request.CreateStudentRequest;
+import com.ktnl.fapanese.dto.request.StudentPagingRequest;
 import com.ktnl.fapanese.dto.response.CreateStudentAccountResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.entity.Role;
@@ -93,15 +94,25 @@ public class StudentService implements IStudentService {
     }
 
     @Override
-    public Page<UserResponse> getAllStudent(String campus, Integer status, String keyword, int pageNo, int pageSize, String sortBy, String sortDir) {
-        // 1. Tạo đối tượng Sort
-        // Kiểm tra xem chiều là ASC hay DESC để tạo Sort tương ứng
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
-                ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<User> userPage = userRepo.getStudents("STUDENT", campus, status, keyword, pageable);
-        return userPage.map(mapper::toUserResponse);    }
+    public Page<UserResponse> getAllStudent(StudentPagingRequest request) {
+
+        // 1. Lấy Pageable trực tiếp từ hàm tiện ích trong BaseSearchRequest
+        // (Không cần viết logic if-else check sortDir ở đây nữa)
+        Pageable pageable = request.getPageable();
+
+        // 2. Gọi Repo
+        // Lấy các tham số filter từ getter của request
+        Page<User> userPage = userRepo.getStudents(
+                "STUDENT",
+                request.getCampus(),
+                request.getStatus(),
+                request.getKeyword(),
+                pageable
+        );
+
+        // 3. Map sang Response
+        return userPage.map(mapper::toUserResponse);
+    }
 
     @Override
     public UserResponse getStudentByEmail(String email) {

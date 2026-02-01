@@ -2,6 +2,7 @@ package com.ktnl.fapanese.controller;
 
 
 import com.ktnl.fapanese.dto.request.CreateStudentRequest;
+import com.ktnl.fapanese.dto.request.StudentPagingRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.CreateStudentAccountResponse;
 import com.ktnl.fapanese.dto.response.ExcelUploadResponse;
@@ -43,16 +44,8 @@ public class StudentController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'LECTURER')")
     @GetMapping
-    public ApiResponse<Page<UserResponse>> getAllStudent(
-            @RequestParam(required = false) String campus,
-            @RequestParam(required = false) Integer status,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "8") int size,
-            @RequestParam(defaultValue = "id") String sortBy, // Mặc định sort theo ID
-            @RequestParam(defaultValue = "asc") String sortDir
-    ){
-        var result = iStudentService.getAllStudent(campus, status, keyword, page, size, sortBy, sortDir);
+    public ApiResponse<Page<UserResponse>> getAllStudent( @ModelAttribute StudentPagingRequest request){
+        var result = iStudentService.getAllStudent(request);
 
         return ApiResponse.<Page<UserResponse>>builder()
                 .result(result)

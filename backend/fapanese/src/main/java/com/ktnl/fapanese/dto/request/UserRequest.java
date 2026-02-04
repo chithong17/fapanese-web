@@ -42,4 +42,6 @@ public class UserRequest {
             private LocalDate dateOfBirth;
 
     private String campus;
+
+    private String avtUrl;
 }

@@ -34,6 +34,7 @@ import com.ktnl.fapanese.entity.enums.UserRole;
 
 @Slf4j
 @Service
+
 public class UserService implements IUserService {
     @Autowired
     private UserRepository userRepo;
@@ -161,6 +162,7 @@ public class UserService implements IUserService {
                 student.setLastName(userRequest.getLastName());
                 student.setCampus(userRequest.getCampus());
                 student.setDateOfBirth(userRequest.getDateOfBirth());
+                student.setAvtUrl(userRequest.getAvtUrl());
             }
         }
 
@@ -180,6 +182,7 @@ public class UserService implements IUserService {
                 lecturer.setBio(userRequest.getBio());
                 lecturer.setExpertise(userRequest.getExpertise());
                 lecturer.setDateOfBirth(userRequest.getDateOfBirth()); // hoặc dùng parse an toàn
+                lecturer.setAvtUrl(userRequest.getAvtUrl());
             }
         }
 

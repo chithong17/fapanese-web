@@ -4,30 +4,25 @@ import com.ktnl.fapanese.dto.request.ChangePasswordRequest;
 import com.ktnl.fapanese.dto.request.UserRequest;
 import com.ktnl.fapanese.dto.response.ApiResponse;
 import com.ktnl.fapanese.dto.response.UserResponse;
-import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.service.interfaces.IUserService;
-import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping({"/api/users"})
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-@RequestMapping("/api/users")
 public class UserController {
-    final IUserService iUserService;
+    IUserService iUserService;
 
     @PostMapping("/register")
     public ApiResponse<UserResponse> register(@Valid @RequestBody UserRequest request){
@@ -52,7 +47,7 @@ public class UserController {
     }
 
     @PostMapping("/profile/update")
-    private ApiResponse<UserResponse> updateProfile(@RequestBody UserRequest request){
+    public ApiResponse<UserResponse> updateProfile(@RequestBody UserRequest request){
         log.info("Update profile request: {}", request);
         UserResponse userResponse = iUserService.updateUserProfile(request);
         return ApiResponse.<UserResponse>builder()

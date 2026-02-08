@@ -16,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class VocabularyService implements IVocabularyService {
@@ -83,7 +85,13 @@ public class VocabularyService implements IVocabularyService {
 
     @Override
     public List<VocabularyResponse> getVocabulariesByLessonPartId(Long lessonPartId) {
+        log.info("🔍 Querying vocabularies for lessonPartId: {}", lessonPartId);
         List<Vocabulary> vocabularies = vocabularyRepository.findByLessonPart_Id(lessonPartId);
+        log.info("✅ Found {} vocabularies", vocabularies.size());
+
+        // Debug: print ra từng vocabulary
+        vocabularies.forEach(v -> log.info("  - {}: {}", v.getId(), v.getWordKana()));
+
         return vocabularyMapper.toVocabularyResponseList(vocabularies);
     }
 }

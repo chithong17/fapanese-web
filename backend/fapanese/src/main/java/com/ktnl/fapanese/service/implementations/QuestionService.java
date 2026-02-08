@@ -126,6 +126,11 @@ public class QuestionService implements IQuestionService {
                 if (storedAnswer != null && storedAnswer.equalsIgnoreCase(userAnswer.getUserAnswer())) {
                     isCorrect = true;
                 }
+            } else if ("TRUE_FALSE".equalsIgnoreCase(questionType)) {
+                storedAnswer = question.getCorrectAnswer();
+                if (storedAnswer != null && storedAnswer.equalsIgnoreCase(userAnswer.getUserAnswer())) {
+                    isCorrect = true;
+                }
             } else if ("FILL".equalsIgnoreCase(questionType)) {
                 storedAnswer = question.getFillAnswer();
                 if (storedAnswer != null && storedAnswer.trim().equalsIgnoreCase(userAnswer.getUserAnswer().trim())) {

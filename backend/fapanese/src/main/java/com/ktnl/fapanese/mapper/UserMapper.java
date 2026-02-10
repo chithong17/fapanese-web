@@ -17,9 +17,13 @@ public interface UserMapper {
     @Mapping(target = "password_hash", source = "password")
     User toUser(UserRequest request);
     User toUser(CreateStudentRequest request);
+    User toUser(UserResponse request);
+
 
     Student toStudent(UserRequest request);
     Student toStudent(CreateStudentRequest request);
+    Student toStudent(UserResponse request);
+
 
     Lecturer toLecturer(UserRequest request);
     Lecturer toLecturer(CreateLecturerRequest request);

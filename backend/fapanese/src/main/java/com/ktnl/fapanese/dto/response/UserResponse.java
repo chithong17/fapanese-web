@@ -22,10 +22,11 @@ public class UserResponse {
     private String firstName;
     private String lastName;
     private String avtUrl;
+    private int status;
     // student specific
     private String campus;
     // lecturer specific
     private String expertise;
     private String bio;
-    private int status; 
+
 }

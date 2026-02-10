@@ -2,15 +2,14 @@ package com.ktnl.fapanese.controller;
 
 
 import com.ktnl.fapanese.dto.request.*;
-import com.ktnl.fapanese.dto.response.ApiResponse;
-import com.ktnl.fapanese.dto.response.AuthenticationResponse;
-import com.ktnl.fapanese.dto.response.EmailResponse;
-import com.ktnl.fapanese.dto.response.VerifyOtpResponse;
+import com.ktnl.fapanese.dto.response.*;
+import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.mail.ForgotPasswordEmail;
 import com.ktnl.fapanese.mail.VerifyOtpEmail;
 import com.ktnl.fapanese.service.interfaces.IAuthenticationService;
 import com.ktnl.fapanese.service.interfaces.IOtpTokenService;
+import com.ktnl.fapanese.service.interfaces.ISocialAuthService;
 import com.ktnl.fapanese.service.interfaces.IUserService;
 import com.nimbusds.jose.JOSEException;
 import jakarta.servlet.http.Cookie;
@@ -26,6 +25,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -36,6 +37,7 @@ public class AuthenticationController {
     IAuthenticationService iAuthenticationService;
     IOtpTokenService iOtpTokenService;
     IUserService iUserService;
+    List<ISocialAuthService> iSocialAuthServices;
 
     @NonFinal
     @Value("${auth.cookie.secure}")
@@ -63,6 +65,35 @@ public class AuthenticationController {
 
         //Xóa Refresh Token trong Body trả về (để client không thấy)
         result.setRefreshToken(null);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .body(ApiResponse.<AuthenticationResponse>builder()
+                        .result(result)
+                        .build());
+    }
+
+    @PostMapping("/login/{provider}")
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> authenticate(@PathVariable String provider, @RequestBody Map<String, String> body) throws Exception {
+        // 1. Tìm đúng Service (Google)
+        ISocialAuthService service = iSocialAuthServices.stream()
+                .filter(s -> s.getProviderName().equalsIgnoreCase(provider))
+                .findFirst().orElseThrow();
+
+        // 2. Verify Google Token
+        UserResponse info = service.verifyToken(body.get("token"));
+
+        var result = iAuthenticationService.loginSocial(info);
+
+        // 4. Tạo JWT và trả về Response (khớp với class UserResponse của ông)
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", result.getRefreshToken())
+                .httpOnly(true)
+                .secure(IS_COOKIE_SECURE) // Đọc từ config
+                .path("/")
+                .maxAge(REFRESHABLE_DURATION) // 30 ngày (tương ứng với logic service)
+                .sameSite(SAME_SITE)
+                .build();
+
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())

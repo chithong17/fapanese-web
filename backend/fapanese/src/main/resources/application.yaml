@@ -10,6 +10,16 @@ spring:
     username: ${DBMS_USERNAME}
     password: ${DBMS_PASSWORD}
     driverClassName: "com.mysql.cj.jdbc.Driver"
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - profile
+              - email
 
 
   jpa:
@@ -75,9 +85,10 @@ logging:
 
 app:
   cors:
-    allowed-origins: "http://localhost:5173"
+    allowed-origins: "http://localhost:3000"
 
 auth:
   cookie:
     secure: true
     same-site: none
+

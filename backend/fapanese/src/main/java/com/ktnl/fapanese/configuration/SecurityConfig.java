@@ -37,7 +37,8 @@ public class SecurityConfig {
             "/api/auth/forgot-password",
             "/api/auth/reset-password",
             "/api/auth/logout",
-            "/api/auth/refresh"
+            "/api/auth/refresh",
+            "/api/auth/login/google"
     };
 
     private final String[] PUBLIC_GET_ENDPOINT = {
@@ -63,7 +64,6 @@ public class SecurityConfig {
                         // THÊM DÒNG NÀY ĐỂ GIẢI QUYẾT LỖI CORS PREFLIGHT
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").permitAll()//để tạm thời sẽ xóa đi sau này
                         .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll()
                         .requestMatchers("/api/interview/**").permitAll()
 

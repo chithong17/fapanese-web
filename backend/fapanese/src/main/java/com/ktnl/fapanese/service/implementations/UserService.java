@@ -96,7 +96,7 @@ public class UserService implements IUserService {
                     User user = mapper.toUser(userRequest);
                     Role role = roleRepo.findByRoleName(UserRole.STUDENT.name());
                     user.setRoles(Set.of(role));
-                    user.setStatus(0);
+                    user.setStatus(3);
 
                     Student student = mapper.toStudent(userRequest);
                     student.setUser(user);       // Quan hệ từ Student -> User

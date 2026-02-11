@@ -1,5 +1,6 @@
 package com.ktnl.fapanese.configuration;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,12 +23,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.Collections;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
     @Value("${app.cors.allowed-origins}")
     private String allowedOrigins;
+
+    @Value("${spring.datasource.url}")
+    private String test;
 
     private final String[] PUBLIC_POST_ENDPOINT = {
             "/api/auth/login",

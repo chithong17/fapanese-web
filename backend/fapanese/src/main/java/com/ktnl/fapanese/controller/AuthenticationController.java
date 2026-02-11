@@ -7,6 +7,7 @@ import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.mail.ForgotPasswordEmail;
 import com.ktnl.fapanese.mail.VerifyOtpEmail;
+import com.ktnl.fapanese.service.implementations.GoogleAuthService;
 import com.ktnl.fapanese.service.interfaces.IAuthenticationService;
 import com.ktnl.fapanese.service.interfaces.IOtpTokenService;
 import com.ktnl.fapanese.service.interfaces.ISocialAuthService;
@@ -37,7 +38,7 @@ public class AuthenticationController {
     IAuthenticationService iAuthenticationService;
     IOtpTokenService iOtpTokenService;
     IUserService iUserService;
-    List<ISocialAuthService> iSocialAuthServices;
+    ISocialAuthService iSocialAuthServices;
 
     @NonFinal
     @Value("${auth.cookie.secure}")
@@ -76,12 +77,14 @@ public class AuthenticationController {
     @PostMapping("/login/{provider}")
     public ResponseEntity<ApiResponse<AuthenticationResponse>> authenticate(@PathVariable String provider, @RequestBody Map<String, String> body) throws Exception {
         // 1. Tìm đúng Service (Google)
-        ISocialAuthService service = iSocialAuthServices.stream()
-                .filter(s -> s.getProviderName().equalsIgnoreCase(provider))
-                .findFirst().orElseThrow();
+//        ISocialAuthService service = iSocialAuthServices.stream()
+//                .filter(s -> s.getProviderName().equalsIgnoreCase(provider))
+//                .findFirst().orElseThrow();
+
+//        ISocialAuthService service = new GoogleAuthService();
 
         // 2. Verify Google Token
-        UserResponse info = service.verifyToken(body.get("token"));
+        UserResponse info = iSocialAuthServices.verifyToken(body.get("token"));
 
         var result = iAuthenticationService.loginSocial(info);
 

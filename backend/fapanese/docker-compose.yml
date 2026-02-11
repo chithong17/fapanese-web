@@ -21,3 +21,6 @@ services:
     # Cần thiết để `host.docker.internal` (ở Bước 3) hoạt động
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+
+#          docker run -d --name mysql-jp -p 3306:3306 -e MYSQL_DATABASE=fapanese_database -e MYSQL_ROOT_PASSWORD=123 mysql:8.4

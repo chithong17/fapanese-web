@@ -8,17 +8,27 @@ import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.exception.AppException;
 import com.ktnl.fapanese.exception.ErrorCode;
 import com.ktnl.fapanese.service.interfaces.ISocialAuthService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
 public class GoogleAuthService implements ISocialAuthService {
-    @Value("${google.client-id}") // Lưu trong application.yml
+    @Value("${spring.security.oauth2.client.registration.google.client-id}") // Lưu trong application.yml
     private String googleClientId;
+
 
     @Override
     public String getProviderName() {
-        return "GOOGLE";
+        return "google";
     }
 
     @Override

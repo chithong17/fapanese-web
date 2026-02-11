@@ -91,28 +91,25 @@ public class UserService implements IUserService {
     }
 
     public User registerSocialUser(UserResponse userRequest) {
-        Optional<User> existingUserOpt  = userRepo.findByEmail(userRequest.getEmail());
+        return userRepo.findByEmail(userRequest.getEmail())
+                .orElseGet(() -> {
+                    User user = mapper.toUser(userRequest);
+                    Role role = roleRepo.findByRoleName(UserRole.STUDENT.name());
+                    user.setRoles(Set.of(role));
+                    user.setStatus(0);
 
-        if(existingUserOpt.isPresent())
-            throw new AppException(ErrorCode.EMAIL_EXISTED);
-
-        // 1. Chuẩn bị đối tượng User trong bộ nhớ
-        User user = mapper.toUser(userRequest);
-        Role role = roleRepo.findByRoleName(UserRole.STUDENT.name());
-        user.setRoles(Set.of(role));
-        user.setStatus(0);
-
-
-        Student student = mapper.toStudent(userRequest);
-        student.setUser(user);       // Quan hệ từ Student -> User
-        user.setStudent(student);    // Quan hệ ngược lại từ User -> Student
+                    Student student = mapper.toStudent(userRequest);
+                    student.setUser(user);       // Quan hệ từ Student -> User
+                    user.setStudent(student);    // Quan hệ ngược lại từ User -> Student
 
 
-        // 3. Chỉ cần LƯU USER MỘT LẦN DUY NHẤT ở cuối cùng
-        // Do có CascadeType.ALL, JPA sẽ tự động lưu cả Lecturer/Student liên quan
+                    // 3. Chỉ cần LƯU USER MỘT LẦN DUY NHẤT ở cuối cùng
+                    // Do có CascadeType.ALL, JPA sẽ tự động lưu cả Lecturer/Student liên quan
 
-        // 4. Map từ đối tượng đã được lưu (có đầy đủ thông tin) và trả về
-        return userRepo.save(user);
+                    // 4. Map từ đối tượng đã được lưu (có đầy đủ thông tin) và trả về
+                    return userRepo.save(user);
+                });
+
     }
 
     public UserResponse getCurrentUserProfile() {

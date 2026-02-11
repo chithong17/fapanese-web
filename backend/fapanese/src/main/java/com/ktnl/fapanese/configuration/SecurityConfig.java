@@ -1,5 +1,6 @@
 package com.ktnl.fapanese.configuration;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,12 +23,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.Collections;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
     @Value("${app.cors.allowed-origins}")
     private String allowedOrigins;
+
+    @Value("${spring.datasource.url}")
+    private String test;
 
     private final String[] PUBLIC_POST_ENDPOINT = {
             "/api/auth/login",
@@ -37,7 +42,8 @@ public class SecurityConfig {
             "/api/auth/forgot-password",
             "/api/auth/reset-password",
             "/api/auth/logout",
-            "/api/auth/refresh"
+            "/api/auth/refresh",
+            "/api/auth/login/google"
     };
 
     private final String[] PUBLIC_GET_ENDPOINT = {
@@ -63,7 +69,6 @@ public class SecurityConfig {
                         // THÊM DÒNG NÀY ĐỂ GIẢI QUYẾT LỖI CORS PREFLIGHT
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").permitAll()//để tạm thời sẽ xóa đi sau này
                         .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll()
                         .requestMatchers("/api/interview/**").permitAll()
 

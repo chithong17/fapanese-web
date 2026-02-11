@@ -21,6 +21,7 @@ public enum ErrorCode {
     TOKEN_REUSED(1009, "Refresh Token đã được sử dụng", HttpStatus.FORBIDDEN),
     OTP_NOT_EXISTED(1010, "OTP không tồn tại", HttpStatus.NOT_FOUND),
     OTP_INVALID(1011, "OTP không hợp lệ hoặc đã hết hạn", HttpStatus.BAD_REQUEST),
+    GOOGLE_AUTH_FAIL(1012, "Xác thực Google không hợp lệ!", HttpStatus.INTERNAL_SERVER_ERROR),
 
 
     //User 2xxx
@@ -92,13 +93,12 @@ public enum ErrorCode {
     PASSWORD_INVALID(2004, "Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
     ROLE_REQUIRED(2005, "Role is required", HttpStatus.BAD_REQUEST),
     DOB_INVALID(2006, "Date of birth must be in the past", HttpStatus.BAD_REQUEST),
-    CAMPUS_REQUIRED(2007, "Campus is required", HttpStatus.BAD_REQUEST),
-
-
-
-
+    CAMPUS_REQUIRED(2007, "Campus is required", HttpStatus.BAD_REQUEST)
 
     ;
+
+
+
 
 
     private int code;

@@ -21,5 +21,6 @@ public interface IUserService {
     void setActiveStatusByEmail(String email, int status);
     List<UserResponse> getPendingTeachers(); // Lấy danh sách giáo viên đang chờ duyệt (status = 2)
     UserResponse updateStatusById(String userId, int status);
+    User registerSocialUser(UserResponse userRequest);
 
 }

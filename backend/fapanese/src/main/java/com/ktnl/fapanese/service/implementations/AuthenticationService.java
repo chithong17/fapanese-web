@@ -3,6 +3,7 @@ package com.ktnl.fapanese.service.implementations;
 
 import com.ktnl.fapanese.dto.request.AuthenticationRequest;
 import com.ktnl.fapanese.dto.response.AuthenticationResponse;
+import com.ktnl.fapanese.dto.response.UserResponse;
 import com.ktnl.fapanese.entity.RefreshToken;
 import com.ktnl.fapanese.entity.User;
 import com.ktnl.fapanese.exception.AppException;
@@ -30,6 +31,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Map;
 import java.util.StringJoiner;
 import java.util.UUID;
 
@@ -41,6 +43,7 @@ public class AuthenticationService implements IAuthenticationService {
     UserRepository userRepository;
     TokenValidationService tokenValidationService;
     RefreshTokenRepository refreshTokenRepository;
+    UserService userService;
 
     @NonFinal
     @Value("${jwt.signerKey}") // Lấy khóa bí mật từ application.properties (dùng để ký và verify JWT)
@@ -80,6 +83,20 @@ public class AuthenticationService implements IAuthenticationService {
             throw new AppException(ErrorCode.LOGIN_FAIL);
 
         //neu dung generate token
+        var accessToken = generateAccessToken(user);
+        var refreshToken = generateRefreshToken(user);
+
+        return AuthenticationResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken.getToken())
+                .authenticated(true)
+                .build();
+    }
+
+    @Override
+    public AuthenticationResponse loginSocial(UserResponse request) {
+        User user = userService.registerSocialUser(request);
+
         var accessToken = generateAccessToken(user);
         var refreshToken = generateRefreshToken(user);
 

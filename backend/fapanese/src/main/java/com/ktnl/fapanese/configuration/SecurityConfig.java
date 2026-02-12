@@ -72,8 +72,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll()
                         .requestMatchers("/api/interview/**").permitAll()
                         .requestMatchers(
-                                "/fapanese/actuator/health",
-                                "/fapanese/actuator/health/**"
+                                "/actuator/health",
+                                "/actuator/health/**"
                         ).permitAll()
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .anyRequest().authenticated()

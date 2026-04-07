@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 // (Logic API của bạn, đã bao gồm xác thực)
 
 // Cấu hình URL gốc của API (thay đổi nếu cần)
-const API_BASE_URL = "http://localhost:8080/fapanese/api";
+const API_BASE_URL = "https://fapanese-backend-production.up.railway.app/fapanese/api";
 
 // ---- 1. HÀM TIỆN ÍCH XÁC THỰC ----
 

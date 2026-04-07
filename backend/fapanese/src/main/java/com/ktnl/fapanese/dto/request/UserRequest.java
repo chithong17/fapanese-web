@@ -31,7 +31,7 @@ public class UserRequest {
     private String password;
 
     @NotBlank(message = "Role is required") // map -> ErrorCode.ROLE_REQUIRED
-    private String role;
+    private String  role;
 
     private String expertise;
 

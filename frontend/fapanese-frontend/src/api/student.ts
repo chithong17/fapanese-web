@@ -1,6 +1,6 @@
 import axios, { type AxiosProgressEvent } from "axios";
 
-const API_URL = "http://localhost:8080/fapanese/api/students";
+const API_URL = "https://fapanese-backend-production.up.railway.app/fapanese/api/students";
 
 export const getAllStudents = async (token: string) => {
   const res = await axios.get(API_URL, {

@@ -59,7 +59,7 @@ const TeacherOverviewPartsPage: React.FC = () => {
   });
 
   const token = localStorage.getItem("token") || "";
-  const API_URL = "http://localhost:8080/fapanese/api";
+  const API_URL = "https://fapanese-backend-production.up.railway.app/fapanese/api";
 
   // --- Lấy danh sách các Part (Hàm này đã đúng) ---
   const fetchParts = async () => {

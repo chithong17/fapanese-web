@@ -6,10 +6,10 @@ export default defineConfig({
   server: {
     proxy: {
       // 1. PROXY CHO BACKEND JAVA (Business Logic)
-      // Frontend gọi: /api/users -> http://localhost:8080/fapanese/users
+      // Frontend gọi: /api/users -> https://fapanese-backend-production.up.railway.app/fapanese/users
       "/api": {
         // target: "https://5180368dcd09.ngrok-free.app/fapanese",
-        target: "http://localhost:8080/fapanese", 
+        target: "https://fapanese-backend-production.up.railway.app/fapanese", 
         changeOrigin: true,
         // Sửa lỗi: Chỉ trả về chuỗi đã thay thế
         rewrite: (path) => path.replace(/^\/api/, ""), 

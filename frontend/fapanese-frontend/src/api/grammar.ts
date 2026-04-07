@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "http://localhost:8080/fapanese/api";
+const API_URL = "https://fapanese-backend-production.up.railway.app/fapanese/api";
 
 export const getGrammarsByLessonPartId = async (lessonPartId: number) => {
   const token = localStorage.getItem("token");

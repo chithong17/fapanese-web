@@ -115,7 +115,7 @@ const InterviewPractice: React.FC = () => {
                 formData.append("audio", blob, "input.webm");
 
                 try {
-                    const res = await fetch("http://localhost:8080/fapanese/api/interview/interact", {
+                    const res = await fetch("https://fapanese-backend-production.up.railway.app/fapanese/api/interview/interact", {
                         method: "POST",
                         body: formData,
                     });

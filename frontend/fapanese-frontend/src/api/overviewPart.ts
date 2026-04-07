@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/fapanese/api";
+const API_URL = "https://fapanese-backend-production.up.railway.app/fapanese/api";
 
 // Giả định endpoint cho overview parts
 export const getOverviewPartsByOverview = async (overviewId: number) => {

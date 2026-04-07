@@ -50,7 +50,7 @@ const TeacherManageSpeakingQuestionsPage: React.FC = () => {
     const [questionFormData, setQuestionFormData] = useState<Partial<SpeakingQuestion>>({});
 
     const token = localStorage.getItem("token") || "";
-    const API_URL = "http://localhost:8080/fapanese/api";
+    const API_URL = "https://fapanese-backend-production.up.railway.app/fapanese/api";
 
     // --- Fetch Speaking Item Info (for context) ---
     const fetchSpeakingItemInfo = async () => {

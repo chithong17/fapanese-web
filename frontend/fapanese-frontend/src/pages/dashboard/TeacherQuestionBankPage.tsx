@@ -61,7 +61,7 @@ const TeacherQuestionBankPage: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const token = localStorage.getItem("token") || "";
-    const API_URL = "http://localhost:8080/fapanese/api";
+    const API_URL = "https://fapanese-backend-production.up.railway.app/fapanese/api";
 
     // --- Fetch All Questions ---
     const fetchQuestions = async () => {
